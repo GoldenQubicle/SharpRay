@@ -5,7 +5,6 @@ using System.Numerics;
 using System;
 using Raylib_cs;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ProtoCity
 {
@@ -13,107 +12,116 @@ namespace ProtoCity
     {
         private const int Width = 800;
         private const int Height = 480;
-        private static List<UIComponent> UIComponents = new()
+        public static List<UIComponent> UIComponents = new()
         {
-            new Circle { Id = 0, Position = new Vector2(Width/2, Height/2), Color = RED, Radius = 5f },
-            new Circle { Id = 1, Position = new Vector2(150, 150), Color = YELLOW, Radius = 15f },
-            new Rectangle { Id = 2, Position = new Vector2(200, 300), Color = GREEN, Size = new Vector2(20, 20) },
+            new Circle
+            {
+                Id = 0,
+                Position = new Vector2(Width / 2, Height / 2),
+                BaseColor = RED,
+                Radius = 5f
+            },
+            new Circle
+            {
+                Id = 1,
+                Position = new Vector2(150, 150),
+                BaseColor = YELLOW,
+                Radius = 15f,
+            },
+            new Rectangle
+            {
+                Id = 2,
+                Position = new Vector2(200, 300),
+                BaseColor = GREEN,
+                Size = new Vector2(20, 20)
+            },
             new Polygon
             {
                 Id = 3,
                 Position = new Vector2(Width / 2, Height / 2),
-                Color = BLUE,
+                BaseColor = BLUE,
                 TextCoords = Array.Empty<Vector2>(),
                 Points = new Vector2[]
                     {
                     new Vector2(0,  50),
                     new Vector2(50,  50),
-                    new Vector2(50, 0),                    
+                    new Vector2(50, 0),
                 },
             }
         };
 
-        static Stack<IEditEvent> UndoStack = new();
-        static Stack<IEditEvent> RedoStack = new();
+        private static readonly Stack<IEditEvent> UndoStack = new();
+        private static readonly Stack<IEditEvent> RedoStack = new();
+        private static readonly List<Action> ToBeFlushed = new();
 
         static void Main(string[] args)
         {
-            Mouse.Actions.Add(UICOmponentHandler);
-            KeyBoard.Actions.Add(e =>
-            {
-                if(e is UndoEvent && UndoStack.Count > 0)
-                {
-                    var edit = UndoStack.Pop();
-                    edit.Undo();
-                    RedoStack.Push(edit);
-                }
-
-                if(e is RedoEvent && RedoStack.Count > 0)
-                {
-                    var edit = RedoStack.Pop();
-                    edit.Redo();
-                    UndoStack.Push(edit);
-                }
-            });
+            Mouse.Actions.Add(MouseEventHandler);
+            KeyBoard.Actions.Add(KeyBoardEventHandler);
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
 
             while (!WindowShouldClose())
             {
+                foreach (var c in UIComponents)
+                    c.Update(GetMousePosition());
+
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
+                FlushUIEvents();
                 Draw();
             }
 
             CloseWindow();
         }
 
-        static int EntityUnderCursor = -1;
-        static bool IsDragging;
-        static void UICOmponentHandler(IMouseEvent me)
-        {            
-
-            foreach (var comp in UIComponents)
+        internal static void UIEventHandler(UIEvent e)
+        {
+            if (e is IEditEvent edit)
             {
-                if (comp is not Circle c) continue;
-
-                var d = Vector2.Distance(c.Position, me.Position);
-
-                if (d < c.Radius)
-                    EntityUnderCursor = c.Id;
-
-                var isOver = EntityUnderCursor == c.Id;
-
-                if (isOver && me is MouseLeftDrag && !IsDragging)
+                if (edit is DeleteEdit d)
                 {
-                    //c.Position = me.Position;
-                    IsDragging = true;
+                    ToBeFlushed.Add(() => UIComponents.Remove(d.UIComponent));
                 }
-                if (isOver && IsDragging)
-                {
-                    c.Position = me.Position;
-                    Console.WriteLine(EntityUnderCursor);
-                }
-
-                if (IsDragging && me is MouseLeftRelease)
-                {
-                    EntityUnderCursor = -1;
-                    IsDragging = false;
-                    isOver = false;
-                    Console.WriteLine(EntityUnderCursor);
-                }
-
-                if (isOver && me is MouseWheelUp)
-                    c.Radius += 1.5f;
-
-                if (isOver && me is MouseWheelDown)
-                    c.Radius -= 1.5f;
+                UndoStack.Push(edit);
             }
         }
 
+        private static void FlushUIEvents()
+        {
+            ToBeFlushed.ForEach(a => a());
+            ToBeFlushed.Clear();
+        }
 
-        static Texture2D texture2D = new() { id = 1, };
+        private static void KeyBoardEventHandler(IKeyBoardEvent e)
+        {
+            foreach (var comp in UIComponents)
+                comp.OnKeyBoardEvent(e);
 
-        static void Draw()
+            if (e is KeyUndo && UndoStack.Count > 0)
+            {
+                var edit = UndoStack.Pop();
+                edit.Undo();
+                RedoStack.Push(edit);
+            }
+
+            if (e is KeyRedo && RedoStack.Count > 0)
+            {
+                var edit = RedoStack.Pop();
+                edit.Redo();
+                UndoStack.Push(edit);
+            }
+        }
+
+        private static void MouseEventHandler(IMouseEvent e)
+        {
+            foreach (var comp in UIComponents)
+                comp.OnMouseEvent(e);
+        }
+
+
+        private static Texture2D texture2D = new() { id = 1, };
+
+        private static void Draw()
         {
             BeginDrawing();
             ClearBackground(GRAY);
