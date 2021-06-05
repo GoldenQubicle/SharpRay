@@ -33,15 +33,34 @@ namespace ProtoCity
             }
         };
 
+        static Stack<IEditEvent> UndoStack = new();
+        static Stack<IEditEvent> RedoStack = new();
+
         static void Main(string[] args)
         {
             Mouse.Actions.Add(UICOmponentHandler);
+            KeyBoard.Actions.Add(e =>
+            {
+                if(e is UndoEvent && UndoStack.Count > 0)
+                {
+                    var edit = UndoStack.Pop();
+                    edit.Undo();
+                    RedoStack.Push(edit);
+                }
 
+                if(e is RedoEvent && RedoStack.Count > 0)
+                {
+                    var edit = RedoStack.Pop();
+                    edit.Redo();
+                    UndoStack.Push(edit);
+                }
+            });
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
 
             while (!WindowShouldClose())
             {
                 Mouse.DoEvents();
+                KeyBoard.DoEvents();
                 Draw();
             }
 
@@ -49,16 +68,13 @@ namespace ProtoCity
         }
 
         static int EntityUnderCursor = -1;
+        static bool IsDragging;
         static void UICOmponentHandler(IMouseEvent me)
-        {
-            foreach(var poly in UIComponents.OfType<Polygon>())
-            {
-                
-            }
+        {            
 
-            foreach (var e in UIComponents)
+            foreach (var comp in UIComponents)
             {
-                if (e is not Circle c) continue;
+                if (comp is not Circle c) continue;
 
                 var d = Vector2.Distance(c.Position, me.Position);
 
@@ -67,11 +83,24 @@ namespace ProtoCity
 
                 var isOver = EntityUnderCursor == c.Id;
 
-                if (isOver && me is MouseLeftDrag)
+                if (isOver && me is MouseLeftDrag && !IsDragging)
+                {
+                    //c.Position = me.Position;
+                    IsDragging = true;
+                }
+                if (isOver && IsDragging)
+                {
                     c.Position = me.Position;
+                    Console.WriteLine(EntityUnderCursor);
+                }
 
-                if (isOver && me is MouseLeftRelease)
+                if (IsDragging && me is MouseLeftRelease)
+                {
                     EntityUnderCursor = -1;
+                    IsDragging = false;
+                    isOver = false;
+                    Console.WriteLine(EntityUnderCursor);
+                }
 
                 if (isOver && me is MouseWheelUp)
                     c.Radius += 1.5f;
@@ -88,7 +117,6 @@ namespace ProtoCity
         {
             BeginDrawing();
             ClearBackground(GRAY);
-
 
             foreach (var e in UIComponents)
             {

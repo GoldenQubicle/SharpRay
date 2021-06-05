@@ -19,44 +19,44 @@ namespace ProtoCity
 
             //click events
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
-                Actions.ForEach(ms => ms(new MouseLeftClick(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseLeftClick(currentMousePostion)));
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_MIDDLE_BUTTON))
-                Actions.ForEach(ms => ms(new MouseMiddleClick(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseMiddleClick(currentMousePostion)));
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_RIGHT_BUTTON))
-                Actions.ForEach(ms => ms(new MouseRighttClick(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseRighttClick(currentMousePostion)));
 
 
             //release events
             if (IsMouseButtonReleased(MouseButton.MOUSE_LEFT_BUTTON))
-                Actions.ForEach(ms => ms(new MouseLeftRelease(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseLeftRelease(currentMousePostion)));
 
             if (IsMouseButtonReleased(MouseButton.MOUSE_MIDDLE_BUTTON))
-                Actions.ForEach(ms => ms(new MouseMiddleRelease(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseMiddleRelease(currentMousePostion)));
 
             if (IsMouseButtonReleased(MouseButton.MOUSE_RIGHT_BUTTON))
-                Actions.ForEach(ms => ms(new MouseRightRelease(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseRightRelease(currentMousePostion)));
 
 
             //drag events
             //send continuously even when cursor is outside window with potentially negative coordinates
             if (IsMouseButtonDown(MouseButton.MOUSE_LEFT_BUTTON) && isDragging)
-                Actions.ForEach(ms => ms(new MouseLeftDrag(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseLeftDrag(currentMousePostion)));
 
             if (IsMouseButtonDown(MouseButton.MOUSE_MIDDLE_BUTTON) && isDragging)
-                Actions.ForEach(ms => ms(new MouseMiddleDrag(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseMiddleDrag(currentMousePostion)));
 
             if (IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON) && isDragging)
-                Actions.ForEach(ms => ms(new MouseRightDrag(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseRightDrag(currentMousePostion)));
 
 
             //mousewheel events
             if (mouseWheel == 1f)
-                Actions.ForEach(ms => ms(new MouseWheelUp(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseWheelUp(currentMousePostion)));
 
             if (mouseWheel == -1f)
-                Actions.ForEach(ms => ms(new MouseWheelDown(currentMousePostion)));
+                Actions.ForEach(a => a(new MouseWheelDown(currentMousePostion)));
 
             PreviousMousePostion = currentMousePostion;
         }
