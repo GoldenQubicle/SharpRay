@@ -27,6 +27,16 @@ namespace ProtoCity
             if (IsMouseButtonPressed(MouseButton.MOUSE_RIGHT_BUTTON))
                 Actions.ForEach(ms => ms(new MouseRighttClick(currentMousePostion)));
 
+            //release events
+            if (IsMouseButtonReleased(MouseButton.MOUSE_LEFT_BUTTON))
+                Actions.ForEach(ms => ms(new MouseLeftRelease(currentMousePostion)));
+
+            if (IsMouseButtonReleased(MouseButton.MOUSE_MIDDLE_BUTTON))
+                Actions.ForEach(ms => ms(new MouseMiddleRelease(currentMousePostion)));
+
+            if (IsMouseButtonReleased(MouseButton.MOUSE_RIGHT_BUTTON))
+                Actions.ForEach(ms => ms(new MouseRightRelease(currentMousePostion)));
+
             //drag events
             //send continuously even when cursor is outside window with potentially negative coordinates
             if (IsMouseButtonDown(MouseButton.MOUSE_LEFT_BUTTON) && isDragging)
@@ -47,5 +57,7 @@ namespace ProtoCity
 
             PreviousMousePostion = currentMousePostion;
         }
+
+        public static Vector2 GetPosition() => GetMousePosition();
     }
 }
