@@ -5,6 +5,7 @@ using System.Numerics;
 using System;
 using Raylib_cs;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProtoCity
 {
@@ -12,15 +13,29 @@ namespace ProtoCity
     {
         private const int Width = 800;
         private const int Height = 480;
-        private static List<Entity> Entities = new()
+        private static List<UIComponent> UIComponents = new()
         {
-            new Circle { Id = 0, Position = new Vector2(50, 50), Radius = 25f, Color = PURPLE },
-            new Circle { Id = 1, Position = new Vector2(150, 150), Radius = 15f, Color = YELLOW },
-            new Rectangle { Id = 2, Position = new Vector2(200, 300), Size = new Vector2(20, 20), Color = GREEN },
+            new Circle { Id = 0, Position = new Vector2(Width/2, Height/2), Color = RED, Radius = 5f },
+            new Circle { Id = 1, Position = new Vector2(150, 150), Color = YELLOW, Radius = 15f },
+            new Rectangle { Id = 2, Position = new Vector2(200, 300), Color = GREEN, Size = new Vector2(20, 20) },
+            new Polygon
+            {
+                Id = 3,
+                Position = new Vector2(Width / 2, Height / 2),
+                Color = BLUE,
+                TextCoords = Array.Empty<Vector2>(),
+                Points = new Vector2[]
+                    {
+                    new Vector2(0,  50),
+                    new Vector2(50,  50),
+                    new Vector2(50, 0),                    
+                },
+            }
         };
+
         static void Main(string[] args)
         {
-            Mouse.Actions.Add(EntityHandler);
+            Mouse.Actions.Add(UICOmponentHandler);
 
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
 
@@ -34,13 +49,14 @@ namespace ProtoCity
         }
 
         static int EntityUnderCursor = -1;
-        static void EntityHandler(IMouseEvent me)
+        static void UICOmponentHandler(IMouseEvent me)
         {
-            //so the issue atm is; the isOver check needs to happen continue
-            //as now it still registers as being over an entity when in fact the mouse moved away this was done to allow dragging
-            //so, what needs to happen; isOver needs to be checken continiusly, expect when a dragging action is started
-            //otherwise the motion becomes choppy and annoying
-            foreach (var e in Entities)
+            foreach(var poly in UIComponents.OfType<Polygon>())
+            {
+                
+            }
+
+            foreach (var e in UIComponents)
             {
                 if (e is not Circle c) continue;
 
@@ -65,16 +81,25 @@ namespace ProtoCity
             }
         }
 
+
+        static Texture2D texture2D = new() { id = 1, };
+
         static void Draw()
         {
             BeginDrawing();
             ClearBackground(GRAY);
 
-            foreach (var e in Entities)
-            {
-                if (e is Circle c) DrawCircleV(c.Position, c.Radius, c.Color);
 
-                if (e is Rectangle r) DrawRectangleV(r.Position, r.Size, r.Color);
+            foreach (var e in UIComponents)
+            {
+                if (e is Circle c)
+                    DrawCircleV(c.Position, c.Radius, c.Color);
+
+                if (e is Rectangle r)
+                    DrawRectangleV(r.Position, r.Size, r.Color);
+
+                if (e is Polygon p)
+                    DrawTexturePoly(texture2D, p.Position, p.Points, p.TextCoords, p.Points.Length, p.Color);
             };
 
             EndDrawing();
