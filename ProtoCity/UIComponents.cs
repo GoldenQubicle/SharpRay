@@ -7,17 +7,18 @@ namespace SharpRay
 {
     public abstract class UIComponent
     {
-        public Action<IUIEvent> EmitEvent { get; set; } = Program.UIEventHandler;
-
+        protected Action<IUIEvent> EmitEvent { get; } = Program.UIEventHandler; //not ideal
+        public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } //probably want more of those in a proper api
         public Vector2 Position { get; set; }
+        public float Scale { get; set; } = 1f;
         public Color BaseColor { get; set; }
         public Color HighLightColor { get; set; } = Color.BROWN;
         public bool HasMouseFocus { get; protected set; }
         public abstract bool ContainsPoint(Vector2 point);
         public abstract void Draw();
-        
+
         protected Color Color { get; private set; }
-        protected bool IsDragged { get;  private set; }
+        protected bool IsDragged { get; private set; }
         private Vector2 DragStart { get; set; }
         private Vector2 DragOffSet { get; set; }
 
@@ -33,6 +34,9 @@ namespace SharpRay
         public virtual void OnMouseEvent(IMouseEvent me)
         {
             if (!HasMouseFocus) return;
+
+            if (me is MouseLeftClick)
+                EmitEvent(OnMouseLeftClick?.Invoke(this));
 
             if (me is MouseLeftDrag && !IsDragged)
             {
@@ -51,6 +55,13 @@ namespace SharpRay
                 });
                 IsDragged = false;
             }
+
+            if (me is MouseWheelUp || me is MouseWheelDown)
+            {
+                var start = Scale;
+                Scale += me is MouseWheelUp ? 0.15f : -0.15f;
+                EmitEvent(new ScaleEdit { UIComponent = this, Start = start, End = Scale });
+            }
         }
 
         public virtual void OnKeyBoardEvent(IKeyBoardEvent ke)
@@ -62,12 +73,12 @@ namespace SharpRay
         }
     }
 
-    public class TimerButton : Rectangle
+    public class ToggleButton : Rectangle
     {
         public string Text { get; set; }
-        public Func<string> OnUpdate { get; internal set; }
+        public Func<string> OnUpdate { get; set; }
 
-        private bool IsToggled;
+        public bool IsToggled { get; private set; }
 
         public override void Update(Vector2 mPos)
         {
@@ -77,17 +88,19 @@ namespace SharpRay
         public override void Draw()
         {
             base.Draw();
-            DrawText(Text, (int)Position.X, (int)Position.Y+2, 25, Color.WHITE);
+            DrawText(Text, (int)Position.X, (int)Position.Y + 2, 25, Color.WHITE);
         }
 
         public override void OnMouseEvent(IMouseEvent me)
         {
+            //not calling base since we don't need dragging nor scaling for a static button
+
             if (!HasMouseFocus) return;
 
             if (me is MouseLeftClick)
             {
                 IsToggled = !IsToggled;
-                EmitEvent(new ToggleTimer { IsPaused = !IsToggled });
+                EmitEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
             }
         }
     }
@@ -99,18 +112,10 @@ namespace SharpRay
         public override bool ContainsPoint(Vector2 point)
         {
             var d = Vector2.Distance(Position, point);
-            return d < Radius;
+            return d < Radius * Scale;
         }
 
-        public override void OnMouseEvent(IMouseEvent me)
-        {
-            base.OnMouseEvent(me);
-            if (!HasMouseFocus) return;
-            if (me is MouseWheelUp) Radius += 1.5f;
-            if (me is MouseWheelDown) Radius -= 1.5f;
-        }
-
-        public override void Draw() => DrawCircleV(Position, Radius, Color);
+        public override void Draw() => DrawCircleV(Position, Radius * Scale, Color);
     }
 
     public class Rectangle : UIComponent
@@ -119,11 +124,11 @@ namespace SharpRay
 
         public override bool ContainsPoint(Vector2 point)
         {
-            return point.X > Position.X && point.X < Position.X + Size.X &&
-                 point.Y > Position.Y && point.Y < Position.Y + Size.Y;
+            return point.X > Position.X && point.X < Position.X + Size.X * Scale &&
+                 point.Y > Position.Y && point.Y < Position.Y + Size.Y * Scale;
         }
 
-        public override void Draw() => DrawRectangleV(Position, Size, Color);
+        public override void Draw() => DrawRectangleV(Position, Size * new Vector2(Scale, Scale), Color);
     }
 
 
@@ -140,7 +145,7 @@ namespace SharpRay
         {
             return false;
         }
-            
+
         public override void Draw() => DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, Color);
     }
 }

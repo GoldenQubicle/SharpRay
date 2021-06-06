@@ -13,10 +13,24 @@ namespace SharpRay
         public bool IsPaused { get; init; }
     }
 
+    public struct RectangleLeftClick : IUIEvent
+    {
+        public UIComponent UIComponent { get; init; }
+    }
+
     public interface IEditEvent : IUIEvent
     {
         void Undo();
         void Redo();
+    }
+
+    public struct ScaleEdit : IEditEvent
+    {
+        public UIComponent UIComponent { get; init; }
+        public float Start { get; init; }
+        public float End { get; init; }
+        public void Undo() => UIComponent.Scale = Start;
+        public void Redo() => UIComponent.Scale = End;
     }
 
     public struct TranslateEdit : IEditEvent

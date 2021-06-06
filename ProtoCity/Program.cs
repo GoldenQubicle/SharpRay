@@ -30,7 +30,8 @@ namespace SharpRay
             {
                 Position = new Vector2(200, 300),
                 BaseColor = GREEN,
-                Size = new Vector2(20, 20)
+                Size = new Vector2(20, 20),
+                OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
             },
             new Polygon
             {
@@ -44,13 +45,14 @@ namespace SharpRay
                         new Vector2(50, 0),
                     },
             },
-            new TimerButton
+            new ToggleButton
             {
                 Position = new Vector2(Width - 150, 5),
                 Size = new Vector2(100, 25),
                 Text = "Timer!",
                 BaseColor = BEIGE,
                 OnUpdate = () => Stopwatch.Elapsed.ToString("hh':'mm':'ss"),
+                OnMouseLeftClick = tb => new ToggleTimer { UIComponent = tb, IsPaused = !(tb as ToggleButton).IsToggled }
             }
         };
 
@@ -96,7 +98,10 @@ namespace SharpRay
                 if (!t.IsPaused) Stopwatch.Start();
                 if (t.IsPaused) Stopwatch.Stop();
             }
-        }
+
+            if(e is RectangleLeftClick)
+                Console.WriteLine(e.UIComponent.GetType().Name);
+        }       
 
         private static void FlushUIEvents()
         {
