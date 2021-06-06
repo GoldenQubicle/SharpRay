@@ -3,7 +3,7 @@ using static Raylib_cs.Raylib;
 using System;
 using System.Numerics;
 
-namespace ProtoCity
+namespace SharpRay
 {
     public abstract class UIComponent
     {
@@ -82,7 +82,6 @@ namespace ProtoCity
 
         public override void OnMouseEvent(IMouseEvent me)
         {
-            //don't call base since we don't want the button to be draggable
             if (!HasMouseFocus) return;
 
             if (me is MouseLeftClick)

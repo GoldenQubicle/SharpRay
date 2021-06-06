@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace ProtoCity
+namespace SharpRay
 {
     public interface IUIEvent
     {

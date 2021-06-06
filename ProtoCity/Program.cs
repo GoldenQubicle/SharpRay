@@ -4,10 +4,9 @@ using System.Reflection;
 using System.Numerics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
 
-namespace ProtoCity
+namespace SharpRay
 {
     class Program
     {
@@ -51,14 +50,15 @@ namespace ProtoCity
                 Size = new Vector2(100, 25),
                 Text = "Timer!",
                 BaseColor = BEIGE,
-                OnUpdate = () => stopwatch.Elapsed.ToString("hh':'mm':'ss")
+                OnUpdate = () => Stopwatch.Elapsed.ToString("hh':'mm':'ss"),
             }
         };
 
         private static readonly Stack<IEditEvent> UndoStack = new();
         private static readonly Stack<IEditEvent> RedoStack = new();
         private static readonly List<Action> ToBeFlushed = new();
-        private static Stopwatch stopwatch = new();
+        private static Stopwatch Stopwatch = new();
+
         static void Main(string[] args)
         {
             Mouse.EmitEvent += MouseEventHandler;
@@ -93,8 +93,8 @@ namespace ProtoCity
 
             if (e is ToggleTimer t)
             {
-                if (!t.IsPaused) stopwatch.Start();
-                if (t.IsPaused) stopwatch.Stop();
+                if (!t.IsPaused) Stopwatch.Start();
+                if (t.IsPaused) Stopwatch.Stop();
             }
         }
 

@@ -3,7 +3,7 @@ using System;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 
-namespace ProtoCity
+namespace SharpRay
 {
     public class Mouse
     {
@@ -16,7 +16,7 @@ namespace ProtoCity
             var isDragging = currentMousePostion != PreviousMousePostion;
             var mouseWheel = GetMouseWheelMove();
 
-            //click events
+            //click events - TODO proper click & double click
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
                 EmitEvent(new MouseLeftClick { Position = currentMousePostion });
 

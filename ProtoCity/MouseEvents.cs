@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace ProtoCity
+namespace SharpRay
 {
     public interface IMouseEvent
     {

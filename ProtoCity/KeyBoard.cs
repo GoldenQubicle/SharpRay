@@ -2,7 +2,7 @@
 using System;
 using static Raylib_cs.Raylib;
 
-namespace ProtoCity
+namespace SharpRay
 {
     public static class KeyBoard
     {

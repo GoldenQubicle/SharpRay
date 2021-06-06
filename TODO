@@ -1,7 +1,7 @@
 First MileStone:
   ✔ be able to draw a rectangles, and undo/redo @created(06-06-2021 13:13) @done(06-06-2021 13:14)
     reason: handle ui stuff in somewhat sensible manner and proper undo / redo is very helpfull down the line
-  ☐ be able to start and pause a timer @created(06-06-2021 13:13)
+  ✔ be able to start and pause a timer @created(06-06-2021 13:13) @done(06-06-2021 14:04)
       reason: more ui interaction
   ☐ be able to save rectangle and time elapsed to disk @created(06-06-2021 13:13)
       reason: handle 'game' state in a smart way, i.e. do NOT save the ui components directly obviously!
@@ -11,4 +11,5 @@ First MileStone:
       reason: proof of concept complete
 
 TODO: 
+  ☐ proper click & double click mouse events @created(06-06-2021 14:21)
   ☐ investigate DI and project organisation @created(06-06-2021 13:17)

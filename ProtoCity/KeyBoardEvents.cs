@@ -1,4 +1,4 @@
-﻿namespace ProtoCity
+﻿namespace SharpRay
 {
     public interface IKeyBoardEvent { }
 
