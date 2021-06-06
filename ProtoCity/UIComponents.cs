@@ -36,7 +36,7 @@ namespace ProtoCity
 
             if (me is MouseLeftDrag && !IsDragged)
             {
-                DragStart = me.Position;
+                DragStart = Position;
                 DragOffSet = Position - me.Position;
                 IsDragged = true;
             }

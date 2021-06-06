@@ -3,7 +3,6 @@ using static Raylib_cs.Color;
 using System.Reflection;
 using System.Numerics;
 using System;
-using Raylib_cs;
 using System.Collections.Generic;
 
 namespace ProtoCity
@@ -115,8 +114,6 @@ namespace ProtoCity
                 comp.OnMouseEvent(e);
             }
         }
-
-
 
         private static void Draw()
         {
