@@ -5,6 +5,7 @@ using System.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace ProtoCity
 {
@@ -39,23 +40,30 @@ namespace ProtoCity
                 TextCoords = Array.Empty<Vector2>(),
                 Points = new Vector2[]
                     {
-                    new Vector2(0,  50),
-                    new Vector2(50,  50),
-                    new Vector2(50, 0),
-                },
+                        new Vector2(0, 50),
+                        new Vector2(50, 50),
+                        new Vector2(50, 0),
+                    },
+            },
+            new TimerButton
+            {
+                Position = new Vector2(Width - 150, 5),
+                Size = new Vector2(100, 25),
+                Text = "Timer!",
+                BaseColor = BEIGE,
+                OnUpdate = () => stopwatch.Elapsed.ToString("hh':'mm':'ss")
             }
         };
 
         private static readonly Stack<IEditEvent> UndoStack = new();
         private static readonly Stack<IEditEvent> RedoStack = new();
         private static readonly List<Action> ToBeFlushed = new();
-
+        private static Stopwatch stopwatch = new();
         static void Main(string[] args)
         {
             Mouse.EmitEvent += MouseEventHandler;
             KeyBoard.EmitEvent += KeyBoardEventHandler;
-            UIComponents.Last().EmitEvent += e => Console.WriteLine("poly event");|
-            
+
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
 
@@ -81,6 +89,12 @@ namespace ProtoCity
                     ToBeFlushed.Add(() => UIComponents.Remove(d.UIComponent));
 
                 UndoStack.Push(edit);
+            }
+
+            if (e is ToggleTimer t)
+            {
+                if (!t.IsPaused) stopwatch.Start();
+                if (t.IsPaused) stopwatch.Stop();
             }
         }
 
@@ -113,9 +127,7 @@ namespace ProtoCity
         private static void MouseEventHandler(IMouseEvent e)
         {
             foreach (var comp in UIComponents)
-            {
                 comp.OnMouseEvent(e);
-            }
         }
 
         private static void Draw()

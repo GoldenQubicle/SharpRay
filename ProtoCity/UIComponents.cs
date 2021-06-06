@@ -62,6 +62,37 @@ namespace ProtoCity
         }
     }
 
+    public class TimerButton : Rectangle
+    {
+        public string Text { get; set; }
+        public Func<string> OnUpdate { get; internal set; }
+
+        private bool IsToggled;
+
+        public override void Update(Vector2 mPos)
+        {
+            base.Update(mPos);
+            Text = OnUpdate();
+        }
+        public override void Draw()
+        {
+            base.Draw();
+            DrawText(Text, (int)Position.X, (int)Position.Y+2, 25, Color.WHITE);
+        }
+
+        public override void OnMouseEvent(IMouseEvent me)
+        {
+            //don't call base since we don't want the button to be draggable
+            if (!HasMouseFocus) return;
+
+            if (me is MouseLeftClick)
+            {
+                IsToggled = !IsToggled;
+                EmitEvent(new ToggleTimer { IsPaused = !IsToggled });
+            }
+        }
+    }
+
     public class Circle : UIComponent
     {
         public float Radius { get; set; }
@@ -110,13 +141,7 @@ namespace ProtoCity
         {
             return false;
         }
-
-        public override void OnKeyBoardEvent(IKeyBoardEvent ke)
-        {
-            base.OnKeyBoardEvent(ke);
-            if (ke is KeyPressed kp)
-                EmitEvent(new DummyEvent());
-        }
+            
         public override void Draw() => DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, Color);
     }
 }

@@ -2,22 +2,28 @@
 
 namespace ProtoCity
 {
-    public interface IUIEvent { }
-    
-    public class DummyEvent : IUIEvent { }
+    public interface IUIEvent
+    {
+        UIComponent UIComponent { get; init; }
+    }
+
+    public struct ToggleTimer : IUIEvent
+    {
+        public UIComponent UIComponent { get; init; }
+        public bool IsPaused { get; init; }
+    }
 
     public interface IEditEvent : IUIEvent
     {
-        UIComponent UIComponent { get; init; }
         void Undo();
-        void Redo ();
+        void Redo();
     }
 
     public struct TranslateEdit : IEditEvent
     {
+        public UIComponent UIComponent { get; init; }
         public Vector2 Start { get; init; }
         public Vector2 End { get; init; }
-        public UIComponent UIComponent { get; init; }
         public void Undo() => UIComponent.Position = Start;
         public void Redo() => UIComponent.Position = End;
     }
@@ -26,6 +32,6 @@ namespace ProtoCity
     {
         public UIComponent UIComponent { get; init; }
         public void Undo() => Program.UIComponents.Add(UIComponent);
-        public void Redo() => Program.UIComponents.Remove(UIComponent);        
+        public void Redo() => Program.UIComponents.Remove(UIComponent);
     }
 }

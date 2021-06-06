@@ -1,2 +1,14 @@
-Todo:  
-  ✔ draw circle moveable by mouse @created(03-06-2021 20:59) @done(03-06-2021 21:39)
+First MileStone:
+  ✔ be able to draw a rectangles, and undo/redo @created(06-06-2021 13:13) @done(06-06-2021 13:14)
+    reason: handle ui stuff in somewhat sensible manner and proper undo / redo is very helpfull down the line
+  ☐ be able to start and pause a timer @created(06-06-2021 13:13)
+      reason: more ui interaction
+  ☐ be able to save rectangle and time elapsed to disk @created(06-06-2021 13:13)
+      reason: handle 'game' state in a smart way, i.e. do NOT save the ui components directly obviously!
+  ☐ be able to load from disk rectangle and time elapsed @created(06-06-2021 13:13)
+      reason: what's the point of saving it one can't load
+  ☐ be able to continue timer once loaded @created(06-06-2021 13:13)
+      reason: proof of concept complete
+
+TODO: 
+  ☐ investigate DI and project organisation @created(06-06-2021 13:17)
