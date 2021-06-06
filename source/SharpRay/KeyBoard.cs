@@ -18,12 +18,11 @@ namespace SharpRay
 
             if (IsKeyDown(KeyboardKey.KEY_DELETE) || IsKeyDown(KeyboardKey.KEY_D))
                 EmitEvent(new KeyDelete());
-            
+
             //bit shit
-            foreach(var key in Keys)
+            foreach (var key in Keys)
             {
-                if (IsKeyPressed(key))
-                    EmitEvent(new KeyPressed { Char = (char)key });
+                if (IsKeyPressed(key)) EmitEvent(new KeyPressed { Char = (char)key });
             }
         }
     }

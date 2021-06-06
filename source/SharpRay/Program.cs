@@ -99,9 +99,9 @@ namespace SharpRay
                 if (t.IsPaused) Stopwatch.Stop();
             }
 
-            if(e is RectangleLeftClick)
+            if (e is RectangleLeftClick)
                 Console.WriteLine(e.UIComponent.GetType().Name);
-        }       
+        }
 
         private static void FlushUIEvents()
         {
