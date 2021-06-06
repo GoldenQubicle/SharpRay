@@ -7,6 +7,8 @@ namespace ProtoCity
 {
     public abstract class UIComponent
     {
+        public Action<IUIEvent> EmitEvent { get; set; } = Program.UIEventHandler;
+
         public Vector2 Position { get; set; }
         public Color BaseColor { get; set; }
         public Color HighLightColor { get; set; } = Color.BROWN;
@@ -18,8 +20,6 @@ namespace ProtoCity
         protected bool IsDragged { get;  private set; }
         private Vector2 DragStart { get; set; }
         private Vector2 DragOffSet { get; set; }
-
-        private static readonly Action<IEditEvent> OnEdit = e => Program.UIEventHandler(e);
 
         public virtual void Update(Vector2 mPos)
         {
@@ -43,7 +43,7 @@ namespace ProtoCity
 
             if (me is MouseLeftRelease && IsDragged)
             {
-                OnEdit(new TranslateEdit
+                EmitEvent(new TranslateEdit
                 {
                     UIComponent = this,
                     Start = DragStart,
@@ -58,7 +58,7 @@ namespace ProtoCity
             if (!HasMouseFocus) return;
 
             if (ke is KeyDelete)
-                OnEdit(new DeleteEdit { UIComponent = this });
+                EmitEvent(new DeleteEdit { UIComponent = this });
         }
     }
 
@@ -104,13 +104,19 @@ namespace ProtoCity
         public Vector2[] Points { get; init; }
         public Vector2[] TextCoords { get; init; }
 
-        private static Texture2D texture2D = new() { id = 1, };
+        private static Texture2D texture2D = new() { id = 1, }; // seems like textures need to be unloaded btw
 
         public override bool ContainsPoint(Vector2 point)
         {
             return false;
         }
 
+        public override void OnKeyBoardEvent(IKeyBoardEvent ke)
+        {
+            base.OnKeyBoardEvent(ke);
+            if (ke is KeyPressed kp)
+                EmitEvent(new DummyEvent());
+        }
         public override void Draw() => DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, Color);
     }
 }

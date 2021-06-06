@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Numerics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProtoCity
 {
@@ -51,10 +52,12 @@ namespace ProtoCity
 
         static void Main(string[] args)
         {
-            Mouse.Actions.Add(MouseEventHandler);
-            KeyBoard.Actions.Add(KeyBoardEventHandler);
-
+            Mouse.EmitEvent += MouseEventHandler;
+            KeyBoard.EmitEvent += KeyBoardEventHandler;
+            UIComponents.Last().EmitEvent += e => Console.WriteLine("poly event");|
+            
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
+            SetWindowPosition(1366, 712);
 
             while (!WindowShouldClose())
             {

@@ -18,7 +18,7 @@ namespace ProtoCity
         public Vector2 Position { get; init; }
     }
 
-    public struct MouseRighttClick : IMouseEvent
+    public struct MouseRightClick : IMouseEvent
     {
         public Vector2 Position { get; init; }
     }

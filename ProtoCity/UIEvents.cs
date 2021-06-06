@@ -4,6 +4,8 @@ namespace ProtoCity
 {
     public interface IUIEvent { }
     
+    public class DummyEvent : IUIEvent { }
+
     public interface IEditEvent : IUIEvent
     {
         UIComponent UIComponent { get; init; }
