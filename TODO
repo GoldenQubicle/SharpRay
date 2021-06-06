@@ -11,5 +11,7 @@ First MileStone:
       reason: proof of concept complete
 
 TODO: 
+  ☐ implement containsPoint polygon @created(06-06-2021 18:09)
+  ☐ implement scale polygon @created(06-06-2021 18:09)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)
   ☐ investigate DI and project organisation @created(06-06-2021 13:17)
