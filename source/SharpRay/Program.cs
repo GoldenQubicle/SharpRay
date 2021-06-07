@@ -5,7 +5,6 @@ using System.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace SharpRay
 {
@@ -13,8 +12,14 @@ namespace SharpRay
     {
         private const int Width = 800;
         private const int Height = 480;
-        public static List<UIComponent> UIComponents = new()
+
+        public static List<Entity> Entities = new()
         {
+            new Player
+            {
+                Position = new Vector2(300, 200),
+                Size = new Vector2(15, 15)
+            },
             new Circle
             {
                 Position = new Vector2(Width / 2, Height / 2),
@@ -57,15 +62,6 @@ namespace SharpRay
             }
         };
 
-        public static List<Entity> Entities = new()
-        {
-            new Player
-            {
-                Position = new Vector2(300, 200),
-                Size = new Vector2(15, 15)
-            }
-        };
-
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> ToBeFlushed = new();
@@ -78,25 +74,16 @@ namespace SharpRay
 
             foreach (var e in Entities)
             {
-                if (e is IKeyBoardListener) KeyBoard.EmitEvent += e.OnKeyBoardEvent;
-                if (e is IMouseListener) Mouse.EmitEvent += e.OnMouseEvent;
+                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
+                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
+                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += UIEventHandler;
             }
-            foreach (var c in UIComponents)
-            {
-                if (c is IKeyBoardListener) KeyBoard.EmitEvent += c.OnKeyBoardEvent;
-                if (c is IMouseListener) Mouse.EmitEvent += c.OnMouseEvent;
-                if (c is IEventEmitter<IUIEvent> e) e.EmitEvent += UIEventHandler;
-            }
-
 
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
 
             while (!WindowShouldClose())
             {
-                foreach (var comp in UIComponents)
-                    comp.Update(GetMousePosition());
-
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
                 FlushUIEvents();
@@ -111,7 +98,7 @@ namespace SharpRay
             if (e is IHasUndoRedo ur) UndoStack.Push(ur);
 
             if (e is DeleteEdit edit)
-                ToBeFlushed.Add(() => UIComponents.Remove(edit.UIComponent));
+                ToBeFlushed.Add(() => Entities.Remove(edit.UIComponent));
 
             if (e is ToggleTimer t)
             {
@@ -129,16 +116,16 @@ namespace SharpRay
             ToBeFlushed.Clear();
         }
 
-        private static void KeyBoardEventHandler(IKeyBoardEvent e)
+        private static void KeyBoardEventHandler(IKeyBoardEvent kbe)
         {
-            if (e is KeyUndo && UndoStack.Count > 0)
+            if (kbe is KeyUndo && UndoStack.Count > 0)
             {
                 var edit = UndoStack.Pop();
                 edit.Undo();
                 RedoStack.Push(edit);
             }
 
-            if (e is KeyRedo && RedoStack.Count > 0)
+            if (kbe is KeyRedo && RedoStack.Count > 0)
             {
                 var edit = RedoStack.Pop();
                 edit.Redo();
@@ -146,7 +133,7 @@ namespace SharpRay
             }
         }
 
-        private static void MouseEventHandler(IMouseEvent e)
+        private static void MouseEventHandler(IMouseEvent me)
         {
 
         }
@@ -157,10 +144,10 @@ namespace SharpRay
             ClearBackground(GRAY);
 
             foreach (var e in Entities)
+            {
                 e.Draw();
-
-            foreach (var comp in UIComponents)
-                comp.Draw();
+                if (e is ILoop l) l.Update(GetMousePosition());
+            }
 
             EndDrawing();
         }

@@ -46,7 +46,7 @@ namespace SharpRay
     public struct DeleteEdit : IUIEvent, IHasUndoRedo
     {
         public UIComponent UIComponent { get; init; }
-        public void Undo() => Program.UIComponents.Add(UIComponent);
-        public void Redo() => Program.UIComponents.Remove(UIComponent);
+        public void Undo() => Program.Entities.Add(UIComponent);
+        public void Redo() => Program.Entities.Remove(UIComponent);
     }
 }

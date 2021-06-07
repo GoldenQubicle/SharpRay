@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace SharpRay
 {
-    public abstract class UIComponent : IEventEmitter<IUIEvent>, IKeyBoardListener, IMouseListener, IDrawable
+    public abstract class UIComponent : Entity, IEventEmitter<IUIEvent>, ILoop
     {
         public Action<IUIEvent> EmitEvent { get; set; }
         public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } //probably want more of those in a proper api
@@ -16,7 +16,6 @@ namespace SharpRay
         public Color HighLightColor { get; set; } = Color.BROWN;
         public bool HasMouseFocus { get; protected set; }
         public abstract bool ContainsPoint(Vector2 point);
-        public abstract void Draw();
 
         protected Color Color { get; private set; }
         protected bool IsDragged { get; private set; }
@@ -32,7 +31,7 @@ namespace SharpRay
                 Position = mPos + DragOffSet;
         }
 
-        public virtual void OnMouseEvent(IMouseEvent me)
+        public override void OnMouseEvent(IMouseEvent me)
         {
             if (!HasMouseFocus) return;
 
@@ -70,7 +69,7 @@ namespace SharpRay
             }
         }
 
-        public virtual void OnKeyBoardEvent(IKeyBoardEvent ke)
+        public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
             if (!HasMouseFocus) return;
 
