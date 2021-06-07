@@ -2,9 +2,10 @@
 
 namespace SharpRay
 {
-    public interface IUIEvent
+   
+    public struct UIEvent : IUIEvent
     {
-        UIComponent UIComponent { get; init; }
+        public UIComponent UIComponent { get; init; }
     }
 
     public struct ToggleTimer : IUIEvent
@@ -18,13 +19,13 @@ namespace SharpRay
         public UIComponent UIComponent { get; init; }
     }
 
-    public interface IEditEvent : IUIEvent
+    public interface IHasUndoRedo 
     {
         void Undo();
         void Redo();
     }
 
-    public struct ScaleEdit : IEditEvent
+    public struct ScaleEdit : IUIEvent, IHasUndoRedo
     {
         public UIComponent UIComponent { get; init; }
         public float Start { get; init; }
@@ -33,7 +34,7 @@ namespace SharpRay
         public void Redo() => UIComponent.Scale = End;
     }
 
-    public struct TranslateEdit : IEditEvent
+    public struct TranslateEdit : IUIEvent, IHasUndoRedo
     {
         public UIComponent UIComponent { get; init; }
         public Vector2 Start { get; init; }
@@ -42,7 +43,7 @@ namespace SharpRay
         public void Redo() => UIComponent.Position = End;
     }
 
-    public struct DeleteEdit : IEditEvent
+    public struct DeleteEdit : IUIEvent, IHasUndoRedo
     {
         public UIComponent UIComponent { get; init; }
         public void Undo() => Program.UIComponents.Add(UIComponent);

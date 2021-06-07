@@ -3,6 +3,8 @@ First MileStone:
     reason: handle ui stuff in somewhat sensible manner and proper undo / redo is very helpfull down the line
   ✔ be able to start and pause a timer @created(06-06-2021 13:13) @done(06-06-2021 14:04)
       reason: more ui interaction
+  ☐ be able to control a rectange as 'player' character @created(07-06-2021 19:35)
+    reason: flesh out ui event system and difference between ui components and game entities
   ☐ be able to save rectangle and time elapsed to disk @created(06-06-2021 13:13)
       reason: handle 'game' state in a smart way, i.e. do NOT save the ui components directly obviously!
   ☐ be able to load from disk rectangle and time elapsed @created(06-06-2021 13:13)
@@ -15,3 +17,14 @@ TODO:
   ☐ implement scale polygon @created(06-06-2021 18:09)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)
   ☐ investigate DI and project organisation @created(06-06-2021 13:17)
+
+Second MileStone (ideas):
+   ☐ snake game @created(07-06-2021 19:41)
+    reason: simple yet effective proving grounds of capbilities. Would probably want to include 
+    sound since that's important and I've got no experience with it so far. Could also opt to use 
+    external assets for visuals as well. 
+  ☐ manipulate a custom shader in realtime with ui controls @created(07-06-2021 19:41)
+    reason: shaders are the bread and butter of a proper runnning game, technical challenging
+    This idea came about while thinking about how to create a brush zoning tool so that could be a good
+    first start. Like, scrollwheel changes size, on left click puts the brush down, etc. And this would also
+    need to support undo / redo

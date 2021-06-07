@@ -1,6 +1,14 @@
 ﻿namespace SharpRay
 {
-    public interface IKeyBoardEvent { }
+    public struct KeyPressed : IKeyBoardEvent { public char Char { get; init; } }
+
+    public struct KeyUp : IKeyBoardEvent { }
+
+    public struct KeyRight : IKeyBoardEvent { }
+
+    public struct KeyDown : IKeyBoardEvent { }
+
+    public struct KeyLeft : IKeyBoardEvent { }
 
     public struct KeyDelete : IKeyBoardEvent { }
 
@@ -8,8 +16,4 @@
 
     public struct KeyRedo : IKeyBoardEvent { }
 
-    public struct KeyPressed : IKeyBoardEvent
-    {
-        public char Char { get; init; }
-    }
 }

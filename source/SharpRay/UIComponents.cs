@@ -5,10 +5,11 @@ using System.Numerics;
 
 namespace SharpRay
 {
-    public abstract class UIComponent
+    public abstract class UIComponent : IEventEmitter<IUIEvent>, IKeyBoardListener, IMouseListener, IDrawable
     {
-        protected Action<IUIEvent> EmitEvent { get; } = Program.UIEventHandler; //not ideal
+        public Action<IUIEvent> EmitEvent { get; set; }
         public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } //probably want more of those in a proper api
+        public Action<UIComponent> OnRightMouseClick { get; set; }
         public Vector2 Position { get; set; }
         public float Scale { get; set; } = 1f;
         public Color BaseColor { get; set; }
@@ -35,8 +36,13 @@ namespace SharpRay
         {
             if (!HasMouseFocus) return;
 
-            if (me is MouseLeftClick)
-                EmitEvent(OnMouseLeftClick?.Invoke(this));
+            if (me is MouseLeftClick && OnMouseLeftClick is not null)
+                EmitEvent(OnMouseLeftClick(this));
+
+            if (me is MouseRightClick)
+            {
+                OnRightMouseClick?.Invoke(this);
+            }
 
             if (me is MouseLeftDrag && !IsDragged)
             {
@@ -71,6 +77,7 @@ namespace SharpRay
             if (ke is KeyDelete)
                 EmitEvent(new DeleteEdit { UIComponent = this });
         }
+
     }
 
     public class ToggleButton : Rectangle
