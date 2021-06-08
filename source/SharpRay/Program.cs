@@ -5,6 +5,7 @@ using System.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace SharpRay
 {
@@ -66,20 +67,27 @@ namespace SharpRay
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> ToBeFlushed = new();
         private static Stopwatch Stopwatch = new();
+        
+        public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
 
         static void Main(string[] args)
         {
-            Mouse.EmitEvent += MouseEventHandler;
-            KeyBoard.EmitEvent += KeyBoardEventHandler;
+            Mouse.EmitEvent += OnMouseEvent;
+            KeyBoard.EmitEvent += OnKeyBoardEvent;
 
             foreach (var e in Entities)
             {
                 if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
                 if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
-                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += UIEventHandler;
+                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
+                if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
             }
 
+            InitAudioDevice();
+            Audio.Initialize();
+
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
+            
             SetWindowPosition(1366, 712);
 
             while (!WindowShouldClose())
@@ -90,10 +98,11 @@ namespace SharpRay
                 Draw();
             }
 
+            CloseAudioDevice();
             CloseWindow();
         }
 
-        internal static void UIEventHandler(IUIEvent e)
+        internal static void OnUIEvent(IUIEvent e)
         {
             if (e is IHasUndoRedo ur) UndoStack.Push(ur);
 
@@ -116,7 +125,7 @@ namespace SharpRay
             ToBeFlushed.Clear();
         }
 
-        private static void KeyBoardEventHandler(IKeyBoardEvent kbe)
+        private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
         {
             if (kbe is KeyUndo && UndoStack.Count > 0)
             {
@@ -133,7 +142,7 @@ namespace SharpRay
             }
         }
 
-        private static void MouseEventHandler(IMouseEvent me)
+        private static void OnMouseEvent(IMouseEvent me)
         {
 
         }

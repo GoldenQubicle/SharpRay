@@ -8,6 +8,7 @@ namespace SharpRay
     {
         public static Action<IKeyBoardEvent> EmitEvent { get; set; }
         private static readonly KeyboardKey[] Keys = Enum.GetValues<KeyboardKey>();
+
         public static void DoEvents()
         {
             if (IsKeyDown(KeyboardKey.KEY_UP) || IsKeyDown(KeyboardKey.KEY_W))
@@ -29,8 +30,8 @@ namespace SharpRay
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
                 EmitEvent(new KeyRedo());
 
-            
-            if (IsKeyDown(KeyboardKey.KEY_DELETE) )
+
+            if (IsKeyDown(KeyboardKey.KEY_DELETE))
                 EmitEvent(new KeyDelete());
 
             //bit shit

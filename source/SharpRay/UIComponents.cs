@@ -2,6 +2,7 @@
 using static Raylib_cs.Raylib;
 using System;
 using System.Numerics;
+using System.Net;
 
 namespace SharpRay
 {
@@ -79,7 +80,7 @@ namespace SharpRay
 
     }
 
-    public class ToggleButton : Rectangle
+    public class ToggleButton : Rectangle, IEventEmitter<IAudioEvent>
     {
         public string Text { get; set; }
         public Func<string> OnUpdate { get; set; }
@@ -107,8 +108,11 @@ namespace SharpRay
             {
                 IsToggled = !IsToggled;
                 EmitEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
+                (this as IEventEmitter<IAudioEvent>).EmitEvent(new AudioToggleTimerClicked { Entity = this }); //erhm, not great
             }
         }
+
+        Action<IAudioEvent> IEventEmitter<IAudioEvent>.EmitEvent { get; set; }
     }
 
     public class Circle : UIComponent
