@@ -2,15 +2,18 @@
 using static Raylib_cs.Raylib;
 using System;
 using System.Numerics;
-using System.Net;
 
 namespace SharpRay
 {
     public abstract class UIComponent : Entity, IEventEmitter<IUIEvent>, ILoop
     {
         public Action<IUIEvent> EmitEvent { get; set; }
-        public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } //probably want more of those in a proper api
+
+        //not too sure about these 2...          
+        public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } 
         public Action<UIComponent> OnRightMouseClick { get; set; }
+
+
         public Vector2 Position { get; set; }
         public float Scale { get; set; } = 1f;
         public Color BaseColor { get; set; }
@@ -80,6 +83,12 @@ namespace SharpRay
 
     }
 
+    /*
+     * kinda experimental class 
+     *  2 types of event emitter, ui & audio
+     *  OnUpdate func to update the timer text
+     *  uses OnMouseLeftClick to get the event to emit
+     */
     public class ToggleButton : Rectangle, IEventEmitter<IAudioEvent>
     {
         public string Text { get; set; }

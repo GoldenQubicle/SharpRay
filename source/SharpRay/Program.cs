@@ -19,7 +19,8 @@ namespace SharpRay
             new Player
             {
                 Position = new Vector2(300, 200),
-                Size = new Vector2(15, 15)
+                Size = new Vector2(15, 15),
+                Bounds = new Vector2(Width, Height)
             },
             new Circle
             {

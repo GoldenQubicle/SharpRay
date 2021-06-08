@@ -27,24 +27,26 @@ namespace SharpRay
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; init; }
+        public Vector2 Bounds { get; init; }
 
-        public float Speed = .075f;
+        private float Speed = .075f;
 
-        public override void Draw() => DrawRectangleV(Position, Size, Color.ORANGE);
+        public override void Draw()
+        {
+            DrawRectangleV(Position, Size, Color.ORANGE);
+
+            if (Position.X > Bounds.X) Position = new Vector2(0, Position.Y);
+            if (Position.X < 0) Position = new Vector2(Bounds.X, Position.Y);
+            if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
+            if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
+        }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyUp)
-                Position -= new Vector2(0f, Speed);
-
-            if (e is KeyRight)
-                Position += new Vector2(Speed, 0f);
-
-            if (e is KeyDown)
-                Position += new Vector2(0f, Speed);
-
-            if (e is KeyLeft)
-                Position -= new Vector2(Speed, 0f);
+            if (e is KeyUp) Position -= new Vector2(0f, Speed);
+            if (e is KeyRight) Position += new Vector2(Speed, 0f);
+            if (e is KeyDown) Position += new Vector2(0f, Speed);
+            if (e is KeyLeft) Position -= new Vector2(Speed, 0f);
         }
     }
 }
