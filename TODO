@@ -33,6 +33,7 @@ Second MileStone (ideas):
     the ui. 
     
 TODO: 
+  ☐ figure out entity collision @created(09-06-2021 20:23)
   ☐ implement containsPoint polygon @created(06-06-2021 18:09)
   ☐ implement scale polygon @created(06-06-2021 18:09)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)

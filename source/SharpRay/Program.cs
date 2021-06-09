@@ -19,41 +19,53 @@ namespace SharpRay
             new Player
             {
                 Position = new Vector2(300, 200),
-                Size = new Vector2(15, 15),
+                Size = new Vector2(20, 20),
                 Bounds = new Vector2(Width, Height)
             },
-            new Circle
+            new FoodParticle
             {
-                Position = new Vector2(Width / 2, Height / 2),
-                BaseColor = RED,
-                Radius = 50f,
-                OnRightMouseClick = e => Console.WriteLine("")
+                Position = new Vector2(Width/2, Height /2),
+                Size = new Vector2(15, 15),
+                Color = GREEN
             },
-            new Circle
+            new PoisonParticle
             {
-                Position = new Vector2(150, 150),
-                BaseColor = YELLOW,
-                Radius = 15f,
+                Position = new Vector2(100, 100),
+                Size = new Vector2(15, 15),
+                Color = RED
             },
-            new Rectangle
-            {
-                Position = new Vector2(200, 300),
-                BaseColor = GREEN,
-                Size = new Vector2(20, 20),
-                OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
-            },
-            new Polygon
-            {
-                Position = new Vector2(Width / 2, Height / 2),
-                BaseColor = BLUE,
-                TextCoords = Array.Empty<Vector2>(),
-                Points = new Vector2[]
-                    {
-                        new Vector2(0, 50),
-                        new Vector2(50, 50),
-                        new Vector2(50, 0),
-                    },
-            },
+            //new Circle
+            //{
+            //    Position = new Vector2(Width / 2, Height / 2),
+            //    BaseColor = RED,
+            //    Radius = 50f,
+            //    OnRightMouseClick = e => Console.WriteLine("")
+            //},
+            //new Circle
+            //{
+            //    Position = new Vector2(150, 150),
+            //    BaseColor = YELLOW,
+            //    Radius = 15f,
+            //},
+            //new Rectangle
+            //{
+            //    Position = new Vector2(200, 300),
+            //    BaseColor = GREEN,
+            //    Size = new Vector2(20, 20),
+            //    OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
+            //},
+            //new Polygon
+            //{
+            //    Position = new Vector2(Width / 2, Height / 2),
+            //    BaseColor = BLUE,
+            //    TextCoords = Array.Empty<Vector2>(),
+            //    Points = new Vector2[]
+            //        {
+            //            new Vector2(0, 50),
+            //            new Vector2(50, 50),
+            //            new Vector2(50, 0),
+            //        },
+            //},
             new ToggleButton
             {
                 Position = new Vector2(Width - 150, 5),
@@ -68,27 +80,28 @@ namespace SharpRay
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> ToBeFlushed = new();
         private static Stopwatch Stopwatch = new();
-        
-        public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
 
+        public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
+        public static Action<ICollisionEvent> EmitCollisionEvent { get; set; }
         static void Main(string[] args)
         {
-            Mouse.EmitEvent += OnMouseEvent;
-            KeyBoard.EmitEvent += OnKeyBoardEvent;
+            Mouse.EmitMouseEvent += OnMouseEvent;
+            KeyBoard.EmitKeyBoardEvent += OnKeyBoardEvent;
 
             foreach (var e in Entities)
             {
-                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
-                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
-                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
-                if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
+                if (e is IKeyBoardListener kbl) KeyBoard.EmitKeyBoardEvent += kbl.OnKeyBoardEvent;
+                if (e is IMouseListener ml) Mouse.EmitMouseEvent += ml.OnMouseEvent;
+                if (e is IUIEventEmitter ui) ui.EmitUIEvent += OnUIEvent;
+                if (e is IAudioEventEmitter au) au.EmitAdudioEvent += Audio.OnAudioEvent;
+                if (e is ICollisionListener ce) EmitCollisionEvent += ce.OnCollisionEvent;
             }
 
             InitAudioDevice();
             Audio.Initialize();
 
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
-            
+
             SetWindowPosition(1366, 712);
 
             while (!WindowShouldClose())
@@ -97,11 +110,30 @@ namespace SharpRay
                 KeyBoard.DoEvents();
                 FlushUIEvents();
                 Draw();
+                
+                for(var i = 0; i < Entities.Count; i++)
+                {
+                    var e1 = Entities[i];
+
+                    for(var j = i + 1; j < Entities.Count; j++)
+                    {
+                        var e2 = Entities[j];
+                        
+                        if(CheckCollisionRecs(e1.Rectangle, e2.Rectangle))
+                        {
+                            if (e1 is ICollisionListener cl1)
+                                EmitCollisionEvent(new CollisionEvent {
+
+                                });
+                        }
+                    }
+                }
             }
 
             CloseAudioDevice();
             CloseWindow();
         }
+
 
         internal static void OnUIEvent(IUIEvent e)
         {

@@ -6,38 +6,38 @@ namespace SharpRay
 {
     public static class KeyBoard
     {
-        public static Action<IKeyBoardEvent> EmitEvent { get; set; }
+        public static Action<IKeyBoardEvent> EmitKeyBoardEvent { get; set; }
         private static readonly KeyboardKey[] Keys = Enum.GetValues<KeyboardKey>();
 
         public static void DoEvents()
         {
             if (IsKeyDown(KeyboardKey.KEY_UP) || IsKeyDown(KeyboardKey.KEY_W))
-                EmitEvent(new KeyUp());
+                EmitKeyBoardEvent(new KeyUp());
 
             if (IsKeyDown(KeyboardKey.KEY_RIGHT) || IsKeyDown(KeyboardKey.KEY_D))
-                EmitEvent(new KeyRight());
+                EmitKeyBoardEvent(new KeyRight());
 
             if (IsKeyDown(KeyboardKey.KEY_DOWN) || IsKeyDown(KeyboardKey.KEY_S))
-                EmitEvent(new KeyDown());
+                EmitKeyBoardEvent(new KeyDown());
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT) || IsKeyDown(KeyboardKey.KEY_A))
-                EmitEvent(new KeyLeft());
+                EmitKeyBoardEvent(new KeyLeft());
 
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Z))
-                EmitEvent(new KeyUndo());
+                EmitKeyBoardEvent(new KeyUndo());
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
-                EmitEvent(new KeyRedo());
+                EmitKeyBoardEvent(new KeyRedo());
 
 
             if (IsKeyDown(KeyboardKey.KEY_DELETE))
-                EmitEvent(new KeyDelete());
+                EmitKeyBoardEvent(new KeyDelete());
 
             //bit shit
             foreach (var key in Keys)
             {
-                if (IsKeyPressed(key)) EmitEvent(new KeyPressed { Char = (char)key });
+                if (IsKeyPressed(key)) EmitKeyBoardEvent(new KeyPressed { Char = (char)key });
             }
         }
     }

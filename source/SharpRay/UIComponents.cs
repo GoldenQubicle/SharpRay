@@ -5,9 +5,9 @@ using System.Numerics;
 
 namespace SharpRay
 {
-    public abstract class UIComponent : Entity, IEventEmitter<IUIEvent>, ILoop
+    public abstract class UIComponent : Entity, IUIEventEmitter, ILoop
     {
-        public Action<IUIEvent> EmitEvent { get; set; }
+        public Action<IUIEvent> EmitUIEvent { get; set; }
 
         //not too sure about these 2...          
         public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } 
@@ -40,7 +40,7 @@ namespace SharpRay
             if (!HasMouseFocus) return;
 
             if (me is MouseLeftClick && OnMouseLeftClick is not null)
-                EmitEvent(OnMouseLeftClick(this));
+                EmitUIEvent(OnMouseLeftClick(this));
 
             if (me is MouseRightClick)
             {
@@ -56,7 +56,7 @@ namespace SharpRay
 
             if (me is MouseLeftRelease && IsDragged)
             {
-                EmitEvent(new TranslateEdit
+                EmitUIEvent(new TranslateEdit
                 {
                     UIComponent = this,
                     Start = DragStart,
@@ -69,7 +69,7 @@ namespace SharpRay
             {
                 var start = Scale;
                 Scale += me is MouseWheelUp ? 0.15f : -0.15f;
-                EmitEvent(new ScaleEdit { UIComponent = this, Start = start, End = Scale });
+                EmitUIEvent(new ScaleEdit { UIComponent = this, Start = start, End = Scale });
             }
         }
 
@@ -78,7 +78,7 @@ namespace SharpRay
             if (!HasMouseFocus) return;
 
             if (ke is KeyDelete)
-                EmitEvent(new DeleteEdit { UIComponent = this });
+                EmitUIEvent(new DeleteEdit { UIComponent = this });
         }
 
     }
@@ -89,7 +89,7 @@ namespace SharpRay
      *  OnUpdate func to update the timer text
      *  uses OnMouseLeftClick to get the event to emit
      */
-    public class ToggleButton : Rectangle, IEventEmitter<IAudioEvent>
+    public class ToggleButton : Rectangle, IAudioEventEmitter
     {
         public string Text { get; set; }
         public Func<string> OnUpdate { get; set; }
@@ -116,12 +116,12 @@ namespace SharpRay
             if (me is MouseLeftClick)
             {
                 IsToggled = !IsToggled;
-                EmitEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
-                (this as IEventEmitter<IAudioEvent>).EmitEvent(new AudioToggleTimerClicked { Entity = this }); //erhm, not great
+                EmitUIEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
+                EmitAdudioEvent(new AudioToggleTimerClicked { Entity = this }); //erhm, not great
             }
         }
 
-        Action<IAudioEvent> IEventEmitter<IAudioEvent>.EmitEvent { get; set; }
+        public Action<IAudioEvent> EmitAdudioEvent { get; set; }
     }
 
     public class Circle : UIComponent
