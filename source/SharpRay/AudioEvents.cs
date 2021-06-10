@@ -1,7 +1,4 @@
 ﻿namespace SharpRay
 {
-    public struct AudioToggleTimerClicked : IAudioEvent
-    {
-        public Entity Entity { get; init; }
-    }
+    public struct AudioToggleTimerClicked : IAudioEvent { public Entity Entity { get; init; } }
 }

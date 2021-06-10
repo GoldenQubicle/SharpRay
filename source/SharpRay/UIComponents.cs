@@ -5,16 +5,14 @@ using System.Numerics;
 
 namespace SharpRay
 {
-    public abstract class UIComponent : Entity, IUIEventEmitter, ILoop
+    public abstract class UIComponent : Entity, IEventEmitter<IUIEvent>, ILoop
     {
-        public Action<IUIEvent> EmitUIEvent { get; set; }
-
         //not too sure about these 2...          
-        public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; } 
+        public Func<UIComponent, IUIEvent> OnMouseLeftClick { get; set; }
         public Action<UIComponent> OnRightMouseClick { get; set; }
 
+        public Action<IUIEvent> EmitEvent { get; set; }
 
-        public Vector2 Position { get; set; }
         public float Scale { get; set; } = 1f;
         public Color BaseColor { get; set; }
         public Color HighLightColor { get; set; } = Color.BROWN;
@@ -40,7 +38,7 @@ namespace SharpRay
             if (!HasMouseFocus) return;
 
             if (me is MouseLeftClick && OnMouseLeftClick is not null)
-                EmitUIEvent(OnMouseLeftClick(this));
+                EmitEvent(OnMouseLeftClick(this));
 
             if (me is MouseRightClick)
             {
@@ -56,7 +54,7 @@ namespace SharpRay
 
             if (me is MouseLeftRelease && IsDragged)
             {
-                EmitUIEvent(new TranslateEdit
+                EmitEvent(new TranslateEdit
                 {
                     UIComponent = this,
                     Start = DragStart,
@@ -69,7 +67,7 @@ namespace SharpRay
             {
                 var start = Scale;
                 Scale += me is MouseWheelUp ? 0.15f : -0.15f;
-                EmitUIEvent(new ScaleEdit { UIComponent = this, Start = start, End = Scale });
+                EmitEvent(new ScaleEdit { UIComponent = this, Start = start, End = Scale });
             }
         }
 
@@ -78,7 +76,7 @@ namespace SharpRay
             if (!HasMouseFocus) return;
 
             if (ke is KeyDelete)
-                EmitUIEvent(new DeleteEdit { UIComponent = this });
+                EmitEvent(new DeleteEdit { UIComponent = this });
         }
 
     }
@@ -89,8 +87,10 @@ namespace SharpRay
      *  OnUpdate func to update the timer text
      *  uses OnMouseLeftClick to get the event to emit
      */
-    public class ToggleButton : Rectangle, IAudioEventEmitter
+    public class ToggleButton : Rectangle, IEventEmitter<IAudioEvent>
     {
+        Action<IAudioEvent> IEventEmitter<IAudioEvent>.EmitEvent { get; set; }
+
         public string Text { get; set; }
         public Func<string> OnUpdate { get; set; }
 
@@ -116,36 +116,28 @@ namespace SharpRay
             if (me is MouseLeftClick)
             {
                 IsToggled = !IsToggled;
-                EmitUIEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
-                EmitAdudioEvent(new AudioToggleTimerClicked { Entity = this }); //erhm, not great
+                EmitEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
+                (this as IEventEmitter<IAudioEvent>).EmitEvent(new AudioToggleTimerClicked { Entity = this }); //erhm, not great
             }
         }
-
-        public Action<IAudioEvent> EmitAdudioEvent { get; set; }
     }
 
     public class Circle : UIComponent
     {
         public float Radius { get; set; }
 
-        public override bool ContainsPoint(Vector2 point)
-        {
-            var d = Vector2.Distance(Position, point);
-            return d < Radius * Scale;
-        }
+        public override bool ContainsPoint(Vector2 point) => Vector2.Distance(Position, point) < Radius * Scale;
 
         public override void Draw() => DrawCircleV(Position, Radius * Scale, Color);
     }
 
     public class Rectangle : UIComponent
     {
-        public Vector2 Size { get; set; }
-
-        public override bool ContainsPoint(Vector2 point)
-        {
-            return point.X > Position.X && point.X < Position.X + Size.X * Scale &&
-                 point.Y > Position.Y && point.Y < Position.Y + Size.Y * Scale;
-        }
+        public override bool ContainsPoint(Vector2 point) =>
+                point.X > Position.X &&
+                point.X < Position.X + Size.X * Scale &&
+                point.Y > Position.Y &&
+                point.Y < Position.Y + Size.Y * Scale;
 
         public override void Draw() => DrawRectangleV(Position, Size * new Vector2(Scale, Scale), Color);
     }

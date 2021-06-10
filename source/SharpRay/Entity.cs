@@ -9,12 +9,24 @@ namespace SharpRay
     public interface ILoop { void Update(Vector2 mPos); }
     public interface IMouseListener { void OnMouseEvent(IMouseEvent e); }
     public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent e); }
-    public interface ICollisionListener { void OnCollisionEvent(ICollisionEvent e); }
+    public interface ICollisionListener { void OnCollision(GameEntity e); }
+    public interface IHasCollider { public Raylib_cs.Rectangle Rectangle { get; } }
 
     public abstract class Entity : IKeyBoardListener, IMouseListener, IDrawable
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; init; }
+
+        public virtual void Draw() { }
+
+        public virtual void OnKeyBoardEvent(IKeyBoardEvent e) { }
+
+        public virtual void OnMouseEvent(IMouseEvent e) { }
+
+    }
+
+    public abstract class GameEntity : Entity, IHasCollider
+    {
         public Raylib_cs.Rectangle Rectangle
         {
             get => new Raylib_cs.Rectangle
@@ -25,33 +37,27 @@ namespace SharpRay
                 height = Size.Y
             };
         }
-
-        public virtual void Draw() { }
-
-        public virtual void OnKeyBoardEvent(IKeyBoardEvent e) { }
-
-        public virtual void OnMouseEvent(IMouseEvent e) { }
-
     }
 
+    public interface IPlayerEvent : IEvent { }
+    public struct PlayerConsumedParticle :IPlayerEvent { public GameEntity GameEntity { get; init; } }
 
-    public class Player : Entity, ICollisionListener
+    public class Player : GameEntity, ICollisionListener, IEventEmitter<IPlayerEvent>
     {
+        public Action<IPlayerEvent> EmitEvent { get; set; }
+
         public Vector2 Bounds { get; init; }
 
         private float Speed = .075f;
 
-        public void OnCollisionEvent(ICollisionEvent e)
+        public void OnCollision(GameEntity e)
         {
             if (e is FoodParticle f)
-            {
-
-            }
+                EmitEvent(new PlayerConsumedParticle { GameEntity = f });
 
             if (e is PoisonParticle p)
-            {
+                EmitEvent(new PlayerConsumedParticle { GameEntity = p });
 
-            }
         }
         public override void Draw()
         {
@@ -70,9 +76,10 @@ namespace SharpRay
             if (e is KeyDown) Position += new Vector2(0f, Speed);
             if (e is KeyLeft) Position -= new Vector2(Speed, 0f);
         }
+
     }
 
-    public class FoodParticle : Entity
+    public class FoodParticle : GameEntity
     {
         public Color Color { get; init; }
         public override void Draw()
@@ -81,7 +88,7 @@ namespace SharpRay
         }
     }
 
-    public class PoisonParticle : Entity
+    public class PoisonParticle : GameEntity
     {
         public Color Color { get; init; }
         public override void Draw()

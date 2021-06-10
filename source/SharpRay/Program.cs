@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace SharpRay
 {
@@ -34,26 +35,26 @@ namespace SharpRay
                 Size = new Vector2(15, 15),
                 Color = RED
             },
-            //new Circle
-            //{
-            //    Position = new Vector2(Width / 2, Height / 2),
-            //    BaseColor = RED,
-            //    Radius = 50f,
-            //    OnRightMouseClick = e => Console.WriteLine("")
-            //},
-            //new Circle
-            //{
-            //    Position = new Vector2(150, 150),
-            //    BaseColor = YELLOW,
-            //    Radius = 15f,
-            //},
-            //new Rectangle
-            //{
-            //    Position = new Vector2(200, 300),
-            //    BaseColor = GREEN,
-            //    Size = new Vector2(20, 20),
-            //    OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
-            //},
+            new Circle
+            {
+                Position = new Vector2(Width / 2, Height / 2),
+                BaseColor = RED,
+                Radius = 50f,
+                OnRightMouseClick = e => Console.WriteLine("")
+            },
+            new Circle
+            {
+                Position = new Vector2(150, 150),
+                BaseColor = YELLOW,
+                Radius = 15f,
+            },
+            new Rectangle
+            {
+                Position = new Vector2(200, 300),
+                BaseColor = GREEN,
+                Size = new Vector2(20, 20),
+                OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
+            },
             //new Polygon
             //{
             //    Position = new Vector2(Width / 2, Height / 2),
@@ -82,20 +83,21 @@ namespace SharpRay
         private static Stopwatch Stopwatch = new();
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
-        public static Action<ICollisionEvent> EmitCollisionEvent { get; set; }
         static void Main(string[] args)
         {
-            Mouse.EmitMouseEvent += OnMouseEvent;
-            KeyBoard.EmitKeyBoardEvent += OnKeyBoardEvent;
+            Mouse.EmitEvent += OnMouseEvent;
+            KeyBoard.EmitEvent += OnKeyBoardEvent;
 
             foreach (var e in Entities)
             {
-                if (e is IKeyBoardListener kbl) KeyBoard.EmitKeyBoardEvent += kbl.OnKeyBoardEvent;
-                if (e is IMouseListener ml) Mouse.EmitMouseEvent += ml.OnMouseEvent;
-                if (e is IUIEventEmitter ui) ui.EmitUIEvent += OnUIEvent;
-                if (e is IAudioEventEmitter au) au.EmitAdudioEvent += Audio.OnAudioEvent;
-                if (e is ICollisionListener ce) EmitCollisionEvent += ce.OnCollisionEvent;
+                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
+                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
+                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
+                if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
+                if (e is IEventEmitter<IPlayerEvent> pe) pe.EmitEvent += OnPLayerEvent;
             }
+
+            var gameEntities = Entities.OfType<GameEntity>().ToArray();
 
             InitAudioDevice();
             Audio.Initialize();
@@ -111,20 +113,18 @@ namespace SharpRay
                 FlushUIEvents();
                 Draw();
                 
-                for(var i = 0; i < Entities.Count; i++)
+                for(var i = 0; i < gameEntities.Count(); i++)
                 {
-                    var e1 = Entities[i];
-
-                    for(var j = i + 1; j < Entities.Count; j++)
+                    var e1 = gameEntities[i];
+                    if (e1 is ICollisionListener cl1)
                     {
-                        var e2 = Entities[j];
-                        
-                        if(CheckCollisionRecs(e1.Rectangle, e2.Rectangle))
+                        for (var j = 0; j < gameEntities.Count(); j++)
                         {
-                            if (e1 is ICollisionListener cl1)
-                                EmitCollisionEvent(new CollisionEvent {
-
-                                });
+                            var e2 = gameEntities[j];
+                            if (e1 != e2 && CheckCollisionRecs(e1.Rectangle, e2.Rectangle))
+                            {
+                                cl1.OnCollision(e2);
+                            }
                         }
                     }
                 }
@@ -134,6 +134,11 @@ namespace SharpRay
             CloseWindow();
         }
 
+        private static void OnPLayerEvent(IPlayerEvent e)
+        {
+            if (e is PlayerConsumedParticle cp)
+                ToBeFlushed.Add(() => Entities.Remove(cp.GameEntity));
+        }
 
         internal static void OnUIEvent(IUIEvent e)
         {

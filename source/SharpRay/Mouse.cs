@@ -7,7 +7,7 @@ namespace SharpRay
 {
     public class Mouse
     {
-        public static Action<IMouseEvent> EmitMouseEvent { get; set; }
+        public static Action<IMouseEvent> EmitEvent { get; set; }
 
         private static Vector2 PreviousMousePostion;
         public static void DoEvents()
@@ -18,44 +18,44 @@ namespace SharpRay
 
             //click events - TODO proper click & double click
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
-                EmitMouseEvent(new MouseLeftClick { Position = currentMousePostion });
+                EmitEvent(new MouseLeftClick { Position = currentMousePostion });
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_MIDDLE_BUTTON))
-                EmitMouseEvent(new MouseMiddleClick { Position = currentMousePostion });
+                EmitEvent(new MouseMiddleClick { Position = currentMousePostion });
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_RIGHT_BUTTON))
-                EmitMouseEvent(new MouseRightClick { Position = currentMousePostion });
+                EmitEvent(new MouseRightClick { Position = currentMousePostion });
 
 
             //release events
             if (IsMouseButtonReleased(MouseButton.MOUSE_LEFT_BUTTON))
-                EmitMouseEvent(new MouseLeftRelease { Position = currentMousePostion });
+                EmitEvent(new MouseLeftRelease { Position = currentMousePostion });
 
             if (IsMouseButtonReleased(MouseButton.MOUSE_MIDDLE_BUTTON))
-                EmitMouseEvent(new MouseMiddleRelease { Position = currentMousePostion });
+                EmitEvent(new MouseMiddleRelease { Position = currentMousePostion });
 
             if (IsMouseButtonReleased(MouseButton.MOUSE_RIGHT_BUTTON))
-                EmitMouseEvent(new MouseRightRelease { Position = currentMousePostion });
+                EmitEvent(new MouseRightRelease { Position = currentMousePostion });
 
 
             //drag events
             //send continuously even when cursor is outside window with potentially negative coordinates
             if (IsMouseButtonDown(MouseButton.MOUSE_LEFT_BUTTON) && isDragging)
-                EmitMouseEvent(new MouseLeftDrag { Position = currentMousePostion });
+                EmitEvent(new MouseLeftDrag { Position = currentMousePostion });
 
             if (IsMouseButtonDown(MouseButton.MOUSE_MIDDLE_BUTTON) && isDragging)
-                EmitMouseEvent(new MouseMiddleDrag { Position = currentMousePostion });
+                EmitEvent(new MouseMiddleDrag { Position = currentMousePostion });
 
             if (IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON) && isDragging)
-                EmitMouseEvent(new MouseRightDrag { Position = currentMousePostion });
+                EmitEvent(new MouseRightDrag { Position = currentMousePostion });
 
 
             //mousewheel events
             if (mouseWheel == 1f)
-                EmitMouseEvent(new MouseWheelUp { Position = currentMousePostion });
+                EmitEvent(new MouseWheelUp { Position = currentMousePostion });
 
             if (mouseWheel == -1f)
-                EmitMouseEvent(new MouseWheelDown { Position = currentMousePostion });
+                EmitEvent(new MouseWheelDown { Position = currentMousePostion });
 
             PreviousMousePostion = currentMousePostion;
         }
