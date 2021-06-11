@@ -59,6 +59,7 @@ namespace SharpRay
                 EmitEvent(new PlayerConsumedParticle { GameEntity = p });
 
         }
+        float sin = .001f;
         public override void Draw()
         {
             DrawRectangleV(Position, Size, Color.PURPLE);
@@ -67,6 +68,12 @@ namespace SharpRay
             if (Position.X < 0) Position = new Vector2(Bounds.X, Position.Y);
             if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
             if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
+
+            
+            var p = MathF.Sin(sin+=0.005f);
+            //Console.WriteLine($"{p}");
+
+            Position += new Vector2(.05f, 0f);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)

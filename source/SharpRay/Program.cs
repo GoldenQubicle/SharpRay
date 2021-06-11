@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Timers;
 
 namespace SharpRay
 {
@@ -25,7 +26,7 @@ namespace SharpRay
             },
             new FoodParticle
             {
-                Position = new Vector2(Width/2, Height /2),
+                Position = new Vector2(Width / 2, Height / 2),
                 Size = new Vector2(15, 15),
                 Color = GREEN
             },
@@ -94,53 +95,67 @@ namespace SharpRay
                 if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
                 if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
                 if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
-                if (e is IEventEmitter<IPlayerEvent> pe) pe.EmitEvent += OnPLayerEvent;
+                if (e is IEventEmitter<IPlayerEvent> pe) pe.EmitEvent += OnPlayerEvent;
             }
 
             var gameEntities = Entities.OfType<GameEntity>().ToArray();
 
             InitAudioDevice();
             Audio.Initialize();
-
+            SetTargetFPS(60);
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
-
             SetWindowPosition(1366, 712);
 
+            var sw = new Stopwatch();
+            sw.Start();
+            var past = sw.ElapsedTicks;
+            
             while (!WindowShouldClose())
             {
+                var now = sw.ElapsedTicks;
+                var delta = now - past; // in ticks
+                past = now;
+                Console.WriteLine(delta);
+
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
-                FlushUIEvents();
+                DoCollisions(gameEntities);
                 Draw();
+                FlushEvents();
+
                 
-                for(var i = 0; i < gameEntities.Count(); i++)
-                {
-                    var e1 = gameEntities[i];
-                    if (e1 is ICollisionListener cl1)
-                    {
-                        for (var j = 0; j < gameEntities.Count(); j++)
-                        {
-                            var e2 = gameEntities[j];
-                            if (e1 != e2 && CheckCollisionRecs(e1.Rectangle, e2.Rectangle))
-                            {
-                                cl1.OnCollision(e2);
-                            }
-                        }
-                    }
-                }
             }
 
             CloseAudioDevice();
             CloseWindow();
         }
 
-        private static void OnPLayerEvent(IPlayerEvent e)
+    
+        private static void DoCollisions(GameEntity[] gameEntities)
+        {
+            var geLength = gameEntities.Length;
+            for (var i = 0; i < geLength; i++)
+            {
+                var e1 = gameEntities[i];
+                if (e1 is ICollisionListener cl1)
+                {
+                    for (var j = 0; j < geLength; j++)
+                    {
+                        var e2 = gameEntities[j];
+                        if (e1 != e2 && CheckCollisionRecs(e1.Rectangle, e2.Rectangle))
+                            cl1.OnCollision(e2);
+                    }
+                }
+            }
+        }
+
+        private static void OnPlayerEvent(IPlayerEvent e)
         {
             if (e is PlayerConsumedParticle cp)
                 ToBeFlushed.Add(() => Entities.Remove(cp.GameEntity));
         }
 
-        internal static void OnUIEvent(IUIEvent e)
+        private static void OnUIEvent(IUIEvent e)
         {
             if (e is IHasUndoRedo ur) UndoStack.Push(ur);
 
@@ -157,7 +172,7 @@ namespace SharpRay
                 Console.WriteLine(e.UIComponent.GetType().Name);
         }
 
-        private static void FlushUIEvents()
+        private static void FlushEvents()
         {
             ToBeFlushed.ForEach(a => a());
             ToBeFlushed.Clear();
