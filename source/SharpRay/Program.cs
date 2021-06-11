@@ -115,7 +115,7 @@ namespace SharpRay
                 var now = sw.ElapsedTicks;
                 var delta = now - past; // in ticks
                 past = now;
-                Console.WriteLine(delta);
+                //Console.WriteLine(delta);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
@@ -206,10 +206,7 @@ namespace SharpRay
             ClearBackground(GRAY);
 
             foreach (var e in Entities)
-            {
                 e.Draw();
-                if (e is ILoop l) l.Update(GetMousePosition());
-            }
 
             EndDrawing();
         }

@@ -25,4 +25,6 @@ namespace SharpRay
     public struct MouseWheelUp : IMouseEvent { public Vector2 Position { get; init; } }
 
     public struct MouseWheelDown : IMouseEvent { public Vector2 Position { get; init; } }
+
+    public struct MouseMovement : IMouseEvent { public Vector2 Position { get; init; } }
 }

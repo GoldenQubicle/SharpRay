@@ -6,7 +6,6 @@ using static Raylib_cs.Raylib;
 namespace SharpRay
 {
     public interface IDrawable { void Draw(); }
-    public interface ILoop { void Update(Vector2 mPos); }
     public interface IMouseListener { void OnMouseEvent(IMouseEvent e); }
     public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent e); }
     public interface ICollisionListener { void OnCollision(GameEntity e); }
@@ -73,7 +72,7 @@ namespace SharpRay
             var p = MathF.Sin(sin+=0.005f);
             //Console.WriteLine($"{p}");
 
-            Position += new Vector2(.05f, 0f);
+            Position += new Vector2(.5f, 0f);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)

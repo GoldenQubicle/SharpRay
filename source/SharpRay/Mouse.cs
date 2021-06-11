@@ -16,6 +16,9 @@ namespace SharpRay
             var isDragging = currentMousePostion != PreviousMousePostion;
             var mouseWheel = GetMouseWheelMove();
 
+            if (isDragging) 
+                EmitEvent(new MouseMovement { Position = currentMousePostion });
+
             //click events - TODO proper click & double click
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
                 EmitEvent(new MouseLeftClick { Position = currentMousePostion });
