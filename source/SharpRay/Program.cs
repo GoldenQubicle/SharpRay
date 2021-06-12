@@ -5,10 +5,7 @@ using System.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Timers;
-using System.Diagnostics.Contracts;
 
 namespace SharpRay
 {
@@ -82,7 +79,7 @@ namespace SharpRay
         private static Stopwatch ToggleButtonStopwatch = new();
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
-        public const double TickMulitplier = 10000d;
+        public const double TickMultiplier = 10000d;
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> EventActions = new();
@@ -105,7 +102,7 @@ namespace SharpRay
 
             InitAudioDevice();
             Audio.Initialize();
-            //SetTargetFPS(60);
+            SetTargetFPS(60);
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
 
@@ -118,7 +115,6 @@ namespace SharpRay
                 var now = sw.ElapsedTicks;
                 var delta = now - past; 
                 past = now;
-                //Console.WriteLine(delta);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
@@ -135,6 +131,7 @@ namespace SharpRay
         {
             return b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
         }
+
         private static void DoCollisions(GameEntity[] gameEntities)
         {
             var geLength = gameEntities.Length;

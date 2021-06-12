@@ -28,20 +28,33 @@ Second MileStone (ideas):
     reason: simple yet effective proving grounds of capbilities. Would probably want to include 
     sound since that's important and I've got no experience with it so far. Could also opt to use 
     external assets for visuals as well. 
-    So instead of going the usual route of fleshing out gameplay first lets first focus on loading 
-    assets and the like and get something more decent than polygons going on screen. Could even opt to first build 
-    the ui. 
+    
+    TODO:
+      ☐ create new branch and clear out old stuff @created(12-06-2021 10:45)
+      ☐ create splashscreen and menu @created(12-06-2021 10:46)
+      ☐ find sound effects for game over, menu clicks, snake movement, snake consume food, snake slippery? @created(12-06-2021 10:46)
+      ☐ create easing snake movement @created(12-06-2021 10:54)
+      ☐ create snake controls @created(12-06-2021 10:56)
+      ☐ adjust bounds, i.e. touching bounds in game over @created(12-06-2021 10:56)
+      ☐ create growing snake on food consumption @created(12-06-2021 10:56)
+      ☐ create snake head collision with own body is game over @created(12-06-2021 10:56)
+      ☐ create spawn food particles @created(12-06-2021 10:57)
+      ☐ create score system, e.g. particles eaten & time alive? @created(12-06-2021 10:58)
+      ☐ create win condition when snake fills entire play area @created(12-06-2021 10:59)
+
     
 TODO: 
-  ☐ figure out entity collision @created(09-06-2021 20:23)
+  ✔ figure out entity collision @created(09-06-2021 20:23) @done(11-06-2021 16:02)
   ☐ implement containsPoint polygon @created(06-06-2021 18:09)
   ☐ implement scale polygon @created(06-06-2021 18:09)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)
   ☐ investigate DI and project organisation @created(06-06-2021 13:17)
 
-Ideas:
+Challenging Ideas:
   ☐ manipulate a custom shader in realtime with ui controls @created(07-06-2021 19:41)
     reason: shaders are the bread and butter of a proper runnning game, technical challenging
     This idea came about while thinking about how to create a brush zoning tool so that could be a good
     first start. Like, scrollwheel changes size, on left click puts the brush down, etc. And this would also
     need to support undo / redo
+  ☐ simulate a long running process (thread sleep) and figure out how to not block the ui! @created(12-06-2021 10:39)
+    reason: this is going to be an issue sooner or later so may as well get it out of the way. 

@@ -61,11 +61,11 @@ namespace SharpRay
                 EmitEvent(new PlayerConsumedParticle { GameEntity = p });
 
         }
-        
+
         double elapsed = 0d;
         //specified in milliseconds * tick multiplier
         //reason being when runnning uncapped fps delta time in millis is often zero so we need higher precision
-        double interval = 500d * Program.TickMulitplier; 
+        double interval = 500d * Program.TickMultiplier;
         public override void Render(double deltaTime)
         {
             DrawRectangleV(Position, Size, Color.PURPLE);
@@ -79,12 +79,12 @@ namespace SharpRay
             if (elapsed > interval)
                 elapsed = 0d;
 
-            var phi = (float) Program.MapRange(elapsed, 0d, interval, 0d, Math.Tau);
-            
+            var phi = (float)Program.MapRange(elapsed, 0d, interval, 0d, Math.Tau);
+
             var x = MathF.Cos(phi) * 100;
             var y = MathF.Sin(phi) * 100;
 
-            Position = new Vector2(x + 250, y+100);
+            Position = new Vector2(x + 250, y + 100);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
@@ -94,7 +94,6 @@ namespace SharpRay
             if (e is KeyDown) Position += new Vector2(0f, Speed);
             if (e is KeyLeft) Position -= new Vector2(Speed, 0f);
         }
-
     }
 
     public class FoodParticle : GameEntity
