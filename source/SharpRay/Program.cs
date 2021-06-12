@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Timers;
+using System.Diagnostics.Contracts;
 
 namespace SharpRay
 {
@@ -73,17 +74,19 @@ namespace SharpRay
                 Position = new Vector2(Width - 150, 5),
                 Size = new Vector2(100, 25),
                 BaseColor = BEIGE,
-                OnUpdate = () => Stopwatch.Elapsed.ToString("hh':'mm':'ss"),
+                OnDrawText = () => ToggleButtonStopwatch.Elapsed.ToString("hh':'mm':'ss"),
                 OnMouseLeftClick = tb => new ToggleTimer { UIComponent = tb, IsPaused = !(tb as ToggleButton).IsToggled }
             }
         };
 
-        private static readonly Stack<IHasUndoRedo> UndoStack = new();
-        private static readonly Stack<IHasUndoRedo> RedoStack = new();
-        private static readonly List<Action> ToBeFlushed = new();
-        private static Stopwatch Stopwatch = new();
+        private static Stopwatch ToggleButtonStopwatch = new();
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
+        public const double TickMulitplier = 10000d;
+        private static readonly Stack<IHasUndoRedo> UndoStack = new();
+        private static readonly Stack<IHasUndoRedo> RedoStack = new();
+        private static readonly List<Action> EventActions = new();
+        
         static void Main(string[] args)
         {
             Mouse.EmitEvent += OnMouseEvent;
@@ -102,47 +105,48 @@ namespace SharpRay
 
             InitAudioDevice();
             Audio.Initialize();
-            SetTargetFPS(60);
+            //SetTargetFPS(60);
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
 
             var sw = new Stopwatch();
             sw.Start();
             var past = sw.ElapsedTicks;
-            
+
             while (!WindowShouldClose())
             {
                 var now = sw.ElapsedTicks;
-                var delta = now - past; // in ticks
+                var delta = now - past; 
                 past = now;
                 //Console.WriteLine(delta);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
                 DoCollisions(gameEntities);
-                Draw();
-                FlushEvents();
-
-                
+                DoRender(delta);
+                DoEventActions();
             }
 
             CloseAudioDevice();
             CloseWindow();
         }
 
-    
+        public static double MapRange(double s, double a1, double a2, double b1, double b2) 
+        {
+            return b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
+        }
         private static void DoCollisions(GameEntity[] gameEntities)
         {
             var geLength = gameEntities.Length;
             for (var i = 0; i < geLength; i++)
             {
                 var e1 = gameEntities[i];
-                if (e1 is ICollisionListener cl1)
+                if (e1 is IHasCollision cl1)
                 {
                     for (var j = 0; j < geLength; j++)
                     {
                         var e2 = gameEntities[j];
-                        if (e1 != e2 && CheckCollisionRecs(e1.Rectangle, e2.Rectangle))
+                        if (e1 != e2 && CheckCollisionRecs(e1.Collider, e2.Collider))
                             cl1.OnCollision(e2);
                     }
                 }
@@ -152,30 +156,31 @@ namespace SharpRay
         private static void OnPlayerEvent(IPlayerEvent e)
         {
             if (e is PlayerConsumedParticle cp)
-                ToBeFlushed.Add(() => Entities.Remove(cp.GameEntity));
+                EventActions.Add(() => Entities.Remove(cp.GameEntity));
         }
 
         private static void OnUIEvent(IUIEvent e)
         {
-            if (e is IHasUndoRedo ur) UndoStack.Push(ur);
+            if (e is IHasUndoRedo ur) 
+                UndoStack.Push(ur);
 
             if (e is DeleteEdit edit)
-                ToBeFlushed.Add(() => Entities.Remove(edit.UIComponent));
+                EventActions.Add(() => Entities.Remove(edit.UIComponent));
 
             if (e is ToggleTimer t)
             {
-                if (!t.IsPaused) Stopwatch.Start();
-                if (t.IsPaused) Stopwatch.Stop();
+                if (!t.IsPaused) ToggleButtonStopwatch.Start();
+                if (t.IsPaused) ToggleButtonStopwatch.Stop();
             }
 
             if (e is RectangleLeftClick)
                 Console.WriteLine(e.UIComponent.GetType().Name);
         }
 
-        private static void FlushEvents()
+        private static void DoEventActions()
         {
-            ToBeFlushed.ForEach(a => a());
-            ToBeFlushed.Clear();
+            EventActions.ForEach(a => a());
+            EventActions.Clear();
         }
 
         private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
@@ -200,13 +205,13 @@ namespace SharpRay
 
         }
 
-        private static void Draw()
+        private static void DoRender(double delta)
         {
             BeginDrawing();
             ClearBackground(GRAY);
 
             foreach (var e in Entities)
-                e.Draw();
+                e.Render(delta);
 
             EndDrawing();
         }
