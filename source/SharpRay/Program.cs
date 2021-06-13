@@ -34,54 +34,12 @@ namespace SharpRay
                 Size = new Vector2(15, 15),
                 Color = RED
             },
-            new Circle
-            {
-                Position = new Vector2(Width / 2, Height / 2),
-                BaseColor = RED,
-                Radius = 50f,
-                OnRightMouseClick = e => Console.WriteLine("")
-            },
-            new Circle
-            {
-                Position = new Vector2(150, 150),
-                BaseColor = YELLOW,
-                Radius = 15f,
-            },
-            new Rectangle
-            {
-                Position = new Vector2(200, 300),
-                BaseColor = GREEN,
-                Size = new Vector2(20, 20),
-                OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
-            },
-            //new Polygon
-            //{
-            //    Position = new Vector2(Width / 2, Height / 2),
-            //    BaseColor = BLUE,
-            //    TextCoords = Array.Empty<Vector2>(),
-            //    Points = new Vector2[]
-            //        {
-            //            new Vector2(0, 50),
-            //            new Vector2(50, 50),
-            //            new Vector2(50, 0),
-            //        },
-            //},
-            new ToggleButton
-            {
-                Position = new Vector2(Width - 150, 5),
-                Size = new Vector2(100, 25),
-                BaseColor = BEIGE,
-                OnDrawText = () => ToggleButtonStopwatch.Elapsed.ToString("hh':'mm':'ss"),
-                OnMouseLeftClick = tb => new ToggleTimer { UIComponent = tb, IsPaused = !(tb as ToggleButton).IsToggled }
-            }
+           
         };
-
-        private static Stopwatch ToggleButtonStopwatch = new();
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
         public const double TickMultiplier = 10000d;
-        private static readonly Stack<IHasUndoRedo> UndoStack = new();
-        private static readonly Stack<IHasUndoRedo> RedoStack = new();
+        
         private static readonly List<Action> EventActions = new();
         
         static void Main(string[] args)
@@ -158,48 +116,26 @@ namespace SharpRay
 
         private static void OnUIEvent(IUIEvent e)
         {
-            if (e is IHasUndoRedo ur) 
-                UndoStack.Push(ur);
+           
+        }
 
-            if (e is DeleteEdit edit)
-                EventActions.Add(() => Entities.Remove(edit.UIComponent));
+     
 
-            if (e is ToggleTimer t)
-            {
-                if (!t.IsPaused) ToggleButtonStopwatch.Start();
-                if (t.IsPaused) ToggleButtonStopwatch.Stop();
-            }
+        private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
+        {
+            
 
-            if (e is RectangleLeftClick)
-                Console.WriteLine(e.UIComponent.GetType().Name);
+        }
+
+        private static void OnMouseEvent(IMouseEvent me)
+        {
+
         }
 
         private static void DoEventActions()
         {
             EventActions.ForEach(a => a());
             EventActions.Clear();
-        }
-
-        private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
-        {
-            if (kbe is KeyUndo && UndoStack.Count > 0)
-            {
-                var edit = UndoStack.Pop();
-                edit.Undo();
-                RedoStack.Push(edit);
-            }
-
-            if (kbe is KeyRedo && RedoStack.Count > 0)
-            {
-                var edit = RedoStack.Pop();
-                edit.Redo();
-                UndoStack.Push(edit);
-            }
-        }
-
-        private static void OnMouseEvent(IMouseEvent me)
-        {
-
         }
 
         private static void DoRender(double delta)
