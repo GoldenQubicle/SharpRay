@@ -34,14 +34,39 @@ namespace SharpRay
                 Size = new Vector2(15, 15),
                 Color = RED
             },
-           
+            new EntityContainer(new List<UIEntity>
+            {
+                new Label
+                {
+                    Position = new Vector2(),
+                    Size = new Vector2(200, 250),
+                    Margins = new Vector2(25, 5),
+                    FillColor = BROWN,
+                    TextColor = BEIGE,
+                    FontSize = 60f,
+                    Text = "Shitty Snake",
+                },
+                new Button
+                {
+                    Position = new Vector2(25, 75),
+                    Size = new Vector2(150, 20),
+                    Margins = new Vector2(50, 3),
+                    BaseColor = BLUE,
+                    FocusColor = SKYBLUE,
+                    TextColor = VIOLET,
+                    Text = "Start",
+                    OnMouseLeftClick = e => new StartSnakeGame { UIComponent = e }
+
+                }
+            }, new Vector2(Width / 2-100, Height / 2-125)),
+
         };
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
         public const double TickMultiplier = 10000d;
-        
+
         private static readonly List<Action> EventActions = new();
-        
+
         static void Main(string[] args)
         {
             Mouse.EmitEvent += OnMouseEvent;
@@ -52,6 +77,7 @@ namespace SharpRay
                 if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
                 if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
                 if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
+                if (e is EntityContainer c) foreach (var ce in c.Entities) ce.EmitEvent += OnUIEvent;
                 if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
                 if (e is IEventEmitter<IPlayerEvent> pe) pe.EmitEvent += OnPlayerEvent;
             }
@@ -70,9 +96,7 @@ namespace SharpRay
 
             while (!WindowShouldClose())
             {
-                var now = sw.ElapsedTicks;
-                var delta = now - past; 
-                past = now;
+                var delta = GetDeltaTime(sw, ref past);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
@@ -85,7 +109,15 @@ namespace SharpRay
             CloseWindow();
         }
 
-        public static double MapRange(double s, double a1, double a2, double b1, double b2) 
+        private static long GetDeltaTime(Stopwatch sw, ref long past)
+        {
+            var now = sw.ElapsedTicks;
+            var delta = now - past;
+            past = now;
+            return delta;
+        }
+
+        public static double MapRange(double s, double a1, double a2, double b1, double b2)
         {
             return b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
         }
@@ -116,14 +148,16 @@ namespace SharpRay
 
         private static void OnUIEvent(IUIEvent e)
         {
-           
+            if (e is StartSnakeGame)
+                Entities.OfType<EntityContainer>().First().Hide();
+
         }
 
-     
+
 
         private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
         {
-            
+
 
         }
 

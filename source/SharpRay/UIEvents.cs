@@ -2,24 +2,12 @@
 
 namespace SharpRay
 {
-   
-    public struct UIEvent : IUIEvent
-    {
-        public UIEntity UIComponent { get; init; }
-    }
+    public struct StartSnakeGame : IUIEvent { public UIEntity UIComponent { get; init; } }
 
-    public struct ToggleTimer : IUIEvent
-    {
-        public UIEntity UIComponent { get; init; }
-        public bool IsPaused { get; init; }
-    }
 
-    public struct RectangleLeftClick : IUIEvent
-    {
-        public UIEntity UIComponent { get; init; }
-    }
 
-    public interface IHasUndoRedo 
+    #region undo & redo ui events
+    public interface IHasUndoRedo
     {
         void Undo();
         void Redo();
@@ -49,4 +37,5 @@ namespace SharpRay
         public void Undo() => Program.Entities.Add(UIComponent);
         public void Redo() => Program.Entities.Remove(UIComponent);
     }
+    #endregion
 }

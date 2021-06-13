@@ -5,9 +5,9 @@ using static Raylib_cs.Raylib;
 
 namespace SharpRay
 {
-    public interface IMouseListener { void OnMouseEvent(IMouseEvent e); }
-    public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent e); }
-    public interface IHasCollision { void OnCollision(GameEntity e); }
+    public interface IMouseListener { void OnMouseEvent(IMouseEvent ke); }
+    public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent me); }
+    public interface IHasCollision { void OnCollision(GameEntity ge); }
     public interface IHasCollider { public Raylib_cs.Rectangle Collider { get; } }
 
     public abstract class Entity : IKeyBoardListener, IMouseListener
@@ -73,7 +73,7 @@ namespace SharpRay
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            float Speed = 1.5f;
+            float Speed = 2.5f;
 
             if (e is KeyUp) Position -= new Vector2(0f, Speed);
             if (e is KeyRight) Position += new Vector2(Speed, 0f);

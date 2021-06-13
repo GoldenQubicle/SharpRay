@@ -5,21 +5,84 @@ using System.Numerics;
 
 namespace SharpRay
 {
+    /// <summary>
+    /// Classes implementing UIEntity can enable mouse focus by overriding ContainsPoint, and calling base.OnMouseEvent
+    /// </summary>
     public abstract class UIEntity : Entity, IEventEmitter<IUIEvent>
     {
-        //not too sure about these 2...          
         public Func<UIEntity, IUIEvent> OnMouseLeftClick { get; set; }
-        public Action<UIEntity> OnRightMouseClick { get; set; }
-
-        public Action<IUIEvent> EmitEvent { get; set; }
-
         public float Scale { get; set; } = 1f;
-        public Color BaseColor { get; set; }
-        public Color HighLightColor { get; set; } = Color.BROWN;
+        public Action<IUIEvent> EmitEvent { get; set; }
+        public virtual bool ContainsPoint(Vector2 point) => false;
         public bool HasMouseFocus { get; protected set; }
-        public abstract bool ContainsPoint(Vector2 point);
+        public override void OnMouseEvent(IMouseEvent e) => HasMouseFocus = ContainsPoint(e.Position);
+    }
 
-        protected Color Color { get; private set; }
+    public class Label : UIEntity
+    {
+        public string Text { get; init; }
+        public Font Font { get; init; }
+        public Color TextColor { get; init; }
+        public Color FillColor { get; set; }
+
+        public Raylib_cs.Rectangle Rectangle
+        {
+            get => new Raylib_cs.Rectangle
+            {
+                x = Position.X + Margins.X,
+                y = Position.Y + Margins.Y,
+                width = Size.X - Margins.X,
+                height = Size.Y - Margins.Y
+            };
+        }
+        public float FontSize { get; init; } = 15f;
+        public float Spacing { get; init; } = 1f;
+        public bool WordWrap { get; init; } = false;
+        public Vector2 Margins { get; init; }
+
+        public override void Render(double deltaTime)
+        {
+            DrawRectangleV(Position, Size, FillColor);
+            DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+        }
+    }
+
+
+
+    public class Button : Label
+    {
+        public Color FocusColor { get; init; }
+        public Color BaseColor { get; init; }
+        public override void Render(double deltaTime)
+        {
+            FillColor = HasMouseFocus ? FocusColor : BaseColor;
+            base.Render(deltaTime);
+        }
+
+        public override bool ContainsPoint(Vector2 point) =>
+                point.X > Position.X &&
+                point.X < Position.X + Size.X &&
+                point.Y > Position.Y &&
+                point.Y < Position.Y + Size.Y;
+
+        public override void OnMouseEvent(IMouseEvent e)
+        {
+            base.OnMouseEvent(e);
+            if (HasMouseFocus && e is MouseLeftClick)
+                EmitEvent(OnMouseLeftClick(this));
+        }
+    }
+
+
+
+    public abstract class DragEditShape : UIEntity
+    {
+        //not too sure about these 2...          
+        public Action<DragEditShape> OnRightMouseClick { get; set; }
+        public Color ColorDefault { get; set; }
+        public Color ColorFocused { get; set; }
+        protected Color ColorRender { get; set; }
+
         protected bool IsDragged { get; set; }
         private Vector2 DragStart { get; set; }
         private Vector2 DragOffSet { get; set; }
@@ -75,8 +138,10 @@ namespace SharpRay
                 EmitEvent(new DeleteEdit { UIComponent = this });
         }
 
-        public override void Render(double deltaTime) => Color = HasMouseFocus ? HighLightColor : BaseColor;
-
+        public override void Render(double deltaTime)
+        {
+            ColorRender = HasMouseFocus ? ColorFocused : ColorDefault;
+        }
     }
 
     /*
@@ -114,7 +179,7 @@ namespace SharpRay
         }
     }
 
-    public class Circle : UIEntity
+    public class Circle : DragEditShape
     {
         public float Radius { get; set; }
 
@@ -123,11 +188,11 @@ namespace SharpRay
         public override void Render(double deltaTime)
         {
             base.Render(deltaTime);
-            DrawCircleV(Position, Radius * Scale, Color);
+            DrawCircleV(Position, Radius * Scale, ColorRender);
         }
     }
 
-    public class Rectangle : UIEntity
+    public class Rectangle : DragEditShape
     {
         public override bool ContainsPoint(Vector2 point) =>
                 point.X > Position.X &&
@@ -138,12 +203,12 @@ namespace SharpRay
         public override void Render(double deltaTime)
         {
             base.Render(deltaTime);
-            DrawRectangleV(Position, Size * new Vector2(Scale, Scale), Color);
+            DrawRectangleV(Position, Size * new Vector2(Scale, Scale), ColorRender);
         }
     }
 
 
-    public class Polygon : UIEntity
+    public class Polygon : DragEditShape
     {
         //points are ordered anti-clockwise and are drawn relative to Position, i.e. as if Position were 0,0
         //in addition Position acts as the 1st point and opens/closes the polygon
@@ -160,7 +225,7 @@ namespace SharpRay
         public override void Render(double deltaTime)
         {
             base.Render(deltaTime);
-            DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, Color);
+            DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, ColorRender);
         }
     }
 }
