@@ -150,15 +150,12 @@ namespace SharpRay
         {
             if (e is StartSnakeGame)
                 Entities.OfType<EntityContainer>().First().Hide();
-
         }
-
-
 
         private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
         {
-
-
+            if (kbe is KeyPressed p && p.Char == 'M')
+                Entities.OfType<EntityContainer>().First().Show();
         }
 
         private static void OnMouseEvent(IMouseEvent me)
