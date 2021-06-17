@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace SharpRay
 {
-    public class EntityContainer : Entity
+    public class UIEntityContainer : Entity
     {
         public List<UIEntity> Entities { get; }
         public Vector2 Translate { get; }
         public bool IsVisible { get; private set; } = true;
 
-        public EntityContainer(List<UIEntity> entities, Vector2 translate)
+        public UIEntityContainer(List<UIEntity> entities, Vector2 translate)
         {
             Translate = translate;
             Entities = entities;

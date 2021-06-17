@@ -41,12 +41,13 @@ namespace SharpRay
         }
     }
 
-    public interface IPlayerEvent : IEvent { }
-    public struct PlayerConsumedParticle : IPlayerEvent { public GameEntity GameEntity { get; init; } }
+    public interface IGameEvent : IAudioEvent { }
+    public struct PlayerConsumedParticle : IGameEvent { public GameEntity GameEntity { get; init; } }
+    public struct PlayerMovement : IGameEvent { public GameEntity GameEntity { get; init; } }
 
-    public class Player : GameEntity, IHasCollision, IEventEmitter<IPlayerEvent>
+    public class Player : GameEntity, IHasCollision, IEventEmitter<IGameEvent>
     {
-        public Action<IPlayerEvent> EmitEvent { get; set; }
+        public Action<IGameEvent> EmitEvent { get; set; }
 
         public Vector2 Bounds { get; init; }
 
@@ -61,6 +62,8 @@ namespace SharpRay
 
         }
 
+        double interval = 650 * Program.TickMultiplier;
+        double current = 0d;
         public override void Render(double deltaTime)
         {
             DrawRectangleV(Position, Size, Color.PURPLE);
@@ -69,6 +72,14 @@ namespace SharpRay
             if (Position.X < 0) Position = new Vector2(Bounds.X, Position.Y);
             if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
             if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
+
+            current += deltaTime;
+            if (current > interval)
+            {
+                EmitEvent(new PlayerMovement { GameEntity = this });
+                current = 0d;
+            }
+
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)

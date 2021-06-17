@@ -16,25 +16,25 @@ namespace SharpRay
 
         public static List<Entity> Entities = new()
         {
-            new Player
-            {
-                Position = new Vector2(300, 200),
-                Size = new Vector2(20, 20),
-                Bounds = new Vector2(Width, Height)
-            },
-            new FoodParticle
-            {
-                Position = new Vector2(Width / 2, Height / 2),
-                Size = new Vector2(15, 15),
-                Color = GREEN
-            },
-            new PoisonParticle
-            {
-                Position = new Vector2(100, 100),
-                Size = new Vector2(15, 15),
-                Color = RED
-            },
-            new EntityContainer(new List<UIEntity>
+            //new Player
+            //{
+            //    Position = new Vector2(300, 200),
+            //    Size = new Vector2(20, 20),
+            //    Bounds = new Vector2(Width, Height)
+            //},
+            //new FoodParticle
+            //{
+            //    Position = new Vector2(Width / 2, Height / 2),
+            //    Size = new Vector2(15, 15),
+            //    Color = GREEN
+            //},
+            //new PoisonParticle
+            //{
+            //    Position = new Vector2(100, 100),
+            //    Size = new Vector2(15, 15),
+            //    Color = RED
+            //},
+            new UIEntityContainer(new List<UIEntity>
             {
                 new Label
                 {
@@ -58,7 +58,7 @@ namespace SharpRay
                     OnMouseLeftClick = e => new StartSnakeGame { UIComponent = e }
 
                 }
-            }, new Vector2(Width / 2-100, Height / 2-125)),
+            }, new Vector2(Width / 2 - 100, Height / 2 - 125)),
 
         };
 
@@ -72,15 +72,7 @@ namespace SharpRay
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
-            foreach (var e in Entities)
-            {
-                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
-                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
-                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
-                if (e is EntityContainer c) foreach (var ce in c.Entities) ce.EmitEvent += OnUIEvent;
-                if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
-                if (e is IEventEmitter<IPlayerEvent> pe) pe.EmitEvent += OnPlayerEvent;
-            }
+            DoEntityEventBinding(Entities);
 
             var gameEntities = Entities.OfType<GameEntity>().ToArray();
 
@@ -107,6 +99,37 @@ namespace SharpRay
 
             CloseAudioDevice();
             CloseWindow();
+        }
+
+        private static void DoEntityEventBinding(List<Entity> entities)
+        {
+            foreach (var e in entities)
+            {
+                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
+                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
+
+                if (e is IEventEmitter<IUIEvent> ui)
+                {
+                    ui.EmitEvent += OnUIEvent;
+                    ui.EmitEvent += Audio.OnUIEvent;
+                }
+                    
+                if (e is IEventEmitter<IGameEvent> pe)
+                {
+                    pe.EmitEvent += OnGameEvent;
+                    pe.EmitEvent += Audio.OnGameEvent;
+                }
+
+                if (e is UIEntityContainer c)
+                {
+                    foreach(var ce in c.Entities)
+                        if(ce is IEventEmitter<IUIEvent> ceui)
+                        {
+                            ceui.EmitEvent += OnUIEvent;
+                            ceui.EmitEvent += Audio.OnUIEvent;
+                        }
+                }
+            }
         }
 
         private static long GetDeltaTime(Stopwatch sw, ref long past)
@@ -140,7 +163,7 @@ namespace SharpRay
             }
         }
 
-        private static void OnPlayerEvent(IPlayerEvent e)
+        private static void OnGameEvent(IGameEvent e)
         {
             if (e is PlayerConsumedParticle cp)
                 EventActions.Add(() => Entities.Remove(cp.GameEntity));
@@ -149,13 +172,24 @@ namespace SharpRay
         private static void OnUIEvent(IUIEvent e)
         {
             if (e is StartSnakeGame)
-                Entities.OfType<EntityContainer>().First().Hide();
+            {
+                Entities.OfType<UIEntityContainer>().First().Hide();
+
+                var player = new Player
+                {
+                    Position = new Vector2(300, 200),
+                    Size = new Vector2(20, 20),
+                    Bounds = new Vector2(Width, Height)
+                };
+                DoEntityEventBinding(new List<Entity> { player });
+                Entities.Add(player);
+            }
         }
 
         private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
         {
             if (kbe is KeyPressed p && p.Char == 'M')
-                Entities.OfType<EntityContainer>().First().Show();
+                Entities.OfType<UIEntityContainer>().First().Show();
         }
 
         private static void OnMouseEvent(IMouseEvent me)
