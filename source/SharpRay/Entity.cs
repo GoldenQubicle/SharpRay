@@ -65,6 +65,7 @@ namespace SharpRay
         static double interval = 750 * Program.TickMultiplier;
         static double current = 0d;
         static double prevDistance = 0f;
+
         public override void Render(double deltaTime)
         {
             DrawRectangleV(Position, Size, Color.PURPLE);
