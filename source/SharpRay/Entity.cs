@@ -62,8 +62,9 @@ namespace SharpRay
 
         }
 
-        double interval = 650 * Program.TickMultiplier;
-        double current = 0d;
+        static double interval = 750 * Program.TickMultiplier;
+        static double current = 0d;
+        static double prevDistance = 0f;
         public override void Render(double deltaTime)
         {
             DrawRectangleV(Position, Size, Color.PURPLE);
@@ -78,7 +79,13 @@ namespace SharpRay
             {
                 EmitEvent(new PlayerMovement { GameEntity = this });
                 current = 0d;
+                prevDistance = 0d;
             }
+            
+            var e = Easings.EaseSineInOut((float)current, 0f, Size.X, (float)interval);
+            var d = e - prevDistance;
+            prevDistance = e;
+            Position += new Vector2((float)d, 0f);
 
         }
 

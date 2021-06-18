@@ -34,6 +34,7 @@ namespace SharpRay
             //    Size = new Vector2(15, 15),
             //    Color = RED
             //},
+            
             new UIEntityContainer(new List<UIEntity>
             {
                 new Label
@@ -72,7 +73,7 @@ namespace SharpRay
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
-            DoEntityEventBinding(Entities);
+            EntityEventInitialisation(Entities);
 
             var gameEntities = Entities.OfType<GameEntity>().ToArray();
 
@@ -81,6 +82,8 @@ namespace SharpRay
             SetTargetFPS(60);
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
+
+            Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GRAY, LIGHTGRAY)));
 
             var sw = new Stopwatch();
             sw.Start();
@@ -101,35 +104,22 @@ namespace SharpRay
             CloseWindow();
         }
 
-        private static void DoEntityEventBinding(List<Entity> entities)
+        private static void EntityEventInitialisation(List<Entity> entities)
         {
             foreach (var e in entities)
             {
                 if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
                 if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
 
-                if (e is IEventEmitter<IUIEvent> ui)
-                {
-                    ui.EmitEvent += OnUIEvent;
-                    ui.EmitEvent += Audio.OnUIEvent;
-                }
-                    
-                if (e is IEventEmitter<IGameEvent> pe)
-                {
-                    pe.EmitEvent += OnGameEvent;
-                    pe.EmitEvent += Audio.OnGameEvent;
-                }
+                if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
 
-                if (e is UIEntityContainer c)
-                {
-                    foreach(var ce in c.Entities)
-                        if(ce is IEventEmitter<IUIEvent> ceui)
-                        {
-                            ceui.EmitEvent += OnUIEvent;
-                            ceui.EmitEvent += Audio.OnUIEvent;
-                        }
-                }
+                if (e is UIEntityContainer c) foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent);
             }
+        }
+
+        private static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent
+        {
+            foreach (var action in onEventActions) e.EmitEvent += action;
         }
 
         private static long GetDeltaTime(Stopwatch sw, ref long past)
@@ -165,8 +155,7 @@ namespace SharpRay
 
         private static void OnGameEvent(IGameEvent e)
         {
-            if (e is PlayerConsumedParticle cp)
-                EventActions.Add(() => Entities.Remove(cp.GameEntity));
+            if (e is PlayerConsumedParticle cp) EventActions.Add(() => Entities.Remove(cp.GameEntity));
         }
 
         private static void OnUIEvent(IUIEvent e)
@@ -181,15 +170,14 @@ namespace SharpRay
                     Size = new Vector2(20, 20),
                     Bounds = new Vector2(Width, Height)
                 };
-                DoEntityEventBinding(new List<Entity> { player });
+                EntityEventInitialisation(new List<Entity> { player });
                 Entities.Add(player);
             }
         }
 
         private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
         {
-            if (kbe is KeyPressed p && p.Char == 'M')
-                Entities.OfType<UIEntityContainer>().First().Show();
+            if (kbe is KeyPressed p && p.Char == 'M') Entities.OfType<UIEntityContainer>().First().Show();
         }
 
         private static void OnMouseEvent(IMouseEvent me)
@@ -208,8 +196,7 @@ namespace SharpRay
             BeginDrawing();
             ClearBackground(GRAY);
 
-            foreach (var e in Entities)
-                e.Render(delta);
+            foreach (var e in Entities) e.Render(delta);
 
             EndDrawing();
         }

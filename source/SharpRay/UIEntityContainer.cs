@@ -14,29 +14,29 @@ namespace SharpRay
             Translate = translate;
             Entities = entities;
 
-            foreach (var e in Entities)
-                e.Position += Translate;
+            foreach (var e in Entities) e.Position += Translate;
         }
 
-        public void Hide() => IsVisible = false;
+        public void Hide()
+        {
+            IsVisible = false;
+            foreach (var e in Entities) e.HasMouseFocus = false;
+        }
         public void Show() => IsVisible = true;
 
         public override void Render(double deltaTime)
         {
-            if (IsVisible)
-                Entities.ForEach(e => e.Render(deltaTime));
+            if (IsVisible) foreach (var e in Entities) e.Render(deltaTime);
         }
 
         public override void OnMouseEvent(IMouseEvent me)
         {
-            if (IsVisible)
-                Entities.ForEach(e => e.OnMouseEvent(me));
+            if (IsVisible) foreach (var e in Entities) e.OnMouseEvent(me);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
-            if (IsVisible)
-                Entities.ForEach(e => e.OnKeyBoardEvent(ke));
+            if (IsVisible) foreach (var e in Entities) e.OnKeyBoardEvent(ke);
         }
     }
 }

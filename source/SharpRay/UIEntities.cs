@@ -14,8 +14,23 @@ namespace SharpRay
         public float Scale { get; set; } = 1f;
         public Action<IUIEvent> EmitEvent { get; set; }
         public virtual bool ContainsPoint(Vector2 point) => false;
-        public bool HasMouseFocus { get; protected set; }
+        public bool HasMouseFocus { get; set; }
         public override void OnMouseEvent(IMouseEvent e) => HasMouseFocus = ContainsPoint(e.Position);
+    }
+
+    public class ImageTexture : UIEntity
+    {
+        public Texture2D Texture2D { get; private set; }
+        public ImageTexture(Image image)
+        {
+            Texture2D = LoadTextureFromImage(image);
+            UnloadImage(image);
+        }
+
+        public override void Render(double deltaTime)
+        {
+            DrawTexture(Texture2D, (int)Position.X, (int)Position.Y, Color.WHITE);
+        }
     }
 
     public class Label : UIEntity

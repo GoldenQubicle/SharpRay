@@ -18,6 +18,8 @@ namespace SharpRay
         {
             Sounds.Add(typeof(StartSnakeGame), LoadSound(Path.Combine(Program.AssestsFolder, ButtonPushSound)));
             Sounds.Add(typeof(PlayerMovement), LoadSound(Path.Combine(Program.AssestsFolder, ScuffedSnakeSound)));
+
+            SetMasterVolume(0.5f);
         }
                
         public static void OnUIEvent(IUIEvent e) => PlaySound(Sounds[e.GetType()]);
