@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Raylib_cs;
 
 namespace SharpRay
 {
@@ -16,58 +17,39 @@ namespace SharpRay
 
         public static List<Entity> Entities = new()
         {
-            //new Player
-            //{
-            //    Position = new Vector2(300, 200),
-            //    Size = new Vector2(20, 20),
-            //    Bounds = new Vector2(Width, Height)
-            //},
-            //new FoodParticle
-            //{
-            //    Position = new Vector2(Width / 2, Height / 2),
-            //    Size = new Vector2(15, 15),
-            //    Color = GREEN
-            //},
-            //new PoisonParticle
-            //{
-            //    Position = new Vector2(100, 100),
-            //    Size = new Vector2(15, 15),
-            //    Color = RED
-            //},
-            
             new UIEntityContainer(new List<UIEntity>
             {
                 new Label
                 {
                     Position = new Vector2(),
                     Size = new Vector2(200, 250),
-                    Margins = new Vector2(25, 5),
-                    FillColor = BROWN,
-                    TextColor = BEIGE,
+                    Margins = new Vector2(25, 10),
+                    FillColor = DARKBROWN,
+                    TextColor = GOLD,
                     FontSize = 60f,
                     Text = "Shitty Snake",
                 },
                 new Button
                 {
-                    Position = new Vector2(25, 75),
+                    Position = new Vector2(25, 80),
                     Size = new Vector2(150, 20),
                     Margins = new Vector2(50, 3),
-                    BaseColor = BLUE,
-                    FocusColor = SKYBLUE,
-                    TextColor = VIOLET,
+                    BaseColor = DARKBLUE,
+                    FocusColor = BLUE,
+                    TextColor = ORANGE,
                     Text = "Start",
                     OnMouseLeftClick = e => new StartSnakeGame { UIComponent = e }
 
                 }
-            }, new Vector2(Width / 2 - 100, Height / 2 - 125)),
+            }, new Vector2(Width / 2 - 100, Height / 2 - 120)),
 
         };
-
+        private static GameEntity[] gameEntities;
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
         public const double TickMultiplier = 10000d;
 
         private static readonly List<Action> EventActions = new();
-
+        private static readonly Stopwatch sw = new();
         static void Main(string[] args)
         {
             Mouse.EmitEvent += OnMouseEvent;
@@ -75,23 +57,21 @@ namespace SharpRay
 
             EntityEventInitialisation(Entities);
 
-            var gameEntities = Entities.OfType<GameEntity>().ToArray();
+            gameEntities = Entities.OfType<GameEntity>().ToArray();
 
             InitAudioDevice();
             Audio.Initialize();
-            SetTargetFPS(60);
+            //SetTargetFPS(60);
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
+            SetBackGround();
 
-            Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GRAY, LIGHTGRAY)));
-
-            var sw = new Stopwatch();
             sw.Start();
-            var past = sw.ElapsedTicks;
+            var past = 0L;
 
             while (!WindowShouldClose())
             {
-                var delta = GetDeltaTime(sw, ref past);
+                var delta = GetDeltaTime(ref past);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
@@ -103,6 +83,9 @@ namespace SharpRay
             CloseAudioDevice();
             CloseWindow();
         }
+
+        private static void SetBackGround() =>
+            Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GOLD, ORANGE), DARKBROWN));
 
         private static void EntityEventInitialisation(List<Entity> entities)
         {
@@ -122,7 +105,7 @@ namespace SharpRay
             foreach (var action in onEventActions) e.EmitEvent += action;
         }
 
-        private static long GetDeltaTime(Stopwatch sw, ref long past)
+        private static long GetDeltaTime(ref long past)
         {
             var now = sw.ElapsedTicks;
             var delta = now - past;
@@ -155,7 +138,46 @@ namespace SharpRay
 
         private static void OnGameEvent(IGameEvent e)
         {
-            if (e is PlayerConsumedParticle cp) EventActions.Add(() => Entities.Remove(cp.GameEntity));
+            if (e is SnakeConsumedFood f)
+            {
+                EventActions.Add(() =>
+                {
+                    Entities.Remove(f.GameEntity);
+                    gameEntities = Entities.OfType<GameEntity>().ToArray();
+                });
+                // spawn segment, increase score
+            }
+
+            if (e is SnakeConsumedPoop p)
+            {
+                EventActions.Add(() =>
+                {
+                    Entities.Remove(p.GameEntity);
+                    gameEntities = Entities.OfType<GameEntity>().ToArray();
+                });
+                // despawn segment, descrease score
+            }
+
+            if (e is SnakeCollideWithBody || e is SnakeCollideWithBounds)
+            {
+                // game over, update highscore, menu screen
+            }
+
+            if (e is ParticleSpawn)
+            {
+                EventActions.Add(() =>
+                {
+                    var fp = new FoodParticle
+                    {
+                        Position = new Vector2(440, 240),
+                        Size = new Vector2(20, 20),
+                        Color = LIME
+                    };
+                    EntityEventInitialisation(new List<Entity> { fp });
+                    Entities.Insert(3, fp);
+                    gameEntities = Entities.OfType<GameEntity>().ToArray();
+                });
+            }
         }
 
         private static void OnUIEvent(IUIEvent e)
@@ -164,14 +186,20 @@ namespace SharpRay
             {
                 Entities.OfType<UIEntityContainer>().First().Hide();
 
-                var player = new Player
+                var player = new Head
                 {
-                    Position = new Vector2(300, 200),
+                    Position = new Vector2(380, 200),
                     Size = new Vector2(20, 20),
                     Bounds = new Vector2(Width, Height)
                 };
-                EntityEventInitialisation(new List<Entity> { player });
+                var spawner = new ParticleSpawner
+                {
+                    Size = new Vector2(Width, Height)
+                };
+                EntityEventInitialisation(new List<Entity> { player, spawner });
+                Entities.Add(spawner);
                 Entities.Add(player);
+                gameEntities = Entities.OfType<GameEntity>().ToArray();
             }
         }
 
