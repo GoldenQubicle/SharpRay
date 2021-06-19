@@ -9,18 +9,8 @@ using System.Linq;
 
 namespace SharpRay
 {
-    public interface ISharpRay
-    {
-        List<Entity> Entities { get; set; }
-        void OnMouseEvent(IMouseEvent e);
-        void OnKeyBoardEvent(IKeyBoardEvent e);
-    }
-
     class Program
     {
-        private const int Width = 800;
-        private const int Height = 480;
-
         public static List<Entity> Entities = new()
         {
             new UIEntityContainer(new List<UIEntity>
@@ -48,14 +38,19 @@ namespace SharpRay
 
                 }
             }, new Vector2(Width / 2 - 100, Height / 2 - 120)),
-
         };
-        private static GameEntity[] gameEntities;
+
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
         public const double TickMultiplier = 10000d;
 
         private static readonly List<Action> EventActions = new();
         private static readonly Stopwatch sw = new();
+        
+        private const int Width = 800;
+        private const int Height = 480;
+
+        public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
+
         static void Main(string[] args)
         {
             Mouse.EmitEvent += OnMouseEvent;
@@ -63,11 +58,9 @@ namespace SharpRay
 
             EntityEventInitialisation(Entities);
 
-            gameEntities = Entities.OfType<GameEntity>().ToArray();
-
             InitAudioDevice();
             Audio.Initialize();
-            //SetTargetFPS(60);
+
             InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
             SetBackGround();
@@ -81,7 +74,7 @@ namespace SharpRay
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
-                DoCollisions(gameEntities);
+                DoCollisions();
                 DoRender(delta);
                 DoEventActions();
             }
@@ -90,10 +83,8 @@ namespace SharpRay
             CloseWindow();
         }
 
-        private static void SetBackGround() =>
-            Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GOLD, ORANGE), DARKBROWN));
+        #region engine stuff
 
-        private static void EntityEventInitialisation(params Entity[] entities) => EntityEventInitialisation(entities.ToList());
         private static void EntityEventInitialisation(List<Entity> entities)
         {
             foreach (var e in entities)
@@ -107,10 +98,14 @@ namespace SharpRay
             }
         }
 
+        private static void EntityEventInitialisation(params Entity[] entities) => EntityEventInitialisation(entities.ToList());
+
         private static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent
         {
             foreach (var action in onEventActions) e.EmitEvent += action;
         }
+
+        private static void SetBackGround() => Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GOLD, ORANGE), DARKBROWN));
 
         private static long GetDeltaTime(ref long past)
         {
@@ -120,20 +115,16 @@ namespace SharpRay
             return delta;
         }
 
-        public static double MapRange(double s, double a1, double a2, double b1, double b2)
+        private static void DoCollisions()
         {
-            return b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
-        }
-
-        private static void DoCollisions(GameEntity[] gameEntities)
-        {
-            var geLength = gameEntities.Length;
-            for (var i = 0; i < geLength; i++)
+            var gameEntities = Entities.OfType<GameEntity>().ToArray();
+            
+            for (var i = 0; i < gameEntities.Length; i++)
             {
                 var e1 = gameEntities[i];
                 if (e1 is IHasCollision cl1)
                 {
-                    for (var j = 0; j < geLength; j++)
+                    for (var j = 0; j < gameEntities.Length; j++)
                     {
                         var e2 = gameEntities[j];
                         if (e1 != e2 && CheckCollisionRecs(e1.Collider, e2.Collider))
@@ -141,12 +132,6 @@ namespace SharpRay
                     }
                 }
             }
-        }
-
-        private static void DoEventActions()
-        {
-            EventActions.ForEach(a => a());
-            EventActions.Clear();
         }
 
         private static void DoRender(double delta)
@@ -159,6 +144,15 @@ namespace SharpRay
             EndDrawing();
         }
 
+        private static void DoEventActions()
+        {
+            EventActions.ForEach(a => a());
+            EventActions.Clear();
+        }
+
+        #endregion
+
+
         #region snak gam
 
         static Random rnd = new();
@@ -170,9 +164,8 @@ namespace SharpRay
                 {
                     Entities.Remove(f.FoodParticle);
                     EntityEventInitialisation(f.NextSegment);
-                    var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles
+                    var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
                     Entities.Insert(idx, f.NextSegment);
-                    gameEntities = Entities.OfType<GameEntity>().ToArray();
                 });
             }
 
@@ -181,7 +174,6 @@ namespace SharpRay
                 EventActions.Add(() =>
                 {
                     Entities.Remove(p.GameEntity);
-                    gameEntities = Entities.OfType<GameEntity>().ToArray();
                 });
                 // despawn segment, descrease score
             }
@@ -204,8 +196,7 @@ namespace SharpRay
                         Size = new Vector2(20, 20),
                     };
                     EntityEventInitialisation(fp);
-                    Entities.Insert(3, fp);
-                    gameEntities = Entities.OfType<GameEntity>().ToArray();
+                    Entities.Insert(3, fp); // ensure rendering above background, ui & particlespawner
                 });
             }
         }
@@ -232,7 +223,6 @@ namespace SharpRay
                 EntityEventInitialisation(head, spawner);
                 Entities.Add(spawner);
                 Entities.Add(head);
-                gameEntities = Entities.OfType<GameEntity>().ToArray();
             }
         }
 
@@ -247,7 +237,5 @@ namespace SharpRay
         }
 
         #endregion
-
-
     }
 }
