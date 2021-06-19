@@ -48,7 +48,11 @@ namespace SharpRay
 
     public struct SnakeConsumedFood : IGameEvent { public GameEntity GameEntity { get; init; } }
     public struct SnakeConsumedPoop : IGameEvent { public GameEntity GameEntity { get; init; } }
-    public struct SnakeMovement : IGameEvent { }
+    public struct SnakeMovement : IGameEvent
+    {
+        public Direction Direction { get; init; }
+        public Vector2 Position { get; init; }
+    }
     public struct SnakeCollideWithBody : IGameEvent { }
     public struct SnakeCollideWithBounds : IGameEvent { }
     public struct ParticleSpawn : IGameEvent { }
@@ -82,8 +86,9 @@ namespace SharpRay
 
     public class Segment : GameEntity
     {
+        public int Idx { get; init; }
         protected Color Color { get; set; } = Color.MAGENTA;
-        protected Direction Direction { get; set; } = Direction.Right;
+        public Direction Direction { get; set; }
         private double interval = 550 * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
@@ -138,7 +143,7 @@ namespace SharpRay
             if (e is PoopParticle p)
                 EmitEvent(new SnakeConsumedPoop { GameEntity = p });
 
-            if (e is Segment s)
+            if (e is Segment s && s.Idx > 2)
                 EmitEvent(new SnakeCollideWithBody());
 
         }
@@ -151,7 +156,8 @@ namespace SharpRay
             if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
             if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
 
-            if (DoMovement(deltaTime)) EmitEvent(new SnakeMovement());
+            if (DoMovement(deltaTime))
+                EmitEvent(new SnakeMovement { Direction = Direction, Position = Position });
 
             DrawRectangleV(Position, Size, Color);
         }

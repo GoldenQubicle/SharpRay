@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Raylib_cs;
+using System.Net.NetworkInformation;
 
 namespace SharpRay
 {
@@ -154,20 +155,28 @@ namespace SharpRay
 
         #region snak gam
         static int snakeLength = 0;
+        static List<SnakeMovement> Path = new();
         private static void OnGameEvent(IGameEvent e)
         {
+            if (e is SnakeMovement sm) Path.Add(sm);
+
             if (e is SnakeConsumedFood f)
             {
                 EventActions.Add(() =>
                 {
                     Entities.Remove(f.GameEntity);
+                    var tail = Path[Path.Count - snakeLength];
                     var s = new Segment
                     {
-                        Size = new Vector2(20, 20)
+                        Size = new Vector2(20, 20),
+                        Position = tail.Position,
+                        Direction = tail.Direction,
+                        Idx = snakeLength + 1
                     };
                     var idx = Entities.Count - snakeLength - 1;
                     Entities.Insert(idx, s);
                     gameEntities = Entities.OfType<GameEntity>().ToArray();
+                    snakeLength++;
                 });
                 // spawn segment, increase score
             }
@@ -193,7 +202,7 @@ namespace SharpRay
                 {
                     var fp = new FoodParticle
                     {
-                        Position = new Vector2(440, 240),
+                        Position = new Vector2(500, 200),
                         Size = new Vector2(20, 20),
                         Color = LIME
                     };
@@ -214,7 +223,9 @@ namespace SharpRay
                 {
                     Position = new Vector2(380, 200),
                     Size = new Vector2(20, 20),
-                    Bounds = new Vector2(Width, Height)
+                    Bounds = new Vector2(Width, Height),
+                    Direction = Direction.Right,
+                    Idx = 1
                 };
                 var spawner = new ParticleSpawner
                 {
@@ -224,7 +235,7 @@ namespace SharpRay
                 Entities.Add(spawner);
                 Entities.Add(player);
                 gameEntities = Entities.OfType<GameEntity>().ToArray();
-                snakeLength = 1;
+                snakeLength++;
             }
         }
 
@@ -240,6 +251,6 @@ namespace SharpRay
 
         #endregion
 
-      
+
     }
 }

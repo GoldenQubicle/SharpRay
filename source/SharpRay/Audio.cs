@@ -5,8 +5,6 @@ using static Raylib_cs.Raylib;
 
 namespace SharpRay
 {
- 
-
     public static class Audio
     {
         private const string ButtonPushSound = @"Tiny Button Push-SoundBible.com-513260752.wav";
