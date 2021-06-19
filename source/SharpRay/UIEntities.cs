@@ -10,11 +10,13 @@ namespace SharpRay
     /// </summary>
     public abstract class UIEntity : Entity, IEventEmitter<IUIEvent>
     {
-        public Func<UIEntity, IUIEvent> OnMouseLeftClick { get; set; }
-        public float Scale { get; set; } = 1f;
         public Action<IUIEvent> EmitEvent { get; set; }
-        public virtual bool ContainsPoint(Vector2 point) => false;
+        public Func<UIEntity, IUIEvent> OnMouseLeftClick { get; set; }
+        
+        public float Scale { get; set; } = 1f;
+
         public bool HasMouseFocus { get; set; }
+        public virtual bool ContainsPoint(Vector2 point) => false;
         public override void OnMouseEvent(IMouseEvent e) => HasMouseFocus = ContainsPoint(e.Position);
     }
 
@@ -22,6 +24,7 @@ namespace SharpRay
     {
         public Texture2D Texture2D { get; private set; }
         public Color Color { get; init; }
+
         public ImageTexture(Image image, Color color)
         {
             Color = color;
@@ -63,8 +66,6 @@ namespace SharpRay
             DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }
-
-
 
     public class Button : Label
     {
@@ -163,14 +164,11 @@ namespace SharpRay
 
     /*
      * kinda experimental class 
-     *  2 types of event emitter, ui & audio
      *  OnDrawText func to update the text
      *  uses OnMouseLeftClick to get the event to emit
      */
-    public class ToggleButton : Rectangle, IEventEmitter<IAudioEvent>
+    public class ToggleButton : Rectangle
     {
-        Action<IAudioEvent> IEventEmitter<IAudioEvent>.EmitEvent { get; set; }
-
         public Func<string> OnDrawText { get; set; }
 
         public bool IsToggled { get; private set; }
@@ -191,7 +189,6 @@ namespace SharpRay
             {
                 IsToggled = !IsToggled;
                 EmitEvent(OnMouseLeftClick(this)); // nre risk on purpose, need to have an event to emit for a functional button
-                (this as IEventEmitter<IAudioEvent>).EmitEvent(new AudioToggleTimerClicked { Entity = this }); //erhm, not great
             }
         }
     }

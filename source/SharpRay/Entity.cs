@@ -2,11 +2,11 @@
 
 namespace SharpRay
 {
-    public interface IMouseListener { void OnMouseEvent(IMouseEvent ke); }
-    public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent me); }
-    public interface IHasCollision { void OnCollision(GameEntity ge); }
+    public interface IMouseListener { void OnMouseEvent(IMouseEvent e); }
+    public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent e); }
+    public interface IUIEventListener { void OnUIEvent(IUIEvent e); }
+    public interface IHasCollision { void OnCollision(GameEntity e); }
     public interface IHasCollider { public Raylib_cs.Rectangle Collider { get; } }
-    public interface IGameEvent : IAudioEvent { }
 
     public abstract class Entity : IKeyBoardListener, IMouseListener
     {

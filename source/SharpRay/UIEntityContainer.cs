@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SharpRay
 {
-    public class UIEntityContainer : Entity
+    public class UIEntityContainer : Entity, IUIEventListener
     {
         public List<UIEntity> Entities { get; }
         public Vector2 Translate { get; }
@@ -36,7 +36,13 @@ namespace SharpRay
 
         public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
+            if (ke is KeyPressed p && p.Char == 'M') Show();
             if (IsVisible) foreach (var e in Entities) e.OnKeyBoardEvent(ke);
+        }
+
+        public void OnUIEvent(IUIEvent e)
+        {
+            if (e is SnakeGameStart) Hide();
         }
     }
 }

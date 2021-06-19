@@ -35,7 +35,6 @@ namespace SharpRay
                     TextColor = ORANGE,
                     Text = "Start",
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
-
                 }
             }, new Vector2(Width / 2 - 100, Height / 2 - 120)),
         };
@@ -45,7 +44,7 @@ namespace SharpRay
 
         private static readonly List<Action> EventActions = new();
         private static readonly Stopwatch sw = new();
-        
+
         private const int Width = 800;
         private const int Height = 480;
 
@@ -53,9 +52,6 @@ namespace SharpRay
 
         static void Main(string[] args)
         {
-            Mouse.EmitEvent += OnMouseEvent;
-            KeyBoard.EmitEvent += OnKeyBoardEvent;
-
             EntityEventInitialisation(Entities);
 
             InitAudioDevice();
@@ -94,7 +90,7 @@ namespace SharpRay
 
                 if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
 
-                if (e is UIEntityContainer c) foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent);
+                if (e is UIEntityContainer c) foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent, c.OnUIEvent);
             }
         }
 
@@ -118,7 +114,7 @@ namespace SharpRay
         private static void DoCollisions()
         {
             var gameEntities = Entities.OfType<GameEntity>().ToArray();
-            
+
             for (var i = 0; i < gameEntities.Length; i++)
             {
                 var e1 = gameEntities[i];
@@ -156,8 +152,11 @@ namespace SharpRay
         #region snak gam
 
         static Random rnd = new();
+
+
         private static void OnGameEvent(IGameEvent e)
         {
+
             if (e is SnakeConsumedFood f)
             {
                 EventActions.Add(() =>
@@ -174,8 +173,8 @@ namespace SharpRay
                 EventActions.Add(() =>
                 {
                     Entities.Remove(p.GameEntity);
+                    // despawn segment, descrease score
                 });
-                // despawn segment, descrease score
             }
 
             if (e is SnakeCollideWithBody || e is SnakeCollideWithBounds)
@@ -205,8 +204,6 @@ namespace SharpRay
         {
             if (e is SnakeGameStart)
             {
-                Entities.OfType<UIEntityContainer>().First().Hide();
-
                 var head = new Head
                 {
                     Position = new Vector2(380, 200),
@@ -216,24 +213,12 @@ namespace SharpRay
                     NextDirection = Direction.Right,
                 };
 
-                var spawner = new ParticleSpawner
-                {
-                    Size = new Vector2(Width, Height)
-                };
+                var spawner = new ParticleSpawner { Size = new Vector2(Width, Height) };
+
                 EntityEventInitialisation(head, spawner);
                 Entities.Add(spawner);
                 Entities.Add(head);
             }
-        }
-
-        private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
-        {
-            if (kbe is KeyPressed p && p.Char == 'M') Entities.OfType<UIEntityContainer>().First().Show();
-        }
-
-        private static void OnMouseEvent(IMouseEvent me)
-        {
-
         }
 
         #endregion
