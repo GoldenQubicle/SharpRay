@@ -93,8 +93,10 @@ namespace SharpRay
 
     public class Segment : GameEntity
     {
-        protected Color Color { get; set; } = Color.MAGENTA;
+        public Vector2 Bounds { get; init; }
         public Direction Direction { get; set; }
+        protected Color Color { get; set; }
+
         private static double interval = 550 * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
@@ -103,8 +105,15 @@ namespace SharpRay
         protected Segment Next { get; set; }
         public override void Render(double deltaTime)
         {
+
+            if (Position.X > Bounds.X) Position = new Vector2(0, Position.Y);
+            if (Position.X < 0) Position = new Vector2(Bounds.X, Position.Y);
+            if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
+            if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
+
             DoMovement(deltaTime);
-            DrawRectangleV(Position, Size, Color.DARKPURPLE);
+            DrawRectangleRounded(Collider, .35f, 1, Color.DARKPURPLE);
+            DrawRectangleRoundedLines(Collider, .35f, 1, 2, Color.PURPLE);
         }
 
         public Segment AddNext()
@@ -113,6 +122,7 @@ namespace SharpRay
             {
                 Size = Size,
                 Direction = Direction,
+                Bounds = Bounds,
                 Position = Direction switch
                 {
                     Direction.Up => Position + new Vector2(0f, 20f),
@@ -165,9 +175,11 @@ namespace SharpRay
     {
         public Action<IGameEvent> EmitEvent { get; set; }
 
-        public Vector2 Bounds { get; init; }
         private List<Segment> Segments { get; } = new();
-        public Direction NextDirection { get; set; } 
+        public Direction NextDirection { get; set; }
+        private Func<SnakeConsumedFood> OnConsumedFood { get;  set; }
+        private bool HasConsumedFood { get;  set; }
+
         public Head()
         {
             Segments.Add(this);
@@ -177,14 +189,18 @@ namespace SharpRay
         {
             if (e is FoodParticle f)
             {
-                var next = Segments.Last().AddNext();
-                Segments.Add(next);
-                EmitEvent(new SnakeConsumedFood
+                HasConsumedFood = true;
+                OnConsumedFood = () =>
                 {
-                    FoodParticle = f,
-                    NextSegment = next,
-                    SnakeLength = Segments.Count
-                });
+                    var next = Segments.Last().AddNext();
+                    Segments.Add(next);
+                    return new SnakeConsumedFood
+                    {
+                        FoodParticle = f,
+                        NextSegment = next,
+                        SnakeLength = Segments.Count
+                    };
+                };
             }
 
             if (e is PoopParticle p)
@@ -208,9 +224,16 @@ namespace SharpRay
                 Next?.SetDirection(Direction);
                 Direction = NextDirection;
                 EmitEvent(new SnakeMovement { Direction = Direction, Position = Position });
+
+                if (HasConsumedFood)
+                {
+                    EmitEvent(OnConsumedFood());
+                    HasConsumedFood = false;
+                }
             }
 
-            DrawRectangleV(Position, Size, Color);
+            DrawRectangleRounded(Collider, .5f, 10, Color.MAGENTA);
+            DrawRectangleRoundedLines(Collider, .5f, 10, 1, Color.PURPLE);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
@@ -232,7 +255,8 @@ namespace SharpRay
         public Color Color { get; init; }
         public override void Render(double deltaTime)
         {
-            DrawRectangleRec(Collider, Color);
+            DrawRectangleRec(Collider, Color.LIME);
+            DrawRectangleLinesEx(Collider, 1, Color.GREEN);
         }
     }
 

@@ -195,7 +195,6 @@ namespace SharpRay
                         Position = new Vector2((float)x, (float)y),
                         //Position = new Vector2(460, 200),
                         Size = new Vector2(20, 20),
-                        Color = LIME
                     };
                     EntityEventInitialisation(fp);
                     Entities.Insert(3, fp);

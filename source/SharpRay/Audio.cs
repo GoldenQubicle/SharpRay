@@ -23,7 +23,7 @@ namespace SharpRay
             Sounds.Add(typeof(SnakeConsumedPoop), LoadSound(Path.Combine(Program.AssestsFolder, SnakeConsumedPoop)));
             Sounds.Add(typeof(ParticleSpawn), LoadSound(Path.Combine(Program.AssestsFolder, ParticleSpawn)));
 
-            SetMasterVolume(0.5f);
+            SetMasterVolume(0.0f);
         }
                
         public static void OnUIEvent(IUIEvent e) => PlaySound(Sounds[e.GetType()]);
