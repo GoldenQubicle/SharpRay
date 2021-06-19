@@ -1,5 +1,6 @@
 ﻿using Raylib_cs;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Transactions;
 using static Raylib_cs.Raylib;
@@ -86,13 +87,11 @@ namespace SharpRay
 
     public class Segment : GameEntity
     {
-        public int Idx { get; init; }
         protected Color Color { get; set; } = Color.MAGENTA;
         public Direction Direction { get; set; }
-        private double interval = 550 * Program.TickMultiplier;
+        private static double interval = 550 * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
-        private Func<double, Vector2> Velocity = d => new Vector2((float)d, 0f);
 
         public override void Render(double deltaTime)
         {
@@ -109,23 +108,25 @@ namespace SharpRay
             var d = e - prevDistance;
 
             prevDistance = e;
-            Position += Velocity(d);
+            Position += GetVelocity(d);
 
             if (current > interval)
             {
                 current = 0d;
                 prevDistance = 0d;
-                Velocity = d => Direction switch
-                {
-                    Direction.Up => new Vector2(0f, -(float)d),
-                    Direction.Right => new Vector2((float)d, 0f),
-                    Direction.Down => new Vector2(0f, (float)d),
-                    Direction.Left => new Vector2(-(float)d, 0f),
-                };
+
                 return true;
             }
             return false;
         }
+
+        protected Vector2 GetVelocity(double d) => Direction switch
+        {
+            Direction.Up => new Vector2(0f, -(float)d),
+            Direction.Right => new Vector2((float)d, 0f),
+            Direction.Down => new Vector2(0f, (float)d),
+            Direction.Left => new Vector2(-(float)d, 0f),
+        };
     }
 
 
@@ -134,7 +135,8 @@ namespace SharpRay
         public Action<IGameEvent> EmitEvent { get; set; }
 
         public Vector2 Bounds { get; init; }
-
+        private List<Segment> Segments { get; } = new();
+        private List<SnakeMovement> Path { get; } = new();
         public void OnCollision(GameEntity e)
         {
             if (e is FoodParticle f)
@@ -143,8 +145,8 @@ namespace SharpRay
             if (e is PoopParticle p)
                 EmitEvent(new SnakeConsumedPoop { GameEntity = p });
 
-            if (e is Segment s && s.Idx > 2)
-                EmitEvent(new SnakeCollideWithBody());
+            //if (e is Segment s)
+            //    EmitEvent(new SnakeCollideWithBody());
 
         }
 

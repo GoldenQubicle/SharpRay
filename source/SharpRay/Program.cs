@@ -156,29 +156,41 @@ namespace SharpRay
         #region snak gam
         static int snakeLength = 0;
         static List<SnakeMovement> Path = new();
+        static Random rnd = new();
         private static void OnGameEvent(IGameEvent e)
         {
-            if (e is SnakeMovement sm) Path.Add(sm);
+            Console.WriteLine(e.GetType().Name);
+            if (e is SnakeMovement sm)
+            {
+
+                Path.Insert(0, sm);
+                for (var i = 1; i < snakeLength; i++)
+                {
+                    var s = Entities[Entities.Count - snakeLength] as Segment;
+                    s.Direction = Path[i].Direction;
+                }
+                Path.RemoveAt(snakeLength);
+
+            }
 
             if (e is SnakeConsumedFood f)
             {
                 EventActions.Add(() =>
                 {
                     Entities.Remove(f.GameEntity);
-                    var tail = Path[Path.Count - snakeLength];
+                    var tail = Path.Last();
                     var s = new Segment
                     {
                         Size = new Vector2(20, 20),
                         Position = tail.Position,
                         Direction = tail.Direction,
-                        Idx = snakeLength + 1
                     };
-                    var idx = Entities.Count - snakeLength - 1;
+                    Path.Add(tail);
+                    var idx = Entities.Count - snakeLength ;
                     Entities.Insert(idx, s);
                     gameEntities = Entities.OfType<GameEntity>().ToArray();
                     snakeLength++;
                 });
-                // spawn segment, increase score
             }
 
             if (e is SnakeConsumedPoop p)
@@ -200,9 +212,11 @@ namespace SharpRay
             {
                 EventActions.Add(() =>
                 {
+                    var x = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Width);
+                    var y = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Height);
                     var fp = new FoodParticle
                     {
-                        Position = new Vector2(500, 200),
+                        Position = new Vector2((float)x,(float)y ),
                         Size = new Vector2(20, 20),
                         Color = LIME
                     };
@@ -219,21 +233,21 @@ namespace SharpRay
             {
                 Entities.OfType<UIEntityContainer>().First().Hide();
 
-                var player = new Head
+                var head = new Head
                 {
                     Position = new Vector2(380, 200),
                     Size = new Vector2(20, 20),
                     Bounds = new Vector2(Width, Height),
                     Direction = Direction.Right,
-                    Idx = 1
                 };
+                Path.Add(new SnakeMovement { Position = head.Position, Direction = head.Direction });
                 var spawner = new ParticleSpawner
                 {
                     Size = new Vector2(Width, Height)
                 };
-                EntityEventInitialisation(new List<Entity> { player, spawner });
+                EntityEventInitialisation(new List<Entity> { head, spawner });
                 Entities.Add(spawner);
-                Entities.Add(player);
+                Entities.Add(head);
                 gameEntities = Entities.OfType<GameEntity>().ToArray();
                 snakeLength++;
             }
