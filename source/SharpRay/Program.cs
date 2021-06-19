@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Raylib_cs;
-using System.Net.NetworkInformation;
 
 namespace SharpRay
 {
@@ -88,6 +86,7 @@ namespace SharpRay
         private static void SetBackGround() =>
             Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GOLD, ORANGE), DARKBROWN));
 
+        private static void EntityEventInitialisation(params Entity[] entities) => EntityEventInitialisation(entities.ToList());
         private static void EntityEventInitialisation(List<Entity> entities)
         {
             foreach (var e in entities)
@@ -154,42 +153,19 @@ namespace SharpRay
         }
 
         #region snak gam
-        static int snakeLength = 0;
-        static List<SnakeMovement> Path = new();
+
         static Random rnd = new();
         private static void OnGameEvent(IGameEvent e)
         {
-            Console.WriteLine(e.GetType().Name);
-            if (e is SnakeMovement sm)
-            {
-
-                Path.Insert(0, sm);
-                for (var i = 1; i < snakeLength; i++)
-                {
-                    var s = Entities[Entities.Count - snakeLength] as Segment;
-                    s.Direction = Path[i].Direction;
-                }
-                Path.RemoveAt(snakeLength);
-
-            }
-
             if (e is SnakeConsumedFood f)
             {
                 EventActions.Add(() =>
                 {
-                    Entities.Remove(f.GameEntity);
-                    var tail = Path.Last();
-                    var s = new Segment
-                    {
-                        Size = new Vector2(20, 20),
-                        Position = tail.Position,
-                        Direction = tail.Direction,
-                    };
-                    Path.Add(tail);
-                    var idx = Entities.Count - snakeLength ;
-                    Entities.Insert(idx, s);
+                    Entities.Remove(f.FoodParticle);
+                    EntityEventInitialisation(f.NextSegment);
+                    var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles
+                    Entities.Insert(idx, f.NextSegment);
                     gameEntities = Entities.OfType<GameEntity>().ToArray();
-                    snakeLength++;
                 });
             }
 
@@ -216,11 +192,12 @@ namespace SharpRay
                     var y = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Height);
                     var fp = new FoodParticle
                     {
-                        Position = new Vector2((float)x,(float)y ),
+                        Position = new Vector2((float)x, (float)y),
+                        //Position = new Vector2(460, 200),
                         Size = new Vector2(20, 20),
                         Color = LIME
                     };
-                    EntityEventInitialisation(new List<Entity> { fp });
+                    EntityEventInitialisation(fp);
                     Entities.Insert(3, fp);
                     gameEntities = Entities.OfType<GameEntity>().ToArray();
                 });
@@ -239,17 +216,17 @@ namespace SharpRay
                     Size = new Vector2(20, 20),
                     Bounds = new Vector2(Width, Height),
                     Direction = Direction.Right,
+                    NextDirection = Direction.Right,
                 };
-                Path.Add(new SnakeMovement { Position = head.Position, Direction = head.Direction });
+
                 var spawner = new ParticleSpawner
                 {
                     Size = new Vector2(Width, Height)
                 };
-                EntityEventInitialisation(new List<Entity> { head, spawner });
+                EntityEventInitialisation(head, spawner);
                 Entities.Add(spawner);
                 Entities.Add(head);
                 gameEntities = Entities.OfType<GameEntity>().ToArray();
-                snakeLength++;
             }
         }
 

@@ -1,8 +1,8 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using System.Transactions;
 using static Raylib_cs.Raylib;
 
 namespace SharpRay
@@ -47,7 +47,12 @@ namespace SharpRay
 
     #region snak gam
 
-    public struct SnakeConsumedFood : IGameEvent { public GameEntity GameEntity { get; init; } }
+    public struct SnakeConsumedFood : IGameEvent
+    {
+        public FoodParticle FoodParticle { get; init; }
+        public Segment NextSegment { get; init; }
+        public int SnakeLength { get; init; }
+    }
     public struct SnakeConsumedPoop : IGameEvent { public GameEntity GameEntity { get; init; } }
     public struct SnakeMovement : IGameEvent
     {
@@ -66,8 +71,8 @@ namespace SharpRay
         double rndInterval;
         double current;
         private Random Random = new Random();
-        double min = 1500d;
-        double max = 3000d;
+        double min = 500d;
+        double max = 750d;
         public ParticleSpawner()
         {
             rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
@@ -80,6 +85,7 @@ namespace SharpRay
             {
                 EmitEvent(new ParticleSpawn());
                 rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
+                //rndInterval = double.MaxValue;
                 current = 0d;
             }
         }
@@ -92,11 +98,30 @@ namespace SharpRay
         private static double interval = 550 * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
+        private Direction previousDirection;
 
+        protected Segment Next { get; set; }
         public override void Render(double deltaTime)
         {
             DoMovement(deltaTime);
-            DrawRectangleV(Position, Size, Color);
+            DrawRectangleV(Position, Size, Color.DARKPURPLE);
+        }
+
+        public Segment AddNext()
+        {
+            Next = new Segment
+            {
+                Size = Size,
+                Direction = Direction,
+                Position = Direction switch
+                {
+                    Direction.Up => Position + new Vector2(0f, 20f),
+                    Direction.Right => Position + new Vector2(-20f, 0f),
+                    Direction.Down => Position + new Vector2(0f, -20f),
+                    Direction.Left => Position + new Vector2(20f, 0f),
+                },
+            };
+            return Next;
         }
 
         protected bool DoMovement(double deltaTime)
@@ -127,6 +152,12 @@ namespace SharpRay
             Direction.Down => new Vector2(0f, (float)d),
             Direction.Left => new Vector2(-(float)d, 0f),
         };
+        internal void SetDirection(Direction direction)
+        {
+            previousDirection = Direction;
+            Next?.SetDirection(previousDirection);
+            Direction = direction;
+        }
     }
 
 
@@ -136,11 +167,25 @@ namespace SharpRay
 
         public Vector2 Bounds { get; init; }
         private List<Segment> Segments { get; } = new();
-        private List<SnakeMovement> Path { get; } = new();
+        public Direction NextDirection { get; set; } 
+        public Head()
+        {
+            Segments.Add(this);
+        }
+
         public void OnCollision(GameEntity e)
         {
             if (e is FoodParticle f)
-                EmitEvent(new SnakeConsumedFood { GameEntity = f });
+            {
+                var next = Segments.Last().AddNext();
+                Segments.Add(next);
+                EmitEvent(new SnakeConsumedFood
+                {
+                    FoodParticle = f,
+                    NextSegment = next,
+                    SnakeLength = Segments.Count
+                });
+            }
 
             if (e is PoopParticle p)
                 EmitEvent(new SnakeConsumedPoop { GameEntity = p });
@@ -159,17 +204,26 @@ namespace SharpRay
             if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
 
             if (DoMovement(deltaTime))
+            {
+                Next?.SetDirection(Direction);
+                Direction = NextDirection;
                 EmitEvent(new SnakeMovement { Direction = Direction, Position = Position });
+            }
 
             DrawRectangleV(Position, Size, Color);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyUp) Direction = Direction.Up;
-            if (e is KeyRight) Direction = Direction.Right;
-            if (e is KeyDown) Direction = Direction.Down;
-            if (e is KeyLeft) Direction = Direction.Left;
+            if (e is KeyPressed) return;
+
+            NextDirection = e switch
+            {
+                KeyUp => Direction.Up,
+                KeyRight => Direction.Right,
+                KeyDown => Direction.Down,
+                KeyLeft => Direction.Left,
+            };
         }
     }
 

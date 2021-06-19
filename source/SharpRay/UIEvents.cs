@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace SharpRay
 {
@@ -34,8 +35,8 @@ namespace SharpRay
     public struct DeleteEdit : IUIEvent, IHasUndoRedo
     {
         public UIEntity UIComponent { get; init; }
-        public void Undo() => Program.Entities.Add(UIComponent);
-        public void Redo() => Program.Entities.Remove(UIComponent);
+        public void Undo() => throw new NotImplementedException();
+        public void Redo() => throw new NotImplementedException();
     }
     #endregion
 }
