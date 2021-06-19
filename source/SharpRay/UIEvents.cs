@@ -3,9 +3,6 @@ using System.Numerics;
 
 namespace SharpRay
 {
-    public struct StartSnakeGame : IUIEvent { public UIEntity UIComponent { get; init; } }
-
-
 
     #region undo & redo ui events
     public interface IHasUndoRedo
@@ -35,8 +32,9 @@ namespace SharpRay
     public struct DeleteEdit : IUIEvent, IHasUndoRedo
     {
         public UIEntity UIComponent { get; init; }
-        public void Undo() => throw new NotImplementedException();
-        public void Redo() => throw new NotImplementedException();
+        public void Undo() => Program.Entities.Add(UIComponent);
+        public void Redo() => Program.Entities.Remove(UIComponent);
     }
+
     #endregion
 }

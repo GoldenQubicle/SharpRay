@@ -9,6 +9,13 @@ using System.Linq;
 
 namespace SharpRay
 {
+    public interface ISharpRay
+    {
+        List<Entity> Entities { get; set; }
+        void OnMouseEvent(IMouseEvent e);
+        void OnKeyBoardEvent(IKeyBoardEvent e);
+    }
+
     class Program
     {
         private const int Width = 800;
@@ -37,7 +44,7 @@ namespace SharpRay
                     FocusColor = BLUE,
                     TextColor = ORANGE,
                     Text = "Start",
-                    OnMouseLeftClick = e => new StartSnakeGame { UIComponent = e }
+                    OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
 
                 }
             }, new Vector2(Width / 2 - 100, Height / 2 - 120)),
@@ -190,7 +197,7 @@ namespace SharpRay
                 {
                     var x = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Width);
                     var y = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Height);
-                    var fp = new FoodParticle
+                    var fp = new ParticleFood
                     {
                         Position = new Vector2((float)x, (float)y),
                         //Position = new Vector2(460, 200),
@@ -205,7 +212,7 @@ namespace SharpRay
 
         private static void OnUIEvent(IUIEvent e)
         {
-            if (e is StartSnakeGame)
+            if (e is SnakeGameStart)
             {
                 Entities.OfType<UIEntityContainer>().First().Hide();
 
