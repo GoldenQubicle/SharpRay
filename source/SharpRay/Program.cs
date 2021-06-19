@@ -136,6 +136,24 @@ namespace SharpRay
             }
         }
 
+        private static void DoEventActions()
+        {
+            EventActions.ForEach(a => a());
+            EventActions.Clear();
+        }
+
+        private static void DoRender(double delta)
+        {
+            BeginDrawing();
+            ClearBackground(GRAY);
+
+            foreach (var e in Entities) e.Render(delta);
+
+            EndDrawing();
+        }
+
+        #region snak gam
+        static int snakeLength = 0;
         private static void OnGameEvent(IGameEvent e)
         {
             if (e is SnakeConsumedFood f)
@@ -143,6 +161,12 @@ namespace SharpRay
                 EventActions.Add(() =>
                 {
                     Entities.Remove(f.GameEntity);
+                    var s = new Segment
+                    {
+                        Size = new Vector2(20, 20)
+                    };
+                    var idx = Entities.Count - snakeLength - 1;
+                    Entities.Insert(idx, s);
                     gameEntities = Entities.OfType<GameEntity>().ToArray();
                 });
                 // spawn segment, increase score
@@ -200,6 +224,7 @@ namespace SharpRay
                 Entities.Add(spawner);
                 Entities.Add(player);
                 gameEntities = Entities.OfType<GameEntity>().ToArray();
+                snakeLength = 1;
             }
         }
 
@@ -213,20 +238,8 @@ namespace SharpRay
 
         }
 
-        private static void DoEventActions()
-        {
-            EventActions.ForEach(a => a());
-            EventActions.Clear();
-        }
+        #endregion
 
-        private static void DoRender(double delta)
-        {
-            BeginDrawing();
-            ClearBackground(GRAY);
-
-            foreach (var e in Entities) e.Render(delta);
-
-            EndDrawing();
-        }
+      
     }
 }

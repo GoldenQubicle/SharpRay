@@ -52,14 +52,17 @@ namespace SharpRay
     public struct SnakeCollideWithBody : IGameEvent { }
     public struct SnakeCollideWithBounds : IGameEvent { }
     public struct ParticleSpawn : IGameEvent { }
+    public enum Direction { Up, Right, Down, Left }
 
     public class ParticleSpawner : GameEntity, IEventEmitter<IGameEvent>
     {
+        public Action<IGameEvent> EmitEvent { get; set; }
+
         double rndInterval;
         double current;
         private Random Random = new Random();
-        double min = 1250d;
-        double max = 1750d;
+        double min = 1500d;
+        double max = 3000d;
         public ParticleSpawner()
         {
             rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
@@ -75,18 +78,53 @@ namespace SharpRay
                 current = 0d;
             }
         }
-
-        public Action<IGameEvent> EmitEvent { get; set; }
     }
 
     public class Segment : GameEntity
     {
+        protected Color Color { get; set; } = Color.MAGENTA;
+        protected Direction Direction { get; set; } = Direction.Right;
+        private double interval = 550 * Program.TickMultiplier;
+        private double current = 0d;
+        private double prevDistance = 0f;
+        private Func<double, Vector2> Velocity = d => new Vector2((float)d, 0f);
 
+        public override void Render(double deltaTime)
+        {
+            DoMovement(deltaTime);
+            DrawRectangleV(Position, Size, Color);
+        }
+
+        protected bool DoMovement(double deltaTime)
+        {
+            current += deltaTime;
+
+            var t = Math.Clamp(Program.MapRange(current, 0d, interval, 0d, 1d), 0d, 1d);
+            var e = Easings.EaseBackInOut((float)t, 0f, Size.X, 1f);
+            var d = e - prevDistance;
+
+            prevDistance = e;
+            Position += Velocity(d);
+
+            if (current > interval)
+            {
+                current = 0d;
+                prevDistance = 0d;
+                Velocity = d => Direction switch
+                {
+                    Direction.Up => new Vector2(0f, -(float)d),
+                    Direction.Right => new Vector2((float)d, 0f),
+                    Direction.Down => new Vector2(0f, (float)d),
+                    Direction.Left => new Vector2(-(float)d, 0f),
+                };
+                return true;
+            }
+            return false;
+        }
     }
 
-    public enum Direction { Up, Right, Down, Left }
 
-    public class Head : GameEntity, IHasCollision, IEventEmitter<IGameEvent>
+    public class Head : Segment, IHasCollision, IEventEmitter<IGameEvent>
     {
         public Action<IGameEvent> EmitEvent { get; set; }
 
@@ -101,15 +139,9 @@ namespace SharpRay
                 EmitEvent(new SnakeConsumedPoop { GameEntity = p });
 
             if (e is Segment s)
-                EmitEvent(new SnakeCollideWithBody ());
+                EmitEvent(new SnakeCollideWithBody());
 
         }
-
-        private Direction direction = Direction.Right;
-        private static double interval = 550 * Program.TickMultiplier;
-        private static double current = 0d;
-        private static double prevDistance = 0f;
-        private Func<double, Vector2> Speed = d => new Vector2((float)d, 0f);
 
         public override void Render(double deltaTime)
         {
@@ -119,40 +151,17 @@ namespace SharpRay
             if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
             if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
 
-            current += deltaTime;
+            if (DoMovement(deltaTime)) EmitEvent(new SnakeMovement());
 
-            var t = Math.Clamp(Program.MapRange(current, 0d, interval, 0d, 1d), 0d, 1d);
-            var e = Easings.EaseBackInOut((float)t, 0f, Size.X, 1f);
-            var d = e - prevDistance;
-
-            prevDistance = e;
-            Position += Speed(d);
-
-            if (current > interval)
-            {
-                current = 0d;
-                prevDistance = 0d;
-                Speed = d => direction switch
-                {
-                    Direction.Up => new Vector2(0f, -(float)d),
-                    Direction.Right => new Vector2((float)d, 0f),
-                    Direction.Down => new Vector2(0f, (float)d),
-                    Direction.Left => new Vector2(-(float)d, 0f),
-                };
-
-                EmitEvent(new SnakeMovement ());
-            }
-
-            DrawRectangleV(Position, Size, Color.MAGENTA);
-
+            DrawRectangleV(Position, Size, Color);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyUp) direction = Direction.Up;
-            if (e is KeyRight) direction = Direction.Right;
-            if (e is KeyDown) direction = Direction.Down;
-            if (e is KeyLeft) direction = Direction.Left;
+            if (e is KeyUp) Direction = Direction.Up;
+            if (e is KeyRight) Direction = Direction.Right;
+            if (e is KeyDown) Direction = Direction.Down;
+            if (e is KeyLeft) Direction = Direction.Left;
         }
     }
 
