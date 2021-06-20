@@ -121,9 +121,6 @@ namespace SharpRay
                 var e1 = gameEntities[i];
                 if (e1 is IHasCollision cl1)
                 {
-                    //TODO change this for raycast collision
-                    //CheckCollisionRayBox() => it is even a thing!
-
                     for (var j = 0; j < gameEntities.Length; j++)
                     {
                         var e2 = gameEntities[j];

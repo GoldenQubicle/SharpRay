@@ -80,3 +80,9 @@ Next MileStones / Challenging Ideas:
   ☐ do another spirograph animation tool @created(20-06-2021 14:11)
     reasons: proper animation of easyings could be fun and usefull and it would neat a lot of ui work, like lists and scroll stuff etc, 
     so that would improve the whole ui side of things. 
+  ☐ create frame logging system @created(20-06-2021 17:04)
+    reason: technical challenge and long term beneficial. At the moment there's a weird bug in snake game 
+    wherein the order of update vs collision in the main loop is causing food consumption to be triggered twice. 
+    Not sure why that is and when figuring it out it would be super helpfull the have a way to tell which events
+    were fired and handled during a single frame (i.e. main loop) in which order and which were the emitters
+    and receivers. 

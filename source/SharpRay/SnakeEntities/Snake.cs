@@ -13,7 +13,7 @@ namespace SharpRay
         public Action<IGameEvent> EmitEvent { get; set; }
         private List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
-        private bool HasConsumedFood { get; set; }
+
         public Snake(Vector2 position)
         {
             Position = position;
@@ -25,8 +25,6 @@ namespace SharpRay
         public void OnCollision(GameEntity e)
         {
             if (e is ParticleFood f)
-            {
-                HasConsumedFood = true;
                 OnConsumedFood = () =>
                 {
                     var next = Segments.Last().SetNext();
@@ -38,7 +36,6 @@ namespace SharpRay
                         SnakeLength = Segments.Count
                     };
                 };
-            }
 
             if (e is ParticlePoop p)
                 EmitEvent(new SnakeConsumedPoop { GameEntity = p });
@@ -58,11 +55,12 @@ namespace SharpRay
 
                 EmitEvent(new SnakeLocomotion { Direction = Direction, Position = Position });
 
-                if (HasConsumedFood)
+                if (OnConsumedFood is not null)
                 {
                     EmitEvent(OnConsumedFood());
-                    HasConsumedFood = false;
+                    OnConsumedFood = null;
                 }
+
                 IntervalElapsed = false;
             }
 
