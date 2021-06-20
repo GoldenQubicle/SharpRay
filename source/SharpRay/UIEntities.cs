@@ -32,7 +32,7 @@ namespace SharpRay
             UnloadImage(image);
         }
 
-        public override void Render(double deltaTime)
+        public override void Render()
         {
             DrawTexture(Texture2D, (int)Position.X, (int)Position.Y, Color);
         }
@@ -60,7 +60,7 @@ namespace SharpRay
         public bool WordWrap { get; init; } = false;
         public Vector2 Margins { get; init; }
 
-        public override void Render(double deltaTime)
+        public override void Render()
         {
             DrawRectangleV(Position, Size, FillColor);
             DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
@@ -71,10 +71,10 @@ namespace SharpRay
     {
         public Color FocusColor { get; init; }
         public Color BaseColor { get; init; }
-        public override void Render(double deltaTime)
+        public override void Render()
         {
             FillColor = HasMouseFocus ? FocusColor : BaseColor;
-            base.Render(deltaTime);
+            base.Render();
         }
 
         public override bool ContainsPoint(Vector2 point) =>
@@ -156,7 +156,7 @@ namespace SharpRay
                 EmitEvent(new DeleteEdit { UIComponent = this });
         }
 
-        public override void Render(double deltaTime)
+        public override void Render()
         {
             ColorRender = HasMouseFocus ? ColorFocused : ColorDefault;
         }
@@ -169,14 +169,20 @@ namespace SharpRay
      */
     public class ToggleButton : Rectangle
     {
-        public Func<string> OnDrawText { get; set; }
+        public Func<string> OnUpdateText { get; set; }
 
         public bool IsToggled { get; private set; }
+        public string Text { get; set; }
 
-        public override void Render(double deltaTime)
+        public override void Update(double deltaTime)
         {
-            base.Render(deltaTime);
-            DrawText(OnDrawText(), (int)Position.X, (int)Position.Y + 2, 25, Color.WHITE);
+            Text= OnUpdateText();
+        }
+
+        public override void Render()
+        {
+            base.Render();
+            DrawText(Text, (int)Position.X, (int)Position.Y + 2, 25, Color.WHITE);
         }
 
         public override void OnMouseEvent(IMouseEvent me)
@@ -199,9 +205,8 @@ namespace SharpRay
 
         public override bool ContainsPoint(Vector2 point) => Vector2.Distance(Position, point) < Radius * Scale;
 
-        public override void Render(double deltaTime)
+        public override void Render()
         {
-            base.Render(deltaTime);
             DrawCircleV(Position, Radius * Scale, ColorRender);
         }
     }
@@ -214,9 +219,8 @@ namespace SharpRay
                 point.Y > Position.Y &&
                 point.Y < Position.Y + Size.Y * Scale;
 
-        public override void Render(double deltaTime)
+        public override void Render()
         {
-            base.Render(deltaTime);
             DrawRectangleV(Position, Size * new Vector2(Scale, Scale), ColorRender);
         }
     }
@@ -236,9 +240,8 @@ namespace SharpRay
             return false;
         }
 
-        public override void Render(double deltaTime)
+        public override void Render()
         {
-            base.Render(deltaTime);
             DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, ColorRender);
         }
     }

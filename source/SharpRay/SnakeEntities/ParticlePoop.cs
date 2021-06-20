@@ -6,7 +6,7 @@ namespace SharpRay
     public class ParticlePoop : GameEntity
     {
         public Color Color { get; init; }
-        public override void Render(double deltaTime)
+        public override void Render()
         {
             DrawRectangleRec(Collider, Color);
         }

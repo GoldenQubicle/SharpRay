@@ -2,6 +2,7 @@
 using System;
 using System.Numerics;
 using static Raylib_cs.Raylib;
+using static SharpRay.SnakeConfig;
 
 namespace SharpRay
 {
@@ -13,42 +14,55 @@ namespace SharpRay
         public Direction Direction { get; set; }
         public Direction NextDirection { get; set; }
 
-        protected Segment Next;
-        protected Color Color;
+        protected bool IntervalElapsed { get; set; }
+        protected Vector2 Center { get; set; }
+        protected Segment Next { get; set; }
+        protected Color Color { get; set; }
 
-        private static double interval = 550 * Program.TickMultiplier;
+        private static double interval = LocomotionInterval * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
         private Direction previousDirection;
 
-        public override void Render(double deltaTime)
+        public override void Update(double deltaTime)
         {
+            current += deltaTime;
 
-            if (Position.X > Bounds.X) Position = new Vector2(0, Position.Y);
-            if (Position.X < 0) Position = new Vector2(Bounds.X, Position.Y);
-            if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
-            if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
+            if (current > interval)
+            {
+                current = 0d;
+                prevDistance = 0d;
+                IntervalElapsed = true;
+            }
 
-            DoMovement(deltaTime);
-
-            DrawRectangleRounded(Collider, .35f, 1, Color.DARKPURPLE);
-            DrawRectangleRoundedLines(Collider, .35f, 1, 2, Color.PURPLE);
+            DoLocomotion();
+            
+            //update position used by collider
+            Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
         }
 
-        public Segment AddNext()
+        public override void Render()
+        {
+            DrawRectangleRounded(Collider, .35f, 1, Color.DARKPURPLE);
+            DrawRectangleRoundedLines(Collider, .35f, 1, 2, Color.PURPLE);
+
+            DrawCircleV(Center, 2, Color.BLUE);
+        }
+
+        public Segment SetNext()
         {
             Next = new Segment
             {
-                Size = Size,
+                Size = new Vector2(SegmentSize, SegmentSize),
                 Direction = Direction,
-                Bounds = Bounds,
-                Position = Direction switch
+                Center = Direction switch
                 {
-                    Direction.Up => Position + new Vector2(0f, 20f),
-                    Direction.Right => Position + new Vector2(-20f, 0f),
-                    Direction.Down => Position + new Vector2(0f, -20f),
-                    Direction.Left => Position + new Vector2(20f, 0f),
+                    Direction.Up => Center + new Vector2(0f, CellSize),
+                    Direction.Right => Center + new Vector2(-CellSize, 0f),
+                    Direction.Down => Center + new Vector2(0f, -CellSize),
+                    Direction.Left => Center + new Vector2(CellSize, 0f),
                 },
+                Position = Center - Size / 2
             };
             return Next;
         }
@@ -60,33 +74,20 @@ namespace SharpRay
             Direction = direction;
         }
 
-        protected bool DoMovement(double deltaTime)
+        private void DoLocomotion()
         {
-            current += deltaTime;
-
             var t = Math.Clamp(Program.MapRange(current, 0d, interval, 0d, 1d), 0d, 1d);
-            var e = Easings.EaseBackInOut((float)t, 0f, Size.X, 1f);
+            var e = Easings.EaseBackInOut((float)t, 0f, CellSize, 1f);
             var d = e - prevDistance;
             prevDistance = e;
 
-            Position += GetVelocity(d);
-
-            if (current > interval)
+            Center += Direction switch
             {
-                current = 0d;
-                prevDistance = 0d;
-
-                return true;
-            }
-            return false;
+                Direction.Up => new Vector2(0f, -(float)d),
+                Direction.Right => new Vector2((float)d, 0f),
+                Direction.Down => new Vector2(0f, (float)d),
+                Direction.Left => new Vector2(-(float)d, 0f),
+            };
         }
-
-        private Vector2 GetVelocity(double d) => Direction switch
-        {
-            Direction.Up => new Vector2(0f, -(float)d),
-            Direction.Right => new Vector2((float)d, 0f),
-            Direction.Down => new Vector2(0f, (float)d),
-            Direction.Left => new Vector2(-(float)d, 0f),
-        };
     }
 }

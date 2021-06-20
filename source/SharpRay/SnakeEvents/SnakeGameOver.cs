@@ -1,4 +1,4 @@
 ﻿namespace SharpRay
 {
-    public struct SnakeGameOver : IGameEvent { public UIEntity UIComponent { get; init; } }
+    public struct SnakeGameOver : IGameEvent { public int Score { get; init; } }
 }

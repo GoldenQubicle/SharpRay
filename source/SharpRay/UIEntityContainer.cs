@@ -24,9 +24,14 @@ namespace SharpRay
         }
         public void Show() => IsVisible = true;
 
-        public override void Render(double deltaTime)
+        public override void Render( )
         {
-            if (IsVisible) foreach (var e in Entities) e.Render(deltaTime);
+            if (IsVisible) foreach (var e in Entities) e.Render();
+        }
+
+        public override void Update(double deltaTime)
+        {
+            if (IsVisible) foreach (var e in Entities) e.Update(deltaTime);
         }
 
         public override void OnMouseEvent(IMouseEvent me)

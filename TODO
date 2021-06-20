@@ -23,6 +23,13 @@ First MileStone:
       what went well: event system is pretty nice so far and I look forward to using it
       what went less well: need to keep an eye on my own health and learn to enjoy the process
 
+    TODO: 
+      ✔ figure out entity collision @created(09-06-2021 20:23) @done(11-06-2021 16:02)
+      ☐ implement containsPoint polygon @created(06-06-2021 18:09)
+      ☐ implement scale polygon @created(06-06-2021 18:09)
+      ☐ proper click & double click mouse events @created(06-06-2021 14:21)
+      ☐ investigate DI and project organisation @created(06-06-2021 13:17)
+
 Second MileStone (ideas):
   ☐ snake game @created(07-06-2021 19:41)
     reason: simple yet effective proving grounds of capbilities. Would probably want to include 
@@ -30,27 +37,39 @@ Second MileStone (ideas):
     external assets for visuals as well. 
     
     TODO:
-      ☐ create new branch and clear out old stuff @created(12-06-2021 10:45)
-      ☐ create splashscreen and menu @created(12-06-2021 10:46)
-      ☐ find sound effects for game over, menu clicks, snake movement, snake consume food, snake slippery? @created(12-06-2021 10:46)
-      ☐ create easing snake movement @created(12-06-2021 10:54)
-      ☐ create snake controls @created(12-06-2021 10:56)
-      ☐ adjust bounds, i.e. touching bounds in game over @created(12-06-2021 10:56)
-      ☐ create growing snake on food consumption @created(12-06-2021 10:56)
-      ☐ create snake head collision with own body is game over @created(12-06-2021 10:56)
-      ☐ create spawn food particles @created(12-06-2021 10:57)
+      ✔ create new branch and clear out old stuff @created(12-06-2021 10:45) @done(20-06-2021 14:08)
+      ✔ create splashscreen and menu @created(12-06-2021 10:46) @done(20-06-2021 14:08)
+      ✔ find sound effects for game over, menu clicks, snake movement, snake consume food, snake slippery? @created(12-06-2021 10:46) @done(20-06-2021 14:08)
+      ✔ create easing snake movement @created(12-06-2021 10:54) @done(20-06-2021 14:08)
+      ✔ create snake controls @created(12-06-2021 10:56) @done(20-06-2021 14:08)
+      ✔ create growing snake on food consumption @created(12-06-2021 10:56) @done(20-06-2021 14:08)
+      ✔ create spawn food particles @created(12-06-2021 10:57) @done(20-06-2021 14:08)
       ☐ create score system, e.g. particles eaten & time alive? @created(12-06-2021 10:58)
       ☐ create win condition when snake fills entire play area @created(12-06-2021 10:59)
 
+      ☐ game over state @created(20-06-2021 14:08)
+        ✔ create snake head collision with own body is game over @created(12-06-2021 10:56) @done(20-06-2021 16:01)
+          see if adjusting the segment size to be smaller than the head resolved the issue of colliding with segments when the head
+          is parallel to the body due to locomotion
+          if that doesn't solve it, guess implement ray collision
+        ✔ adjust bounds, i.e. touching bounds in game over @created(12-06-2021 10:56) @done(20-06-2021 16:01)
+        ✔ select game over sound @created(20-06-2021 14:14) @done(20-06-2021 16:01)
+        ☐ create game over menu screen @created(20-06-2021 14:14)
     
-TODO: 
-  ✔ figure out entity collision @created(09-06-2021 20:23) @done(11-06-2021 16:02)
-  ☐ implement containsPoint polygon @created(06-06-2021 18:09)
-  ☐ implement scale polygon @created(06-06-2021 18:09)
-  ☐ proper click & double click mouse events @created(06-06-2021 14:21)
-  ☐ investigate DI and project organisation @created(06-06-2021 13:17)
+      ☐ create poop particles @created(20-06-2021 14:14)
+        so I think this can be done rather nicely by passing down a 'isDigisting' boolean from head on food consumption, 
+        and then render the segment differently. When the segment has no next, an event needs to be emitted.
+        q: are poop particles on a timer? 
 
-Challenging Ideas:
+      ☐ particle spawn on grid, and preferable evenly spaced out. Also need some checking of poop particles @created(20-06-2021 14:28)
+
+      ☐ start w 3 segment snake at the place as start button and spawn 1 food particle to the right @created(20-06-2021 14:27)
+
+      ☐ start game on key enter press when menu / game over screen is showing @created(20-06-2021 16:17)
+
+
+
+Next MileStones / Challenging Ideas:
   ☐ manipulate a custom shader in realtime with ui controls @created(07-06-2021 19:41)
     reason: shaders are the bread and butter of a proper runnning game, technical challenging
     This idea came about while thinking about how to create a brush zoning tool so that could be a good
@@ -58,3 +77,6 @@ Challenging Ideas:
     need to support undo / redo
   ☐ simulate a long running process (thread sleep) and figure out how to not block the ui! @created(12-06-2021 10:39)
     reason: this is going to be an issue sooner or later so may as well get it out of the way. 
+  ☐ do another spirograph animation tool @created(20-06-2021 14:11)
+    reasons: proper animation of easyings could be fun and usefull and it would neat a lot of ui work, like lists and scroll stuff etc, 
+    so that would improve the whole ui side of things. 

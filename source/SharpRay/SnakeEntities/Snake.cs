@@ -4,16 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using static Raylib_cs.Raylib;
+using static SharpRay.SnakeConfig;
 
 namespace SharpRay
 {
-    public class Head : Segment, IHasCollision, IEventEmitter<IGameEvent>
+    public class Snake : Segment, IHasCollision, IEventEmitter<IGameEvent>
     {
         public Action<IGameEvent> EmitEvent { get; set; }
         private List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
         private bool HasConsumedFood { get; set; }
-        public Head() => Segments.Add(this);
+        public Snake(Vector2 position)
+        {
+            Position = position;
+            Size = new Vector2(HeadSize, HeadSize);
+            Segments.Add(this);
+            Center = new Vector2(Position.X + CellSize / 2, Position.Y + CellSize / 2);
+        }
 
         public void OnCollision(GameEntity e)
         {
@@ -22,7 +29,7 @@ namespace SharpRay
                 HasConsumedFood = true;
                 OnConsumedFood = () =>
                 {
-                    var next = Segments.Last().AddNext();
+                    var next = Segments.Last().SetNext();
                     Segments.Add(next);
                     return new SnakeConsumedFood
                     {
@@ -36,47 +43,47 @@ namespace SharpRay
             if (e is ParticlePoop p)
                 EmitEvent(new SnakeConsumedPoop { GameEntity = p });
 
-            //if (e is Segment s)
-            //    EmitEvent(new SnakeCollideWithBody());
-
+            if (e is Segment s && Segments[1] != s) //ignore first segment collision due to locomotion
+                EmitEvent(new SnakeGameOver { Score = Segments.Count });
         }
 
-        public override void Render(double deltaTime)
+        public override void Update(double deltaTime)
         {
+            base.Update(deltaTime);
 
-            if (Position.X > Bounds.X) Position = new Vector2(0, Position.Y);
-            if (Position.X < 0) Position = new Vector2(Bounds.X, Position.Y);
-            if (Position.Y > Bounds.Y) Position = new Vector2(Position.X, 0);
-            if (Position.Y < 0) Position = new Vector2(Position.X, Bounds.Y);
-
-            if (DoMovement(deltaTime))
+            if (IntervalElapsed)
             {
                 Next?.SetDirection(Direction);
                 Direction = NextDirection;
 
-                EmitEvent(new SnakeMovement { Direction = Direction, Position = Position });
+                EmitEvent(new SnakeLocomotion { Direction = Direction, Position = Position });
 
                 if (HasConsumedFood)
                 {
                     EmitEvent(OnConsumedFood());
                     HasConsumedFood = false;
                 }
+                IntervalElapsed = false;
             }
 
+            if (Center.X >= Bounds.X || Center.X <= 0 || Center.Y >= Bounds.Y || Center.Y <= 0)
+                EmitEvent(new SnakeGameOver { Score = Segments.Count });
+        }
+
+        public override void Render()
+        {
             DrawRectangleRounded(Collider, .5f, 10, Color.MAGENTA);
             DrawRectangleRoundedLines(Collider, .5f, 10, 1, Color.PURPLE);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyPressed) return;
-
             NextDirection = e switch
             {
-                KeyUp => Direction.Up,
-                KeyRight => Direction.Right,
-                KeyDown => Direction.Down,
-                KeyLeft => Direction.Left,
+                SnakeUp => Direction.Up,
+                SnakeRight => Direction.Right,
+                SnakeDown => Direction.Down,
+                SnakeLeft => Direction.Left,
             };
         }
     }

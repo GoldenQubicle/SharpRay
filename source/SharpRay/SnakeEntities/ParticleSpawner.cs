@@ -2,7 +2,7 @@
 
 namespace SharpRay
 {
-    public class ParticleSpawner : GameEntity, IEventEmitter<IGameEvent>
+    public class ParticleSpawner : Entity, IEventEmitter<IGameEvent>
     {
         public Action<IGameEvent> EmitEvent { get; set; }
 
@@ -17,7 +17,7 @@ namespace SharpRay
             rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
         }
 
-        public override void Render(double deltaTime)
+        public override void Update(double deltaTime)
         {
             current += deltaTime;
             if (current > rndInterval)

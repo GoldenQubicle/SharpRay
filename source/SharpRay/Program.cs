@@ -1,5 +1,6 @@
 ﻿using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
+using static SharpRay.SnakeConfig;
 using System.Reflection;
 using System.Numerics;
 using System;
@@ -36,7 +37,7 @@ namespace SharpRay
                     Text = "Start",
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
                 }
-            }, new Vector2(Width / 2 - 100, Height / 2 - 120)),
+            }, new Vector2(WindowWidth / 2 - 100, WindowHeight / 2 - 120)),
         };
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
@@ -44,9 +45,6 @@ namespace SharpRay
 
         private static readonly List<Action> EventActions = new();
         private static readonly Stopwatch sw = new();
-
-        private const int Width = 800;
-        private const int Height = 480;
 
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
 
@@ -57,7 +55,7 @@ namespace SharpRay
             InitAudioDevice();
             Audio.Initialize();
 
-            InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
+            InitWindow(WindowWidth, WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(1366, 712);
             SetBackGround();
 
@@ -70,8 +68,10 @@ namespace SharpRay
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
+
                 DoCollisions();
-                DoRender(delta);
+                DoUpdate(delta);
+                DoRender();
                 DoEventActions();
             }
 
@@ -101,7 +101,8 @@ namespace SharpRay
             foreach (var action in onEventActions) e.EmitEvent += action;
         }
 
-        private static void SetBackGround() => Entities.Insert(0, new ImageTexture(GenImageChecked(Width, Height, 20, 20, GOLD, ORANGE), DARKBROWN));
+        private static void SetBackGround() =>
+            Entities.Insert(0, new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, GOLD, ORANGE), DARKBROWN));
 
         private static long GetDeltaTime(ref long past)
         {
@@ -120,6 +121,9 @@ namespace SharpRay
                 var e1 = gameEntities[i];
                 if (e1 is IHasCollision cl1)
                 {
+                    //TODO change this for raycast collision
+                    //CheckCollisionRayBox() => it is even a thing!
+
                     for (var j = 0; j < gameEntities.Length; j++)
                     {
                         var e2 = gameEntities[j];
@@ -130,12 +134,17 @@ namespace SharpRay
             }
         }
 
-        private static void DoRender(double delta)
+        private static void DoUpdate(double deltaTime)
+        {
+            foreach (var e in Entities) e.Update(deltaTime);
+        }
+
+        private static void DoRender()
         {
             BeginDrawing();
             ClearBackground(GRAY);
 
-            foreach (var e in Entities) e.Render(delta);
+            foreach (var e in Entities) e.Render();
 
             EndDrawing();
         }
@@ -153,7 +162,6 @@ namespace SharpRay
 
         static Random rnd = new();
 
-
         private static void OnGameEvent(IGameEvent e)
         {
 
@@ -162,7 +170,6 @@ namespace SharpRay
                 EventActions.Add(() =>
                 {
                     Entities.Remove(f.FoodParticle);
-                    EntityEventInitialisation(f.NextSegment);
                     var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
                     Entities.Insert(idx, f.NextSegment);
                 });
@@ -177,8 +184,13 @@ namespace SharpRay
                 });
             }
 
-            if (e is SnakeCollideWithBody || e is SnakeCollideWithBounds)
+            if (e is SnakeGameOver go)
             {
+                EventActions.Add(() =>
+                {
+                    Entities.RemoveRange(2, Entities.Count - 2);
+                    Entities.OfType<UIEntityContainer>().First().Show();
+                });
                 // game over, update highscore, menu screen
             }
 
@@ -186,13 +198,13 @@ namespace SharpRay
             {
                 EventActions.Add(() =>
                 {
-                    var x = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Width);
-                    var y = MapRange(rnd.NextDouble(), 0d, 1d, 0d, Height);
+                    var x = MapRange(rnd.NextDouble(), 0d, 1d, 0d, WindowWidth);
+                    var y = MapRange(rnd.NextDouble(), 0d, 1d, 0d, WindowHeight);
                     var fp = new ParticleFood
                     {
                         Position = new Vector2((float)x, (float)y),
                         //Position = new Vector2(460, 200),
-                        Size = new Vector2(20, 20),
+                        Size = new Vector2(CellSize, CellSize),
                     };
                     EntityEventInitialisation(fp);
                     Entities.Insert(3, fp); // ensure rendering above background, ui & particlespawner
@@ -204,20 +216,18 @@ namespace SharpRay
         {
             if (e is SnakeGameStart)
             {
-                var head = new Head
+                var snake = new Snake(new Vector2(360, 200))
                 {
-                    Position = new Vector2(380, 200),
-                    Size = new Vector2(20, 20),
-                    Bounds = new Vector2(Width, Height),
+                    Bounds = new Vector2(WindowWidth, WindowHeight),
                     Direction = Direction.Right,
                     NextDirection = Direction.Right,
                 };
 
-                var spawner = new ParticleSpawner { Size = new Vector2(Width, Height) };
+                var spawner = new ParticleSpawner { Size = new Vector2(WindowWidth, WindowHeight) };
 
-                EntityEventInitialisation(head, spawner);
+                EntityEventInitialisation(snake, spawner);
                 Entities.Add(spawner);
-                Entities.Add(head);
+                Entities.Add(snake);
             }
         }
 

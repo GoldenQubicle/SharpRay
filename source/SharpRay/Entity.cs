@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Raylib_cs;
+using System.Numerics;
 
 namespace SharpRay
 {
@@ -17,7 +18,9 @@ namespace SharpRay
         /// Delta time is the interval since last render frame in ticks!
         /// </summary>
         /// <param name="deltaTime"></param>
-        public virtual void Render(double deltaTime) { }
+        public virtual void Render() { }
+
+        public virtual void Update(double deltaTime) { }
 
         public virtual void OnKeyBoardEvent(IKeyBoardEvent e) { }
 
