@@ -227,16 +227,17 @@ namespace SharpRay
                     Entities.Remove(f.FoodParticle);
                     var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
                     Entities.Insert(idx, f.NextSegment);
+                    EntityEventInitialisation(f.NextSegment);
                 });
             }
 
             if (e is SnakeConsumedPoop p)
             {
-                EventActions.Add(() =>
-                {
-                    Entities.Remove(p.GameEntity);
-                    // despawn segment, descrease score
-                });
+                //EventActions.Add(() =>
+                //{
+                //    Entities.Remove(p.PoopParticle);
+                //    Entities.Remove(p.Tail);
+                //});
             }
 
             if (e is SnakeGameOver go)
@@ -249,7 +250,7 @@ namespace SharpRay
                 });
             }
 
-            if (e is ParticleSpawn)
+            if (e is FoodParticleSpawn)
             {
                 EventActions.Add(() =>
                 {
@@ -265,27 +266,48 @@ namespace SharpRay
                     Entities.Insert(4, fp); // ensure rendering above background, uix2 & particlespawner
                 });
             }
+
+            if(e is PoopParticleSpawn ps)
+            {
+                EventActions.Add(() =>
+                {
+                    var pp = new ParticlePoop
+                    {
+                        Position = ps.GameEntity.Position,
+                        Size = new Vector2(CellSize, CellSize)
+                    };
+                    EntityEventInitialisation(pp);
+                    Entities.Insert(4, pp); // ensure rendering above background, uix2 & particlespawner
+                });
+            }
         }
 
         private static void OnUIEvent(IUIEvent e)
         {
             if (e is SnakeGameStart)
             {
-                var snake = new Snake(new Vector2(360, 200))
+                var x = 360;
+                var head = new Snake(new Vector2(x, 200))
                 {
                     Bounds = new Vector2(WindowWidth, WindowHeight),
                     Direction = Direction.Right,
                     NextDirection = Direction.Right,
                 };
+                //var neck = head.SetNext();
+                //var tail = neck.SetNext();
+                //head.Segments.Add(neck);
+                //head.Segments.Add(tail);
 
                 //bind to pass game over event to score label ui
-                snake.EmitEvent += Entities.OfType<UIEntityContainer>().First().Entities.OfType<IGameEventListener>().ToArray()[1].OnGameEvent; // hot damn this is ugly
+                head.EmitEvent += Entities.OfType<UIEntityContainer>().First().Entities.OfType<IGameEventListener>().ToArray()[1].OnGameEvent; // hot damn this is ugly
 
                 var spawner = new ParticleSpawner { Size = new Vector2(WindowWidth, WindowHeight) };
 
-                EntityEventInitialisation(snake, spawner);
+                EntityEventInitialisation(head,  spawner);
                 Entities.Add(spawner);
-                Entities.Add(snake);
+                Entities.Add(head);
+                //Entities.Add(neck);
+                //Entities.Add(tail);
             }
         }
 

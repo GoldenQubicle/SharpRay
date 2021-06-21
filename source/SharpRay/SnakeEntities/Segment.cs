@@ -1,5 +1,6 @@
 ﻿using Raylib_cs;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 using static SharpRay.SnakeConfig;
@@ -19,10 +20,12 @@ namespace SharpRay
         protected Segment Next { get; set; }
         protected Color Color { get; set; }
 
+
         private static double interval = LocomotionInterval * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
         private Direction previousDirection;
+        private bool isDigesting;
 
         public override void Update(double deltaTime)
         {
@@ -33,20 +36,37 @@ namespace SharpRay
                 current = 0d;
                 prevDistance = 0d;
                 IntervalElapsed = true;
+
+                if (isDigesting && Next is not null)
+                {
+                    Next.SetIsDigesting(true);
+                    isDigesting = false;
+                }
+                
+                if(isDigesting && Next is null)
+                {
+                    EmitEvent(new PoopParticleSpawn { GameEntity = this });
+                    isDigesting = false;
+                }
+                    
             }
 
             DoLocomotion();
-            
+
             //update position used by collider
             Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
+
         }
 
         public override void Render()
         {
-            DrawRectangleRounded(Collider, .35f, 1, Color.DARKPURPLE);
-            DrawRectangleRoundedLines(Collider, .35f, 1, 2, Color.PURPLE);
+            if (isDigesting)
+                Color = Color.BROWN;
+            else
+                Color = Color.DARKPURPLE;
 
-            DrawCircleV(Center, 2, Color.BLUE);
+            DrawRectangleRounded(Collider, .35f, 1, Color);
+            DrawRectangleRoundedLines(Collider, .35f, 1, 2, Color.PURPLE);
         }
 
         public Segment SetNext()
@@ -73,6 +93,8 @@ namespace SharpRay
             Next?.SetDirection(previousDirection);
             Direction = direction;
         }
+
+        public void SetIsDigesting(bool b) => isDigesting = b;
 
         private void DoLocomotion()
         {

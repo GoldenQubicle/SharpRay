@@ -8,7 +8,7 @@ namespace SharpRay
         public Color Color { get; init; }
         public override void Render()
         {
-            DrawRectangleRec(Collider, Color);
+            DrawRectangleRounded(Collider, .7f, 5, Color.DARKBROWN);
         }
     }
 }

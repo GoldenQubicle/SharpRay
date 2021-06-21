@@ -22,7 +22,7 @@ namespace SharpRay
             current += deltaTime;
             if (current > rndInterval)
             {
-                EmitEvent(new ParticleSpawn());
+                EmitEvent(new FoodParticleSpawn());
                 rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
                 //rndInterval = double.MaxValue;
                 current = 0d;

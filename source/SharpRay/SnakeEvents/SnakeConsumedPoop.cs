@@ -1,5 +1,9 @@
 ﻿namespace SharpRay
 {
-    public struct SnakeConsumedPoop : IGameEvent { public GameEntity GameEntity { get; init; } }
+    public struct SnakeConsumedPoop : IGameEvent 
+    { 
+        public Segment Tail { get; init; }
+        public ParticlePoop PoopParticle { get; init; }
+    }
 
 }

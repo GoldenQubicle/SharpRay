@@ -38,7 +38,7 @@ namespace SharpRay
 
     }
 
-    public abstract class GameEntity : Entity, IHasCollider
+    public abstract class GameEntity : Entity, IHasCollider, IEventEmitter<IGameEvent>
     {
         public Raylib_cs.Rectangle Collider
         {
@@ -50,5 +50,6 @@ namespace SharpRay
                 height = Size.Y
             };
         }
+        public Action<IGameEvent> EmitEvent { get; set; }
     }
 }

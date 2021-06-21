@@ -38,7 +38,7 @@ namespace SharpRay
                 };
 
             if (e is ParticlePoop p)
-                EmitEvent(new SnakeConsumedPoop { GameEntity = p });
+                EmitEvent(new SnakeConsumedPoop { PoopParticle = p });
 
             if (e is Segment s && Segments[1] != s) //ignore first segment collision due to locomotion
                 EmitEvent(new SnakeGameOver { Score = Segments.Count });
@@ -59,6 +59,7 @@ namespace SharpRay
                 {
                     EmitEvent(OnConsumedFood());
                     OnConsumedFood = null;
+                    Next.SetIsDigesting(true);
                 }
 
                 IntervalElapsed = false;
