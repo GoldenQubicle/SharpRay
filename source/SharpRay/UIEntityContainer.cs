@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
+using System;
 
 namespace SharpRay
 {
@@ -7,7 +8,7 @@ namespace SharpRay
     {
         public List<UIEntity> Entities { get; }
         public Vector2 Translate { get; }
-        public bool IsVisible { get; private set; } = true;
+        public bool IsVisible { get; set; } = true;
 
         public UIEntityContainer(List<UIEntity> entities, Vector2 translate)
         {
@@ -24,7 +25,7 @@ namespace SharpRay
         }
         public void Show() => IsVisible = true;
 
-        public override void Render( )
+        public override void Render()
         {
             if (IsVisible) foreach (var e in Entities) e.Render();
         }
@@ -41,14 +42,13 @@ namespace SharpRay
 
         public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
-            if (ke is KeyPressed p && p.Char == 'M') Show();
             if (IsVisible) foreach (var e in Entities) e.OnKeyBoardEvent(ke);
         }
 
-        public void OnUIEvent(IUIEvent e)
-        {
-            if (e is SnakeGameStart) Hide();
-        }
+        public Action<IUIEvent, Entity> OnUIEventAction { get; set; }
+
+        public void OnUIEvent(IUIEvent e) => OnUIEventAction?.Invoke(e, this);
+
     }
 }
 

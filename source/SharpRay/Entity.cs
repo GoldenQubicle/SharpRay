@@ -1,11 +1,21 @@
 ﻿using Raylib_cs;
+using System;
 using System.Numerics;
 
 namespace SharpRay
 {
     public interface IMouseListener { void OnMouseEvent(IMouseEvent e); }
     public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent e); }
-    public interface IUIEventListener { void OnUIEvent(IUIEvent e); }
+    public interface IUIEventListener
+    {
+        Action<IUIEvent, Entity> OnUIEventAction { get; set; }
+        void OnUIEvent(IUIEvent e);
+    }
+    public interface IGameEventListener
+    {
+        Action<IGameEvent, Entity> OnGameEventAction { get; set; }
+        void OnGameEvent(IGameEvent e);
+    }
     public interface IHasCollision { void OnCollision(GameEntity e); }
     public interface IHasCollider { public Raylib_cs.Rectangle Collider { get; } }
 

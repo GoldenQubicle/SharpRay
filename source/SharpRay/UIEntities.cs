@@ -12,7 +12,7 @@ namespace SharpRay
     {
         public Action<IUIEvent> EmitEvent { get; set; }
         public Func<UIEntity, IUIEvent> OnMouseLeftClick { get; set; }
-        
+
         public float Scale { get; set; } = 1f;
 
         public bool HasMouseFocus { get; set; }
@@ -38,13 +38,13 @@ namespace SharpRay
         }
     }
 
-    public class Label : UIEntity
+    public class Label : UIEntity, IGameEventListener
     {
-        public string Text { get; init; }
+        public Label() { }
+        public string Text { get; set; }
         public Font Font { get; init; }
         public Color TextColor { get; init; }
         public Color FillColor { get; set; }
-
         public Raylib_cs.Rectangle Rectangle
         {
             get => new Raylib_cs.Rectangle
@@ -65,6 +65,12 @@ namespace SharpRay
             DrawRectangleV(Position, Size, FillColor);
             DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
+
+
+        public Action<IGameEvent, Entity> OnGameEventAction { get; set; }
+        public void OnGameEvent(IGameEvent e) => OnGameEventAction?.Invoke(e, this);
+
+
     }
 
     public class Button : Label
@@ -176,7 +182,7 @@ namespace SharpRay
 
         public override void Update(double deltaTime)
         {
-            Text= OnUpdateText();
+            Text = OnUpdateText();
         }
 
         public override void Render()

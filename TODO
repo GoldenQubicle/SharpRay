@@ -44,9 +44,7 @@ Second MileStone (ideas):
       ✔ create snake controls @created(12-06-2021 10:56) @done(20-06-2021 14:08)
       ✔ create growing snake on food consumption @created(12-06-2021 10:56) @done(20-06-2021 14:08)
       ✔ create spawn food particles @created(12-06-2021 10:57) @done(20-06-2021 14:08)
-      ☐ create score system, e.g. particles eaten & time alive? @created(12-06-2021 10:58)
-      ☐ create win condition when snake fills entire play area @created(12-06-2021 10:59)
-
+      
       ☐ game over state @created(20-06-2021 14:08)
         ✔ create snake head collision with own body is game over @created(12-06-2021 10:56) @done(20-06-2021 16:01)
           see if adjusting the segment size to be smaller than the head resolved the issue of colliding with segments when the head
@@ -66,6 +64,10 @@ Second MileStone (ideas):
       ☐ start w 3 segment snake at the place as start button and spawn 1 food particle to the right @created(20-06-2021 14:27)
 
       ☐ start game on key enter press when menu / game over screen is showing @created(20-06-2021 16:17)
+
+      ☐ create score system, e.g. particles eaten & time alive? @created(12-06-2021 10:58)
+
+      ☐ create win condition when snake fills entire play area @created(12-06-2021 10:59)
 
 
 

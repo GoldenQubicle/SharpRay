@@ -19,6 +19,53 @@ namespace SharpRay
                 new Label
                 {
                     Position = new Vector2(),
+                    Size = new Vector2(WindowWidth / 3, WindowHeight / 3 * 2),
+                    Margins = new Vector2(20, 40),
+                    FillColor = DARKBROWN,
+                    TextColor = GOLD,
+                    FontSize = 70f,
+                    Text = "Game Over",
+                },
+                new Label
+                {
+                    Position = new Vector2(0, 200),
+                    Size = new Vector2(WindowWidth / 3, WindowHeight / 6),
+                    Margins = new Vector2(30, 35),
+                    FillColor = BLANK,
+                    TextColor = ORANGE,
+                    FontSize = 45,
+                    OnGameEventAction = (e, l) =>
+                    {
+                        if(e is SnakeGameOver go) (l as Label).Text = $"SCORE : {go.Score}";
+                    }
+                },
+                new Button
+                {
+                    Position = new Vector2(150, 120),
+                    Size = new Vector2(100, 100),
+                    Margins = new Vector2(12,  3),
+                    BaseColor = DARKBLUE,
+                    FocusColor = BLUE,
+                    TextColor = ORANGE,
+                    OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e },
+                    Text = "AGAIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+                    FontSize = 37,
+                }
+
+            }, new Vector2(WindowWidth / 2 - WindowWidth / 6, WindowHeight / 2 - WindowHeight / 3))
+            {
+                IsVisible = false,
+                OnUIEventAction = (e, c) =>
+                {
+                    if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
+                }
+            },
+            new UIEntityContainer(new List<UIEntity>
+            {
+
+                new Label
+                {
+                    Position = new Vector2(),
                     Size = new Vector2(200, 250),
                     Margins = new Vector2(25, 10),
                     FillColor = DARKBROWN,
@@ -37,7 +84,14 @@ namespace SharpRay
                     Text = "Start",
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
                 }
-            }, new Vector2(WindowWidth / 2 - 100, WindowHeight / 2 - 120)),
+            }, new Vector2(WindowWidth / 2 - 100, WindowHeight / 2 - 120))
+            {
+                IsVisible = true,
+                OnUIEventAction = (e, c) =>
+                {
+                    if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
+                }
+            },
         };
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
@@ -90,7 +144,11 @@ namespace SharpRay
 
                 if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
 
-                if (e is UIEntityContainer c) foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent, c.OnUIEvent);
+                if (e is UIEntityContainer c)
+                {
+
+                    foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent, c.OnUIEvent);
+                }
             }
         }
 
@@ -185,10 +243,10 @@ namespace SharpRay
             {
                 EventActions.Add(() =>
                 {
-                    Entities.RemoveRange(2, Entities.Count - 2);
-                    Entities.OfType<UIEntityContainer>().First().Show();
+                    var preceding = 3;//background, start & game over menu, don't want to remove those                   
+                    Entities.RemoveRange(preceding, Entities.Count - preceding);
+                    Entities.OfType<UIEntityContainer>().First().Show(); 
                 });
-                // game over, update highscore, menu screen
             }
 
             if (e is ParticleSpawn)
@@ -204,7 +262,7 @@ namespace SharpRay
                         Size = new Vector2(CellSize, CellSize),
                     };
                     EntityEventInitialisation(fp);
-                    Entities.Insert(3, fp); // ensure rendering above background, ui & particlespawner
+                    Entities.Insert(4, fp); // ensure rendering above background, uix2 & particlespawner
                 });
             }
         }
@@ -219,6 +277,9 @@ namespace SharpRay
                     Direction = Direction.Right,
                     NextDirection = Direction.Right,
                 };
+
+                //bind to pass game over event to score label ui
+                snake.EmitEvent += Entities.OfType<UIEntityContainer>().First().Entities.OfType<IGameEventListener>().ToArray()[1].OnGameEvent; // hot damn this is ugly
 
                 var spawner = new ParticleSpawner { Size = new Vector2(WindowWidth, WindowHeight) };
 
