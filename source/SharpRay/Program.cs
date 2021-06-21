@@ -233,11 +233,11 @@ namespace SharpRay
 
             if (e is SnakeConsumedPoop p)
             {
-                //EventActions.Add(() =>
-                //{
-                //    Entities.Remove(p.PoopParticle);
-                //    Entities.Remove(p.Tail);
-                //});
+                EventActions.Add(() =>
+                {
+                    Entities.Remove(p.PoopParticle);
+                    Entities.Remove(p.Tail);
+                });
             }
 
             if (e is SnakeGameOver go)
@@ -246,7 +246,7 @@ namespace SharpRay
                 {
                     var preceding = 3;//background, start & game over menu, don't want to remove those                   
                     Entities.RemoveRange(preceding, Entities.Count - preceding);
-                    Entities.OfType<UIEntityContainer>().First().Show(); 
+                    Entities.OfType<UIEntityContainer>().First().Show();
                 });
             }
 
@@ -267,7 +267,7 @@ namespace SharpRay
                 });
             }
 
-            if(e is PoopParticleSpawn ps)
+            if (e is PoopParticleSpawn ps)
             {
                 EventActions.Add(() =>
                 {
@@ -303,7 +303,7 @@ namespace SharpRay
 
                 var spawner = new ParticleSpawner { Size = new Vector2(WindowWidth, WindowHeight) };
 
-                EntityEventInitialisation(head,  spawner);
+                EntityEventInitialisation(head, spawner);
                 Entities.Add(spawner);
                 Entities.Add(head);
                 //Entities.Add(neck);

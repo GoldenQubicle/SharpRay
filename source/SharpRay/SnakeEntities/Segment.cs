@@ -25,7 +25,7 @@ namespace SharpRay
         private double current = 0d;
         private double prevDistance = 0f;
         private Direction previousDirection;
-        private bool isDigesting;
+        public bool isDigesting { get; private set; }
 
         public override void Update(double deltaTime)
         {

@@ -8,11 +8,12 @@ using static SharpRay.SnakeConfig;
 
 namespace SharpRay
 {
-    public class Snake : Segment, IHasCollision, IEventEmitter<IGameEvent>
+    public class Snake : Segment, IHasCollision
     {
-        public Action<IGameEvent> EmitEvent { get; set; }
+
         private List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
+        private Func<SnakeConsumedPoop> OnConsumedPoop { get; set; }
 
         public Snake(Vector2 position)
         {
@@ -38,7 +39,16 @@ namespace SharpRay
                 };
 
             if (e is ParticlePoop p)
-                EmitEvent(new SnakeConsumedPoop { PoopParticle = p });
+                OnConsumedPoop = () =>
+                {
+                    var tail = Segments.Last();
+                    Segments.Remove(tail);
+                    return new SnakeConsumedPoop
+                    {
+                        PoopParticle = p,
+                        Tail = tail
+                    };
+                };
 
             if (e is Segment s && Segments[1] != s) //ignore first segment collision due to locomotion
                 EmitEvent(new SnakeGameOver { Score = Segments.Count });
@@ -60,6 +70,12 @@ namespace SharpRay
                     EmitEvent(OnConsumedFood());
                     OnConsumedFood = null;
                     Next.SetIsDigesting(true);
+                }
+
+                if (OnConsumedPoop is not null)
+                {
+                    EmitEvent(OnConsumedPoop());
+                    OnConsumedPoop = null;
                 }
 
                 IntervalElapsed = false;

@@ -44,15 +44,15 @@ Second MileStone (ideas):
       ✔ create snake controls @created(12-06-2021 10:56) @done(20-06-2021 14:08)
       ✔ create growing snake on food consumption @created(12-06-2021 10:56) @done(20-06-2021 14:08)
       ✔ create spawn food particles @created(12-06-2021 10:57) @done(20-06-2021 14:08)
-      
-      ☐ game over state @created(20-06-2021 14:08)
+
+      ✔ game over state @created(20-06-2021 14:08) @done(21-06-2021 19:43)
         ✔ create snake head collision with own body is game over @created(12-06-2021 10:56) @done(20-06-2021 16:01)
           see if adjusting the segment size to be smaller than the head resolved the issue of colliding with segments when the head
           is parallel to the body due to locomotion
           if that doesn't solve it, guess implement ray collision
         ✔ adjust bounds, i.e. touching bounds in game over @created(12-06-2021 10:56) @done(20-06-2021 16:01)
         ✔ select game over sound @created(20-06-2021 14:14) @done(20-06-2021 16:01)
-        ☐ create game over menu screen @created(20-06-2021 14:14)
+        ✔ create game over menu screen @created(20-06-2021 14:14) @done(21-06-2021 19:43)
     
       ☐ create poop particles @created(20-06-2021 14:14)
         so I think this can be done rather nicely by passing down a 'isDigisting' boolean from head on food consumption, 
