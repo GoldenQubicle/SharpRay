@@ -273,7 +273,7 @@ namespace SharpRay
                 {
                     var pp = new ParticlePoop
                     {
-                        Position = ps.GameEntity.Position,
+                        Position = ps.Position,
                         Size = new Vector2(CellSize, CellSize)
                     };
                     EntityEventInitialisation(pp);
@@ -293,10 +293,10 @@ namespace SharpRay
                     Direction = Direction.Right,
                     NextDirection = Direction.Right,
                 };
-                //var neck = head.SetNext();
-                //var tail = neck.SetNext();
-                //head.Segments.Add(neck);
-                //head.Segments.Add(tail);
+                var neck = head.SetNext();
+                var tail = neck.SetNext();
+                head.Segments.Add(neck);
+                head.Segments.Add(tail);
 
                 //bind to pass game over event to score label ui
                 head.EmitEvent += Entities.OfType<UIEntityContainer>().First().Entities.OfType<IGameEventListener>().ToArray()[1].OnGameEvent; // hot damn this is ugly
@@ -306,8 +306,8 @@ namespace SharpRay
                 EntityEventInitialisation(head, spawner);
                 Entities.Add(spawner);
                 Entities.Add(head);
-                //Entities.Add(neck);
-                //Entities.Add(tail);
+                Entities.Add(neck);
+                Entities.Add(tail);
             }
         }
 

@@ -11,7 +11,7 @@ namespace SharpRay
     public class Snake : Segment, IHasCollision
     {
 
-        private List<Segment> Segments { get; } = new();
+        public List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
         private Func<SnakeConsumedPoop> OnConsumedPoop { get; set; }
 
@@ -57,7 +57,7 @@ namespace SharpRay
         public override void Update(double deltaTime)
         {
             base.Update(deltaTime);
-
+            
             if (IntervalElapsed)
             {
                 Next?.SetDirection(Direction);

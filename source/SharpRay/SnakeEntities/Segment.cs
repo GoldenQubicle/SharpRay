@@ -24,8 +24,7 @@ namespace SharpRay
         private static double interval = LocomotionInterval * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
-        private Direction previousDirection;
-        public bool isDigesting { get; private set; }
+        private bool isDigesting;
 
         public override void Update(double deltaTime)
         {
@@ -42,13 +41,12 @@ namespace SharpRay
                     Next.SetIsDigesting(true);
                     isDigesting = false;
                 }
-                
-                if(isDigesting && Next is null)
+
+                if (isDigesting && Next is null)
                 {
-                    EmitEvent(new PoopParticleSpawn { GameEntity = this });
+                    EmitEvent(new PoopParticleSpawn { Position = Position });
                     isDigesting = false;
                 }
-                    
             }
 
             DoLocomotion();
@@ -60,10 +58,7 @@ namespace SharpRay
 
         public override void Render()
         {
-            if (isDigesting)
-                Color = Color.BROWN;
-            else
-                Color = Color.DARKPURPLE;
+            Color = isDigesting ? Color.BROWN : Color.DARKPURPLE;
 
             DrawRectangleRounded(Collider, .35f, 1, Color);
             DrawRectangleRoundedLines(Collider, .35f, 1, 2, Color.PURPLE);
@@ -89,8 +84,7 @@ namespace SharpRay
 
         public void SetDirection(Direction direction)
         {
-            previousDirection = Direction;
-            Next?.SetDirection(previousDirection);
+            Next?.SetDirection(Direction);
             Direction = direction;
         }
 

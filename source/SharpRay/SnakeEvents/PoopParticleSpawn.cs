@@ -1,4 +1,9 @@
-﻿namespace SharpRay
+﻿using System.Numerics;
+
+namespace SharpRay
 {
-    public struct PoopParticleSpawn : IGameEvent { public GameEntity GameEntity { get; init; } }
+    public struct PoopParticleSpawn : IGameEvent 
+    { 
+        public Vector2 Position { get; init; }
+    }
 }
