@@ -44,7 +44,7 @@ namespace SharpRay
 
                 if (isDigesting && Next is null)
                 {
-                    EmitEvent(new PoopParticleSpawn { Position = Position });
+                    EmitEvent(new PoopParticleSpawn { Position = Center - new Vector2(CellSize, CellSize) / 2 });
                     isDigesting = false;
                 }
             }

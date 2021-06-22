@@ -159,7 +159,7 @@ namespace SharpRay
         }
 
         private static void SetBackGround() =>
-            Entities.Insert(0, new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, GOLD, ORANGE), DARKBROWN));
+            Entities.Insert(0, new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LIGHTGRAY, GRAY), DARKBLUE));
 
         private static long GetDeltaTime(ref long past)
         {
@@ -249,16 +249,13 @@ namespace SharpRay
                 });
             }
 
-            if (e is FoodParticleSpawn)
+            if (e is FoodParticleSpawn fs)
             {
                 EventActions.Add(() =>
                 {
-                    var x = MapRange(rnd.NextDouble(), 0d, 1d, 0d, WindowWidth);
-                    var y = MapRange(rnd.NextDouble(), 0d, 1d, 0d, WindowHeight);
                     var fp = new ParticleFood
                     {
-                        Position = new Vector2((float)x, (float)y),
-                        //Position = new Vector2(460, 200),
+                        Position = fs.Position,
                         Size = new Vector2(CellSize, CellSize),
                     };
                     EntityEventInitialisation(fp);
@@ -285,28 +282,37 @@ namespace SharpRay
         {
             if (e is SnakeGameStart)
             {
-                var x = 360;
-                var head = new Snake(new Vector2(x, 200))
+                var head = new Snake(new Vector2(360, 200))
                 {
                     Bounds = new Vector2(WindowWidth, WindowHeight),
                     Direction = Direction.Right,
                     NextDirection = Direction.Right,
                 };
+
+                var spawner = new FoodParticleSpawner
+                {
+                    Size = new Vector2(WindowWidth, WindowHeight)
+                };
+
+                EntityEventInitialisation(head, spawner);
+
+                spawner.Initialize(10); //set 1st random interval and food particles to start with 
+
+                //create 3 segment snake to start with bc 2 part snake doesn't collide with itself yet (due to locomotion)
                 var neck = head.SetNext();
                 var tail = neck.SetNext();
                 head.Segments.Add(neck);
                 head.Segments.Add(tail);
 
-                //bind to pass game over event to score label ui
+                //bind to pass game over event to score label ui, and spawner tracks particles itself
                 head.EmitEvent += Entities.OfType<UIEntityContainer>().First().Entities.OfType<IGameEventListener>().ToArray()[1].OnGameEvent; // hot damn this is ugly
+                head.EmitEvent += spawner.OnGameEvent;
 
-                var spawner = new ParticleSpawner { Size = new Vector2(WindowWidth, WindowHeight) };
-
-                EntityEventInitialisation(head, spawner);
+                //add it all to entities and note insertion order matters w regards to main loop. spawner first, head last!
                 Entities.Add(spawner);
                 Entities.Add(tail);
                 Entities.Add(neck);
-                Entities.Add(head); // insertion order matters, head goes last!
+                Entities.Add(head); 
 
             }
         }

@@ -54,20 +54,33 @@ Second MileStone (ideas):
         ✔ select game over sound @created(20-06-2021 14:14) @done(20-06-2021 16:01)
         ✔ create game over menu screen @created(20-06-2021 14:14) @done(21-06-2021 19:43)
     
-      ☐ create poop particles @created(20-06-2021 14:14)
+      ✔ create poop particles @created(20-06-2021 14:14) @done(22-06-2021 12:51)
         so I think this can be done rather nicely by passing down a 'isDigisting' boolean from head on food consumption, 
         and then render the segment differently. When the segment has no next, an event needs to be emitted.
         q: are poop particles on a timer? 
+      
+      ☐ poop spawn sound effect @created(22-06-2021 12:53)
 
-      ☐ particle spawn on grid, and preferable evenly spaced out. Also need some checking of poop particles @created(20-06-2021 14:28)
+      ✔ adjust poop particle locatation to use tail center!  @created(22-06-2021 16:31) @done(22-06-2021 16:37)
 
-      ☐ start w 3 segment snake at the place as start button and spawn 1 food particle to the right @created(20-06-2021 14:27)
+      ✔ particle spawn on grid, and preferable evenly spaced out. Also need some checking of poop particles @created(20-06-2021 14:28) @done(22-06-2021 17:28)
+
+      ✔ start w 3 segment snake at the place as start button  @created(20-06-2021 14:27) @done(22-06-2021 12:50)
+     
+      ✘ spawn 1 food particle to the right ? @created(22-06-2021 12:50) @cancelled(22-06-2021 17:28)
+        cancelled because just spawning a bunch at the start anyway
+
+      ☐ would it make more sense if the new segment is added once the food has been digested.. ? @created(22-06-2021 17:29)
+
+      ☐ create coherent color scheme @created(22-06-2021 12:51)
 
       ☐ start game on key enter press when menu / game over screen is showing @created(20-06-2021 16:17)
 
       ☐ create score system, e.g. particles eaten & time alive? @created(12-06-2021 10:58)
 
       ☐ create win condition when snake fills entire play area @created(12-06-2021 10:59)
+
+      ☐ tweak start screen @created(22-06-2021 17:34)
 
 
 

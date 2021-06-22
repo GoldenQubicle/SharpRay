@@ -9,6 +9,7 @@ namespace SharpRay
         public override void Render()
         {
             DrawRectangleRounded(Collider, .7f, 5, Color.DARKBROWN);
+            DrawRectangleRoundedLines(Collider, .7f, 5, 1, Color.BROWN);
         }
     }
 }

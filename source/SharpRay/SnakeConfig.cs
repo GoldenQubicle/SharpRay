@@ -13,7 +13,7 @@
         public const string FootStepSound = @"Fotstep_Carpet_Left.wav";
         public const string SnakeGrow = @"maximize_006.wav";
         public const string SnakeShrink = @"minimize_006.wav";
-        public const string FoodParticleSpawn = @"drop_004.wav";
+        public const string FoodSpawn = @"drop_004.wav";
         public const string GameOver = @"error_006.wav";
     }
 }
