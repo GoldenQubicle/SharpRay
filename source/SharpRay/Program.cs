@@ -115,7 +115,6 @@ namespace SharpRay
 
             sw.Start();
             var past = 0L;
-
             while (!WindowShouldClose())
             {
                 var delta = GetDeltaTime(ref past);
@@ -305,9 +304,10 @@ namespace SharpRay
 
                 EntityEventInitialisation(head, spawner);
                 Entities.Add(spawner);
-                Entities.Add(head);
-                Entities.Add(neck);
                 Entities.Add(tail);
+                Entities.Add(neck);
+                Entities.Add(head); // insertion order matters, head goes last!
+
             }
         }
 

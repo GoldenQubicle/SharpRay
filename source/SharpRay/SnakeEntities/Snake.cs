@@ -20,6 +20,7 @@ namespace SharpRay
             Position = position;
             Size = new Vector2(HeadSize, HeadSize);
             Segments.Add(this);
+
             Center = new Vector2(Position.X + CellSize / 2, Position.Y + CellSize / 2);
         }
 
@@ -57,7 +58,7 @@ namespace SharpRay
         public override void Update(double deltaTime)
         {
             base.Update(deltaTime);
-            
+
             if (IntervalElapsed)
             {
                 Next?.SetDirection(Direction);

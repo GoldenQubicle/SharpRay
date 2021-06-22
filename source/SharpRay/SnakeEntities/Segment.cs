@@ -24,7 +24,7 @@ namespace SharpRay
         private static double interval = LocomotionInterval * Program.TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
-        private bool isDigesting;
+        private bool isDigesting = false;
 
         public override void Update(double deltaTime)
         {
