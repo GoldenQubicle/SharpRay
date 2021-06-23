@@ -5,7 +5,6 @@ namespace SharpRay
 {
     public class ParticleFood : GameEntity
     {
-        public Color Color { get; init; }
         public override void Render()
         {
             DrawRectangleRec(Collider, Color.LIME);

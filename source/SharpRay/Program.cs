@@ -14,8 +14,7 @@ namespace SharpRay
     {
         public static List<Entity> Entities = new()
         {
-            new UIEntityContainer(new List<UIEntity>
-            {
+            UIEntityContainerBuilder.CreateNew(isVisible: false).AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
@@ -34,35 +33,33 @@ namespace SharpRay
                     FillColor = BLANK,
                     TextColor = ORANGE,
                     FontSize = 45,
-                    OnGameEventAction = (e, l) =>
-                    {
-                        if(e is SnakeGameOver go) (l as Label).Text = $"SCORE : {go.Score}";
-                    }
                 },
                 new Button
                 {
                     Position = new Vector2(150, 120),
                     Size = new Vector2(100, 100),
-                    Margins = new Vector2(12,  3),
+                    Margins = new Vector2(12, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = BLUE,
                     TextColor = ORANGE,
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e },
                     Text = "AGAIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
                     FontSize = 37,
-                }
-
-            }, new Vector2(WindowWidth / 2 - WindowWidth / 6, WindowHeight / 2 - WindowHeight / 3))
-            {
-                IsVisible = false,
-                OnUIEventAction = (e, c) =>
+                })
+            .Translate(new Vector2(WindowWidth / 2 - WindowWidth / 6, WindowHeight / 2 - WindowHeight / 3))
+            .SetOnUIEventAction((e, c) =>
                 {
                     if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
-                }
-            },
-            new UIEntityContainer(new List<UIEntity>
-            {
+                })
+            .SetOnGameEventAction((e, c) =>
+                {
+                    if (e is SnakeGameOver go)
+                    {
+                        ((c as UIEntityContainer).Entities[1] as Label).Text = $"SCORE : {go.Score}";
+                    }
+                }),
 
+            UIEntityContainerBuilder.CreateNew().AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
@@ -83,15 +80,12 @@ namespace SharpRay
                     TextColor = ORANGE,
                     Text = "Start",
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
-                }
-            }, new Vector2(WindowWidth / 2 - 100, WindowHeight / 2 - 120))
+                })
+            .Translate(new Vector2(WindowWidth / 2 - 100, WindowHeight / 2 - 120))
+            .SetOnUIEventAction((e, c) =>
             {
-                IsVisible = true,
-                OnUIEventAction = (e, c) =>
-                {
-                    if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
-                }
-            },
+                if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
+            })
         };
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
@@ -145,7 +139,6 @@ namespace SharpRay
 
                 if (e is UIEntityContainer c)
                 {
-
                     foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent, c.OnUIEvent);
                 }
             }
@@ -205,7 +198,7 @@ namespace SharpRay
 
         private static void DoEventActions()
         {
-            EventActions.ForEach(a => a());
+            foreach (var a in EventActions) a();
             EventActions.Clear();
         }
 
@@ -213,9 +206,6 @@ namespace SharpRay
 
 
         #region snak gam
-
-        static Random rnd = new();
-
         private static void OnGameEvent(IGameEvent e)
         {
 
@@ -304,19 +294,17 @@ namespace SharpRay
                 head.Segments.Add(neck);
                 head.Segments.Add(tail);
 
-                //bind to pass game over event to score label ui, and spawner tracks particles itself
-                head.EmitEvent += Entities.OfType<UIEntityContainer>().First().Entities.OfType<IGameEventListener>().ToArray()[1].OnGameEvent; // hot damn this is ugly
+                //binding in order to get game over event to game over screen, and spawner tracks particles itself
+                head.EmitEvent += Entities.OfType<UIEntityContainer>().First().OnGameEvent;
                 head.EmitEvent += spawner.OnGameEvent;
 
                 //add it all to entities and note insertion order matters w regards to main loop. spawner first, head last!
                 Entities.Add(spawner);
                 Entities.Add(tail);
                 Entities.Add(neck);
-                Entities.Add(head); 
-
+                Entities.Add(head);
             }
         }
-
         #endregion
     }
 }

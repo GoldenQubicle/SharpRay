@@ -5,7 +5,6 @@ namespace SharpRay
 {
     public class ParticlePoop : GameEntity
     {
-        public Color Color { get; init; }
         public override void Render()
         {
             DrawRectangleRounded(Collider, .7f, 5, Color.DARKBROWN);

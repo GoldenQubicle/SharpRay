@@ -38,7 +38,7 @@ namespace SharpRay
         }
     }
 
-    public class Label : UIEntity, IGameEventListener
+    public class Label : UIEntity
     {
         public Label() { }
         public string Text { get; set; }
@@ -65,12 +65,6 @@ namespace SharpRay
             DrawRectangleV(Position, Size, FillColor);
             DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
-
-
-        public Action<IGameEvent, Entity> OnGameEventAction { get; set; }
-        public void OnGameEvent(IGameEvent e) => OnGameEventAction?.Invoke(e, this);
-
-
     }
 
     public class Button : Label

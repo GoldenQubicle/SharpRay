@@ -12,14 +12,13 @@ namespace SharpRay
 
         private double rndInterval;
         private double current;
-        private Random Random = new Random();
-        private double min = 500d;
-        private double max = 750d;
-        private HashSet<Vector2> OccupiedCells = new();
+        private readonly Random Random = new ();
+
+        private readonly HashSet<Vector2> OccupiedCells = new();
     
         public void Initialize(int particles)
         {
-            rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
+            rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, MinFoodSpawnInterval, MaxFoodSpawnInterval) * Program.TickMultiplier;
             for (var i = 0; i < particles; i++)
                 EmitEvent(new FoodParticleSpawn { Position = GetNewFoodParticlePosition() });
         }
@@ -30,7 +29,7 @@ namespace SharpRay
             if (current > rndInterval)
             {
                 EmitEvent(new FoodParticleSpawn { Position = GetNewFoodParticlePosition() });
-                rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, min, max) * Program.TickMultiplier;
+                rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, MinFoodSpawnInterval, MaxFoodSpawnInterval) * Program.TickMultiplier;
                 current = 0d;
             }
         }

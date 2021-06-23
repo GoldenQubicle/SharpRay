@@ -17,13 +17,14 @@ namespace SharpRay
             Sounds.Add(typeof(SnakeConsumedFood), LoadSound(Path.Combine(Program.AssestsFolder, SnakeGrow)));
             Sounds.Add(typeof(SnakeConsumedPoop), LoadSound(Path.Combine(Program.AssestsFolder, SnakeShrink)));
             Sounds.Add(typeof(FoodParticleSpawn), LoadSound(Path.Combine(Program.AssestsFolder, FoodSpawn)));
+            Sounds.Add(typeof(PoopParticleSpawn), LoadSound(Path.Combine(Program.AssestsFolder, PoopSpawn)));
             Sounds.Add(typeof(SnakeGameOver), LoadSound(Path.Combine(Program.AssestsFolder, GameOver)));
 
             SetMasterVolume(0.15f);
         }
 
         public static void OnUIEvent(IUIEvent e) => PlaySound(Sounds[e.GetType()]);
-        public static void OnGameEvent(IGameEvent e) { }// => PlaySound(Sounds[e.GetType()]);
+        public static void OnGameEvent(IGameEvent e)  => PlaySound(Sounds[e.GetType()]);
 
     }
 }

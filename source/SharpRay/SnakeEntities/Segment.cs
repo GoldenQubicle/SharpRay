@@ -1,6 +1,5 @@
 ﻿using Raylib_cs;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 using static SharpRay.SnakeConfig;
@@ -19,7 +18,6 @@ namespace SharpRay
         protected Vector2 Center { get; set; }
         protected Segment Next { get; set; }
         protected Color Color { get; set; }
-
 
         private static double interval = LocomotionInterval * Program.TickMultiplier;
         private double current = 0d;
@@ -82,10 +80,10 @@ namespace SharpRay
             return Next;
         }
 
-        public void SetDirection(Direction direction)
+        public void SetDirection(Direction nextDirection)
         {
             Next?.SetDirection(Direction);
-            Direction = direction;
+            Direction = nextDirection;
         }
 
         public void SetIsDigesting(bool b) => isDigesting = b;

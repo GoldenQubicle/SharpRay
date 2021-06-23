@@ -4,19 +4,39 @@ using System;
 
 namespace SharpRay
 {
-    public class UIEntityContainer : Entity, IUIEventListener
+    public static class UIEntityContainerBuilder
     {
-        public List<UIEntity> Entities { get; }
-        public Vector2 Translate { get; }
-        public bool IsVisible { get; set; } = true;
+        public static UIEntityContainer CreateNew(bool isVisible = true) => new UIEntityContainer(isVisible);
 
-        public UIEntityContainer(List<UIEntity> entities, Vector2 translate)
+        public static UIEntityContainer AddChildren(this UIEntityContainer container, params UIEntity[] entities)
         {
-            Translate = translate;
-            Entities = entities;
-
-            foreach (var e in Entities) e.Position += Translate;
+            container.Entities.AddRange(entities);
+            return container;
         }
+
+        public static UIEntityContainer Translate(this UIEntityContainer container, Vector2 translate)
+        {
+            foreach (var e in container.Entities) e.Position += translate;
+            return container;
+        }
+
+        public static UIEntityContainer SetOnUIEventAction(this UIEntityContainer container, Action<IUIEvent, Entity> onUIEventAction)
+        {
+            container.OnUIEventAction += onUIEventAction;
+            return container;
+        }
+        public static UIEntityContainer SetOnGameEventAction(this UIEntityContainer container, Action<IGameEvent, Entity> onGameEventAction)
+        {
+            container.OnGameEventAction += onGameEventAction;
+            return container;
+        }
+    }
+
+    public class UIEntityContainer : Entity, IUIEventListener, IGameEventListener
+    {
+        public UIEntityContainer(bool isVisible = true) { IsVisible = isVisible; }
+        public List<UIEntity> Entities { get; } = new();
+        public bool IsVisible { get; private set; }
 
         public void Hide()
         {
@@ -49,6 +69,9 @@ namespace SharpRay
 
         public void OnUIEvent(IUIEvent e) => OnUIEventAction?.Invoke(e, this);
 
+        public Action<IGameEvent, Entity> OnGameEventAction { get; set; }
+
+        public void OnGameEvent(IGameEvent e) => OnGameEventAction?.Invoke(e, this);
     }
 }
 
