@@ -12,10 +12,10 @@ namespace SharpRay
 
         private double rndInterval;
         private double current;
-        private readonly Random Random = new ();
+        private readonly Random Random = new();
 
         private readonly HashSet<Vector2> OccupiedCells = new();
-    
+
         public void Initialize(int particles)
         {
             rndInterval = Program.MapRange(Random.NextDouble(), 0d, 1d, MinFoodSpawnInterval, MaxFoodSpawnInterval) * Program.TickMultiplier;
@@ -36,13 +36,13 @@ namespace SharpRay
 
         private Vector2 GetNewFoodParticlePosition()
         {
-            var x = GetRandomValue(0, (int)Size.X / CellSize) * CellSize;
-            var y = GetRandomValue(0, (int)Size.Y / CellSize) * CellSize;
+            var x = GetRandomValue(0, (int)Size.X / CellSize) * CellSize + (CellSize - FoodSize) / 2;
+            var y = GetRandomValue(0, (int)Size.Y / CellSize) * CellSize + (CellSize - FoodSize) / 2;
 
             while (OccupiedCells.Contains(new Vector2(x, y)))
             {
-                x = GetRandomValue(0, (int)Size.X / CellSize) * CellSize;
-                y = GetRandomValue(0, (int)Size.Y / CellSize) * CellSize;
+                x = GetRandomValue(0, (int)Size.X / CellSize) * CellSize + (CellSize - FoodSize) / 2;
+                y = GetRandomValue(0, (int)Size.Y / CellSize) * CellSize + (CellSize - FoodSize) / 2;
             }
             var pos = new Vector2(x, y);
             OccupiedCells.Add(pos);

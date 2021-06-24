@@ -7,8 +7,8 @@ namespace SharpRay
     {
         public override void Render()
         {
-            DrawRectangleRec(Collider, Color.LIME);
-            DrawRectangleLinesEx(Collider, 1, Color.GREEN);
+            DrawRectangleRounded(Collider, .5f, 1, Color.LIME);
+            DrawRectangleRoundedLines(Collider, .5f, 2, 1, Color.GREEN);
         }
     }
 }

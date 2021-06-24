@@ -18,35 +18,36 @@ namespace SharpRay
                 new Label
                 {
                     Position = new Vector2(),
-                    Size = new Vector2(WindowWidth / 3, WindowHeight / 3 * 2),
-                    Margins = new Vector2(20, 40),
+                    Size = new Vector2(320, WindowHeight),
+                    Margins = new Vector2(20, 20),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
-                    FontSize = 70f,
+                    FontSize = 90f,
                     Text = "Game Over",
                 },
                 new Label
                 {
-                    Position = new Vector2(0, 200),
-                    Size = new Vector2(WindowWidth / 3, WindowHeight / 6),
-                    Margins = new Vector2(30, 35),
-                    FillColor = BLANK,
-                    TextColor = ORANGE,
+                    Position = new Vector2(0, 300),
+                    Size = new Vector2(320, WindowHeight / 6),
+                    Margins = new Vector2(60, 20),
+                    FillColor = DARKPURPLE,
+                    TextColor = GOLD,
                     FontSize = 45,
+                    Text = "Score: 17"
                 },
                 new Button
                 {
-                    Position = new Vector2(150, 120),
-                    Size = new Vector2(100, 100),
+                    Position = new Vector2(200, 160),
+                    Size = new Vector2(80, 100),
                     Margins = new Vector2(12, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = BLUE,
                     TextColor = ORANGE,
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e },
-                    Text = "AGAIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+                    Text = "AGAIN!",
                     FontSize = 37,
                 })
-            .Translate(new Vector2(WindowWidth / 2 - WindowWidth / 6, WindowHeight / 2 - WindowHeight / 3))
+            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
             .SetOnUIEventAction((e, c) =>
                 {
                     if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
@@ -63,29 +64,30 @@ namespace SharpRay
                 new Label
                 {
                     Position = new Vector2(),
-                    Size = new Vector2(200, 250),
-                    Margins = new Vector2(25, 10),
+                    Size = new Vector2(320, WindowHeight),
+                    Margins = new Vector2(18, 40),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
-                    FontSize = 60f,
+                    FontSize = 110f,
                     Text = "Shitty Snake",
                 },
                 new Button
                 {
-                    Position = new Vector2(25, 80),
-                    Size = new Vector2(150, 20),
-                    Margins = new Vector2(50, 3),
+                    Position = new Vector2(120, 160),
+                    Size = new Vector2(120, 40),
+                    Margins = new Vector2(14, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = BLUE,
                     TextColor = ORANGE,
                     Text = "Start",
+                    FontSize = 37,
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
                 })
-            .Translate(new Vector2(WindowWidth / 2 - 100, WindowHeight / 2 - 120))
+            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
             .SetOnUIEventAction((e, c) =>
             {
                 if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
-            })
+            }),
         };
 
         public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
@@ -246,7 +248,7 @@ namespace SharpRay
                     var fp = new ParticleFood
                     {
                         Position = fs.Position,
-                        Size = new Vector2(CellSize, CellSize),
+                        Size = new Vector2(FoodSize, FoodSize),
                     };
                     EntityEventInitialisation(fp);
                     Entities.Insert(4, fp); // ensure rendering above background, uix2 & particlespawner
@@ -260,7 +262,7 @@ namespace SharpRay
                     var pp = new ParticlePoop
                     {
                         Position = ps.Position,
-                        Size = new Vector2(CellSize, CellSize)
+                        Size = new Vector2(PoopSize, PoopSize)
                     };
                     EntityEventInitialisation(pp);
                     Entities.Insert(4, pp); // ensure rendering above background, uix2 & particlespawner
@@ -272,7 +274,7 @@ namespace SharpRay
         {
             if (e is SnakeGameStart)
             {
-                var head = new Snake(new Vector2(360, 200))
+                var head = new Snake(new Vector2(440, 160))
                 {
                     Bounds = new Vector2(WindowWidth, WindowHeight),
                     Direction = Direction.Right,

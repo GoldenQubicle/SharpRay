@@ -63,6 +63,7 @@ namespace SharpRay
         public override void Render()
         {
             DrawRectangleV(Position, Size, FillColor);
+            DrawRectangleLines((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y, TextColor);
             DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }
