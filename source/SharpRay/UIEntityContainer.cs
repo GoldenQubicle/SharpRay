@@ -11,13 +11,10 @@ namespace SharpRay
 
         public static UIEntityContainer AddChildren(this UIEntityContainer container, params UIEntity[] entities)
         {
-            Program.EntityEventInitialisation(entities.Cast<Entity>().ToList());
-
-            foreach (var e in entities)
-                e.EmitEvent += container.OnUIEvent;
+            foreach(var e in entities)
+                Program.SetEmitEventActions(e, Program.OnUIEvent, Audio.OnUIEvent, container.OnUIEvent);
 
             container.Entities.AddRange(entities);
-
             return container;
         }
 

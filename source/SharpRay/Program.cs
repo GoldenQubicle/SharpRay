@@ -33,13 +33,12 @@ namespace SharpRay
                     FillColor = DARKPURPLE,
                     TextColor = YELLOW,
                     FontSize = 45,
-                    Text = "Score: 17"
                 },
                 new Button
                 {
                     Position = new Vector2(200, 160),
                     Size = new Vector2(80, 100),
-                    Margins = new Vector2(12, 3),
+                    Margins = new Vector2(10, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = BLUE,
                     TextColor = ORANGE,
@@ -55,9 +54,7 @@ namespace SharpRay
             .OnGameEvent((e, c) =>
                 {
                     if (e is SnakeGameOver go)
-                    {
                         (c.Entities[1] as Label).Text = $"SCORE : {go.Score}";
-                    }
                 }),
 
             UIEntityContainerBuilder.CreateNew().AddChildren(
@@ -117,7 +114,6 @@ namespace SharpRay
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
-
                 DoCollisions();
                 DoUpdate(delta);
                 DoRender();
@@ -130,21 +126,20 @@ namespace SharpRay
 
         #region engine stuff
 
-        public static void EntityEventInitialisation(List<Entity> entities)
+        private static void EntityEventInitialisation(List<Entity> entities)
         {
             foreach (var e in entities)
             {
                 if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
                 if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
-
                 if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
-                if (e is IEventEmitter<IUIEvent> uie) SetEmitEventActions(uie, OnUIEvent, Audio.OnUIEvent);
+                if (e is IEventEmitter<IUIEvent> eui) SetEmitEventActions(eui, OnUIEvent, Audio.OnUIEvent);
             }
         }
 
         private static void EntityEventInitialisation(params Entity[] entities) => EntityEventInitialisation(entities.ToList());
 
-        private static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent
+        public static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent
         {
             foreach (var action in onEventActions) e.EmitEvent += action;
         }
@@ -266,7 +261,7 @@ namespace SharpRay
             }
         }
 
-        private static void OnUIEvent(IUIEvent e)
+        public static void OnUIEvent(IUIEvent e)
         {
             if (e is SnakeGameStart)
             {
