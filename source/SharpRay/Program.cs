@@ -31,7 +31,7 @@ namespace SharpRay
                     Size = new Vector2(320, WindowHeight / 6),
                     Margins = new Vector2(60, 20),
                     FillColor = DARKPURPLE,
-                    TextColor = GOLD,
+                    TextColor = YELLOW,
                     FontSize = 45,
                     Text = "Score: 17"
                 },
@@ -48,15 +48,15 @@ namespace SharpRay
                     FontSize = 37,
                 })
             .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
-            .SetOnUIEventAction((e, c) =>
+            .OnUIEvent((e, c) =>
                 {
-                    if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
+                    if (e is SnakeGameStart) c.Hide();
                 })
-            .SetOnGameEventAction((e, c) =>
+            .OnGameEvent((e, c) =>
                 {
                     if (e is SnakeGameOver go)
                     {
-                        ((c as UIEntityContainer).Entities[1] as Label).Text = $"SCORE : {go.Score}";
+                        (c.Entities[1] as Label).Text = $"SCORE : {go.Score}";
                     }
                 }),
 
@@ -77,16 +77,16 @@ namespace SharpRay
                     Size = new Vector2(120, 40),
                     Margins = new Vector2(14, 3),
                     BaseColor = DARKBLUE,
-                    FocusColor = BLUE,
+                    FocusColor = MAGENTA,
                     TextColor = ORANGE,
                     Text = "Start",
                     FontSize = 37,
                     OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
                 })
             .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
-            .SetOnUIEventAction((e, c) =>
+            .OnUIEvent((e, c) =>
             {
-                if (e is SnakeGameStart) (c as UIEntityContainer).Hide();
+                if (e is SnakeGameStart) c.Hide();
             }),
         };
 
@@ -130,7 +130,7 @@ namespace SharpRay
 
         #region engine stuff
 
-        private static void EntityEventInitialisation(List<Entity> entities)
+        public static void EntityEventInitialisation(List<Entity> entities)
         {
             foreach (var e in entities)
             {
@@ -138,11 +138,7 @@ namespace SharpRay
                 if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
 
                 if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
-
-                if (e is UIEntityContainer c)
-                {
-                    foreach (var ce in c.Entities) SetEmitEventActions(ce, OnUIEvent, Audio.OnUIEvent, c.OnUIEvent);
-                }
+                if (e is IEventEmitter<IUIEvent> uie) SetEmitEventActions(uie, OnUIEvent, Audio.OnUIEvent);
             }
         }
 
@@ -216,18 +212,18 @@ namespace SharpRay
                 EventActions.Add(() =>
                 {
                     Entities.Remove(f.FoodParticle);
+
+                    EntityEventInitialisation(f.NextSegment);
                     var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
                     Entities.Insert(idx, f.NextSegment);
-                    EntityEventInitialisation(f.NextSegment);
                 });
             }
 
-            if (e is SnakeConsumedPoop p)
+            if (e is DespawnPoop p)
             {
                 EventActions.Add(() =>
                 {
                     Entities.Remove(p.PoopParticle);
-                    Entities.Remove(p.Tail);
                 });
             }
 
@@ -274,7 +270,7 @@ namespace SharpRay
         {
             if (e is SnakeGameStart)
             {
-                var head = new Snake(new Vector2(440, 160))
+                var head = new Snake(new Vector2(400, 160))
                 {
                     Bounds = new Vector2(WindowWidth, WindowHeight),
                     Direction = Direction.Right,
@@ -288,7 +284,7 @@ namespace SharpRay
 
                 EntityEventInitialisation(head, spawner);
 
-                spawner.Initialize(10); //set 1st random interval and food particles to start with 
+                spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
 
                 //create 3 segment snake to start with bc 2 part snake doesn't collide with itself yet (due to locomotion)
                 var neck = head.SetNext();
@@ -296,7 +292,7 @@ namespace SharpRay
                 head.Segments.Add(neck);
                 head.Segments.Add(tail);
 
-                //binding in order to get game over event to game over screen, and spawner tracks particles itself
+                //binding in order to get game over event to game over screen, and spawner tracks particles 
                 head.EmitEvent += Entities.OfType<UIEntityContainer>().First().OnGameEvent;
                 head.EmitEvent += spawner.OnGameEvent;
 

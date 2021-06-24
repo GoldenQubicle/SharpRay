@@ -10,10 +10,9 @@ namespace SharpRay
 {
     public class Snake : Segment, IHasCollision
     {
-
         public List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
-        private Func<SnakeConsumedPoop> OnConsumedPoop { get; set; }
+        private Func<DespawnPoop> OnConsumedPoop { get; set; }
 
         public Snake(Vector2 position)
         {
@@ -38,30 +37,15 @@ namespace SharpRay
                     };
                 };
 
-            if (e is ParticlePoop p)
-                OnConsumedPoop = () =>
-                {
-                    var tail = Segments.Last();
-                    Segments.Remove(tail);
-                    return new SnakeConsumedPoop
-                    {
-                        PoopParticle = p,
-                        Tail = tail
-                    };
-                };
-
-            if (e is Segment s && Segments[1] != s) //ignore first segment collision due to locomotion
+            //ignore first segment collision due to locomotion
+            if ((e is Segment s && Segments[1] != s) || e is ParticlePoop p)
                 EmitEvent(new SnakeGameOver { Score = Segments.Count });
+
         }
 
         public override void Update(double deltaTime)
         {
             base.Update(deltaTime);
-
-            if (Center.X > Bounds.X) Center = new Vector2(0, Center.Y);
-            if (Center.X < 0) Center = new Vector2(Bounds.X, Center.Y);
-            if (Center.Y > Bounds.Y) Center = new Vector2(Center.X, 0);
-            if (Center.Y < 0) Center = new Vector2(Center.X, Bounds.Y);
 
             if (IntervalElapsed)
             {

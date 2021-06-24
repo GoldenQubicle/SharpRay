@@ -6,7 +6,7 @@ using static Raylib_cs.Raylib;
 
 namespace SharpRay
 {
-    public class FoodParticleSpawner : Entity, IEventEmitter<IGameEvent>, IGameEventListener
+    public class FoodParticleSpawner : Entity, IEventEmitter<IGameEvent>, IGameEventListener<FoodParticleSpawner>
     {
         public Action<IGameEvent> EmitEvent { get; set; }
 
@@ -49,7 +49,7 @@ namespace SharpRay
             return pos;
         }
 
-        public Action<IGameEvent, Entity> OnGameEventAction { get; set; }
+        public Action<IGameEvent, FoodParticleSpawner> OnGameEventAction { get; set; }
 
         public void OnGameEvent(IGameEvent e)
         {
@@ -57,7 +57,7 @@ namespace SharpRay
 
             if (e is PoopParticleSpawn ps) OccupiedCells.Add(ps.Position);
 
-            if (e is SnakeConsumedPoop p) OccupiedCells.Remove(p.PoopParticle.Position);
+            if (e is DespawnPoop p) OccupiedCells.Remove(p.PoopParticle.Position);
         }
     }
 }

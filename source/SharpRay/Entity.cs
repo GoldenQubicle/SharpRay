@@ -6,14 +6,14 @@ namespace SharpRay
 {
     public interface IMouseListener { void OnMouseEvent(IMouseEvent e); }
     public interface IKeyBoardListener { void OnKeyBoardEvent(IKeyBoardEvent e); }
-    public interface IUIEventListener
+    public interface IUIEventListener<TEntity> where TEntity : Entity
     {
-        Action<IUIEvent, Entity> OnUIEventAction { get; set; }
+        Action<IUIEvent, TEntity> OnUIEventAction { get; set; }
         void OnUIEvent(IUIEvent e);
     }
-    public interface IGameEventListener
+    public interface IGameEventListener<TEntity> where TEntity : Entity
     {
-        Action<IGameEvent, Entity> OnGameEventAction { get; set; }
+        Action<IGameEvent, TEntity> OnGameEventAction { get; set; }
         void OnGameEvent(IGameEvent e);
     }
     public interface IHasCollision { void OnCollision(GameEntity e); }

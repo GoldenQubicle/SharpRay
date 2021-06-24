@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace SharpRay
 {
@@ -10,7 +11,13 @@ namespace SharpRay
 
         public static UIEntityContainer AddChildren(this UIEntityContainer container, params UIEntity[] entities)
         {
+            Program.EntityEventInitialisation(entities.Cast<Entity>().ToList());
+
+            foreach (var e in entities)
+                e.EmitEvent += container.OnUIEvent;
+
             container.Entities.AddRange(entities);
+
             return container;
         }
 
@@ -20,21 +27,21 @@ namespace SharpRay
             return container;
         }
 
-        public static UIEntityContainer SetOnUIEventAction(this UIEntityContainer container, Action<IUIEvent, Entity> onUIEventAction)
+        public static UIEntityContainer OnUIEvent(this UIEntityContainer container, Action<IUIEvent, UIEntityContainer> onUIEventAction)
         {
             container.OnUIEventAction += onUIEventAction;
             return container;
         }
-        public static UIEntityContainer SetOnGameEventAction(this UIEntityContainer container, Action<IGameEvent, Entity> onGameEventAction)
+        public static UIEntityContainer OnGameEvent(this UIEntityContainer container, Action<IGameEvent, UIEntityContainer> onGameEventAction)
         {
             container.OnGameEventAction += onGameEventAction;
             return container;
         }
     }
 
-    public class UIEntityContainer : Entity, IUIEventListener, IGameEventListener
+    public class UIEntityContainer : Entity, IUIEventListener<UIEntityContainer>, IGameEventListener<UIEntityContainer>
     {
-        public UIEntityContainer(bool isVisible = true) { IsVisible = isVisible; }
+        public UIEntityContainer(bool isVisible = true) => IsVisible = isVisible;
         public List<UIEntity> Entities { get; } = new();
         public bool IsVisible { get; private set; }
 
@@ -65,11 +72,11 @@ namespace SharpRay
             if (IsVisible) foreach (var e in Entities) e.OnKeyBoardEvent(ke);
         }
 
-        public Action<IUIEvent, Entity> OnUIEventAction { get; set; }
+        public Action<IUIEvent, UIEntityContainer> OnUIEventAction { get; set; }
 
         public void OnUIEvent(IUIEvent e) => OnUIEventAction?.Invoke(e, this);
 
-        public Action<IGameEvent, Entity> OnGameEventAction { get; set; }
+        public Action<IGameEvent, UIEntityContainer> OnGameEventAction { get; set; }
 
         public void OnGameEvent(IGameEvent e) => OnGameEventAction?.Invoke(e, this);
     }

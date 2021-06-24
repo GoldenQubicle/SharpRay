@@ -27,7 +27,6 @@ namespace SharpRay
         public override void Update(double deltaTime)
         {
             current += deltaTime;
-            
 
             if (current > interval)
             {
@@ -45,7 +44,7 @@ namespace SharpRay
                 {
                     EmitEvent(new PoopParticleSpawn
                     {
-                        Position = Center - new Vector2(CellSize-PoopSize, CellSize-PoopSize) / 2 
+                        Position = Center - new Vector2(CellSize - PoopSize, CellSize - PoopSize) / 2
                     });
                     isDigesting = false;
                 }
