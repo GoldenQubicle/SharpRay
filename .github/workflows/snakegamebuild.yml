@@ -33,7 +33,7 @@ jobs:
         with:
           tag: v1.0.0
           allowUpdates: true
-          artifacts: "out/*"
+          artifacts: "out/*/*"
           token: ${{ secrets.GITHUB_TOKEN }}
 #   release:
 #       runs-on: ubuntu-latest
