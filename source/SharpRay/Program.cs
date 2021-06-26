@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.IO;
+using Microsoft.VisualBasic;
 
 namespace SharpRay
 {
@@ -184,9 +185,7 @@ namespace SharpRay
         {
             BeginDrawing();
             ClearBackground(GRAY);
-
             foreach (var e in Entities) e.Render();
-
             EndDrawing();
         }
 
