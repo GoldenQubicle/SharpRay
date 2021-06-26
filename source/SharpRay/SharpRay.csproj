@@ -7,9 +7,10 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   
-  <PropertyGroup Condition= " '$(Configuration)' == 'Release' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputType>WinExe</OutputType>
     <AssemblyName>Shitty Snake</AssemblyName>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
