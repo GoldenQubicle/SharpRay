@@ -37,5 +37,6 @@ jobs:
         - uses : ncipollo/release-action@v1.8.6
           with:
             tag: v1.0.0
-            artifacts: "out/*"
+            allowUpdates: true
+            artifacts: "/out/*"
             token: ${{ secrets.GITHUB_TOKEN }}
