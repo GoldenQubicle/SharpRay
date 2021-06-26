@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
 
 namespace SharpRay
 {
@@ -87,7 +88,7 @@ namespace SharpRay
             }),
         };
 
-        public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
+        public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
         public const double TickMultiplier = 10000d;
 
         private static readonly List<Action> EventActions = new();
