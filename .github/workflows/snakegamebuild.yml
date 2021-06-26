@@ -1,25 +1,19 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
-
-# Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ SnakeGame ]
-
+    tags:
+    - '*'
   
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     strategy:
         matrix:
           versions: [ 'win-x86','win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
-    # The type of runner that the job will run on
+    
     runs-on: windows-latest
 
     steps:
@@ -31,17 +25,8 @@ jobs:
       - run: dotnet publish source/SharpRay/SharpRay.csproj -c Release -r ${{matrix.versions}} -o out/ -property:AssemblyName='Shitty Snake ${{matrix.versions}}'
       - uses : ncipollo/release-action@v1.8.6
         with:
-          tag: v1.0.0
+          # tag: v1.0.0
           allowUpdates: true
           artifacts: "out/*"
           token: ${{ secrets.GITHUB_TOKEN }}
-#   release:
-#       runs-on: ubuntu-latest
-#       needs: build
-#       steps:
-#         - uses : ncipollo/release-action@v1.8.6
-#           with:
-#             tag: v1.0.0
-#             allowUpdates: true
-#             artifacts: "out/win-x86/Shitty Snake.exe"
-#             token: ${{ secrets.GITHUB_TOKEN }}
+
