@@ -12,8 +12,7 @@ namespace SharpRay
     {
         public List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
-        private Func<DespawnPoop> OnConsumedPoop { get; set; }
-
+        
         public Snake(Vector2 position)
         {
             Position = position;
@@ -38,7 +37,7 @@ namespace SharpRay
                 };
 
             //ignore first segment collision due to locomotion
-            if ((e is Segment s && Segments[1] != s) || e is ParticlePoop p)
+            if ((e is Segment s && Segments[1] != s) || e is ParticlePoop)
                 EmitEvent(new SnakeGameOver { Score = Segments.Count });
 
         }
@@ -59,12 +58,6 @@ namespace SharpRay
                     EmitEvent(OnConsumedFood());
                     OnConsumedFood = null;
                     Next.SetIsDigesting(true);
-                }
-
-                if (OnConsumedPoop is not null)
-                {
-                    EmitEvent(OnConsumedPoop());
-                    OnConsumedPoop = null;
                 }
 
                 IntervalElapsed = false;
