@@ -24,7 +24,6 @@ jobs:
       - run: dotnet publish source/SharpRay/SharpRay.csproj -c Release -r ${{matrix.versions}} -o out/ -property:AssemblyName='Shitty Snake ${{matrix.versions}}'
       - uses : ncipollo/release-action@v1.8.6
         with:
-          tag: v1.0.0
           allowUpdates: true
           artifacts: "out/*"
           commit: "SnakeGame"
