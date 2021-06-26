@@ -38,5 +38,5 @@ jobs:
           with:
             tag: v1.0.0
             allowUpdates: true
-            artifacts: "/out/*"
+            artifacts: "out/win-x86/Shitty Snake.exe"
             token: ${{ secrets.GITHUB_TOKEN }}
