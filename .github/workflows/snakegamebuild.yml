@@ -18,7 +18,7 @@ jobs:
   build:
     strategy:
         matrix:
-          versions: [ 'win-x86','win-x64'] #, 'win-arm', 'win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
+          versions: [ 'win-x86','win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
     # The type of runner that the job will run on
     runs-on: windows-latest
 
