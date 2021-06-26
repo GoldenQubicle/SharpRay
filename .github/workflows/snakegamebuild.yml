@@ -18,7 +18,7 @@ jobs:
   build:
     strategy:
         matrix:
-          versions: [ 'win-x86'] #,'win-x64', 'win-arm', 'win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
+          versions: [ 'win-x86','win-x64'] #, 'win-arm', 'win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
     # The type of runner that the job will run on
     runs-on: windows-latest
 
@@ -33,7 +33,7 @@ jobs:
         with:
           tag: v1.0.0
           allowUpdates: true
-          artifacts: "out/win-x86/Shitty Snake.exe"
+          artifacts: "out/*"
           token: ${{ secrets.GITHUB_TOKEN }}
 #   release:
 #       runs-on: ubuntu-latest
