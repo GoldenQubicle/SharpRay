@@ -2,6 +2,8 @@ name: CI
 on:
   push:
     branches: [ SnakeGame ]
+    tags:
+    - '*'
 
   workflow_dispatch:
 
@@ -25,5 +27,6 @@ jobs:
           tag: v1.0.0
           allowUpdates: true
           artifacts: "out/*"
+          commit: "SnakeGame"
           token: ${{ secrets.GITHUB_TOKEN }}
 
