@@ -103,7 +103,7 @@ namespace SharpRay
             Audio.Initialize();
 
             InitWindow(WindowWidth, WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
-            SetWindowPosition(1366, 712);
+            SetWindowPosition(GetMonitorWidth(0)/2-WindowWidth/2, GetMonitorHeight(0)/2-WindowHeight/2);
             SetBackGround();
 
             sw.Start();
