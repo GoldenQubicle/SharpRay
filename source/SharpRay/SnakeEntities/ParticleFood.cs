@@ -2,6 +2,7 @@
 using System;
 using System.Numerics;
 using static Raylib_cs.Raylib;
+using static SharpRay.SnakeConfig;
 
 namespace SharpRay
 {
@@ -9,16 +10,14 @@ namespace SharpRay
     {
         private float prevDistance;
         private double current;
-        private double interval = 750 * Program.TickMultiplier;
+        private double interval = FoodSwayInterval * Program.TickMultiplier;
 
         public override void Update(double deltaTime)
         {
             current += deltaTime;
 
             if (current > interval)
-            {
                 current = 0d;
-            }
 
             var t = Program.MapRange(current, 0d, interval, 0d, Math.Tau);
             var e = MathF.Sin((float)t) * 5;

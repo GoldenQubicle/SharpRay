@@ -21,7 +21,7 @@ namespace SharpRay
             }
 
             var t = Program.MapRange(current, 0d, interval, 1d, 0d);
-            alpha = Easings.EaseBounceInOut((float)t, 0f, 20f, 1f);
+            alpha = Easings.EaseBounceInOut((float)t, 0f, 37f, 1f);
         }
 
         public override void Render()

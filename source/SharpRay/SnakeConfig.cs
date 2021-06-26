@@ -9,11 +9,12 @@
         public const int SegmentSize = 55;
         public const int FoodSize = 45;
         public const int PoopSize = 40;
-        public const int FoodParticleStart = 15;
+        public const int FoodParticleStart = 14;
         public const int LocomotionInterval= 550;
         public const double MinFoodSpawnInterval = 1000d;
         public const double MaxFoodSpawnInterval = 2500d;
         public const double PoopDespawnInterval = 10000d;
+        public const double FoodSwayInterval = 1250d;
         public const int StartMenuWidth = 300;
         public const string ButtonPushSound = @"Tiny Button Push-SoundBible.com-513260752.wav";
         public const string FootStepSound = @"Fotstep_Carpet_Left.wav";
