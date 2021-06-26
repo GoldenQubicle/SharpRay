@@ -28,7 +28,7 @@ jobs:
         with:        
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: dotnet publish source/SharpRay/SharpRay.csproj -c Release -r ${{matrix.versions}} -o out/ -property:AssemblyName="Shitty Snake ${{matrix.versions}}"
+      - run: dotnet publish source/SharpRay/SharpRay.csproj -c Release -r ${{matrix.versions}} -o out/ -property:AssemblyName='Shitty Snake ${{matrix.versions}}'
       - uses : ncipollo/release-action@v1.8.6
         with:
           tag: v1.0.0
