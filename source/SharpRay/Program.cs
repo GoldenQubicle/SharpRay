@@ -1,125 +1,123 @@
 ﻿using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
+using static SharpRay.SnakeConfig;
 using System.Reflection;
 using System.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
 
 namespace SharpRay
 {
     class Program
     {
-        private const int Width = 800;
-        private const int Height = 480;
-
         public static List<Entity> Entities = new()
         {
-            new Player
+            UIEntityContainerBuilder.CreateNew(isVisible: false).AddChildren(
+                new Label
+                {
+                    Position = new Vector2(),
+                    Size = new Vector2(320, WindowHeight),
+                    Margins = new Vector2(20, 20),
+                    FillColor = DARKBROWN,
+                    TextColor = GOLD,
+                    FontSize = 90f,
+                    Text = "Game Over",
+                },
+                new Label
+                {
+                    Position = new Vector2(0, 300),
+                    Size = new Vector2(320, WindowHeight / 6),
+                    Margins = new Vector2(60, 20),
+                    FillColor = DARKPURPLE,
+                    TextColor = YELLOW,
+                    FontSize = 45,
+                },
+                new Button
+                {
+                    Position = new Vector2(200, 160),
+                    Size = new Vector2(80, 100),
+                    Margins = new Vector2(10, 3),
+                    BaseColor = DARKBLUE,
+                    FocusColor = BLUE,
+                    TextColor = ORANGE,
+                    OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e },
+                    Text = "AGAIN!",
+                    FontSize = 37,
+                })
+            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
+            .OnUIEvent((e, c) =>
+                {
+                    if (e is SnakeGameStart) c.Hide();
+                })
+            .OnGameEvent((e, c) =>
+                {
+                    if (e is SnakeGameOver go)
+                        (c.Entities[1] as Label).Text = $"SCORE : {go.Score}";
+                }),
+
+            UIEntityContainerBuilder.CreateNew().AddChildren(
+                new Label
+                {
+                    Position = new Vector2(),
+                    Size = new Vector2(320, WindowHeight),
+                    Margins = new Vector2(18, 40),
+                    FillColor = DARKBROWN,
+                    TextColor = GOLD,
+                    FontSize = 110f,
+                    Text = "Shitty Snake",
+                },
+                new Button
+                {
+                    Position = new Vector2(120, 160),
+                    Size = new Vector2(120, 40),
+                    Margins = new Vector2(14, 3),
+                    BaseColor = DARKBLUE,
+                    FocusColor = MAGENTA,
+                    TextColor = ORANGE,
+                    Text = "Start",
+                    FontSize = 37,
+                    OnMouseLeftClick = e => new SnakeGameStart { UIComponent = e }
+                })
+            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
+            .OnUIEvent((e, c) =>
             {
-                Position = new Vector2(300, 200),
-                Size = new Vector2(20, 20),
-                Bounds = new Vector2(Width, Height)
-            },
-            new FoodParticle
-            {
-                Position = new Vector2(Width / 2, Height / 2),
-                Size = new Vector2(15, 15),
-                Color = GREEN
-            },
-            new PoisonParticle
-            {
-                Position = new Vector2(100, 100),
-                Size = new Vector2(15, 15),
-                Color = RED
-            },
-            new Circle
-            {
-                Position = new Vector2(Width / 2, Height / 2),
-                BaseColor = RED,
-                Radius = 50f,
-                OnRightMouseClick = e => Console.WriteLine("")
-            },
-            new Circle
-            {
-                Position = new Vector2(150, 150),
-                BaseColor = YELLOW,
-                Radius = 15f,
-            },
-            new Rectangle
-            {
-                Position = new Vector2(200, 300),
-                BaseColor = GREEN,
-                Size = new Vector2(20, 20),
-                OnMouseLeftClick = r => new RectangleLeftClick { UIComponent = r }
-            },
-            //new Polygon
-            //{
-            //    Position = new Vector2(Width / 2, Height / 2),
-            //    BaseColor = BLUE,
-            //    TextCoords = Array.Empty<Vector2>(),
-            //    Points = new Vector2[]
-            //        {
-            //            new Vector2(0, 50),
-            //            new Vector2(50, 50),
-            //            new Vector2(50, 0),
-            //        },
-            //},
-            new ToggleButton
-            {
-                Position = new Vector2(Width - 150, 5),
-                Size = new Vector2(100, 25),
-                BaseColor = BEIGE,
-                OnDrawText = () => ToggleButtonStopwatch.Elapsed.ToString("hh':'mm':'ss"),
-                OnMouseLeftClick = tb => new ToggleTimer { UIComponent = tb, IsPaused = !(tb as ToggleButton).IsToggled }
-            }
+                if (e is SnakeGameStart) c.Hide();
+            }),
         };
 
-        private static Stopwatch ToggleButtonStopwatch = new();
-
-        public const string AssestsFolder = @"C:\Users\Erik\source\repos\SharpRayEngine\assests";
+        public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
         public const double TickMultiplier = 10000d;
-        private static readonly Stack<IHasUndoRedo> UndoStack = new();
-        private static readonly Stack<IHasUndoRedo> RedoStack = new();
+
         private static readonly List<Action> EventActions = new();
-        
+        private static readonly Stopwatch sw = new();
+
+        public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
+
         static void Main(string[] args)
         {
-            Mouse.EmitEvent += OnMouseEvent;
-            KeyBoard.EmitEvent += OnKeyBoardEvent;
-
-            foreach (var e in Entities)
-            {
-                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
-                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
-                if (e is IEventEmitter<IUIEvent> ui) ui.EmitEvent += OnUIEvent;
-                if (e is IEventEmitter<IAudioEvent> au) au.EmitEvent += Audio.OnAudioEvent;
-                if (e is IEventEmitter<IPlayerEvent> pe) pe.EmitEvent += OnPlayerEvent;
-            }
-
-            var gameEntities = Entities.OfType<GameEntity>().ToArray();
+            EntityEventInitialisation(Entities);
 
             InitAudioDevice();
             Audio.Initialize();
-            SetTargetFPS(60);
-            InitWindow(Width, Height, Assembly.GetEntryAssembly().GetName().Name);
-            SetWindowPosition(1366, 712);
 
-            var sw = new Stopwatch();
+            InitWindow(WindowWidth, WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
+            SetWindowPosition(GetMonitorWidth(0)/2-WindowWidth/2, GetMonitorHeight(0)/2-WindowHeight/2);
+            SetBackGround();
+
             sw.Start();
-            var past = sw.ElapsedTicks;
-
+            var past = 0L;
             while (!WindowShouldClose())
             {
-                var now = sw.ElapsedTicks;
-                var delta = now - past; 
-                past = now;
+                var delta = GetDeltaTime(ref past);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
-                DoCollisions(gameEntities);
-                DoRender(delta);
+                DoCollisions();
+                DoUpdate(delta);
+                DoRender();
                 DoEventActions();
             }
 
@@ -127,20 +125,47 @@ namespace SharpRay
             CloseWindow();
         }
 
-        public static double MapRange(double s, double a1, double a2, double b1, double b2) 
+        #region engine stuff
+
+        private static void EntityEventInitialisation(List<Entity> entities)
         {
-            return b1 + ((s - a1) * (b2 - b1)) / (a2 - a1);
+            foreach (var e in entities)
+            {
+                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
+                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
+                if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
+                if (e is IEventEmitter<IUIEvent> eui) SetEmitEventActions(eui, OnUIEvent, Audio.OnUIEvent);
+            }
         }
 
-        private static void DoCollisions(GameEntity[] gameEntities)
+        private static void EntityEventInitialisation(params Entity[] entities) => EntityEventInitialisation(entities.ToList());
+
+        public static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent
         {
-            var geLength = gameEntities.Length;
-            for (var i = 0; i < geLength; i++)
+            foreach (var action in onEventActions) e.EmitEvent += action;
+        }
+
+        private static void SetBackGround() =>
+            Entities.Insert(0, new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LIGHTGRAY, GRAY), DARKBLUE));
+
+        private static long GetDeltaTime(ref long past)
+        {
+            var now = sw.ElapsedTicks;
+            var delta = now - past;
+            past = now;
+            return delta;
+        }
+
+        private static void DoCollisions()
+        {
+            var gameEntities = Entities.OfType<GameEntity>().ToArray();
+
+            for (var i = 0; i < gameEntities.Length; i++)
             {
                 var e1 = gameEntities[i];
                 if (e1 is IHasCollision cl1)
                 {
-                    for (var j = 0; j < geLength; j++)
+                    for (var j = 0; j < gameEntities.Length; j++)
                     {
                         var e2 = gameEntities[j];
                         if (e1 != e2 && CheckCollisionRecs(e1.Collider, e2.Collider))
@@ -150,67 +175,128 @@ namespace SharpRay
             }
         }
 
-        private static void OnPlayerEvent(IPlayerEvent e)
+        private static void DoUpdate(double deltaTime)
         {
-            if (e is PlayerConsumedParticle cp)
-                EventActions.Add(() => Entities.Remove(cp.GameEntity));
+            foreach (var e in Entities) e.Update(deltaTime);
         }
 
-        private static void OnUIEvent(IUIEvent e)
+        private static void DoRender()
         {
-            if (e is IHasUndoRedo ur) 
-                UndoStack.Push(ur);
-
-            if (e is DeleteEdit edit)
-                EventActions.Add(() => Entities.Remove(edit.UIComponent));
-
-            if (e is ToggleTimer t)
-            {
-                if (!t.IsPaused) ToggleButtonStopwatch.Start();
-                if (t.IsPaused) ToggleButtonStopwatch.Stop();
-            }
-
-            if (e is RectangleLeftClick)
-                Console.WriteLine(e.UIComponent.GetType().Name);
+            BeginDrawing();
+            ClearBackground(GRAY);
+            foreach (var e in Entities) e.Render();
+            EndDrawing();
         }
 
         private static void DoEventActions()
         {
-            EventActions.ForEach(a => a());
+            foreach (var a in EventActions) a();
             EventActions.Clear();
         }
 
-        private static void OnKeyBoardEvent(IKeyBoardEvent kbe)
+        #endregion
+
+
+        #region snak gam
+        private static void OnGameEvent(IGameEvent e)
         {
-            if (kbe is KeyUndo && UndoStack.Count > 0)
+
+            if (e is SnakeConsumedFood f)
             {
-                var edit = UndoStack.Pop();
-                edit.Undo();
-                RedoStack.Push(edit);
+                EventActions.Add(() =>
+                {
+                    Entities.Remove(f.FoodParticle);
+
+                    EntityEventInitialisation(f.NextSegment);
+                    var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
+                    Entities.Insert(idx, f.NextSegment);
+                });
             }
 
-            if (kbe is KeyRedo && RedoStack.Count > 0)
+            if (e is DespawnPoop p)
             {
-                var edit = RedoStack.Pop();
-                edit.Redo();
-                UndoStack.Push(edit);
+                EventActions.Add(() =>
+                {
+                    Entities.Remove(p.PoopParticle);
+                });
+            }
+
+            if (e is SnakeGameOver go)
+            {
+                EventActions.Add(() =>
+                {
+                    var preceding = 3;//background, start & game over menu, don't want to remove those                   
+                    Entities.RemoveRange(preceding, Entities.Count - preceding);
+                    Entities.OfType<UIEntityContainer>().First().Show();
+                });
+            }
+
+            if (e is FoodParticleSpawn fs)
+            {
+                EventActions.Add(() =>
+                {
+                    var fp = new ParticleFood
+                    {
+                        Position = fs.Position,
+                        Size = new Vector2(FoodSize, FoodSize),
+                    };
+                    EntityEventInitialisation(fp);
+                    Entities.Insert(4, fp); // ensure rendering above background, uix2 & particlespawner
+                });
+            }
+
+            if (e is PoopParticleSpawn ps)
+            {
+                EventActions.Add(() =>
+                {
+                    var pp = new ParticlePoop
+                    {
+                        Position = ps.Position,
+                        Size = new Vector2(PoopSize, PoopSize)
+                    };
+                    EntityEventInitialisation(pp);
+                    Entities.Insert(4, pp); // ensure rendering above background, uix2 & particlespawner
+                });
             }
         }
 
-        private static void OnMouseEvent(IMouseEvent me)
+        public static void OnUIEvent(IUIEvent e)
         {
+            if (e is SnakeGameStart)
+            {
+                var head = new Snake(new Vector2(400, 160))
+                {
+                    Bounds = new Vector2(WindowWidth, WindowHeight),
+                    Direction = Direction.Right,
+                    NextDirection = Direction.Right,
+                };
 
+                var spawner = new FoodParticleSpawner
+                {
+                    Size = new Vector2(WindowWidth, WindowHeight)
+                };
+
+                EntityEventInitialisation(head, spawner);
+
+                spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
+
+                //create 3 segment snake to start with bc 2 part snake doesn't collide with itself yet (due to locomotion)
+                var neck = head.SetNext();
+                var tail = neck.SetNext();
+                head.Segments.Add(neck);
+                head.Segments.Add(tail);
+
+                //binding in order to get game over event to game over screen, and spawner tracks particles 
+                head.EmitEvent += Entities.OfType<UIEntityContainer>().First().OnGameEvent;
+                head.EmitEvent += spawner.OnGameEvent;
+
+                //add it all to entities and note insertion order matters w regards to main loop. spawner first, head last!
+                Entities.Add(spawner);
+                Entities.Add(tail);
+                Entities.Add(neck);
+                Entities.Add(head);
+            }
         }
-
-        private static void DoRender(double delta)
-        {
-            BeginDrawing();
-            ClearBackground(GRAY);
-
-            foreach (var e in Entities)
-                e.Render(delta);
-
-            EndDrawing();
-        }
+        #endregion
     }
 }

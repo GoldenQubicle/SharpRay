@@ -10,5 +10,8 @@ x64/
 [Bb]in/
 [Oo]bj/
 
+out/
+
 .vscode/
 .vs/
+*.editorconfig

@@ -13,6 +13,6 @@ namespace SharpRay
 
     public interface IUIEvent : IEvent { UIEntity UIComponent { get; init; } }
 
-    public interface IAudioEvent : IEvent { }
- 
+    public interface IGameEvent : IEvent { }
+
 }

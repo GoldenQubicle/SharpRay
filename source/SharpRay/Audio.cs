@@ -1,23 +1,31 @@
-﻿using System;
+﻿using Raylib_cs;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using static Raylib_cs.Raylib;
+using static SharpRay.SnakeConfig;
 
 namespace SharpRay
 {
- 
-
     public static class Audio
     {
-        private const string ButtonPushSound = @"Tiny Button Push-SoundBible.com-513260752.wav";
-        
-        private static Dictionary<Type, Raylib_cs.Sound> Sounds = new();
+        private static Dictionary<Type, Sound> Sounds = new();
 
         public static void Initialize()
         {
-            Sounds.Add(typeof(AudioToggleTimerClicked), LoadSound(Path.Combine(Program.AssestsFolder, ButtonPushSound)));
+            Sounds.Add(typeof(SnakeGameStart), LoadSound(Path.Combine(Program.AssestsFolder, ButtonPushSound)));
+            Sounds.Add(typeof(SnakeLocomotion), LoadSound(Path.Combine(Program.AssestsFolder, FootStepSound)));
+            Sounds.Add(typeof(SnakeConsumedFood), LoadSound(Path.Combine(Program.AssestsFolder, SnakeGrow)));
+            Sounds.Add(typeof(DespawnPoop), LoadSound(Path.Combine(Program.AssestsFolder, PoopDespawn)));
+            Sounds.Add(typeof(FoodParticleSpawn), LoadSound(Path.Combine(Program.AssestsFolder, FoodSpawn)));
+            Sounds.Add(typeof(PoopParticleSpawn), LoadSound(Path.Combine(Program.AssestsFolder, SnakeShrink)));
+            Sounds.Add(typeof(SnakeGameOver), LoadSound(Path.Combine(Program.AssestsFolder, GameOver)));
+
+            SetMasterVolume(0.15f);
         }
-               
-        public static void OnAudioEvent(IAudioEvent e) => PlaySound(Sounds[e.GetType()]);
+
+        public static void OnUIEvent(IUIEvent e) => PlaySound(Sounds[e.GetType()]);
+        public static void OnGameEvent(IGameEvent e)  => PlaySound(Sounds[e.GetType()]);
+
     }
 }
