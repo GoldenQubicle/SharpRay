@@ -19,8 +19,4 @@
   <ItemGroup>
     <PackageReference Include="Raylib-cs" Version="3.7.0" />
   </ItemGroup>
- 
-  <ItemGroup>
-    <Content Include="assests\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="false" />
-  </ItemGroup>
 </Project>
