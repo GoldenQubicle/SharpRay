@@ -24,14 +24,13 @@ namespace SharpRay
                 EmitEvent?.Invoke(new KeyLeft());
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Z))
-                EmitEvent(new KeyUndo());
+                EmitEvent?.Invoke(new KeyUndo());
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
-                EmitEvent(new KeyRedo());
-
+                EmitEvent?.Invoke(new KeyRedo());
 
             if (IsKeyDown(KeyboardKey.KEY_DELETE))
-                EmitEvent(new KeyDelete());
+                EmitEvent?.Invoke(new KeyDelete());
         }
     }
 }

@@ -39,6 +39,7 @@ namespace SharpRay
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
             EntityEventInitialisation(Entities);
+
             InitAudioDevice();
             Audio.Initialize();
             
