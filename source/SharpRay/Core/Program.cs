@@ -134,7 +134,6 @@ namespace SharpRay
         public static void OnGameEvent(IGameEvent e)
         {
 
-
         }
 
         public static void OnUIEvent(IUIEvent e)
