@@ -16,17 +16,17 @@ namespace SharpRay
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
         public const double TickMultiplier = 10000d;
 
+        private static readonly Stack<IHasUndoRedo> UndoStack = new();
+        private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> EventActions = new();
         private static readonly Stopwatch sw = new();
-        private static List<Entity> Entities => new()
+        private static List<Entity> Entities = new()
         {
-            new Polygon
+            new Polygon(5, 25f)
             {
                 Position = new Vector2(WindowWidth / 2, WindowHeight / 2),
                 ColorDefault = DARKPURPLE,
                 ColorFocused = PURPLE,
-                TextCoords = Array.Empty<Vector2>(),
-                Points = Polygon.CreatePoints(6, 100),
                 OnMouseLeftClick = e => new UIEvent { UIComponent = e }
             },
         };
@@ -35,6 +35,9 @@ namespace SharpRay
 
         static void Main(string[] args)
         {
+            Mouse.EmitEvent += OnMouseEvent;
+            KeyBoard.EmitEvent += OnKeyBoardEvent;
+
             EntityEventInitialisation(Entities);
             InitAudioDevice();
             Audio.Initialize();
@@ -90,7 +93,7 @@ namespace SharpRay
         private static void DoCollisions()
         {
             var gameEntities = Entities.OfType<GameEntity>().ToArray();
-
+            
             for (var i = 0; i < gameEntities.Length; i++)
             {
                 var e1 = gameEntities[i];
@@ -135,7 +138,33 @@ namespace SharpRay
 
         public static void OnUIEvent(IUIEvent e)
         {
-            Console.WriteLine(e.GetType());
+            if (e is IHasUndoRedo ur)
+                UndoStack.Push(ur);
+
+            if (e is DeleteEdit edit)
+                EventActions.Add(() => Entities.Remove(edit.UIComponent));
+        }
+
+        public static void OnKeyBoardEvent(IKeyBoardEvent kbe)
+        {
+            if (kbe is KeyUndo && UndoStack.Count > 0)
+            {
+                var edit = UndoStack.Pop();
+                edit.Undo();
+                RedoStack.Push(edit);
+            }
+
+            if (kbe is KeyRedo && RedoStack.Count > 0)
+            {
+                var edit = RedoStack.Pop();
+                edit.Redo();
+                UndoStack.Push(edit);
+            }
+        }
+
+        public static void OnMouseEvent(IMouseEvent me)
+        {
+
         }
     }
 }
