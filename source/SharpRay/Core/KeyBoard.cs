@@ -1,36 +1,64 @@
 ﻿using Raylib_cs;
 using System;
+using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
 
-namespace SharpRay
+namespace SharpRay.Core
 {
-    internal static class KeyBoard
+    internal class KeyBoard : IEventEmitter<IKeyBoardEvent>
     {
-        public static Action<IKeyBoardEvent> EmitEvent { get; set; }
+        public Action<IKeyBoardEvent> EmitEvent { get; set; }
         private static readonly KeyboardKey[] Keys = Enum.GetValues<KeyboardKey>();
 
-        public static void DoEvents()
+        public void DoEvents()
         {
+
+            foreach (var key in Keys) if (IsKeyPressed(key)) DoEvent(new KeyPressed { KeyboardKey = key });
+
+
+            if (IsKeyReleased(KeyboardKey.KEY_UP) || IsKeyReleased(KeyboardKey.KEY_W))
+                DoEvent(new KeyUpReleased());
+
+            if (IsKeyReleased(KeyboardKey.KEY_RIGHT) || IsKeyReleased(KeyboardKey.KEY_D))
+                DoEvent(new KeyRightReleased());
+
+            if (IsKeyReleased(KeyboardKey.KEY_DOWN) || IsKeyReleased(KeyboardKey.KEY_S))
+                DoEvent(new KeyDownReleased());
+
+            if (IsKeyReleased(KeyboardKey.KEY_LEFT) || IsKeyReleased(KeyboardKey.KEY_A))
+                DoEvent(new KeyLeftReleased());
+
+
             if (IsKeyDown(KeyboardKey.KEY_UP) || IsKeyDown(KeyboardKey.KEY_W))
-                EmitEvent?.Invoke(new KeyUp());
+                DoEvent(new KeyUpDown());
 
             if (IsKeyDown(KeyboardKey.KEY_RIGHT) || IsKeyDown(KeyboardKey.KEY_D))
-                EmitEvent?.Invoke(new KeyRight());
+                DoEvent(new KeyRightDown());
 
             if (IsKeyDown(KeyboardKey.KEY_DOWN) || IsKeyDown(KeyboardKey.KEY_S))
-                EmitEvent?.Invoke(new KeyDown());
+                DoEvent(new KeyDownDown());
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT) || IsKeyDown(KeyboardKey.KEY_A))
-                EmitEvent?.Invoke(new KeyLeft());
+                DoEvent(new KeyLeftDown());
 
-            if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Z))
-                EmitEvent?.Invoke(new KeyUndo());
 
-            if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
-                EmitEvent?.Invoke(new KeyRedo());
+            if (IsKeyPressed(KeyboardKey.KEY_SPACE))
+                DoEvent(new KeySpaceBarPressed());
+
+            if (IsKeyDown(KeyboardKey.KEY_SPACE))
+                DoEvent(new KeySpaceBarDown());
 
             if (IsKeyDown(KeyboardKey.KEY_DELETE))
-                EmitEvent?.Invoke(new KeyDelete());
+                DoEvent(new KeyDelete());
+
+
+            if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Z))
+                DoEvent(new KeyUndo());
+
+            if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
+                DoEvent(new KeyRedo());
         }
+
+        private void DoEvent(IKeyBoardEvent kbe) => EmitEvent?.Invoke(kbe);
     }
 }

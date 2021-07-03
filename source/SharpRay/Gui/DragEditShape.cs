@@ -1,10 +1,13 @@
 ﻿using Raylib_cs;
+using SharpRay.Core;
+using SharpRay.Entities;
+using SharpRay.Eventing;
 using System;
 using System.Numerics;
 
-namespace SharpRay
+namespace SharpRay.Gui
 {
-    public abstract class DragEditShape : UIEntity
+    public abstract class DragEditShape : GuiEntity
     {
         public Action<DragEditShape> OnRightMouseClick { get; set; }
         public Color ColorDefault { get; set; }
@@ -43,7 +46,7 @@ namespace SharpRay
             {
                 EmitEvent(new TranslateEdit
                 {
-                    UIComponent = this,
+                    GuiComponent = this,
                     Start = DragStart,
                     End = me.Position
                 });
@@ -54,7 +57,7 @@ namespace SharpRay
             {
                 var start = Scale;
                 Scale += me is MouseWheelUp ? 0.15f : -0.15f;
-                EmitEvent(new ScaleEdit { UIComponent = this, Start = start, End = Scale });
+                EmitEvent(new ScaleEdit { GuiComponent = this, Start = start, End = Scale });
             }
         }
 
@@ -63,7 +66,7 @@ namespace SharpRay
             if (!HasMouseFocus) return;
 
             if (ke is KeyDelete)
-                EmitEvent(new DeleteEdit { UIComponent = this });
+                EmitEvent(new DeleteEdit { GuiComponent = this });
         }
 
         public override void Render()

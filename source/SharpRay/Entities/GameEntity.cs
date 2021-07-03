@@ -1,19 +1,11 @@
-﻿using System;
+﻿using SharpRay.Collision;
+using SharpRay.Eventing;
+using System;
 
-namespace SharpRay
+namespace SharpRay.Entities
 {
-    public abstract class GameEntity : Entity, IHasCollider, IEventEmitter<IGameEvent>
+    public abstract class GameEntity : Entity, IEventEmitter<IGameEvent>
     {
-        public Raylib_cs.Rectangle Collider
-        {
-            get => new Raylib_cs.Rectangle
-            {
-                x = Position.X,
-                y = Position.Y,
-                width = Size.X,
-                height = Size.Y
-            };
-        }
         public Action<IGameEvent> EmitEvent { get; set; }
     }
 }

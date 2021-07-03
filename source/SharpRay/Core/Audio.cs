@@ -1,9 +1,10 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
 
-namespace SharpRay
+namespace SharpRay.Core
 {
     internal static class Audio
     {
@@ -11,12 +12,10 @@ namespace SharpRay
 
         public static void Initialize()
         {
-            
-
             SetMasterVolume(0.15f);
         }
 
-        public static void OnUIEvent(IUIEvent e) { }// => PlaySound(Sounds[e.GetType()]);
+        public static void OnUIEvent(IGuiEvent e) { }// => PlaySound(Sounds[e.GetType()]);
         public static void OnGameEvent(IGameEvent e) { }// => PlaySound(Sounds[e.GetType()]);
 
     }
