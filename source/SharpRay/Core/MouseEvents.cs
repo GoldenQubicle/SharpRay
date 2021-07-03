@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
+using SharpRay.Eventing;
 
-namespace SharpRay
+namespace SharpRay.Core
 {
 
     public struct MouseLeftClick : IMouseEvent { public Vector2 Position { get; init; } }

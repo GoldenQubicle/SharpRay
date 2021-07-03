@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using SharpRay.Entities;
+using SharpRay.Eventing;
+using SharpRay.Listeners;
 using System;
+using System.Collections.Generic;
 
-namespace SharpRay
+namespace SharpRay.Gui
 {
-    public sealed class UIEntityContainer : Entity, IUIEventListener<UIEntityContainer>, IGameEventListener<UIEntityContainer>
+    public sealed class GuiEntityContainer : Entity, IGuiEventListener<GuiEntityContainer>, IGameEventListener<GuiEntityContainer>
     {
-        public UIEntityContainer(bool isVisible = true) => IsVisible = isVisible;
-        public List<UIEntity> Entities { get; } = new();
+        public GuiEntityContainer(bool isVisible = true) => IsVisible = isVisible;
+        public List<GuiEntity> Entities { get; } = new();
         public bool IsVisible { get; private set; }
 
         public void Hide()
@@ -36,11 +39,11 @@ namespace SharpRay
             if (IsVisible) foreach (var e in Entities) e.OnKeyBoardEvent(ke);
         }
 
-        public Action<IUIEvent, UIEntityContainer> OnUIEventAction { get; set; }
+        public Action<IGuiEvent, GuiEntityContainer> OnGuiEventAction { get; set; }
 
-        public void OnUIEvent(IUIEvent e) => OnUIEventAction?.Invoke(e, this);
+        public void OnGuiEvent(IGuiEvent e) => OnGuiEventAction?.Invoke(e, this);
 
-        public Action<IGameEvent, UIEntityContainer> OnGameEventAction { get; set; }
+        public Action<IGameEvent, GuiEntityContainer> OnGameEventAction { get; set; }
 
         public void OnGameEvent(IGameEvent e) => OnGameEventAction?.Invoke(e, this);
     }

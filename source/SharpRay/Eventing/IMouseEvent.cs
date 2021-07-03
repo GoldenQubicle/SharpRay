@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace SharpRay
+namespace SharpRay.Eventing
 {
     public interface IMouseEvent : IEvent { public Vector2 Position { get; init; } }
 

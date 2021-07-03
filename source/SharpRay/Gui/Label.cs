@@ -1,10 +1,11 @@
 ﻿using Raylib_cs;
 using static Raylib_cs.Raylib;
+using SharpRay.Entities;
 using System.Numerics;
 
-namespace SharpRay
+namespace SharpRay.Gui
 {
-    public class Label : UIEntity
+    public class Label : GuiEntity
     {
         public Label() { }
         public string Text { get; set; }

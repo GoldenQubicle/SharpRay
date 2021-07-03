@@ -1,7 +1,9 @@
 ﻿using Raylib_cs;
+using SharpRay.Core;
+using SharpRay.Eventing;
 using System.Numerics;
 
-namespace SharpRay
+namespace SharpRay.Gui
 {
     public sealed class Button : Label
     {

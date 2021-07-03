@@ -1,9 +1,11 @@
-﻿using static Raylib_cs.Raylib;
-using Raylib_cs;
+﻿using Raylib_cs;
+using static Raylib_cs.Raylib;
+using SharpRay.Eventing;
 using System;
 using System.Numerics;
+using SharpRay.Core;
 
-namespace SharpRay
+namespace SharpRay.Gui
 {
     public sealed class Polygon : DragEditShape
     {

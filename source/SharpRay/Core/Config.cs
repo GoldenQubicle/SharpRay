@@ -1,4 +1,4 @@
-﻿namespace SharpRay
+﻿namespace SharpRay.Core
 {
     internal class Config
     {

@@ -1,6 +1,6 @@
 ﻿using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
-using static SharpRay.Config;
+using static SharpRay.Core.Config;
 using System.Reflection;
 using System;
 using System.Collections.Generic;
@@ -8,10 +8,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Numerics;
+using SharpRay.Collision;
+using SharpRay.Entities;
+using SharpRay.Eventing;
+using SharpRay.Gui;
+using SharpRay.Listeners;
 
-namespace SharpRay
+namespace SharpRay.Core
 {
-    internal class Program
+    public class Application
     {
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
         public const double TickMultiplier = 10000d;
@@ -20,29 +25,34 @@ namespace SharpRay
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> EventActions = new();
         private static readonly Stopwatch sw = new();
-        private static List<Entity> Entities = new()
+        private static List<Entity> Entities = new();
+
+        private static Vector2 PreviousMousePostion { get; set; }
+
+        public static void AddEntity(Entity e)
         {
-            new Polygon(5, 25f)
-            {
-                Position = new Vector2(WindowWidth / 2, WindowHeight / 2),
-                ColorDefault = DARKPURPLE,
-                ColorFocused = PURPLE,
-                OnMouseLeftClick = e => new UIEvent { UIComponent = e }
-            },
-        };
+            EntityEventInitialisation(e, Audio.OnUIEvent);
+            Entities.Add(e);
+        }
+
+
+        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent)
+        {
+            EntityEventInitialisation(e, Audio.OnUIEvent, onGuiEvent);
+            Entities.Add(e);
+        }
+
 
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
-        static void Main(string[] args)
+        public static void Run(string[] args)
         {
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
-            EntityEventInitialisation(Entities);
-
             InitAudioDevice();
             Audio.Initialize();
-            
+
             InitWindow(WindowWidth, WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - WindowHeight / 2);
 
@@ -65,23 +75,42 @@ namespace SharpRay
             CloseWindow();
         }
 
-        private static void EntityEventInitialisation(List<Entity> entities)
+
+
+
+        private static void EntityEventInitialisation(
+           Entity e,
+           Action<IGuiEvent>[] onGuiEventActions = null,
+           Action<IGameEvent>[] onGameEventActions = null)
         {
-            foreach (var e in entities)
-            {
-                if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
-                if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
-                if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, OnGameEvent, Audio.OnGameEvent);
-                if (e is IEventEmitter<IUIEvent> eui) SetEmitEventActions(eui, OnUIEvent, Audio.OnUIEvent);
-            }
+
+            if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
+            if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
+            if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, onGameEventActions);
+            if (e is IEventEmitter<IGuiEvent> eui) SetEmitEventActions(eui, onGuiEventActions);
+
         }
 
-        private static void EntityEventInitialisation(params Entity[] entities) => EntityEventInitialisation(entities.ToList());
+        private static void EntityEventInitialisation(
+            Entity[] entities,
+            Action<IGuiEvent>[] onGuiEventActions = null,
+            Action<IGameEvent>[] onGameEventActions = null)
+        {
+            foreach (var e in entities) EntityEventInitialisation(e, onGuiEventActions, onGameEventActions);
+        }
 
-        public static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent
+        private static void EntityEventInitialisation(Entity e, Action<IGuiEvent> onGuiEvent) => EntityEventInitialisation(e, new[] { onGuiEvent }, null);
+        private static void EntityEventInitialisation(Entity e, params Action<IGuiEvent>[] onGuiEvents) => EntityEventInitialisation(e, onGuiEvents, null);
+        private static void EntityEventInitialisation(Entity e, Action<IGameEvent> onGameEvent) => EntityEventInitialisation(e, null, new[] { onGameEvent });
+        private static void EntityEventInitialisation(Entity e, params Action<IGameEvent>[] onGameEvents) => EntityEventInitialisation(e, null, onGameEvents);
+
+        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, List<Action<T>> onEventActions) where T : IEvent
         {
             foreach (var action in onEventActions) e.EmitEvent += action;
         }
+
+        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
+
 
         private static long GetDeltaTime(ref long past)
         {
@@ -91,10 +120,13 @@ namespace SharpRay
             return delta;
         }
 
+      
+
+
         private static void DoCollisions()
         {
             var gameEntities = Entities.OfType<GameEntity>().ToArray();
-            
+
             for (var i = 0; i < gameEntities.Length; i++)
             {
                 var e1 = gameEntities[i];
@@ -109,6 +141,8 @@ namespace SharpRay
                 }
             }
         }
+
+        private static bool CheckCollisionRecs(ICollider collider1, ICollider collider2) => collider1.Overlaps(collider2);
 
         private static void DoUpdate(double deltaTime)
         {
@@ -131,21 +165,21 @@ namespace SharpRay
 
 
 
-        public static void OnGameEvent(IGameEvent e)
+        internal static void OnGameEvent(IGameEvent e)
         {
 
         }
 
-        public static void OnUIEvent(IUIEvent e)
+        internal static void OnUIEvent(IGuiEvent e)
         {
             if (e is IHasUndoRedo ur)
                 UndoStack.Push(ur);
 
             if (e is DeleteEdit edit)
-                EventActions.Add(() => Entities.Remove(edit.UIComponent));
+                EventActions.Add(() => Entities.Remove(edit.GuiComponent));
         }
 
-        public static void OnKeyBoardEvent(IKeyBoardEvent kbe)
+        internal static void OnKeyBoardEvent(IKeyBoardEvent kbe)
         {
             if (kbe is KeyUndo && UndoStack.Count > 0)
             {
@@ -162,7 +196,7 @@ namespace SharpRay
             }
         }
 
-        public static void OnMouseEvent(IMouseEvent me)
+        internal static void OnMouseEvent(IMouseEvent me)
         {
 
         }

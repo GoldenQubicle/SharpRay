@@ -1,6 +1,8 @@
-﻿using System.Numerics;
+﻿using SharpRay.Eventing;
+using SharpRay.Listeners;
+using System.Numerics;
 
-namespace SharpRay
+namespace SharpRay.Entities
 {
 
     public abstract class Entity : IKeyBoardListener, IMouseListener

@@ -1,8 +1,9 @@
 ﻿using Raylib_cs;
 using System;
+using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
 
-namespace SharpRay
+namespace SharpRay.Core
 {
     internal static class KeyBoard
     {

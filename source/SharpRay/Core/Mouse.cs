@@ -1,66 +1,70 @@
 ﻿using Raylib_cs;
 using System;
 using System.Numerics;
+using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
 
-namespace SharpRay
+namespace SharpRay.Core
 {
     internal class Mouse
     {
         public static Action<IMouseEvent> EmitEvent { get; set; }
 
         private static Vector2 PreviousMousePostion;
+        public static Vector2 Cursor { get; private set; }
         public static void DoEvents()
         {
-            var currentMousePostion = GetMousePosition();
-            var isDragging = currentMousePostion != PreviousMousePostion;
+            Cursor = GetMousePosition();
+
+            var isDragging = Cursor != PreviousMousePostion;
             var mouseWheel = GetMouseWheelMove();
 
+
             if (isDragging) 
-                EmitEvent?.Invoke(new MouseMovement { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseMovement { Position = Cursor });
 
             //click events - TODO proper click & double click
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
-                EmitEvent?.Invoke(new MouseLeftClick { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseLeftClick { Position = Cursor });
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_MIDDLE_BUTTON))
-                EmitEvent?.Invoke(new MouseMiddleClick { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseMiddleClick { Position = Cursor });
 
             if (IsMouseButtonPressed(MouseButton.MOUSE_RIGHT_BUTTON))
-                EmitEvent?.Invoke(new MouseRightClick { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseRightClick { Position = Cursor });
 
 
             //release events
             if (IsMouseButtonReleased(MouseButton.MOUSE_LEFT_BUTTON))
-                EmitEvent?.Invoke(new MouseLeftRelease { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseLeftRelease { Position = Cursor });
 
             if (IsMouseButtonReleased(MouseButton.MOUSE_MIDDLE_BUTTON))
-                EmitEvent?.Invoke(new MouseMiddleRelease { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseMiddleRelease { Position = Cursor });
 
             if (IsMouseButtonReleased(MouseButton.MOUSE_RIGHT_BUTTON))
-                EmitEvent?.Invoke(new MouseRightRelease { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseRightRelease { Position = Cursor });
 
 
             //drag events
             //send continuously even when cursor is outside window with potentially negative coordinates
             if (IsMouseButtonDown(MouseButton.MOUSE_LEFT_BUTTON) && isDragging)
-                EmitEvent?.Invoke(new MouseLeftDrag { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseLeftDrag { Position = Cursor });
 
             if (IsMouseButtonDown(MouseButton.MOUSE_MIDDLE_BUTTON) && isDragging)
-                EmitEvent?.Invoke(new MouseMiddleDrag { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseMiddleDrag { Position = Cursor });
 
             if (IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON) && isDragging)
-                EmitEvent?.Invoke(new MouseRightDrag { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseRightDrag { Position = Cursor });
 
 
             //mousewheel events
             if (mouseWheel == 1f)
-                EmitEvent?.Invoke(new MouseWheelUp { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseWheelUp { Position = Cursor });
 
             if (mouseWheel == -1f)
-                EmitEvent?.Invoke(new MouseWheelDown { Position = currentMousePostion });
+                EmitEvent?.Invoke(new MouseWheelDown { Position = Cursor });
 
-            PreviousMousePostion = currentMousePostion;
+            PreviousMousePostion = Cursor;
         }
     }
 }

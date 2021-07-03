@@ -1,4 +1,6 @@
-﻿namespace SharpRay
+﻿using SharpRay.Entities;
+
+namespace SharpRay.Collision
 {
     public interface IHasCollision
     {

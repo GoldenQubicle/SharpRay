@@ -1,7 +1,7 @@
 ﻿using static Raylib_cs.Raylib;
 using System.Numerics;
 
-namespace SharpRay
+namespace SharpRay.Gui
 {
     public sealed class Circle : DragEditShape
     {

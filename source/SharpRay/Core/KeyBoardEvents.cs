@@ -1,4 +1,6 @@
-﻿namespace SharpRay
+﻿using SharpRay.Eventing;
+
+namespace SharpRay.Core
 {
 
     public struct KeyUp :IKeyBoardEvent { }
