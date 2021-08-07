@@ -7,7 +7,7 @@ namespace SharpRay.Collision
 {
     public class CircleCollider : ICollider
     {
-        public Vector2 Center { get; init; }
+        public Vector2 Center { get; set; }
         public float Radius { get; init; }
 
         public bool ContainsPoint(Vector2 point) => CheckCollisionPointCircle(point, Center, Radius);

@@ -1,28 +1,38 @@
 ﻿using System.Numerics;
 using static SharpRay.Core.Application;
+using SharpRay.Core;
 using SharpRay.Eventing;
 using System;
-using SharpRay.Collision;
 
 namespace Asteroids
 {
     public class Game
     {
-        public static int WindowWidth = 1080;
-        public static int WindowHeight = 720;
+        public const int WindowWidth = 1080;
+        public const int WindowHeight = 720;
 
         static void Main(string[] args)
         {
-            AddEntity(new Ship(new Vector2(128, 128), new Vector2(WindowWidth/2, WindowHeight/2)));
+            AddEntity(new Ship(new Vector2(64, 64), new Vector2(WindowWidth / 2, WindowHeight / 2)), OnGameEvent);
 
-            Run(args);
+            Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
         }
 
+        static void OnGameEvent(IGameEvent e)
+        {
+            if (e is ShipShootBullet ss)
+                AddEntity(new Bullet(ss.Origin, ss.Rotation, ss.Force), OnGameEvent);
+
+            if(e is BulletLifeTimeExpired b)
+                RemoveEntity(b.Bullet);
+
+            Console.WriteLine($"Game event: {e.GetType()}");
+
+        }
 
         static void OnGuiEvent(IGuiEvent e)
         {
-            Console.WriteLine($"hello gui event {e}");
         }
     }
 }

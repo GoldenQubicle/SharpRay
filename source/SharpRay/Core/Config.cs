@@ -1,8 +1,9 @@
 ﻿namespace SharpRay.Core
 {
-    internal class Config
+    public record Config
     {
-        public const int WindowWidth = 1080;
-        public const int WindowHeight = 720;
+        public static double TickMultiplier = 10000d;
+        public int WindowWidth { get; init; }
+        public int WindowHeight { get; init; }
     }
 }

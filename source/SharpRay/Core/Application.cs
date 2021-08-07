@@ -18,7 +18,7 @@ namespace SharpRay.Core
     public class Application
     {
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
-        public const double TickMultiplier = 10000d;
+
 
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
@@ -26,12 +26,22 @@ namespace SharpRay.Core
         private static readonly Stopwatch sw = new();
         private static List<Entity> Entities = new();
 
-        public static void AddEntity(Entity e)
+        public static void RemoveEntity(Entity e)
         {
-            EntityEventInitialisation(e, Audio.OnUIEvent);
-            Entities.Add(e);
+            EventActions.Add(() =>
+            {
+                KeyBoard.EmitEvent -= e.OnKeyBoardEvent;
+                Mouse.EmitEvent -= e.OnMouseEvent;
+
+                Entities.Remove(e);
+            });
         }
 
+        public static void AddEntity(Entity e)
+        {
+            EntityEventInitialisation(e);
+            Entities.Add(e);
+        }
 
         public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent)
         {
@@ -39,24 +49,32 @@ namespace SharpRay.Core
             Entities.Add(e);
         }
 
+        public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent)
+        {
+            EntityEventInitialisation(e, Audio.OnGameEvent, onGameEvent);
+            Entities.Add(e);
+        }
+
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
-        public static void Run(string[] args)
+        public static void Run(Config config)
         {
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
             InitAudioDevice();
             Audio.Initialize();
+            InitWindow(config.WindowWidth, config.WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
+            SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
-            InitWindow(WindowWidth, WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
-            SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - WindowHeight / 2);
+            //SetTargetFPS(60);
 
             sw.Start();
             var past = 0L;
 
             while (!WindowShouldClose())
             {
+                DrawFPS(0, 0);
                 var delta = GetDeltaTime(ref past);
 
                 Mouse.DoEvents();
@@ -70,8 +88,6 @@ namespace SharpRay.Core
             CloseAudioDevice();
             CloseWindow();
         }
-
-
 
 
         private static void EntityEventInitialisation(

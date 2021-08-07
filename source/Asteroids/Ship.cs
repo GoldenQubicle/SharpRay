@@ -12,9 +12,15 @@ namespace Asteroids
 {
     public class Ship : GameEntity
     {
+        private const float phi = 2.09439510239f;
+        private const float rotationSpeed = .001f;
+        private readonly Vector2[] Points = new Vector2[3];
+        private readonly float radius;
         private float rotation;
-        private Vector2[] Points = new Vector2[3];
-        private float radius;
+        private bool hasThrust;
+        private const float thrust = .15f;
+
+
         public Ship(Vector2 size, Vector2 pos)
         {
             Size = size;
@@ -25,45 +31,58 @@ namespace Asteroids
                 Center = Position,
                 Radius = radius
             };
-            RotateShip();//call once to initialize triangle points
+            UpdateShip();//call once to initialize triangle points
         }
 
         public override void Render()
         {
-            DrawCircleV(Position, 20, Color.WHITE);
+            DrawCircleV(Position, 5, Color.WHITE);
             DrawTriangleLines(Points[0], Points[1], Points[2], Color.PINK);
 
             Collider.Render();
 
+            DrawCircleV(Points[0], 5, Color.PURPLE);
+
             foreach (var p in Points.Select((p, i) => (p, i)))
                 DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
-
-            var d = Position + new Vector2(MathF.Cos(-MathF.PI/2 + rotation) * radius, MathF.Sin(-MathF.PI /2 + rotation) * radius);
-            DrawCircleV(d, 5, Color.PURPLE);
         }
 
-        private void RotateShip()
-        {
-            var phi = MathF.Tau / 3;
 
-            Points[0] = Position + new Vector2(MathF.Cos(rotation-MathF.PI / 2) * radius,           MathF.Sin(rotation-MathF.PI / 2) * radius);
-            Points[1] = Position + new Vector2(MathF.Cos(rotation-MathF.PI / 2 + phi * 2) * radius, MathF.Sin(rotation-MathF.PI / 2 + phi * 2) * radius);
-            Points[2] = Position + new Vector2(MathF.Cos(rotation-MathF.PI / 2 + phi) * radius,     MathF.Sin(rotation-MathF.PI / 2 + phi) * radius);
+        private void UpdateShip()
+        {
+            if (hasThrust)
+                Position += new Vector2(MathF.Cos(rotation - MathF.PI / 2) * thrust, MathF.Sin(rotation - MathF.PI / 2) * thrust);
+
+            Points[0] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2) * radius,             MathF.Sin(rotation - MathF.PI / 2) * radius);
+            Points[1] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi * 2) * radius,   MathF.Sin(rotation - MathF.PI / 2 + phi * 2) * radius);
+            Points[2] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi) * radius,       MathF.Sin(rotation - MathF.PI / 2 + phi) * radius);
+
+            (Collider as CircleCollider).Center = Position;
         }
 
         public override void Update(double deltaTime)
         {
-            RotateShip();
+            UpdateShip();
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
             rotation = e switch
             {
-                KeyLeft => rotation -= .001f,
-                KeyRight => rotation += .001f,
+                KeyLeftDown => rotation -= rotationSpeed,
+                KeyRightDown => rotation += rotationSpeed,
                 _ => rotation
             };
+
+            hasThrust = e switch
+            {
+                KeyUpDown => true,
+                KeyUpReleased => false,
+                _ => hasThrust
+            };
+
+            if (e is KeySpaceBarPressed)
+                EmitEvent(new ShipShootBullet { Origin = Points[0], Rotation = rotation, Force = thrust });
         }
     }
 }
