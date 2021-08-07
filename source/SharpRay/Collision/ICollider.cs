@@ -6,5 +6,7 @@ namespace SharpRay.Collision
     {
         bool ContainsPoint(Vector2 point);
         bool Overlaps(ICollider collider);
+
+        void Render();
     }
 }

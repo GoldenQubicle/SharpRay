@@ -13,16 +13,7 @@ namespace Asteroids
 
         static void Main(string[] args)
         {
-            AddEntity(new Ship
-            {
-                Size = new Vector2(512, 512),
-                Position = new Vector2(0, 0),
-                Collider = new RectCollider
-                {
-                    Size = new Vector2(512, 512),
-                    Position = new Vector2(0, 0),
-                }
-            });
+            AddEntity(new Ship(new Vector2(128, 128), new Vector2(WindowWidth/2, WindowHeight/2)));
 
             Run(args);
 

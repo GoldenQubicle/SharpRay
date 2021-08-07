@@ -1,5 +1,6 @@
 ﻿using static Raylib_cs.Raylib;
 using System.Numerics;
+using Raylib_cs;
 
 namespace SharpRay.Collision
 {
@@ -19,5 +20,7 @@ namespace SharpRay.Collision
         }
         public bool ContainsPoint(Vector2 point) => CheckCollisionPointRec(point, Collider);
         public bool Overlaps(ICollider c) => CheckCollisionRecs(Collider, (c as RectCollider).Collider);
+        public void Render() => DrawRectangleLinesEx(Collider, 2, Color.BLUE);
+
     }
 }
