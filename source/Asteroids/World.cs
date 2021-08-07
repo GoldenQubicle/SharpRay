@@ -7,7 +7,7 @@ using SharpRay.Core;
 using SharpRay.Collision;
 using Raylib_cs;
 
-namespace ProtoCity
+namespace Asteroids
 {
     public class World : GameEntity
     {

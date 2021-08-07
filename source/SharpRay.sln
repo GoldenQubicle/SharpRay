@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpRay", "SharpRay\SharpRay.csproj", "{06F409E9-8002-46F0-96AE-3B378BDF322F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoCity", "ProtoCity\ProtoCity.csproj", "{AD1A1CE0-3219-41DB-9C76-0B51459144C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteroids", "Asteroids\Asteroids.csproj", "{AD1A1CE0-3219-41DB-9C76-0B51459144C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

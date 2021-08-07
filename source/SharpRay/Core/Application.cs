@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.IO;
-using System.Numerics;
 using SharpRay.Collision;
 using SharpRay.Entities;
 using SharpRay.Eventing;
@@ -27,8 +26,6 @@ namespace SharpRay.Core
         private static readonly Stopwatch sw = new();
         private static List<Entity> Entities = new();
 
-        private static Vector2 PreviousMousePostion { get; set; }
-
         public static void AddEntity(Entity e)
         {
             EntityEventInitialisation(e, Audio.OnUIEvent);
@@ -41,7 +38,6 @@ namespace SharpRay.Core
             EntityEventInitialisation(e, Audio.OnUIEvent, onGuiEvent);
             Entities.Add(e);
         }
-
 
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
@@ -111,7 +107,6 @@ namespace SharpRay.Core
 
         internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
 
-
         private static long GetDeltaTime(ref long past)
         {
             var now = sw.ElapsedTicks;
@@ -119,9 +114,6 @@ namespace SharpRay.Core
             past = now;
             return delta;
         }
-
-      
-
 
         private static void DoCollisions()
         {
@@ -162,8 +154,6 @@ namespace SharpRay.Core
             foreach (var a in EventActions) a();
             EventActions.Clear();
         }
-
-
 
         internal static void OnGameEvent(IGameEvent e)
         {

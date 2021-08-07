@@ -1,13 +1,10 @@
-﻿using SharpRay.Gui;
-using System.Numerics;
+﻿using System.Numerics;
 using static SharpRay.Core.Application;
-using static Raylib_cs.Raylib;
 using SharpRay.Eventing;
 using System;
 using SharpRay.Collision;
-using Raylib_cs;
 
-namespace ProtoCity
+namespace Asteroids
 {
     public class Game
     {
@@ -16,11 +13,10 @@ namespace ProtoCity
 
         static void Main(string[] args)
         {
-            AddEntity(new World
+            AddEntity(new Ship
             {
                 Size = new Vector2(512, 512),
                 Position = new Vector2(0, 0),
-                Origin = new Vector2(256, 256),
                 Collider = new RectCollider
                 {
                     Size = new Vector2(512, 512),
