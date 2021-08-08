@@ -12,6 +12,7 @@ using SharpRay.Entities;
 using SharpRay.Eventing;
 using SharpRay.Gui;
 using SharpRay.Listeners;
+using System.Timers;
 
 namespace SharpRay.Core
 {
@@ -54,6 +55,7 @@ namespace SharpRay.Core
         }
 
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+        public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
         public static void Run(Config config)
         {
@@ -150,9 +152,17 @@ namespace SharpRay.Core
 
         private static bool CheckCollisionRecs(ICollider collider1, ICollider collider2) => collider1.Overlaps(collider2);
 
+
+        private static double FixedUpdateInterval = 1000 / 60 * TickMultiplier;
+        private static double ElapsedUpdateInterval = 0d;
         private static void DoUpdate(double deltaTime)
         {
-            foreach (var e in Entities) e.Update(deltaTime);
+            ElapsedUpdateInterval += deltaTime;
+            if (ElapsedUpdateInterval >= FixedUpdateInterval)
+            {
+                foreach (var e in Entities) e.Update(ElapsedUpdateInterval);
+                ElapsedUpdateInterval = 0d;
+            }
         }
 
         private static void DoRender()
