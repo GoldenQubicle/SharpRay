@@ -19,7 +19,6 @@ namespace SharpRay.Core
     {
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
 
-
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static readonly List<Action> EventActions = new();
@@ -32,7 +31,6 @@ namespace SharpRay.Core
             {
                 KeyBoard.EmitEvent -= e.OnKeyBoardEvent;
                 Mouse.EmitEvent -= e.OnMouseEvent;
-
                 Entities.Remove(e);
             });
         }
@@ -182,7 +180,7 @@ namespace SharpRay.Core
                 UndoStack.Push(ur);
 
             if (e is DeleteEdit edit)
-                EventActions.Add(() => Entities.Remove(edit.GuiComponent));
+                RemoveEntity(edit.GuiComponent);
         }
 
         internal static void OnKeyBoardEvent(IKeyBoardEvent kbe)

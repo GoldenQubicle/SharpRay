@@ -31,7 +31,9 @@ namespace Asteroids
                 Center = Position,
                 Radius = radius
             };
-            UpdateShip();//call once to initialize triangle points
+            Points[0] = Position + new Vector2(MathF.Cos(MathF.PI / 2) * radius, MathF.Sin(MathF.PI / 2) * radius);
+            Points[1] = Position + new Vector2(MathF.Cos(MathF.PI / 2 + phi * 2) * radius, MathF.Sin(MathF.PI / 2 + phi * 2) * radius);
+            Points[2] = Position + new Vector2(MathF.Cos(MathF.PI / 2 + phi) * radius, MathF.Sin(MathF.PI / 2 + phi) * radius);
         }
 
         public override void Render()
@@ -48,7 +50,7 @@ namespace Asteroids
         }
 
 
-        private void UpdateShip()
+        private void UpdateShip(double deltaTime)
         {
             if (hasThrust)
                 Position += new Vector2(MathF.Cos(rotation - MathF.PI / 2) * thrust, MathF.Sin(rotation - MathF.PI / 2) * thrust);
@@ -62,7 +64,7 @@ namespace Asteroids
 
         public override void Update(double deltaTime)
         {
-            UpdateShip();
+            UpdateShip(deltaTime);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)

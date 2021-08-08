@@ -13,7 +13,7 @@ namespace SharpRay.Gui
         public static GuiEntityContainer AddChildren(this GuiEntityContainer container, params GuiEntity[] entities)
         {
             foreach(var e in entities)
-                Application.SetEmitEventActions(e, Core.Application.OnUIEvent, Audio.OnUIEvent, container.OnGuiEvent);
+                Application.SetEmitEventActions(e, Application.OnUIEvent, Audio.OnUIEvent, container.OnGuiEvent);
 
             container.Entities.AddRange(entities);
             return container;
