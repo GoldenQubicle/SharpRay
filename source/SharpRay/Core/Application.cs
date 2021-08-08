@@ -70,17 +70,17 @@ namespace SharpRay.Core
             //SetTargetFPS(60);
 
             sw.Start();
-            var past = 0L;
+            var previous = 0L;
 
             while (!WindowShouldClose())
             {
                 DrawFPS(0, 0);
-                var delta = GetDeltaTime(ref past);
+                var frameTime = GetFrameTime(ref previous);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
                 DoCollisions();
-                DoUpdate(delta);
+                DoFixedUpdate(frameTime);
                 DoRender();
                 DoEventActions();
             }
@@ -123,7 +123,7 @@ namespace SharpRay.Core
 
         internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
 
-        private static long GetDeltaTime(ref long past)
+        private static long GetFrameTime(ref long past)
         {
             var now = sw.ElapsedTicks;
             var delta = now - past;
@@ -155,9 +155,10 @@ namespace SharpRay.Core
 
         private static double FixedUpdateInterval = 1000 / 60 * TickMultiplier;
         private static double ElapsedUpdateInterval = 0d;
-        private static void DoUpdate(double deltaTime)
+        private static void DoFixedUpdate(double frameTime)
         {
-            ElapsedUpdateInterval += deltaTime;
+            ElapsedUpdateInterval += frameTime;
+            //TODO handle frametime lower than fixed update, i.e. handle 2 update calls per frame
             if (ElapsedUpdateInterval >= FixedUpdateInterval)
             {
                 foreach (var e in Entities) e.Update(ElapsedUpdateInterval);

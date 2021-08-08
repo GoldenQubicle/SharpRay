@@ -14,7 +14,7 @@ namespace Asteroids
         public float Rotation { get; }
         public float InitialForce { get; }
         private float radius = 5f;
-        private float speed = 0.05f;
+        private float speed = 5f;
         private double lifeTime = 350 * Config.TickMultiplier;
         private double elapsed;
         public Bullet(Vector2 origin, float rotation, float initialForce)
