@@ -2,6 +2,7 @@
 using SharpRay.Entities;
 using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
+using static SharpRay.Core.Application;
 using SharpRay.Core;
 using System.Numerics;
 using SharpRay.Collision;
@@ -16,28 +17,31 @@ namespace Asteroids
         private const float rotationSpeed = .001f;
         private readonly Vector2[] Points = new Vector2[3];
         private readonly float radius;
-        private float rotation;
-        private bool hasThrust;
 
-        private float maxAcceleration = 10f;
-        private float currentAcceleration = 0f;
+        private Vector2 Velocity;
+        private bool hasThrust;
+        private float maxThrust = 10;
+
         private double accelerateTime = 500 * Config.TickMultiplier;
         private double decelerateTime = 1500 * Config.TickMultiplier;
         private double elapsedAccelerateTime = 0d;
         private double elapsedDecelerateTime = 0d;
+        private float currentAcceleration = 0f;
 
-        private Vector2 Velocity = new Vector2();
+        private float currentRotation;
 
         public Ship(Vector2 size, Vector2 pos)
         {
             Size = size;
             Position = pos;
             radius = Size.X / 2;
+
             Collider = new CircleCollider
             {
                 Center = Position,
                 Radius = radius
             };
+
             Points[0] = Position + new Vector2(MathF.Cos(MathF.PI / 2) * radius, MathF.Sin(MathF.PI / 2) * radius);
             Points[1] = Position + new Vector2(MathF.Cos(MathF.PI / 2 + phi * 2) * radius, MathF.Sin(MathF.PI / 2 + phi * 2) * radius);
             Points[2] = Position + new Vector2(MathF.Cos(MathF.PI / 2 + phi) * radius, MathF.Sin(MathF.PI / 2 + phi) * radius);
@@ -59,52 +63,37 @@ namespace Asteroids
 
         private void UpdateShip(double deltaTime)
         {
+            //accelerate & decelerate according to easing curve
             if (hasThrust)
             {
-                if (currentAcceleration < maxAcceleration)
-                {
-                    var t = Math.Min(elapsedAccelerateTime, accelerateTime);
-                    currentAcceleration = Easings.EaseQuadOut((float)t, 0f, maxAcceleration, (float) accelerateTime);
-                    elapsedAccelerateTime += deltaTime;
-                }
-                else
-                {
-                    currentAcceleration = maxAcceleration;
-                    elapsedAccelerateTime = 0d;
-                }
+                var t = Math.Min(elapsedAccelerateTime, accelerateTime);
+                currentAcceleration = Easings.EaseQuadOut((float)t, 0f, 1f, (float)accelerateTime);
+                elapsedAccelerateTime += deltaTime;
             }
-            else
+            else if (currentAcceleration > 0)
             {
-                if (currentAcceleration > 0)
-                {
-                    var t = Math.Min(elapsedDecelerateTime, decelerateTime);
-                    var e = Easings.EaseCircOut((float)t, 0f, maxAcceleration, (float)decelerateTime);
-                    currentAcceleration = Application.MapRange(e, 0f, maxAcceleration, maxAcceleration, 0f);
-                    elapsedDecelerateTime += deltaTime;
-                }
-                else
-                {
-                    currentAcceleration = 0f;
-                    elapsedDecelerateTime = 0d;
-                }
+                var t = Math.Min(elapsedDecelerateTime, decelerateTime);
+                currentAcceleration = 1 - Easings.EaseCircOut((float)t, 0f, 1f, (float)decelerateTime);
+                elapsedDecelerateTime += deltaTime;
             }
 
-            //if player pressed left or right, and current rotation < maxRotation speed, increate rotation speed untill current rotation == maxRotation
-
-            //if player releases left or right, and current rotation > 0, decrease rotation speed untill current rotation speed == 0
-
-
-            Velocity = new Vector2(MathF.Cos(rotation - MathF.PI / 2) * currentAcceleration, MathF.Sin(rotation - MathF.PI / 2) * currentAcceleration);
-
+            //apply thrust to position
+            var thrust = currentAcceleration * maxThrust;
+            Velocity = new Vector2(MathF.Cos(currentRotation - MathF.PI / 2) * thrust, MathF.Sin(currentRotation - MathF.PI / 2) * thrust);
             Position += Velocity;
 
-            Points[0] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2) * radius, MathF.Sin(rotation - MathF.PI / 2) * radius);
-            Points[1] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi * 2) * radius, MathF.Sin(rotation - MathF.PI / 2 + phi * 2) * radius);
-            Points[2] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi) * radius, MathF.Sin(rotation - MathF.PI / 2 + phi) * radius);
 
+            //TODO apply easing curves to rotation as well
+
+            //apply rotation
+            Points[0] = Position + new Vector2(MathF.Cos(currentRotation - MathF.PI / 2) * radius, MathF.Sin(currentRotation - MathF.PI / 2) * radius);
+            Points[1] = Position + new Vector2(MathF.Cos(currentRotation - MathF.PI / 2 + phi * 2) * radius, MathF.Sin(currentRotation - MathF.PI / 2 + phi * 2) * radius);
+            Points[2] = Position + new Vector2(MathF.Cos(currentRotation - MathF.PI / 2 + phi) * radius, MathF.Sin(currentRotation - MathF.PI / 2 + phi) * radius);
+
+            //update collider
             (Collider as CircleCollider).Center = Position;
 
-
+            //bounds check
             if (Position.X < 0) Position = new Vector2(Game.WindowWidth, Position.Y);
             if (Position.X > Game.WindowWidth) Position = new Vector2(0, Position.Y);
             if (Position.Y < 0) Position = new Vector2(Position.X, Game.WindowHeight);
@@ -118,22 +107,30 @@ namespace Asteroids
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            rotation = e switch
+            currentRotation = e switch
             {
-                KeyLeftDown => rotation -= rotationSpeed,
-                KeyRightDown => rotation += rotationSpeed,
-                _ => rotation
+                KeyLeftDown => currentRotation -= rotationSpeed,
+                KeyRightDown => currentRotation += rotationSpeed,
+                _ => currentRotation
             };
 
-            hasThrust = e switch
+
+            if (e is KeyUpDown && !hasThrust)
             {
-                KeyUpDown => true,
-                KeyUpReleased => false,
-                _ => hasThrust
-            };
+                elapsedAccelerateTime = MapRange(currentAcceleration, 0d, 1d, 0d, accelerateTime);
+                hasThrust = true;
+            }
+
+            if (e is KeyUpReleased && hasThrust)
+            {
+                elapsedDecelerateTime = MapRange(1d - currentAcceleration, 0d, 1d, 0d, decelerateTime);
+                hasThrust = false;
+            }
 
             if (e is KeySpaceBarPressed)
-                EmitEvent(new ShipShootBullet { Origin = Points[0], Rotation = rotation, Force = currentAcceleration });
+                EmitEvent(new ShipShootBullet { Origin = Points[0], Rotation = currentRotation, Force = currentAcceleration*maxThrust });
         }
+
+
     }
 }
