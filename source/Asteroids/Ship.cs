@@ -11,6 +11,13 @@ using System.Linq;
 
 namespace Asteroids
 {
+    public enum ShipRotation
+    {
+        None,
+        Left,
+        Right
+    }
+
     public class Ship : GameEntity
     {
         private const float phi = 2.09439510239f;
@@ -28,8 +35,14 @@ namespace Asteroids
         private double elapsedDecelerateTime = 0d;
         private float currentAcceleration = 0f;
 
+        private double rotateInTime = 300 * Config.TickMultiplier;
+        private double rotateOutTime = 3000 * Config.TickMultiplier;
+        private double elapsedRotateInTime = 0d;
+        private double elapsedRotateOutTime = 0d;
+        private float maxRotation = 10 * DEG2RAD; // in radians per frame, essentially
         private float currentRotation;
-
+        private float rotation;
+        private ShipRotation shipRotation = ShipRotation.None;
         public Ship(Vector2 size, Vector2 pos)
         {
             Size = size;
@@ -77,18 +90,38 @@ namespace Asteroids
                 elapsedDecelerateTime += deltaTime;
             }
 
-            //apply thrust to position
-            var thrust = currentAcceleration * maxThrust;
-            Velocity = new Vector2(MathF.Cos(currentRotation - MathF.PI / 2) * thrust, MathF.Sin(currentRotation - MathF.PI / 2) * thrust);
-            Position += Velocity;
-
 
             //TODO apply easing curves to rotation as well
+            if (shipRotation is ShipRotation.Left)
+            {
+                var t = Math.Min(elapsedRotateInTime, rotateInTime);
+                currentRotation = Easings.EaseSineIn((float)t, 0f, 1f, (float)rotateInTime);
+                rotation -= currentRotation * maxRotation;
+                elapsedRotateInTime += deltaTime;
+            }
+            if (shipRotation is ShipRotation.Right)
+            {
+                //currentRotation += maxRotation;
+            }
+
+            if (shipRotation is ShipRotation.None && currentRotation > 0)
+            {
+                var t = Math.Min(elapsedRotateOutTime, rotateOutTime);
+                currentRotation = 1 - Easings.EaseBounceOut((float)t, 0f, 1f, (float)rotateOutTime);
+                rotation -= currentRotation * maxRotation;
+                elapsedRotateOutTime += deltaTime;
+            }
+
+            //apply thrust to position
+            var thrust = currentAcceleration * maxThrust;
+
+            Velocity = new Vector2(MathF.Cos(rotation - MathF.PI / 2) * thrust, MathF.Sin(rotation - MathF.PI / 2) * thrust);
+            Position += Velocity;
 
             //apply rotation
-            Points[0] = Position + new Vector2(MathF.Cos(currentRotation - MathF.PI / 2) * radius, MathF.Sin(currentRotation - MathF.PI / 2) * radius);
-            Points[1] = Position + new Vector2(MathF.Cos(currentRotation - MathF.PI / 2 + phi * 2) * radius, MathF.Sin(currentRotation - MathF.PI / 2 + phi * 2) * radius);
-            Points[2] = Position + new Vector2(MathF.Cos(currentRotation - MathF.PI / 2 + phi) * radius, MathF.Sin(currentRotation - MathF.PI / 2 + phi) * radius);
+            Points[0] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2) * radius, MathF.Sin(rotation - MathF.PI / 2) * radius);
+            Points[1] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi * 2) * radius, MathF.Sin(rotation - MathF.PI / 2 + phi * 2) * radius);
+            Points[2] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi) * radius, MathF.Sin(rotation - MathF.PI / 2 + phi) * radius);
 
             //update collider
             (Collider as CircleCollider).Center = Position;
@@ -107,13 +140,28 @@ namespace Asteroids
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            currentRotation = e switch
-            {
-                KeyLeftDown => currentRotation -= rotationSpeed,
-                KeyRightDown => currentRotation += rotationSpeed,
-                _ => currentRotation
-            };
+            //currentRotation = e switch
+            //{
+            //    KeyLeftDown => currentRotation -= rotationSpeed,
+            //    KeyRightDown => currentRotation += rotationSpeed,
+            //    _ => currentRotation
+            //};
 
+            if (e is KeyLeftDown)
+            {
+                shipRotation = ShipRotation.Left;
+            }
+
+            if (e is KeyRightDown)
+            {
+                shipRotation = ShipRotation.Right;
+            }
+
+            if (e is KeyRightReleased or KeyLeftReleased)
+            {
+                elapsedRotateOutTime = MapRange(1d - currentRotation, 0d, 1d, 0d, rotateOutTime);
+                shipRotation = ShipRotation.None;
+            }
 
             if (e is KeyUpDown && !hasThrust)
             {
@@ -128,7 +176,7 @@ namespace Asteroids
             }
 
             if (e is KeySpaceBarPressed)
-                EmitEvent(new ShipShootBullet { Origin = Points[0], Rotation = currentRotation, Force = currentAcceleration*maxThrust });
+                EmitEvent(new ShipShootBullet { Origin = Points[0], Rotation = rotation, Force = currentAcceleration * maxThrust });
         }
 
 
