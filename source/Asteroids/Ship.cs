@@ -85,7 +85,7 @@ namespace Asteroids
                 n_rotation = Motions[RotateOut].GetValue();
 
             //update rotation
-            var r = n_rotation * maxRotation;
+            var r = (n_rotation * maxRotation);
             rotation += direction == Left ? -1 * r : r;
 
             //update & apply acceleration to position
@@ -139,7 +139,7 @@ namespace Asteroids
             };
 
             if (e is KeySpaceBarPressed)
-                EmitEvent(new ShipShootBullet { Origin = Vertices[0], Rotation = rotation, Force = acceleration });
+                EmitEvent(new ShipShootBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
         }
 
         private (bool, string) StartRotateOut()

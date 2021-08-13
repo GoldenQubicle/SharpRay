@@ -2,7 +2,6 @@
 using static SharpRay.Core.Application;
 using SharpRay.Core;
 using SharpRay.Eventing;
-using System;
 
 namespace Asteroids
 {
@@ -22,7 +21,7 @@ namespace Asteroids
         static void OnGameEvent(IGameEvent e)
         {
             if (e is ShipShootBullet ss)
-                AddEntity(new Bullet(ss.Origin, ss.Rotation, ss.Force), OnGameEvent);
+                AddEntity(new Bullet(ss.Origin, ss.Angle, ss.Force), OnGameEvent);
 
             if(e is BulletLifeTimeExpired b)
                 RemoveEntity(b.Bullet);

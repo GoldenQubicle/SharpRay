@@ -7,7 +7,7 @@ namespace Asteroids
     public struct ShipShootBullet : IGameEvent
     {
         public Vector2 Origin { get; init; }
-        public float Rotation { get; init; }
+        public float Angle { get; init; }
         public float Force { get; init; }
     }
 

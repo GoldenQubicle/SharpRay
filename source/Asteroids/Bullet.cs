@@ -10,24 +10,27 @@ namespace Asteroids
 {
     public class Bullet : GameEntity
     {
-        public Vector2 Origin { get; private set; }
-        public float Rotation { get; }
-        public float InitialForce { get; }
-        private float radius = 5f;
-        private float speed = 50f;
-        private double lifeTime = 1350 * Config.TickMultiplier;
+        private Vector2 acceleration;
+        private readonly float radius = 5f;
+        private readonly float speed = 50f;
+        private readonly double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
-        public Bullet(Vector2 origin, float rotation, float initialForce)
+
+        public Bullet(Vector2 origin, float angle, float initialForce)
         {
-            Origin = origin;
-            Rotation = rotation;
-            speed += initialForce;
-            Collider = new CircleCollider { Center = Origin, Radius = radius };
+            Position = origin;
+            acceleration = new Vector2(MathF.Cos(angle) * (speed + initialForce), MathF.Sin(angle) * (speed + initialForce));
+
+            Collider = new CircleCollider
+            { 
+                Center = Position, 
+                Radius = radius
+            };
         }
 
         public override void Render()
         {
-            DrawCircleV(Origin, radius, Color.YELLOW);
+            DrawCircleV(Position, radius, Color.YELLOW);
             Collider.Render();
         }
 
@@ -38,8 +41,9 @@ namespace Asteroids
             if (elapsed > lifeTime)
                 EmitEvent(new BulletLifeTimeExpired { Bullet = this });
 
-            Origin += new Vector2(MathF.Cos(Rotation - MathF.PI / 2) * speed, MathF.Sin(Rotation - MathF.PI / 2) * speed);
-            (Collider as CircleCollider).Center = Origin;
+            Position += acceleration;
+
+            (Collider as CircleCollider).Center = Position;
         }
     }
 }
