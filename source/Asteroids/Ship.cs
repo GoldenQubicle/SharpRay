@@ -2,47 +2,47 @@
 using SharpRay.Entities;
 using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
-using static SharpRay.Core.Application;
 using SharpRay.Core;
 using System.Numerics;
 using SharpRay.Collision;
 using System;
 using System.Linq;
+using SharpRay.Components;
+using System.Collections.Generic;
 
 namespace Asteroids
 {
-    public enum ShipRotation
-    {
-        None,
-        Left,
-        Right
-    }
-
     public class Ship : GameEntity
     {
         private const float phi = 2.09439510239f;
-        private const float rotationSpeed = .001f;
-        private readonly Vector2[] Points = new Vector2[3];
+        private const float HalfPI = MathF.PI / 2;
+        private readonly Vector2[] Vertices = new Vector2[3];
         private readonly float radius;
 
-        private Vector2 Velocity;
-        private bool hasThrust;
-        private float maxThrust = 10;
+        private readonly double accelerateTime = 500 * Config.TickMultiplier; // time it takes to reach max acceleration
+        private readonly double decelerateTime = 1500 * Config.TickMultiplier; // time it takes from max acceleration to come to a stand still
+        private readonly float maxAcceleration = 10;
+        private float n_acceleration = 0f; //normalized 0-1
+        private float acceleration = 0f;
+        private bool hasAcceleration;
 
-        private double accelerateTime = 500 * Config.TickMultiplier;
-        private double decelerateTime = 1500 * Config.TickMultiplier;
-        private double elapsedAccelerateTime = 0d;
-        private double elapsedDecelerateTime = 0d;
-        private float currentAcceleration = 0f;
+        private readonly double rotateInTime = 300 * Config.TickMultiplier; // time it takes to reach max rotation angle
+        private readonly double rotateOutTime = 550 * Config.TickMultiplier; // time it takes from max rotation angle to come to a stand still
+        private readonly float maxRotation = 3.5f * DEG2RAD; // in radians per frame, essentially
+        private float n_rotation = 0f; //normalized 0-1
+        private float rotation = 0f;
+        private bool hasRotation;
+        private string direction;
 
-        private double rotateInTime = 300 * Config.TickMultiplier;
-        private double rotateOutTime = 3000 * Config.TickMultiplier;
-        private double elapsedRotateInTime = 0d;
-        private double elapsedRotateOutTime = 0d;
-        private float maxRotation = 10 * DEG2RAD; // in radians per frame, essentially
-        private float currentRotation;
-        private float rotation;
-        private ShipRotation shipRotation = ShipRotation.None;
+        private Dictionary<string, Easing> Motions;
+
+        private const string Accelerate = nameof(Accelerate);
+        private const string Decelerate = nameof(Decelerate);
+        private const string RotateIn = nameof(RotateIn);
+        private const string RotateOut = nameof(RotateOut);
+        private const string Left = nameof(Left);
+        private const string Right = nameof(Right);
+
         public Ship(Vector2 size, Vector2 pos)
         {
             Size = size;
@@ -55,75 +55,49 @@ namespace Asteroids
                 Radius = radius
             };
 
-            Points[0] = Position + new Vector2(MathF.Cos(MathF.PI / 2) * radius, MathF.Sin(MathF.PI / 2) * radius);
-            Points[1] = Position + new Vector2(MathF.Cos(MathF.PI / 2 + phi * 2) * radius, MathF.Sin(MathF.PI / 2 + phi * 2) * radius);
-            Points[2] = Position + new Vector2(MathF.Cos(MathF.PI / 2 + phi) * radius, MathF.Sin(MathF.PI / 2 + phi) * radius);
+            Vertices[0] = Position + new Vector2(MathF.Cos(HalfPI) * radius, MathF.Sin(HalfPI) * radius);
+            Vertices[1] = Position + new Vector2(MathF.Cos(HalfPI + phi * 2) * radius, MathF.Sin(HalfPI + phi * 2) * radius);
+            Vertices[2] = Position + new Vector2(MathF.Cos(HalfPI + phi) * radius, MathF.Sin(HalfPI + phi) * radius);
+
+            Motions = new Dictionary<string, Easing>
+            {
+                { Accelerate, new Easing(Easings.EaseQuadOut, accelerateTime) },
+                { Decelerate, new Easing(Easings.EaseCircOut, decelerateTime, isReversed: true) },
+                { RotateIn,   new Easing(Easings.EaseSineOut, rotateInTime) },
+                { RotateOut,  new Easing(Easings.EaseSineIn, rotateOutTime, isReversed: true) },
+            };
         }
 
-        public override void Render()
+        public override void Update(double deltaTime)
         {
-            DrawCircleV(Position, 5, Color.WHITE);
-            DrawTriangleLines(Points[0], Points[1], Points[2], Color.PINK);
+            //update motions
+            foreach (var m in Motions) m.Value.Update(deltaTime);
 
-            Collider.Render();
+            //get normalized motion values if applicable
+            if (hasAcceleration)
+                n_acceleration = Motions[Accelerate].GetValue();
+            else if (n_acceleration > 0)
+                n_acceleration = Motions[Decelerate].GetValue();
 
-            DrawCircleV(Points[0], 5, Color.PURPLE);
+            if (hasRotation)
+                n_rotation = Motions[RotateIn].GetValue();
+            else if (n_rotation > 0)
+                n_rotation = Motions[RotateOut].GetValue();
 
-            foreach (var p in Points.Select((p, i) => (p, i)))
-                DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
-        }
+            //update rotation
+            var r = n_rotation * maxRotation;
+            rotation += direction == Left ? -1 * r : r;
 
+            //update & apply acceleration to position
+            acceleration = n_acceleration * maxAcceleration;
+            Position += new Vector2(MathF.Cos(rotation - HalfPI) * acceleration, MathF.Sin(rotation - HalfPI) * acceleration);
 
-        private void UpdateShip(double deltaTime)
-        {
-            //accelerate & decelerate according to easing curve
-            if (hasThrust)
-            {
-                var t = Math.Min(elapsedAccelerateTime, accelerateTime);
-                currentAcceleration = Easings.EaseQuadOut((float)t, 0f, 1f, (float)accelerateTime);
-                elapsedAccelerateTime += deltaTime;
-            }
-            else if (currentAcceleration > 0)
-            {
-                var t = Math.Min(elapsedDecelerateTime, decelerateTime);
-                currentAcceleration = 1 - Easings.EaseCircOut((float)t, 0f, 1f, (float)decelerateTime);
-                elapsedDecelerateTime += deltaTime;
-            }
+            //apply rotation to ship vertices, based on position and hence last in order
+            Vertices[0] = Position + new Vector2(MathF.Cos(rotation - HalfPI) * radius, MathF.Sin(rotation - HalfPI) * radius);
+            Vertices[1] = Position + new Vector2(MathF.Cos(rotation - HalfPI + phi * 2) * radius, MathF.Sin(rotation - HalfPI + phi * 2) * radius);
+            Vertices[2] = Position + new Vector2(MathF.Cos(rotation - HalfPI + phi) * radius, MathF.Sin(rotation - HalfPI + phi) * radius);
 
-
-            //TODO apply easing curves to rotation as well
-            if (shipRotation is ShipRotation.Left)
-            {
-                var t = Math.Min(elapsedRotateInTime, rotateInTime);
-                currentRotation = Easings.EaseSineIn((float)t, 0f, 1f, (float)rotateInTime);
-                rotation -= currentRotation * maxRotation;
-                elapsedRotateInTime += deltaTime;
-            }
-            if (shipRotation is ShipRotation.Right)
-            {
-                //currentRotation += maxRotation;
-            }
-
-            if (shipRotation is ShipRotation.None && currentRotation > 0)
-            {
-                var t = Math.Min(elapsedRotateOutTime, rotateOutTime);
-                currentRotation = 1 - Easings.EaseBounceOut((float)t, 0f, 1f, (float)rotateOutTime);
-                rotation -= currentRotation * maxRotation;
-                elapsedRotateOutTime += deltaTime;
-            }
-
-            //apply thrust to position
-            var thrust = currentAcceleration * maxThrust;
-
-            Velocity = new Vector2(MathF.Cos(rotation - MathF.PI / 2) * thrust, MathF.Sin(rotation - MathF.PI / 2) * thrust);
-            Position += Velocity;
-
-            //apply rotation
-            Points[0] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2) * radius, MathF.Sin(rotation - MathF.PI / 2) * radius);
-            Points[1] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi * 2) * radius, MathF.Sin(rotation - MathF.PI / 2 + phi * 2) * radius);
-            Points[2] = Position + new Vector2(MathF.Cos(rotation - MathF.PI / 2 + phi) * radius, MathF.Sin(rotation - MathF.PI / 2 + phi) * radius);
-
-            //update collider
+            //dont forget to update collider
             (Collider as CircleCollider).Center = Position;
 
             //bounds check
@@ -133,52 +107,63 @@ namespace Asteroids
             if (Position.Y > Game.WindowHeight) Position = new Vector2(Position.X, 0);
         }
 
-        public override void Update(double deltaTime)
+        public override void Render()
         {
-            UpdateShip(deltaTime);
+            DrawCircleV(Position, 5, Color.WHITE);
+            DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
+
+            Collider.Render();
+
+            DrawCircleV(Vertices[0], 5, Color.PURPLE);
+
+            foreach (var p in Vertices.Select((p, i) => (p, i)))
+                DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
         }
+
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            //currentRotation = e switch
-            //{
-            //    KeyLeftDown => currentRotation -= rotationSpeed,
-            //    KeyRightDown => currentRotation += rotationSpeed,
-            //    _ => currentRotation
-            //};
-
-            if (e is KeyLeftDown)
+            (hasRotation, direction) = e switch
             {
-                shipRotation = ShipRotation.Left;
-            }
+                KeyLeftDown when !hasRotation => StartRotateIn(Left),
+                KeyRightDown when !hasRotation => StartRotateIn(Right),
+                KeyLeftReleased or KeyRightReleased => StartRotateOut(),
+                _ => (hasRotation, direction)
+            };
 
-            if (e is KeyRightDown)
+            hasAcceleration = e switch
             {
-                shipRotation = ShipRotation.Right;
-            }
-
-            if (e is KeyRightReleased or KeyLeftReleased)
-            {
-                elapsedRotateOutTime = MapRange(1d - currentRotation, 0d, 1d, 0d, rotateOutTime);
-                shipRotation = ShipRotation.None;
-            }
-
-            if (e is KeyUpDown && !hasThrust)
-            {
-                elapsedAccelerateTime = MapRange(currentAcceleration, 0d, 1d, 0d, accelerateTime);
-                hasThrust = true;
-            }
-
-            if (e is KeyUpReleased && hasThrust)
-            {
-                elapsedDecelerateTime = MapRange(1d - currentAcceleration, 0d, 1d, 0d, decelerateTime);
-                hasThrust = false;
-            }
+                KeyUpDown when !hasAcceleration => StartAccelerate(),
+                KeyUpReleased when hasAcceleration => StartDecelerate(),
+                _ => hasAcceleration
+            };
 
             if (e is KeySpaceBarPressed)
-                EmitEvent(new ShipShootBullet { Origin = Points[0], Rotation = rotation, Force = currentAcceleration * maxThrust });
+                EmitEvent(new ShipShootBullet { Origin = Vertices[0], Rotation = rotation, Force = acceleration });
         }
 
+        private (bool, string) StartRotateOut()
+        {
+            Motions[RotateOut].SetElapsedTime(n_rotation);
+            return (false, direction);
+        }
 
+        private (bool, string) StartRotateIn(string direction)
+        {
+            Motions[RotateIn].SetElapsedTime(n_rotation);
+            return (true, direction);
+        }
+
+        private bool StartAccelerate()
+        {
+            Motions[Accelerate].SetElapsedTime(n_acceleration);
+            return true;
+        }
+
+        private bool StartDecelerate()
+        {
+            Motions[Decelerate].SetElapsedTime(n_acceleration);
+            return false;
+        }
     }
 }

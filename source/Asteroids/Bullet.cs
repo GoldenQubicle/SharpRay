@@ -14,8 +14,8 @@ namespace Asteroids
         public float Rotation { get; }
         public float InitialForce { get; }
         private float radius = 5f;
-        private float speed = 5f;
-        private double lifeTime = 350 * Config.TickMultiplier;
+        private float speed = 50f;
+        private double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
         public Bullet(Vector2 origin, float rotation, float initialForce)
         {
@@ -24,7 +24,6 @@ namespace Asteroids
             speed += initialForce;
             Collider = new CircleCollider { Center = Origin, Radius = radius };
         }
-
 
         public override void Render()
         {

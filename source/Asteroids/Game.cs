@@ -27,8 +27,6 @@ namespace Asteroids
             if(e is BulletLifeTimeExpired b)
                 RemoveEntity(b.Bullet);
 
-            Console.WriteLine($"Game event: {e.GetType()}");
-
         }
 
         static void OnGuiEvent(IGuiEvent e)
