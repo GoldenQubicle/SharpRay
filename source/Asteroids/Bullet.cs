@@ -15,6 +15,7 @@ namespace Asteroids
         private readonly float speed = 10f;
         private readonly double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
+        public int Damage { get; } = 5;
 
         public Bullet(Vector2 origin, float angle, float initialForce)
         {

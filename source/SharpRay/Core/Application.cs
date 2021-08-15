@@ -12,7 +12,6 @@ using SharpRay.Entities;
 using SharpRay.Eventing;
 using SharpRay.Gui;
 using SharpRay.Listeners;
-using System.Timers;
 
 namespace SharpRay.Core
 {

@@ -138,6 +138,7 @@ namespace Asteroids
                 _ => hasAcceleration
             };
 
+            //obvisouly this will change w primary & secondary weapon
             if (e is KeySpaceBarPressed)
                 EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
         }

@@ -1,5 +1,6 @@
 ﻿using SharpRay.Entities;
 using SharpRay.Eventing;
+using System.Dynamic;
 using System.Numerics;
 
 namespace Asteroids
@@ -17,6 +18,17 @@ namespace Asteroids
 
     }
 
+    public struct AsteroidDestroyed : IGameEvent
+    {
+        public Asteroid Asteroid { get; init; }
+    }
+
+    public struct AsteroidSpawnNew : IGameEvent
+    {
+        public int Stages { get; init; }
+        public Vector2 SpawnPoint { get; init; }
+        public Vector2 Size { get; init; }
+    }
 
     public struct ShipHitAsteroid : IGameEvent
     {
