@@ -20,7 +20,7 @@ namespace Asteroids
         private readonly float radius;
 
         private readonly double accelerateTime = 500 * Config.TickMultiplier; // time it takes to reach max acceleration
-        private readonly double decelerateTime = 1500 * Config.TickMultiplier; // time it takes from max acceleration to come to a stand still
+        private readonly double decelerateTime = 2500 * Config.TickMultiplier; // time it takes from max acceleration to come to a stand still
         private readonly float maxAcceleration = 10;
         private float n_acceleration = 0f; //normalized 0-1
         private float acceleration = 0f;
@@ -139,7 +139,7 @@ namespace Asteroids
             };
 
             if (e is KeySpaceBarPressed)
-                EmitEvent(new ShipShootBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
+                EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
         }
 
         private (bool, string) StartRotateOut()

@@ -12,7 +12,7 @@ namespace Asteroids
     {
         private Vector2 acceleration;
         private readonly float radius = 5f;
-        private readonly float speed = 50f;
+        private readonly float speed = 10f;
         private readonly double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
 
