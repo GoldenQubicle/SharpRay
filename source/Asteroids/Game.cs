@@ -22,7 +22,7 @@ namespace Asteroids
         {
             AddEntity(new Ship(new Vector2(64, 64), new Vector2(WindowWidth / 2, WindowHeight / 2)), OnGameEvent);
 
-            AddEntity(new Asteroid(new Vector2(100, 100), new Vector2(500, 200), 15, 2), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(100, 100), new Vector2(500, 200), 15, 3), OnGameEvent);
 
             Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
@@ -57,6 +57,9 @@ namespace Asteroids
             if(e is AsteroidSpawnNew asn)
             {
                 AddEntity(new Asteroid(asn.SpawnPoint, asn.Size, 10, asn.Stages), OnGameEvent);
+                AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, 0), asn.Size, 10, asn.Stages), OnGameEvent);
+                AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(0, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
+                AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
             }
 
         }

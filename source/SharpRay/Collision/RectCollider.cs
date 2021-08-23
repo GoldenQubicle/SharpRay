@@ -28,7 +28,10 @@ namespace SharpRay.Collision
             _ => throw new NotImplementedException($"Rect collider does not provide overlap check for {collider.GetType().Name}")
         };
 
-        public void Render() => DrawRectangleLinesEx(Collider, 2, Color.BLUE);
+        public void Render()
+        {
+            DrawRectangleLinesEx(Collider, 2, Color.BLUE);
+        }
 
     }
 }
