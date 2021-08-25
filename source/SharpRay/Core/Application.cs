@@ -142,14 +142,12 @@ namespace SharpRay.Core
                     for (var j = 0; j < gameEntities.Length; j++)
                     {
                         var e2 = gameEntities[j];
-                        if (e1 != e2 && CheckCollisionRecs(e1.Collider, e2.Collider))
+                        if (e1 != e2 && e1.Collider.Overlaps(e2.Collider))
                             cl1.OnCollision(e2);
                     }
                 }
             }
         }
-
-        private static bool CheckCollisionRecs(ICollider collider1, ICollider collider2) => collider1.Overlaps(collider2);
 
 
         private static double FixedUpdateInterval = 1000 / 60 * TickMultiplier;

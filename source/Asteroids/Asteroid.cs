@@ -23,11 +23,8 @@ namespace Asteroids
             Center = Position + Size / 2;
             Strength = strength;
             Stages = stages;
-            Collider = new RectCollider
-            {
-                Position = Position,
-                Size = Size
-            };
+            Collider = new RectProCollider(Center, Size, 0f);  
+            
 
             Points = GenerateShape();
         }
@@ -103,9 +100,14 @@ namespace Asteroids
                 EmitEvent(new BulletHitAsteroid { Bullet = b });
             }
 
-            if (e is Ship)
+            if (e is Ship s)
             {
                 EmitEvent(new ShipHitAsteroid());
+            }
+
+            if(e is Asteroid a)
+            {
+                //TODO bounce of each other
             }
         }
 

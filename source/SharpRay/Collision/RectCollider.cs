@@ -5,6 +5,9 @@ using System;
 
 namespace SharpRay.Collision
 {
+    /// <summary>
+    /// Basic rectangle collider. Cannot be rotated. 
+    /// </summary>
     public class RectCollider : ICollider
     {
         public Vector2 Position { get; set; }
@@ -32,6 +35,5 @@ namespace SharpRay.Collision
         {
             DrawRectangleLinesEx(Collider, 2, Color.BLUE);
         }
-
     }
 }
