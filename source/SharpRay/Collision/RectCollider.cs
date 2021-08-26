@@ -13,7 +13,7 @@ namespace SharpRay.Collision
         public Vector2 Size { get; set; }
         public Rectangle Collider
         {
-            get => new Rectangle
+            get => new()
             {
                 x = Position.X,
                 y = Position.Y,

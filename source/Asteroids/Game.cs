@@ -22,7 +22,7 @@ namespace Asteroids
         {
             AddEntity(new Ship(new Vector2(64, 64), new Vector2(WindowWidth / 2, WindowHeight / 2)), OnGameEvent);
 
-            AddEntity(new Asteroid(new Vector2(100, 100), new Vector2(500, 200), 15, 3), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(100, 100), new Vector2(350, 200), 15, 3), OnGameEvent);
 
             Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
