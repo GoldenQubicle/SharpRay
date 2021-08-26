@@ -8,15 +8,13 @@ namespace SharpRay.Collision
     {
         public Vector2 Center { get; set; }
         public Vector2 Size { get; private set; }
-        public float Rotation { get; private set; }
 
         private readonly Vector2[] points;
 
-        public RectProCollider(Vector2 center, Vector2 size, float rotation)
+        public RectProCollider(Vector2 center, Vector2 size)
         {
             Center = center;
             Size = size;
-            Rotation = rotation;
 
             points = new Vector2[] 
             {
@@ -29,9 +27,13 @@ namespace SharpRay.Collision
                
         public override void Render()
         {
+            DrawCircleV(Center, 5, Raylib_cs.Color.ORANGE);
+
             DrawLineV(points[0], points[1], Color);
             DrawLineV(points[1], points[2], Color);
-            DrawLineV(points[2], points[0], Color);
+
+            DrawLineV(points[2], points[0], Color);//diagonal to remind ourselves collision checks happen with 2 triangles
+
             DrawLineV(points[2], points[3], Color);
             DrawLineV(points[3], points[0], Color);
         }
@@ -42,10 +44,11 @@ namespace SharpRay.Collision
             yield return (points[2], points[3], points[0]);
         }
 
-        public void Update(Matrix3x2 rotationMatrix)
+        public void Update(Matrix3x2 matrix)
         {
+            Center = Vector2.Transform(Center, matrix);
             for (var i = 0; i < points.Length; i++)
-                points[i] = Vector2.Transform(points[i], rotationMatrix);
+                points[i] = Vector2.Transform(points[i], matrix);
         }
 
         public IEnumerable<(Vector2 start, Vector2 end)> GetLines()

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
-using static SharpRay.Core.Application;
 
 namespace Asteroids
 {
@@ -19,9 +18,9 @@ namespace Asteroids
 
         private Vector2[] Points;
         private Vector2 Center;
-        private float RotationAngle = 0.05f; // in radians per rotation time
-        private Matrix3x2 RotationMatrix;
-
+        private float RotationAngle = 0.05f; // in radians per fixed update
+        private Matrix3x2 Translation = Matrix3x2.CreateTranslation(1f, 0f);
+        private Matrix3x2 Rotation;
         public Asteroid(Vector2 position, Vector2 size, int strength, int stages)
         {
             Position = position;
@@ -30,24 +29,28 @@ namespace Asteroids
             Stages = stages;
             Center = Position + Size / 2;
             Points = GenerateShape();
-            RotationMatrix = Matrix3x2.CreateRotation(RotationAngle, Center);
-            Collider = new RectProCollider(Center, Size, 0f);
-        }
 
+            Collider = new RectProCollider(Center, Size);
+        }
 
         public override void Update(double deltaTime)
         {
+            Position = Vector2.Transform(Position, Translation);
+            Center = Vector2.Transform(Center, Translation);
+            Rotation = Matrix3x2.CreateRotation(RotationAngle, Center);
+            
+            var m = Rotation * Translation;
+
             for (var i = 0; i < Points.Length; i++)
             {
-                Points[i] = Vector2.Transform(Points[i], RotationMatrix);
+                Points[i] = Vector2.Transform(Points[i], m);
             }
 
-            (Collider as RectProCollider).Update(RotationMatrix);
+            (Collider as RectProCollider).Update(m); 
         }
 
         public override void Render()
         {
-
             DrawLineV(Points[0], Points[Points.Length - 1], Color.YELLOW);
 
             for (var i = 0; i < Points.Length - 1; i++)
@@ -55,8 +58,8 @@ namespace Asteroids
                 DrawLineV(Points[i], Points[i + 1], Color.YELLOW);
             }
 
-            //DrawRectangleV(Position, Size, Color.BLANK);
-            //DrawCircleV(Center, 15, Color.YELLOW);
+            //DrawCircleV(Center, 5, Color.YELLOW);
+
             Collider.Render();
         }
 

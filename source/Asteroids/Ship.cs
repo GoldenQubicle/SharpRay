@@ -168,6 +168,5 @@ namespace Asteroids
             Motions[Decelerate].SetElapsedTime(n_acceleration);
             return false;
         }
-
     }
 }
