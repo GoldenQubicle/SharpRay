@@ -1,23 +1,32 @@
-﻿using Raylib_cs;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 
 namespace SharpRay.Collision
 {
-    public class CircleCollider : ICollider
+    public class CircleCollider : Collider
     {
         public Vector2 Center { get; set; }
         public float Radius { get; init; }
+        public int HitPoints { get; init; } = 4; //number of point on circumference used in collision detection with rect pro collider. 
 
-        public bool ContainsPoint(Vector2 point) => CheckCollisionPointCircle(point, Center, Radius);
-        public bool Overlaps(ICollider collider) => collider switch
+        public IEnumerable<Vector2> GetHitPoints()
         {
-            RectCollider rc => CheckCollisionCircleRec(Center, Radius, rc.Collider),
-            CircleCollider cc => CheckCollisionCircles(Center, Radius, cc.Center, cc.Radius),
-            _ => throw new NotImplementedException($"Circle collider does not provide overlap check for {collider.GetType().Name}")
-        };
+            var theta = MathF.Tau / HitPoints;
 
-        public void Render() => DrawCircleLines((int)Center.X, (int)Center.Y, Radius, Color.BLUE);
+            for (var i = 0; i < HitPoints; i++)
+            {
+                yield return Center + new Vector2(MathF.Cos(i * theta) * Radius, MathF.Sin(i * theta) * Radius);
+            }
+        }
+
+        public override void Render()
+        {
+            foreach (var p in GetHitPoints())
+                DrawCircleV(p, 2, Raylib_cs.Color.RED);
+
+            DrawCircleLines((int)Center.X, (int)Center.Y, Radius, Color);
+        }
     }
 }

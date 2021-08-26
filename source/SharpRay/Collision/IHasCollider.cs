@@ -2,6 +2,6 @@
 {
     public interface IHasCollider
     {
-        public ICollider Collider { get; }
+        public Collider Collider { get; }
     }
 }

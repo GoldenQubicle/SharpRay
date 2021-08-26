@@ -8,7 +8,7 @@ using SharpRay.Core;
 
 namespace Asteroids
 {
-    public class Bullet : GameEntity
+    public class Bullet : GameEntity, IHasCollider
     {
         private Vector2 acceleration;
         private readonly float radius = 5f;
@@ -16,6 +16,7 @@ namespace Asteroids
         private readonly double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
         public int Damage { get; } = 5;
+        public Collider Collider { get; }
 
         public Bullet(Vector2 origin, float angle, float initialForce)
         {

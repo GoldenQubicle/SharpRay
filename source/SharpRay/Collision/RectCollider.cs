@@ -1,14 +1,13 @@
 ﻿using static Raylib_cs.Raylib;
 using System.Numerics;
 using Raylib_cs;
-using System;
 
 namespace SharpRay.Collision
 {
     /// <summary>
     /// Basic rectangle collider. Cannot be rotated. 
     /// </summary>
-    public class RectCollider : ICollider
+    public class RectCollider : Collider
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
@@ -22,18 +21,7 @@ namespace SharpRay.Collision
                 height = Size.Y
             };
         }
-        public bool ContainsPoint(Vector2 point) => CheckCollisionPointRec(point, Collider);
+        public override void Render() => DrawRectangleLinesEx(Collider, 2, Color);
         
-        public bool Overlaps(ICollider collider) => collider switch
-        {
-            RectCollider rc => CheckCollisionRecs(Collider, rc.Collider),
-            CircleCollider cc => CheckCollisionCircleRec(cc.Center, cc.Radius, Collider),
-            _ => throw new NotImplementedException($"Rect collider does not provide overlap check for {collider.GetType().Name}")
-        };
-
-        public void Render()
-        {
-            DrawRectangleLinesEx(Collider, 2, Color.BLUE);
-        }
     }
 }

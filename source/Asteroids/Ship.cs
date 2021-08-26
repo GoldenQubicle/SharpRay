@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Asteroids
 {
-    public class Ship : GameEntity
+    public class Ship : GameEntity, IHasCollider
     {
         private const float phi = 2.09439510239f;
         private const float HalfPI = MathF.PI / 2;
@@ -42,6 +42,7 @@ namespace Asteroids
         private const string RotateOut = nameof(RotateOut);
         private const string Left = nameof(Left);
         private const string Right = nameof(Right);
+        public Collider Collider { get; }
 
         public Ship(Vector2 size, Vector2 pos)
         {
@@ -52,7 +53,8 @@ namespace Asteroids
             Collider = new CircleCollider
             {
                 Center = Position,
-                Radius = radius
+                Radius = radius,
+                HitPoints = 16
             };
 
             Vertices[0] = Position + new Vector2(MathF.Cos(HalfPI) * radius, MathF.Sin(HalfPI) * radius);
@@ -166,5 +168,6 @@ namespace Asteroids
             Motions[Decelerate].SetElapsedTime(n_acceleration);
             return false;
         }
+
     }
 }

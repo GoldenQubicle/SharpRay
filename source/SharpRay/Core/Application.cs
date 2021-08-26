@@ -132,16 +132,16 @@ namespace SharpRay.Core
 
         private static void DoCollisions()
         {
-            var gameEntities = Entities.OfType<GameEntity>().ToArray();
+            var colliders = Entities.OfType<IHasCollider>().ToArray();
 
-            for (var i = 0; i < gameEntities.Length; i++)
+            for (var i = 0; i < colliders.Length; i++)
             {
-                var e1 = gameEntities[i];
+                var e1 = colliders[i];
                 if (e1 is IHasCollision cl1)
                 {
-                    for (var j = 0; j < gameEntities.Length; j++)
+                    for (var j = 0; j < colliders.Length; j++)
                     {
-                        var e2 = gameEntities[j];
+                        var e2 = colliders[j];
                         if (e1 != e2 && e1.Collider.Overlaps(e2.Collider))
                             cl1.OnCollision(e2);
                     }

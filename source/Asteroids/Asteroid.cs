@@ -3,15 +3,15 @@ using SharpRay.Collision;
 using SharpRay.Core;
 using SharpRay.Entities;
 using SharpRay.Eventing;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 
 namespace Asteroids
 {
-    public class Asteroid : GameEntity, IHasCollision
+    public class Asteroid : GameEntity, IHasCollider, IHasCollision
     {
+        public Collider Collider { get; }
         public int Strength { get; private set; }
         public int Stages { get; }
         private Vector2[] Points { get; set; }
@@ -82,7 +82,7 @@ namespace Asteroids
             Collider.Render();
         }
 
-        public void OnCollision(GameEntity e)
+        public void OnCollision(IHasCollider e)
         {
             if (e is Bullet b)
             {
