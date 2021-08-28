@@ -44,10 +44,10 @@ namespace Asteroids
         private const string Right = nameof(Right);
         public Collider Collider { get; }
 
-        public Ship(Vector2 size, Vector2 pos)
+        public Ship(Vector2 position, Vector2 size)
         {
+            Position = position;
             Size = size;
-            Position = pos;
             radius = Size.X / 2;
 
             Collider = new CircleCollider

@@ -4,10 +4,12 @@ using SharpRay.Core;
 using SharpRay.Eventing;
 using System.Collections.Generic;
 using System;
+using Raylib_cs;
+using SharpRay.Entities;
 
 namespace Asteroids
 {
-    public class Game
+    public class Game : Entity
     {
         public const int WindowWidth = 1080;
         public const int WindowHeight = 720;
@@ -20,15 +22,20 @@ namespace Asteroids
 
         static void Main(string[] args)
         {
-            AddEntity(new Ship(new Vector2(64, 64), new Vector2(WindowWidth / 2, WindowHeight / 2)), OnGameEvent);
+            var game = new Game();
+            
+            AddEntity(game);
 
-            AddEntity(new Asteroid(new Vector2(100, 100), new Vector2(350, 200), 15, 3), OnGameEvent);
+            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64)), game.OnGameEvent);
+
+            AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f,0), 15, 2), game.OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f,0), 15, 2), game.OnGameEvent);
 
             Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
         }
 
-        static void OnGameEvent(IGameEvent e)
+        public void OnGameEvent(IGameEvent e)
         {
             if (e is ShipFiredBullet sfb)
             {
@@ -56,16 +63,26 @@ namespace Asteroids
 
             if(e is AsteroidSpawnNew asn)
             {
-                AddEntity(new Asteroid(asn.SpawnPoint, asn.Size, 10, asn.Stages), OnGameEvent);
-                AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, 0), asn.Size, 10, asn.Stages), OnGameEvent);
-                AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(0, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
-                AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
+                //AddEntity(new Asteroid(asn.SpawnPoint, asn.Size, 10, asn.Stages), OnGameEvent);
+                //AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, 0), asn.Size, 10, asn.Stages), OnGameEvent);
+                //AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(0, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
+                //AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
             }
 
         }
 
-        static void OnGuiEvent(IGuiEvent e)
+        public void OnGuiEvent(IGuiEvent e)
         {
+        }
+
+        public override void OnKeyBoardEvent(IKeyBoardEvent e)
+        {
+            if(e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_E) 
+            {
+                RemoveEntities<Asteroid>();
+                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f, 0), 15, 2), OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f, 0), 15, 2), OnGameEvent);
+            }
         }
     }
 }

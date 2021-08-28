@@ -6,6 +6,7 @@ using SharpRay.Eventing;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading;
 using static Raylib_cs.Raylib;
 
 namespace Asteroids
@@ -18,17 +19,20 @@ namespace Asteroids
 
         private Vector2[] Points;
         private Vector2 Center;
-        private float RotationAngle = 0.05f; // in radians per fixed update
-        private Matrix3x2 Translation = Matrix3x2.CreateTranslation(1f, 0f);
+        private float RotationAngle;//0.05f; // in radians per fixed update
+        private Matrix3x2 Translation;
         private Matrix3x2 Rotation;
-        public Asteroid(Vector2 position, Vector2 size, int strength, int stages)
+
+        public Asteroid(Vector2 position, Vector2 size, Vector2 heading, int strength, int stages)
         {
             Position = position;
             Size = size;
+            Translation = Matrix3x2.CreateTranslation(heading);
             Strength = strength;
             Stages = stages;
             Center = Position + Size / 2;
             Points = GenerateShape();
+            RotationAngle = GetRandomValue(-50, 50) / 1000f;
 
             Collider = new RectProCollider(Center, Size);
         }
@@ -38,15 +42,13 @@ namespace Asteroids
             Position = Vector2.Transform(Position, Translation);
             Center = Vector2.Transform(Center, Translation);
             Rotation = Matrix3x2.CreateRotation(RotationAngle, Center);
-            
-            var m = Rotation * Translation;
+
+            var m = Translation * Rotation;
 
             for (var i = 0; i < Points.Length; i++)
-            {
                 Points[i] = Vector2.Transform(Points[i], m);
-            }
 
-            (Collider as RectProCollider).Update(m); 
+            (Collider as RectProCollider).Update(m);
         }
 
         public override void Render()
@@ -54,13 +56,11 @@ namespace Asteroids
             DrawLineV(Points[0], Points[Points.Length - 1], Color.YELLOW);
 
             for (var i = 0; i < Points.Length - 1; i++)
-            {
                 DrawLineV(Points[i], Points[i + 1], Color.YELLOW);
-            }
-
-            //DrawCircleV(Center, 5, Color.YELLOW);
 
             Collider.Render();
+
+            DrawCircleV(Center, 5, Color.YELLOW);
         }
 
         public void OnCollision(IHasCollider e)
@@ -69,10 +69,10 @@ namespace Asteroids
             {
                 Strength -= b.Damage;
 
-                if (Strength <= 0 && Stages == 1)
+                if (Strength <= 0 && Stages == 0)
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
 
-                if (Strength <= 0 && Stages > 1)
+                if (Strength <= 0 && Stages > 0)
                 {
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
                     EmitEvent(new AsteroidSpawnNew { Stages = Stages - 1, SpawnPoint = Position, Size = Size / 2 });
@@ -88,6 +88,8 @@ namespace Asteroids
 
             if (e is Asteroid a)
             {
+                RotationAngle = 0f;
+                Translation = Matrix3x2.Identity;
                 //TODO bounce of each other
             }
         }

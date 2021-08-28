@@ -12,7 +12,9 @@ namespace SharpRay.Core
 
         public static void DoEvents()
         {
-            
+
+            foreach (var key in Keys) if (IsKeyPressed(key)) DoEvent(new KeyPressed { KeyboardKey = key });
+
 
             if (IsKeyReleased(KeyboardKey.KEY_UP) || IsKeyReleased(KeyboardKey.KEY_W))
                 DoEvent(new KeyUpReleased());
@@ -39,8 +41,12 @@ namespace SharpRay.Core
             if (IsKeyDown(KeyboardKey.KEY_LEFT) || IsKeyDown(KeyboardKey.KEY_A))
                 DoEvent(new KeyLeftDown());
 
+
             if (IsKeyPressed(KeyboardKey.KEY_SPACE))
                 DoEvent(new KeySpaceBarPressed());
+
+            if (IsKeyDown(KeyboardKey.KEY_DELETE))
+                DoEvent(new KeyDelete());
 
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Z))
@@ -48,9 +54,6 @@ namespace SharpRay.Core
 
             if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
                 DoEvent(new KeyRedo());
-
-            if (IsKeyDown(KeyboardKey.KEY_DELETE))
-                DoEvent(new KeyDelete());
         }
 
         private static void DoEvent(IKeyBoardEvent kbe) => EmitEvent?.Invoke(kbe);

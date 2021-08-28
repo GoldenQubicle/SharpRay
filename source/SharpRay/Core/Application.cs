@@ -25,33 +25,7 @@ namespace SharpRay.Core
         private static readonly Stopwatch sw = new();
         private static List<Entity> Entities = new();
 
-        public static void RemoveEntity(Entity e)
-        {
-            EventActions.Add(() =>
-            {
-                KeyBoard.EmitEvent -= e.OnKeyBoardEvent;
-                Mouse.EmitEvent -= e.OnMouseEvent;
-                Entities.Remove(e);
-            });
-        }
 
-        public static void AddEntity(Entity e)
-        {
-            EntityEventInitialisation(e);
-            Entities.Add(e);
-        }
-
-        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent)
-        {
-            EntityEventInitialisation(e, Audio.OnUIEvent, onGuiEvent);
-            Entities.Add(e);
-        }
-
-        public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent)
-        {
-            EntityEventInitialisation(e, Audio.OnGameEvent, onGameEvent);
-            Entities.Add(e);
-        }
 
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
@@ -88,6 +62,38 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
+        public static void RemoveEntities<T>() where T : Entity
+        {
+            foreach (var e in Entities.OfType<T>())
+                RemoveEntity(e);
+        }
+
+        public static void RemoveEntity(Entity e)
+        {
+            EventActions.Add(() =>
+            {
+                KeyBoard.EmitEvent -= e.OnKeyBoardEvent;
+                Mouse.EmitEvent -= e.OnMouseEvent;
+                Entities.Remove(e);
+            });
+        }
+
+        public static void AddEntity(Entity e) => AddEntity(e, null, null);
+
+        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) => AddEntity(e, new[] { Audio.OnUIEvent, onGuiEvent }, null);
+
+        public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
+
+        private static void AddEntity(Entity e,
+           Action<IGuiEvent>[] onGuiEventActions = null,
+           Action<IGameEvent>[] onGameEventActions = null)
+        {
+            EventActions.Add(() =>
+            {
+                EntityEventInitialisation(e, onGuiEventActions, onGameEventActions);
+                Entities.Add(e);
+            });
+        }
 
         private static void EntityEventInitialisation(
            Entity e,
