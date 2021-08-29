@@ -88,9 +88,10 @@ namespace Asteroids
 
             if (e is Asteroid a)
             {
-                RotationAngle = 0f;
-                Translation = Matrix3x2.Identity;
-                //TODO bounce of each other
+                //super basic bounce mechanic, prone to some issues..
+                RotationAngle = -1 * RotationAngle;
+                Matrix3x2.Invert(Translation, out var inverse);
+                Translation = inverse;
             }
         }
 

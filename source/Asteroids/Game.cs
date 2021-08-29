@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using Raylib_cs;
 using SharpRay.Entities;
+using static Raylib_cs.Raylib;
 
 namespace Asteroids
 {
@@ -33,6 +34,11 @@ namespace Asteroids
 
             Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
+        }
+
+        public override void Render()
+        {
+            //DrawText("hi there!", WindowWidth / 2, WindowHeight / 2, 38, Color.ORANGE);
         }
 
         public void OnGameEvent(IGameEvent e)
