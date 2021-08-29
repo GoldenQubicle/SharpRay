@@ -14,8 +14,11 @@ namespace Asteroids
     public class Asteroid : GameEntity, IHasCollider, IHasCollision
     {
         public Collider Collider { get; }
-        public int Strength { get; private set; }
-        public int Stages { get; }
+        public Matrix3x2 Transform { get; private set; }
+
+        private int Strength;
+        private Vector2 Heading;
+        private int Stage;
 
         private Vector2[] Points;
         private Vector2 Center;
@@ -23,13 +26,16 @@ namespace Asteroids
         private Matrix3x2 Translation;
         private Matrix3x2 Rotation;
 
-        public Asteroid(Vector2 position, Vector2 size, Vector2 heading, int strength, int stages)
+
+        public Asteroid(Vector2 position, Vector2 size, Vector2 heading, int stage)
         {
             Position = position;
             Size = size;
             Translation = Matrix3x2.CreateTranslation(heading);
-            Strength = strength;
-            Stages = stages;
+            Heading = heading;
+            Stage = stage;
+            Strength = stage * 5;
+
             Center = Position + Size / 2;
             Points = GenerateShape();
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
@@ -37,18 +43,34 @@ namespace Asteroids
             Collider = new RectProCollider(Center, Size);
         }
 
+        public Asteroid(Vector2 position, Vector2 size, Matrix3x2 translation, float rotation, int stage)
+        {
+            Position = position;
+            Size = size;
+            Translation = translation;
+            Stage = stage;
+            Strength = stage * 5;
+
+            Center = Position + Size / 2;
+            Points = GenerateShape();
+            RotationAngle = rotation;
+
+            Collider = new RectProCollider(Center, Size);
+        }
+
+
         public override void Update(double deltaTime)
         {
             Position = Vector2.Transform(Position, Translation);
             Center = Vector2.Transform(Center, Translation);
             Rotation = Matrix3x2.CreateRotation(RotationAngle, Center);
 
-            var m = Translation * Rotation;
+            Transform = Translation * Rotation;
 
             for (var i = 0; i < Points.Length; i++)
-                Points[i] = Vector2.Transform(Points[i], m);
+                Points[i] = Vector2.Transform(Points[i], Transform);
 
-            (Collider as RectProCollider).Update(m);
+            (Collider as RectProCollider).Update(Transform);
         }
 
         public override void Render()
@@ -69,13 +91,21 @@ namespace Asteroids
             {
                 Strength -= b.Damage;
 
-                if (Strength <= 0 && Stages == 0)
+                if (Strength <= 0 && Stage == 1)
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
 
-                if (Strength <= 0 && Stages > 0)
+                if (Strength <= 0 && Stage > 1)
                 {
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
-                    EmitEvent(new AsteroidSpawnNew { Stages = Stages - 1, SpawnPoint = Position, Size = Size / 2 });
+                    EmitEvent(new AsteroidSpawnNew
+                    {
+                        Stage = Stage - 1,
+                        Position = Position,
+                        Size = Size / 2,
+                        //Translation = Translation,
+                        Rotation = RotationAngle,
+                        Heading = Heading
+                    });
                 }
 
                 EmitEvent(new BulletHitAsteroid { Bullet = b });
@@ -98,10 +128,10 @@ namespace Asteroids
         private Vector2[] GenerateShape()
         {
             //TODO check for intersecting lines at corners
-            var xpoints = Stages * 3;
-            var ypoints = Stages * 2;
-            var min = Stages * 2;
-            var max = Stages * 10;
+            var xpoints = Stage * 3;
+            var ypoints = Stage * 2;
+            var min = Stage * 2;
+            var max = Stage * 10;
             var shape = new List<Vector2>();
             var xinterval = (int)Size.X / xpoints;
             var yinterval = (int)Size.Y / ypoints;

@@ -17,20 +17,20 @@ namespace Asteroids
 
         private static Dictionary<Type, int> bulletStats = new()
         {
-            {typeof(ShipFiredBullet), 0 },
-            {typeof(BulletHitAsteroid), 0 }
+            { typeof(ShipFiredBullet), 0 },
+            { typeof(BulletHitAsteroid), 0 }
         };
 
         static void Main(string[] args)
         {
             var game = new Game();
-            
+
             AddEntity(game);
 
             AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64)), game.OnGameEvent);
 
-            AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f,0), 15, 2), game.OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f,0), 15, 2), game.OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f, 0), 2), game.OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f, 0), 2), game.OnGameEvent);
 
             Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
@@ -58,7 +58,7 @@ namespace Asteroids
                 bulletStats[bha.GetType()]++;
             }
 
-            if(e is ShipHitAsteroid sha)
+            if (e is ShipHitAsteroid sha)
                 Console.WriteLine("Ship has taken damage");
 
             if (e is AsteroidDestroyed ad)
@@ -67,14 +67,21 @@ namespace Asteroids
                 RemoveEntity(ad.Asteroid);
             }
 
-            if(e is AsteroidSpawnNew asn)
+            if (e is AsteroidSpawnNew asn)
             {
-                //AddEntity(new Asteroid(asn.SpawnPoint, asn.Size, 10, asn.Stages), OnGameEvent);
-                //AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, 0), asn.Size, 10, asn.Stages), OnGameEvent);
-                //AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(0, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
-                //AddEntity(new Asteroid(asn.SpawnPoint + new Vector2(asn.Size.X, asn.Size.Y), asn.Size, 10, asn.Stages), OnGameEvent);
-            }
+                //should actually 'explode', i.e. expel 4 smaller asteroids from the center 
+                var heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .25f), MathF.Sin(MathF.Tau * .25f));
+                AddEntity(new Asteroid(asn.Position, asn.Size, heading, asn.Stage), OnGameEvent);
 
+                heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .5f), MathF.Sin(MathF.Tau * .25f));
+                AddEntity(new Asteroid(asn.Position + new Vector2(asn.Size.X, 0), asn.Size, heading, asn.Stage), OnGameEvent);
+
+                heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .75f), MathF.Sin(MathF.Tau * .75f));
+                AddEntity(new Asteroid(asn.Position + new Vector2(0, asn.Size.Y), asn.Size, heading, asn.Stage), OnGameEvent);
+
+                heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau), MathF.Sin(MathF.Tau));
+                AddEntity(new Asteroid(asn.Position + new Vector2(asn.Size.X, asn.Size.Y), asn.Size, heading, asn.Stage), OnGameEvent);
+            }
         }
 
         public void OnGuiEvent(IGuiEvent e)
@@ -83,11 +90,11 @@ namespace Asteroids
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if(e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_E) 
+            if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_E)
             {
                 RemoveEntities<Asteroid>();
-                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f, 0), 15, 2), OnGameEvent);
-                AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f, 0), 15, 2), OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f, 0), 2), OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f, 0), 2), OnGameEvent);
             }
         }
     }

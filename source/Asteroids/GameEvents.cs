@@ -25,9 +25,11 @@ namespace Asteroids
 
     public struct AsteroidSpawnNew : IGameEvent
     {
-        public int Stages { get; init; }
-        public Vector2 SpawnPoint { get; init; }
+        public int Stage { get; init; }
+        public Vector2 Position { get; init; }
         public Vector2 Size { get; init; }
+        public Vector2 Heading { get; init; }
+        public float Rotation { get; init; }
     }
 
     public struct ShipHitAsteroid : IGameEvent
