@@ -11,7 +11,7 @@ namespace Asteroids
     public class Bullet : GameEntity, IHasCollider
     {
         private Vector2 acceleration;
-        private readonly float radius = 5f;
+        private readonly float radius = 2f;
         private readonly float speed = 10f;
         private readonly double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
@@ -33,7 +33,7 @@ namespace Asteroids
         public override void Render()
         {
             DrawCircleV(Position, radius, Color.YELLOW);
-            Collider.Render();
+            //Collider.Render();
         }
 
         public override void Update(double deltaTime)

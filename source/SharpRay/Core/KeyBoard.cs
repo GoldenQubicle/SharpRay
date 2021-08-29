@@ -5,12 +5,12 @@ using static Raylib_cs.Raylib;
 
 namespace SharpRay.Core
 {
-    internal static class KeyBoard
+    internal class KeyBoard : IEventEmitter<IKeyBoardEvent>
     {
-        public static Action<IKeyBoardEvent> EmitEvent { get; set; }
+        public Action<IKeyBoardEvent> EmitEvent { get; set; }
         private static readonly KeyboardKey[] Keys = Enum.GetValues<KeyboardKey>();
 
-        public static void DoEvents()
+        public void DoEvents()
         {
 
             foreach (var key in Keys) if (IsKeyPressed(key)) DoEvent(new KeyPressed { KeyboardKey = key });
@@ -45,6 +45,9 @@ namespace SharpRay.Core
             if (IsKeyPressed(KeyboardKey.KEY_SPACE))
                 DoEvent(new KeySpaceBarPressed());
 
+            if (IsKeyDown(KeyboardKey.KEY_SPACE))
+                DoEvent(new KeySpaceBarDown());
+
             if (IsKeyDown(KeyboardKey.KEY_DELETE))
                 DoEvent(new KeyDelete());
 
@@ -56,6 +59,6 @@ namespace SharpRay.Core
                 DoEvent(new KeyRedo());
         }
 
-        private static void DoEvent(IKeyBoardEvent kbe) => EmitEvent?.Invoke(kbe);
+        private void DoEvent(IKeyBoardEvent kbe) => EmitEvent?.Invoke(kbe);
     }
 }

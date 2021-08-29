@@ -3,10 +3,8 @@ using SharpRay.Collision;
 using SharpRay.Core;
 using SharpRay.Entities;
 using SharpRay.Eventing;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Threading;
 using static Raylib_cs.Raylib;
 
 namespace Asteroids
@@ -22,10 +20,10 @@ namespace Asteroids
 
         private Vector2[] Points;
         private Vector2 Center;
-        private float RotationAngle;//0.05f; // in radians per fixed update
+        private float RotationAngle;// in radians per fixed update
         private Matrix3x2 Translation;
         private Matrix3x2 Rotation;
-
+        private bool isDirty;
 
         public Asteroid(Vector2 position, Vector2 size, Vector2 heading, int stage)
         {
@@ -34,30 +32,14 @@ namespace Asteroids
             Translation = Matrix3x2.CreateTranslation(heading);
             Heading = heading;
             Stage = stage;
-            Strength = stage * 5;
+            Strength = stage * 20;
 
             Center = Position + Size / 2;
             Points = GenerateShape();
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
 
-            Collider = new RectProCollider(Center, Size);
+            Collider = new RectProCollider(Center, Size * 0.75f);
         }
-
-        public Asteroid(Vector2 position, Vector2 size, Matrix3x2 translation, float rotation, int stage)
-        {
-            Position = position;
-            Size = size;
-            Translation = translation;
-            Stage = stage;
-            Strength = stage * 5;
-
-            Center = Position + Size / 2;
-            Points = GenerateShape();
-            RotationAngle = rotation;
-
-            Collider = new RectProCollider(Center, Size);
-        }
-
 
         public override void Update(double deltaTime)
         {
@@ -71,6 +53,7 @@ namespace Asteroids
                 Points[i] = Vector2.Transform(Points[i], Transform);
 
             (Collider as RectProCollider).Update(Transform);
+
         }
 
         public override void Render()
@@ -80,29 +63,30 @@ namespace Asteroids
             for (var i = 0; i < Points.Length - 1; i++)
                 DrawLineV(Points[i], Points[i + 1], Color.YELLOW);
 
-            Collider.Render();
-
-            DrawCircleV(Center, 5, Color.YELLOW);
+            //Collider.Render();
+            //DrawCircleV(Center, 5, Color.YELLOW);
         }
 
         public void OnCollision(IHasCollider e)
         {
-            if (e is Bullet b)
+            if (e is Bullet b && Strength > 0)
             {
                 Strength -= b.Damage;
 
                 if (Strength <= 0 && Stage == 1)
-                    EmitEvent(new AsteroidDestroyed { Asteroid = this });
-
-                if (Strength <= 0 && Stage > 1)
                 {
+                    EmitEvent(new AsteroidDestroyed { Asteroid = this });
+                }
+
+                if (Strength <= 0 && Stage > 1 && !isDirty)
+                {
+                    isDirty = true; //prevent emitting multiple spawn events per frame when dealing with an onslaught of bullets
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
                     EmitEvent(new AsteroidSpawnNew
                     {
                         Stage = Stage - 1,
-                        Position = Position,
+                        Position = Vector2.Lerp(Position, Center, .5f),
                         Size = Size / 2,
-                        //Translation = Translation,
                         Rotation = RotationAngle,
                         Heading = Heading
                     });
@@ -115,14 +99,13 @@ namespace Asteroids
             {
                 EmitEvent(new ShipHitAsteroid());
             }
+        }
 
-            if (e is Asteroid a)
-            {
-                //super basic bounce mechanic, prone to some issues..
-                RotationAngle = -1 * RotationAngle;
-                Matrix3x2.Invert(Translation, out var inverse);
-                Translation = inverse;
-            }
+        public void ReverseDirection()
+        {
+            RotationAngle = -1 * RotationAngle;
+            Matrix3x2.Invert(Translation, out var inverse);
+            Translation = inverse;
         }
 
         private Vector2[] GenerateShape()

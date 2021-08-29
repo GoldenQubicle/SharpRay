@@ -3,16 +3,18 @@ using System;
 using System.Numerics;
 using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
+using SharpRay.Listeners;
 
 namespace SharpRay.Core
 {
-    internal class Mouse
+    internal class Mouse : IEventEmitter<IMouseEvent>
     {
-        public static Action<IMouseEvent> EmitEvent { get; set; }
+        public Action<IMouseEvent> EmitEvent { get; set; }
 
         private static Vector2 PreviousMousePostion;
         public static Vector2 Cursor { get; private set; }
-        public static void DoEvents()
+
+        public void DoEvents()
         {
             Cursor = GetMousePosition();
 

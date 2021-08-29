@@ -6,7 +6,6 @@ using SharpRay.Core;
 using System.Numerics;
 using SharpRay.Collision;
 using System;
-using System.Linq;
 using SharpRay.Components;
 using System.Collections.Generic;
 
@@ -68,6 +67,7 @@ namespace Asteroids
                 { RotateIn,   new Easing(Easings.EaseSineOut, rotateInTime) },
                 { RotateOut,  new Easing(Easings.EaseSineIn, rotateOutTime, isReversed: true) },
             };
+
         }
 
         public override void Update(double deltaTime)
@@ -111,15 +111,15 @@ namespace Asteroids
 
         public override void Render()
         {
-            DrawCircleV(Position, 5, Color.WHITE);
+            
             DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
-
-            Collider.Render();
-
             DrawCircleV(Vertices[0], 5, Color.PURPLE);
 
-            foreach (var p in Vertices.Select((p, i) => (p, i)))
-                DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
+            //debug draw
+            //DrawCircleV(Position, 5, Color.WHITE);
+            //Collider.Render();
+            //foreach (var p in Vertices.Select((p, i) => (p, i)))
+            //    DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
         }
 
 
@@ -141,9 +141,17 @@ namespace Asteroids
             };
 
             //obvisouly this will change w primary & secondary weapon
-            if (e is KeySpaceBarPressed)
+
+            //if (e is KeySpaceBarPressed)
+            //    EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
+
+            if (e is KeySpaceBarDown)
+            {
                 EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
+            }
+
         }
+
 
         private (bool, string) StartRotateOut()
         {

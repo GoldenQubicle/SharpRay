@@ -22,6 +22,7 @@ namespace SharpRay.Core
     
     //pretty self explanatory
     public struct KeySpaceBarPressed : IKeyBoardEvent { }
+    public struct KeySpaceBarDown : IKeyBoardEvent { }
     public struct KeyDelete : IKeyBoardEvent { }
     
     //emitted on ctr-z & ctrl-y

@@ -24,9 +24,8 @@ namespace SharpRay.Core
         private static readonly List<Action> EventActions = new();
         private static readonly Stopwatch sw = new();
         private static List<Entity> Entities = new();
-
-
-
+        private static KeyBoard KeyBoard { get; } = new KeyBoard();
+        private static Mouse Mouse { get; } = new Mouse();
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
@@ -62,7 +61,8 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
-        public static void RemoveEntities<T>() where T : Entity
+        #region public api
+        public static void RemoveEntitiesOfType<T>() where T : Entity
         {
             foreach (var e in Entities.OfType<T>())
                 RemoveEntity(e);
@@ -84,6 +84,53 @@ namespace SharpRay.Core
 
         public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
 
+        public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
+        public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
+
+        #endregion
+
+
+        #region internal api
+        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, List<Action<T>> onEventActions) where T : IEvent
+        {
+            foreach (var action in onEventActions) e.EmitEvent += action;
+        }
+
+        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
+
+        internal static void OnUIEvent(IGuiEvent e)
+        {
+            if (e is IHasUndoRedo ur)
+                UndoStack.Push(ur);
+
+            if (e is DeleteEdit edit)
+                RemoveEntity(edit.GuiComponent);
+        }
+
+        internal static void OnKeyBoardEvent(IKeyBoardEvent kbe)
+        {
+            if (kbe is KeyUndo && UndoStack.Count > 0)
+            {
+                var edit = UndoStack.Pop();
+                edit.Undo();
+                RedoStack.Push(edit);
+            }
+
+            if (kbe is KeyRedo && RedoStack.Count > 0)
+            {
+                var edit = RedoStack.Pop();
+                edit.Redo();
+                UndoStack.Push(edit);
+            }
+        }
+
+        internal static void OnMouseEvent(IMouseEvent me)
+        {
+
+        }
+
+        #endregion
+
         private static void AddEntity(Entity e,
            Action<IGuiEvent>[] onGuiEventActions = null,
            Action<IGameEvent>[] onGameEventActions = null)
@@ -101,32 +148,11 @@ namespace SharpRay.Core
            Action<IGameEvent>[] onGameEventActions = null)
         {
 
-            if (e is IKeyBoardListener kbl) KeyBoard.EmitEvent += kbl.OnKeyBoardEvent;
-            if (e is IMouseListener ml) Mouse.EmitEvent += ml.OnMouseEvent;
+            if (e is IKeyBoardListener kbl) SetEmitEventActions(KeyBoard, kbl.OnKeyBoardEvent);
+            if (e is IMouseListener ml) SetEmitEventActions(Mouse, ml.OnMouseEvent);
             if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, onGameEventActions);
             if (e is IEventEmitter<IGuiEvent> eui) SetEmitEventActions(eui, onGuiEventActions);
-
         }
-
-        private static void EntityEventInitialisation(
-            Entity[] entities,
-            Action<IGuiEvent>[] onGuiEventActions = null,
-            Action<IGameEvent>[] onGameEventActions = null)
-        {
-            foreach (var e in entities) EntityEventInitialisation(e, onGuiEventActions, onGameEventActions);
-        }
-
-        private static void EntityEventInitialisation(Entity e, Action<IGuiEvent> onGuiEvent) => EntityEventInitialisation(e, new[] { onGuiEvent }, null);
-        private static void EntityEventInitialisation(Entity e, params Action<IGuiEvent>[] onGuiEvents) => EntityEventInitialisation(e, onGuiEvents, null);
-        private static void EntityEventInitialisation(Entity e, Action<IGameEvent> onGameEvent) => EntityEventInitialisation(e, null, new[] { onGameEvent });
-        private static void EntityEventInitialisation(Entity e, params Action<IGameEvent>[] onGameEvents) => EntityEventInitialisation(e, null, onGameEvents);
-
-        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, List<Action<T>> onEventActions) where T : IEvent
-        {
-            foreach (var action in onEventActions) e.EmitEvent += action;
-        }
-
-        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
 
         private static long GetFrameTime(ref long past)
         {
@@ -181,42 +207,6 @@ namespace SharpRay.Core
         {
             foreach (var a in EventActions) a();
             EventActions.Clear();
-        }
-
-        internal static void OnGameEvent(IGameEvent e)
-        {
-
-        }
-
-        internal static void OnUIEvent(IGuiEvent e)
-        {
-            if (e is IHasUndoRedo ur)
-                UndoStack.Push(ur);
-
-            if (e is DeleteEdit edit)
-                RemoveEntity(edit.GuiComponent);
-        }
-
-        internal static void OnKeyBoardEvent(IKeyBoardEvent kbe)
-        {
-            if (kbe is KeyUndo && UndoStack.Count > 0)
-            {
-                var edit = UndoStack.Pop();
-                edit.Undo();
-                RedoStack.Push(edit);
-            }
-
-            if (kbe is KeyRedo && RedoStack.Count > 0)
-            {
-                var edit = RedoStack.Pop();
-                edit.Redo();
-                UndoStack.Push(edit);
-            }
-        }
-
-        internal static void OnMouseEvent(IMouseEvent me)
-        {
-
         }
     }
 }
