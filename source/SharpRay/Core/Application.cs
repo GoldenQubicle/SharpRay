@@ -17,17 +17,14 @@ namespace SharpRay.Core
 {
     public class Application
     {
-        public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
-
+        private static readonly Mouse Mouse = new();
+        private static readonly KeyBoard KeyBoard = new();
+        private static readonly List<Entity> Entities = new();
+        private static readonly Stopwatch sw = new();
+        private static readonly List<Action> EventActions = new();
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
-        private static readonly List<Action> EventActions = new();
-        private static readonly Stopwatch sw = new();
-        private static List<Entity> Entities = new();
-        private static KeyBoard KeyBoard { get; } = new KeyBoard();
-        private static Mouse Mouse { get; } = new Mouse();
-        public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
-        public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+        private static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
 
         public static void Run(Config config)
         {
@@ -62,6 +59,10 @@ namespace SharpRay.Core
         }
 
         #region public api
+
+        public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+        public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+
         public static void RemoveEntitiesOfType<T>() where T : Entity
         {
             foreach (var e in Entities.OfType<T>())
@@ -85,6 +86,7 @@ namespace SharpRay.Core
         public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
 
         public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
+
         public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
 
         #endregion
@@ -180,7 +182,6 @@ namespace SharpRay.Core
                 }
             }
         }
-
 
         private static double FixedUpdateInterval = 1000 / 60 * TickMultiplier;
         private static double ElapsedUpdateInterval = 0d;
