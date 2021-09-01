@@ -47,11 +47,11 @@ namespace SharpRay.Core
                 var frameTime = GetFrameTime(ref previous);
 
                 Mouse.DoEvents();
-                KeyBoard.DoEvents();
+                KeyBoard.DoEvents(); 
                 DoCollisions();
                 DoFixedUpdate(frameTime);
                 DoRender();
-                DoEventActions();
+                DoEventActions(); 
             }
 
             CloseAudioDevice();
