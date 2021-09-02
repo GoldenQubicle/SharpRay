@@ -5,9 +5,9 @@ namespace SharpRay.Components
 {
     public class Easing : Component
     {
-        private Func<float, float, float, float, float> EasingFunction;
-        private double IntervalTime;
-        private bool IsReversed;
+        private readonly Func<float, float, float, float, float> EasingFunction;
+        private readonly double IntervalTime;
+        private readonly bool IsReversed;
         private double ElapsedTime;
 
         public Easing(Func<float, float, float, float, float> easingFunction, double intervalTime, bool isReversed = false)

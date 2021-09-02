@@ -67,7 +67,6 @@ namespace Asteroids
                 { RotateIn,   new Easing(Easings.EaseSineOut, rotateInTime) },
                 { RotateOut,  new Easing(Easings.EaseSineIn, rotateOutTime, isReversed: true) },
             };
-
         }
 
         public override void Update(double deltaTime)
