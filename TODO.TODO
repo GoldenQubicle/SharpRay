@@ -88,6 +88,19 @@ Third MileStone:
         That being said, it was a fruitfull project which saw the implementation of various colliders, vast project organisation changes
         as well as me finally somewhat beginning to understand matrix transforms, which is kinda cool. 
 
+Fourth MileStone:
+  ☐ prototyping city sim @created(03-09-2021 12:09)
+    basically a refined version of the kotlin 2d prototype from years ago. Agents do wonder around, however, they have collisions 
+    with zones wholesale, instead of developed plots within zones. Moreover could consider implementing somekind of langton ant crumbs 
+    type thingy in order for agents to find their way. The implication here being agents to already have somekind of rudimentary 
+    flocking, avoidance and steering behaviours attached to them. 
+    
+    TODO:
+    ☐ zoning mechanics @created(03-09-2021 12:10)
+      That is, instead of randomized plot layout, 
+      make it such that each edge is evenly divided from the center, and each the depth of each plot can be manually adjusted. 
+
+
 SharpRay:
   ☐ update main w asteroids branch @created(03-09-2021 11:06)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)

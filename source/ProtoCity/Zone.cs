@@ -12,19 +12,15 @@ namespace ProtoCity
     public class Zone : Entity
     {
         private readonly List<Vector2> Points = new();
+        private readonly List<Edge> Edges = new();
 
         public override void Render()
         {
             foreach (var (p, i) in Points.Select((p, i) => (p, i)))
-            {
-                DrawCircleV(p, 3, Color.BEIGE);
+                DrawCircleV(p, 3, Color.DARKBROWN);
 
-                if (i >= 1)
-                    DrawLineV(Points[i - 1], p, Color.BEIGE);
+            Edges.ForEach(e => e.Render());
 
-                if (i == Points.Count - 1)
-                    DrawLineV(p, Points[0], Color.BEIGE);
-            }
         }
 
         public override void OnMouseEvent(IMouseEvent e)
@@ -32,6 +28,19 @@ namespace ProtoCity
             if (e is MouseLeftClick mlc)
             {
                 Points.Add(mlc.Position);
+
+                if (Points.Count >= 2)
+                    Edges.Add(new Edge(Points[Points.Count - 2], Points.Last()));
+
+                if (Edges.Count == 2)
+                {
+                    Edges.Add(new Edge(Points.Last(), Points.First())); //close the zone but no need to remove an edge
+                }
+                else if (Edges.Count >= 2)
+                {
+                    Edges.Remove(Edges[Edges.Count - 2]); //remove second to last edge since we've already added a new edge
+                    Edges.Add(new Edge(Points.Last(), Points.First())); // close the zone
+                }
             }
         }
     }

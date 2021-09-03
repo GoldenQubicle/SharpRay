@@ -12,6 +12,8 @@ using SharpRay.Entities;
 using SharpRay.Eventing;
 using SharpRay.Gui;
 using SharpRay.Listeners;
+using System.Numerics;
+using Raylib_cs;
 
 namespace SharpRay.Core
 {
@@ -36,7 +38,7 @@ namespace SharpRay.Core
             InitWindow(config.WindowWidth, config.WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
-            SetTargetFPS(60);
+            //SetTargetFPS(60);
 
             sw.Start();
             var previous = 0L;
@@ -59,7 +61,8 @@ namespace SharpRay.Core
         }
 
         #region public api
-
+        public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
+            DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
