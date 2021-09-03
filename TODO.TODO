@@ -97,8 +97,13 @@ Fourth MileStone:
     
     TODO:
     ☐ zoning mechanics @created(03-09-2021 12:10)
-      That is, instead of randomized plot layout, 
-      make it such that each edge is evenly divided from the center, and each the depth of each plot can be manually adjusted. 
+      instead of randomized plot layout along the edge, each edge is evenly divided from the center. Corner reconcilletaion is a thing. 
+      plots can be marked for development, and when marked, the depth of each plot can be adjusted
+      ☐ make edge depth adjustable @created(03-09-2021 13:31)
+        or is this something related to zoning density perhaps.. since we kinda said depth is adjustable on plot level..?
+      ☐ make zone point pickable @created(03-09-2021 13:30)
+      ☐ choose which side of zone edges the plots attach to @created(03-09-2021 13:30)
+     
 
 
 SharpRay:

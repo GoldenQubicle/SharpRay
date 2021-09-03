@@ -6,6 +6,7 @@ using System.Numerics;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
 using System.Linq;
+using System;
 
 namespace ProtoCity
 {
@@ -16,11 +17,10 @@ namespace ProtoCity
 
         public override void Render()
         {
-            foreach (var (p, i) in Points.Select((p, i) => (p, i)))
-                DrawCircleV(p, 3, Color.DARKBROWN);
-
             Edges.ForEach(e => e.Render());
 
+            foreach (var (p, i) in Points.Select((p, i) => (p, i)))
+                DrawCircleV(p, 3, Color.DARKBROWN);
         }
 
         public override void OnMouseEvent(IMouseEvent e)

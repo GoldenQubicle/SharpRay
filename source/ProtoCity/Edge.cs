@@ -3,6 +3,8 @@ using System.Numerics;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
 using System;
+using static SharpRay.Core.Application;
+using SharpRay.Utils;
 
 namespace ProtoCity
 {
@@ -24,17 +26,25 @@ namespace ProtoCity
         public override void Render()
         {
             DrawLineEx(A, B, 3, Color.LIGHTGRAY);
-            
-            //DrawCircleV(C, 3, Color.BROWN);
-            
-            var d = B - A;
+
+            DrawTextV("A", A, 18, Color.BLACK); 
+            DrawTextV("B", B, 18, Color.BLACK);
+
+            var d = B - A; 
             var n1 = Vector2.Normalize(new Vector2(-d.Y, d.X)) * Depth;
             var n2 = Vector2.Normalize(new Vector2(d.Y, -d.X)) * Depth;
-            
-            //DrawLineV(C, C + n1, Color.GREEN);
-            //DrawLineV(C, C + n2, Color.WHITE);
 
-            DrawLineEx(A + n1, B + n1, 1,  Color.LIGHTGRAY);
-        } 
+            DrawCircleV(C, 5, Color.PURPLE);
+            DrawCircleV(C + n1, 3, Color.PINK);
+
+            var rayOrigin = C + n1;
+            var rayA = Vector2.Transform(Vector2.Normalize(A - C), Matrix3x2.CreateScale(1500f) * Matrix3x2.CreateTranslation(rayOrigin));
+            var rayB = Vector2.Transform(Vector2.Normalize(B - C), Matrix3x2.CreateScale(1500f) * Matrix3x2.CreateTranslation(rayOrigin));
+
+            DrawLineV(rayOrigin, rayA, Color.RED);
+            DrawLineV(rayOrigin, rayB, Color.RED);
+
+
+        }
     }
 }
