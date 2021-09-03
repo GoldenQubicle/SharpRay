@@ -27,8 +27,7 @@ First MileStone:
       ✔ figure out entity collision @created(09-06-2021 20:23) @done(11-06-2021 16:02)
       ✔ implement containsPoint polygon @created(06-06-2021 18:09) @done(02-09-2021 14:15)
       ✔ implement scale polygon @created(06-06-2021 18:09) @done(02-09-2021 14:16)
-      ☐ proper click & double click mouse events @created(06-06-2021 14:21)
-      ☐ investigate DI and project organisation @created(06-06-2021 13:17)
+
 
 Second MileStone (ideas):
   ✔ snake game @created(07-06-2021 19:41) @done(02-09-2021 14:10)
@@ -89,6 +88,11 @@ Third MileStone:
         That being said, it was a fruitfull project which saw the implementation of various colliders, vast project organisation changes
         as well as me finally somewhat beginning to understand matrix transforms, which is kinda cool. 
 
+SharpRay:
+  ☐ update main w asteroids branch @created(03-09-2021 11:06)
+  ☐ proper click & double click mouse events @created(06-06-2021 14:21)
+  ☐ investigate DI and project organisation @created(06-06-2021 13:17)
+  
 Next MileStones / Challenging Ideas:
   ☐ rework shitty snake w new project structure @created(02-09-2021 14:12)
     i.e. put all game related entities and logic into down project
