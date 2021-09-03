@@ -6,7 +6,7 @@ using System.Numerics;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
 using System.Linq;
-using System;
+using static SharpRay.Core.Application;
 
 namespace ProtoCity
 {
@@ -17,7 +17,11 @@ namespace ProtoCity
 
         public override void Render()
         {
-            Edges.ForEach(e => e.Render());
+            foreach(var (e, i) in Edges.Select((e,i) => (e,i)))
+            {
+                e.Render();
+                DrawTextV(i.ToString(), e.C, 10, Color.BLACK);
+            }
 
             foreach (var (p, i) in Points.Select((p, i) => (p, i)))
                 DrawCircleV(p, 3, Color.DARKBROWN);
