@@ -42,7 +42,7 @@ namespace Asteroids
         private const string Left = nameof(Left);
         private const string Right = nameof(Right);
         public Collider Collider { get; }
-
+        public int Health { get; set; } = 100;
         public Ship(Vector2 position, Vector2 size)
         {
             Position = position;
@@ -141,13 +141,13 @@ namespace Asteroids
 
             //obvisouly this will change w primary & secondary weapon
 
-            //if (e is KeySpaceBarPressed)
-            //    EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
-
-            if (e is KeySpaceBarDown)
-            {
+            if (e is KeySpaceBarPressed)
                 EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
-            }
+
+            //if (e is KeySpaceBarDown)
+            //{
+            //    EmitEvent(new ShipFiredBullet { Origin = Vertices[0], Angle = rotation - HalfPI, Force = acceleration });
+            //}
 
         }
 

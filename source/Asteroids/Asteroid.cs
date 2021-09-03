@@ -63,7 +63,7 @@ namespace Asteroids
             for (var i = 0; i < Points.Length - 1; i++)
                 DrawLineV(Points[i], Points[i + 1], Color.YELLOW);
 
-            //Collider.Render();
+            Collider.Render();
             //DrawCircleV(Center, 5, Color.YELLOW);
         }
 
@@ -97,7 +97,16 @@ namespace Asteroids
 
             if (e is Ship s)
             {
-                EmitEvent(new ShipHitAsteroid());
+                EmitEvent(new ShipHitAsteroid { DamageDone = Strength });
+            }
+
+            if (e is Asteroid a)
+            {
+                ReverseDirection();
+                //a.ReverseDirection();
+
+                while (Collider.Overlaps(a.Collider))
+                    Update(0);
             }
         }
 

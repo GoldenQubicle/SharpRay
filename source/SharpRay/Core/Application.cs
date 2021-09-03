@@ -36,7 +36,7 @@ namespace SharpRay.Core
             InitWindow(config.WindowWidth, config.WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
             SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
-            //SetTargetFPS(60);
+            SetTargetFPS(60);
 
             sw.Start();
             var previous = 0L;

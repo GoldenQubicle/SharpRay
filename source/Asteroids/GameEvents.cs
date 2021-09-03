@@ -34,7 +34,7 @@ namespace Asteroids
 
     public struct ShipHitAsteroid : IGameEvent
     {
-
+        public int DamageDone { get; init; }
     }
 
     public struct BulletLifeTimeExpired : IGameEvent

@@ -4,6 +4,7 @@ using SharpRay.Core;
 using SharpRay.Eventing;
 using System;
 using Raylib_cs;
+using System.Reflection.PortableExecutable;
 
 namespace Asteroids
 {
@@ -39,7 +40,10 @@ namespace Asteroids
                 RemoveEntity(bha.Bullet);
 
             if (e is ShipHitAsteroid sha)
+            {
+                
                 Console.WriteLine("Ship has taken damage");
+            }
 
             if (e is AsteroidDestroyed ad)
                 RemoveEntity(ad.Asteroid);

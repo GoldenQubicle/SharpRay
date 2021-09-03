@@ -15,7 +15,7 @@ namespace Asteroids
         private readonly float speed = 10f;
         private readonly double lifeTime = 1350 * Config.TickMultiplier;
         private double elapsed;
-        public int Damage { get; } = 5;
+        public int Damage { get; } = 25;
         public Collider Collider { get; }
 
         public Bullet(Vector2 origin, float angle, float initialForce)
@@ -33,7 +33,7 @@ namespace Asteroids
         public override void Render()
         {
             DrawCircleV(Position, radius, Color.YELLOW);
-            //Collider.Render();
+            Collider.Render();
         }
 
         public override void Update(double deltaTime)
