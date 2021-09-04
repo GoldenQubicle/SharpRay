@@ -157,6 +157,7 @@ namespace SharpRay.Core
             if (e is IMouseListener ml) SetEmitEventActions(Mouse, ml.OnMouseEvent);
             if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, onGameEventActions);
             if (e is IEventEmitter<IGuiEvent> eui) SetEmitEventActions(eui, onGuiEventActions);
+            if (e is DragEditShape des) SetEmitEventActions(des, OnUIEvent);
         }
 
         private static long GetFrameTime(ref long past)

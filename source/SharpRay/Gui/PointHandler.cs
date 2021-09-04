@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace SharpRay.Gui
 {
-    public sealed class Circle : DragEditShape
+    public sealed class PointHandler : DragEditShape
     {
         public float Radius { get; set; }
 

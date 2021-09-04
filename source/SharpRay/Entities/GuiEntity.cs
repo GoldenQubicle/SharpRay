@@ -1,4 +1,5 @@
 ﻿using SharpRay.Eventing;
+using SharpRay.Gui;
 using System;
 using System.Numerics;
 
@@ -11,6 +12,7 @@ namespace SharpRay.Entities
     {
         public Action<IGuiEvent> EmitEvent { get; set; }
         public Func<GuiEntity, IGuiEvent> OnMouseLeftClick { get; set; }
+     
 
         public float Scale { get; set; } = 1f;
 

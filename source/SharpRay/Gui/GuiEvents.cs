@@ -2,6 +2,7 @@
 using SharpRay.Eventing;
 using System;
 using System.Numerics;
+using static SharpRay.Core.Application;
 
 namespace SharpRay.Gui
 {
@@ -9,7 +10,6 @@ namespace SharpRay.Gui
     {
         public GuiEntity GuiComponent { get; init; }
     }
-
 
     #region undo & redo ui events
     public interface IHasUndoRedo
@@ -39,8 +39,8 @@ namespace SharpRay.Gui
     public struct DeleteEdit : IGuiEvent, IHasUndoRedo
     {
         public GuiEntity GuiComponent { get; init; }
-        public void Undo() => throw new NotImplementedException();
-        public void Redo() => throw new NotImplementedException();
+        public void Undo() => AddEntity(GuiComponent);
+        public void Redo() => RemoveEntity(GuiComponent);
     }
 
     #endregion
