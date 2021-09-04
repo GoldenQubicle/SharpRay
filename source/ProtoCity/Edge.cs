@@ -2,7 +2,6 @@
 using System.Numerics;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
-using System;
 using static SharpRay.Core.Application;
 using SharpRay.Gui;
 
@@ -10,7 +9,6 @@ namespace ProtoCity
 {
     public class Edge : Entity
     {
-
         public PointHandler A { get; }
         public PointHandler B { get; }
         public Vector2 C { get; private set; }
@@ -44,7 +42,7 @@ namespace ProtoCity
             DrawLineV(rayOrigin, rayB, Color.RED);
         }
 
-        private (Vector2 origin, Vector2 rayA, Vector2 rayB) GetRays()
+        public (Vector2 origin, Vector2 rayA, Vector2 rayB) GetRays()
         {
             C = Vector2.Lerp(A.Position, B.Position, .5f);
             var (n1, n2) = GetNormals();
