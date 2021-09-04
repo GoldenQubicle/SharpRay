@@ -125,13 +125,19 @@ Fourth MileStone:
 SharpRay:
   ✔ update main w asteroids branch @created(03-09-2021 11:06) @done(04-09-2021 12:55)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)
-  ☐ rework event emitter system @created(04-09-2021 12:31)
+  ☐ investigate spammy keyboard & mouse events @created(04-09-2021 19:26)
+    so when implementing the rudimentary event logging I notices keyboard & mouse events are emitted multiple
+    times per frame. Did notice it before and wonder if that is how it is supposed to work or I am doing something wrong?
+  ✘ rework event emitter system @created(04-09-2021 12:31) @cancelled(04-09-2021 19:26)
     basically entities should be able to have various event emitter, not BE event emitters
     running into the issue again with drag edit shape, which emits a gui event. However in order to 
     actually have undo / redo capabilties, the event MUST also implement IHasUndoRedo and it's not possible
     to constrain this, or at least couldn't figure it out easily. Much rather have this be explicit, i.e.
-    when an entity has undo/redo it must implement an eventEmitter<IUndoRedo> At the moment this is not possible
-  ☐ create frame logging system @created(20-06-2021 17:04)
+    when an entity has undo/redo it must implement an eventEmitter<IUndoRedo> At the moment this is not possible.
+      Then again, it does forces me to consider what type of entity should emit what type of events. Like, the fact 
+      a zone should emit undoredo event makes it clear it is, in fact, not a game entity. So in that regard the system
+      works as intended by design. 
+  ✔ create frame logging system @created(20-06-2021 17:04) @done(04-09-2021 19:26)
     reason: technical challenge and long term beneficial. At the moment there's a weird bug in snake game 
     wherein the order of update vs collision in the main loop is causing food consumption to be triggered twice. 
     Not sure why that is and when figuring it out it would be super helpfull the have a way to tell which events
@@ -142,6 +148,9 @@ SharpRay:
       in that it only tells me the method it fired from (i.e. EmitEvent) and which source file it's in. 
       What I would like to see is which method it originated in, i.e. the method which made the call to EmitEvent
       as well as instance information about the object. 
+      another small update @created(04-09-2021 19:25)
+      so I went ahead and added rudimantary event logging to console which can be toggled with a flag in de config. easy peasy and 
+      should be sufficient for now. 
   ☐ investigate DI and project organisation @created(06-06-2021 13:17)
     so this kinda goes hand-in-hand with the frame logging & event emitter items. The issue that at the moment it's no possible
     to easily see which classes fired what event and in which order. If there were proper event emitter objects, which could bind to 

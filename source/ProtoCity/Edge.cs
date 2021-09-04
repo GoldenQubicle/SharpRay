@@ -27,11 +27,11 @@ namespace ProtoCity
         {
             DrawLineEx(A.Position, B.Position, 3, Color.LIGHTGRAY);
 
-            DrawTextV("A", A.Position, 15, Color.BLACK);
-            DrawTextV("B", B.Position - new Vector2(15, 0), 15, Color.BLACK);
+            //DrawTextV("A", A.Position, 15, Color.BLACK);
+            //DrawTextV("B", B.Position - new Vector2(15, 0), 15, Color.BLACK);
 
             DrawRays();
-        }
+        } 
 
         private void DrawRays()
         {

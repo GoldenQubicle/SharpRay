@@ -9,10 +9,12 @@ namespace ProtoCity
     {
         public static void Main(string[] args)
         {
+            Initialize(new Config { WindowWidth = 1080, WindowHeight = 720, DoEventLogging = true });
+
             AddEntity(new Zone());
-        
             SetKeyBoardEventAction(OnKeyBoardEvent);
-            Run(new Config { WindowWidth = 1080, WindowHeight = 720 });
+
+            Run();
         }
 
         private static void OnKeyBoardEvent(IKeyBoardEvent e)

@@ -27,9 +27,13 @@ namespace SharpRay.Core
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assests");
+        private static long FrameCount;
+        private static bool DoEventLogging;
 
-        public static void Run(Config config)
+        #region public api
+        public static void Initialize(Config config)
         {
+            DoEventLogging = config.DoEventLogging;
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
@@ -39,28 +43,31 @@ namespace SharpRay.Core
             SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
             //SetTargetFPS(60);
+        }
 
+        public static void Run()
+        {
             sw.Start();
             var previous = 0L;
 
             while (!WindowShouldClose())
             {
+                FrameCount++;
                 DrawFPS(0, 0);
                 var frameTime = GetFrameTime(ref previous);
 
                 Mouse.DoEvents();
-                KeyBoard.DoEvents(); 
+                KeyBoard.DoEvents();
                 DoCollisions();
                 DoFixedUpdate(frameTime);
                 DoRender();
-                DoEventActions(); 
+                DoEventActions();
             }
-
             CloseAudioDevice();
             CloseWindow();
         }
 
-        #region public api
+
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
@@ -98,7 +105,24 @@ namespace SharpRay.Core
         #region internal api
         internal static void SetEmitEventActions<T>(IEventEmitter<T> e, List<Action<T>> onEventActions) where T : IEvent
         {
-            foreach (var action in onEventActions) e.EmitEvent += action;
+            foreach (var action in onEventActions)
+            {
+                e.EmitEvent += action;
+
+                //ignore mouse when loggin as it is way too spammy
+                //same may apply to keyboard as well, we'll see
+                if (DoEventLogging && e is not Mouse m)
+                    e.EmitEvent += a =>
+                        {
+                            Console.WriteLine(
+                                $"Frame    | {FrameCount}\n" +
+                                $"Emitter  | {e.GetType()} {e.GetHashCode()}\n" +
+                                $"Event    | {a.GetType()}\n" +
+                                $"Receiver | {action.GetMethodInfo().DeclaringType}.{action.GetMethodInfo().Name} {action.GetHashCode()}" +
+                                $"\n");
+                        };
+
+            }
         }
 
         internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
