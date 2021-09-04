@@ -27,14 +27,15 @@ namespace ProtoCity
                 
                 if (next == default) continue;
 
-                var (start_e, _, end_e) = e.GetRays();
-                var (start_ne, end_ne, _) = next.GetRays();
+                var (_, start_e, end_e) = e.GetRays();
+                var (_, start_ne, end_ne) = next.GetRays();
 
                 var collision = new Vector2();
 
                 CheckCollisionLines(start_e, end_e, start_ne, end_ne, ref collision);
 
                 DrawCircleV(collision, 4, Color.ORANGE);
+                DrawLineV(e.B.Position, collision, Color.ORANGE);
             }
         }
      
