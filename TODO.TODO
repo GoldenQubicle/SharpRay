@@ -96,30 +96,43 @@ Fourth MileStone:
     flocking, avoidance and steering behaviours attached to them. 
     
     TODO:
-    ☐ zoning mechanics @created(03-09-2021 12:10)
+    ✘ zoning mechanics @created(03-09-2021 12:10) @cancelled(05-09-2021 19:02)
+      cancelled because pivor to grid approach
       instead of randomized plot layout along the edge, each edge is evenly divided from the center. Corner reconcilletaion is a thing. 
       plots can be marked for development, and when marked, the depth of each plot can be adjusted
-      ☐ distribute plots along edges @created(03-09-2021 13:32)
-      ☐ edge intersection detection @created(03-09-2021 13:32)
+      ✘ distribute plots along edges @created(03-09-2021 13:32) @cancelled(05-09-2021 19:03)
+      ✘ edge intersection detection @created(03-09-2021 13:32) @cancelled(05-09-2021 19:03)
         basically where to edges intersect with each other, and how do we handle plot distribution in those edge cases - pun intended huhu
-      ☐ auto close zone option @created(04-09-2021 12:28)
+      ✘ auto close zone option @created(04-09-2021 12:28) @cancelled(05-09-2021 19:03)
         zones are automatically closed off at the moment, however, should be optional as otherwise it's not possible to just create a single running facade
-      ☐ make edge depth adjustable @created(03-09-2021 13:31)
+      ✘ make edge depth adjustable @created(03-09-2021 13:31) @cancelled(05-09-2021 19:03)
         or is this something related to zoning density perhaps.. since we kinda said depth is adjustable on plot level..?
       ✔ make zone point pickable @created(03-09-2021 13:30) @done(04-09-2021 12:23)
-      ☐ deleting points w undo/redo .. ? @created(04-09-2021 12:23)
+      ✘ deleting points w undo/redo .. ? @created(04-09-2021 12:23) @cancelled(05-09-2021 19:03)
         it's kinda cool demonstration of engine capabilites but honestly is it really needed atm?
         also it kinda workds at the moment except it throw things off kilter when adding points
         because we assume some things about points & edges order which are no longer true when deleting abitrary point
-      ☐ choose which side of zone edges the plots attach to @created(03-09-2021 13:30)
+      ✘ choose which side of zone edges the plots attach to @created(03-09-2021 13:30) @cancelled(05-09-2021 19:03)
         ..not sure if needed. Like could just indicate it
-    ☐ agents @created(04-09-2021 12:40)
+    ✘ agents @created(04-09-2021 12:40) @cancelled(05-09-2021 19:03)
+      cancelled because pivor to grid approach
       should be capable of multiple behaviours, e.g. flocking, seeking, avoidance etc
-      
-    ☐ collision detection zones @created(04-09-2021 12:24)
-        or at least figure out how to determine if a point is on the inside or outside of a given zone
-        maybe this could just be handled with attached colliders to the edges? though maybe not for mouse picking
-     
+      ✘ collision detection zones @created(04-09-2021 12:24) @cancelled(05-09-2021 19:03)
+          or at least figure out how to determine if a point is on the inside or outside of a given zone
+          maybe this could just be handled with attached colliders to the edges? though maybe not for mouse picking
+    ☐ global grid @created(05-09-2021 19:03)
+      global grid cells or ggc for short have various attributes like which occupant they have, resource or polutant etc. 
+      could even just not encapsulate this and just have various arrays for attributes since I want index based lookup anyway
+      ☐ create basic grid & mouse over demo @created(05-09-2021 19:28)
+    ☐ street tool @created(05-09-2021 19:03)
+      segments consisting of 2 nodes
+      can be drawn from unoccupied ggc to another unoccupied ggc OR ggc which is node, add node when intersecting
+      so since these can be drawn in any orientation, we may end up in a situation where an intersection on 
+      exactly on the border of 2 ggc s
+    ☐ brush tool @created(05-09-2021 19:04)
+      when mouse hoovers over ggc determine if it's occupied or not. 
+    ☐ mouse interaction @created(05-09-2021 19:26)
+      so going to keep this simple I reckon and just have index based lookups. As in, use mouse pos x & y to figure out the grid index. 
 
 
 SharpRay:
