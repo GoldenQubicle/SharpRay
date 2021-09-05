@@ -37,9 +37,9 @@ namespace ProtoCity
         {
             var (rayOrigin, rayA, rayB) = GetRays();
 
-            DrawCircleV(rayOrigin, 3, Color.RED);
-            DrawLineV(rayOrigin, rayA, Color.RED);
-            DrawLineV(rayOrigin, rayB, Color.RED);
+            //DrawCircleV(rayOrigin, 3, Color.RED);
+            //DrawLineV(rayOrigin, rayA, Color.RED);
+            //DrawLineV(rayOrigin, rayB, Color.RED);
         }
 
         public (Vector2 origin, Vector2 rayA, Vector2 rayB) GetRays()

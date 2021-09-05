@@ -36,6 +36,8 @@ namespace ProtoCity
 
                 DrawCircleV(collision, 4, Color.ORANGE);
                 DrawLineV(e.B.Position, collision, Color.ORANGE);
+
+            
             }
         }
      

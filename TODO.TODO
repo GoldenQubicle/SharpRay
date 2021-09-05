@@ -125,16 +125,17 @@ Fourth MileStone:
 SharpRay:
   ✔ update main w asteroids branch @created(03-09-2021 11:06) @done(04-09-2021 12:55)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)
-  ☐ investigate spammy keyboard & mouse events @created(04-09-2021 19:26)
-    so when implementing the rudimentary event logging I notices keyboard & mouse events are emitted multiple
-    times per frame. Did notice it before and wonder if that is how it is supposed to work or I am doing something wrong?
+  ☐ rework and extend undo and redo system @created(04-09-2021 20:23)
+    essentially both OnUIEvent and OnKeyBoardEvent in Aplication exist only to deal with undo redo stuff, 
+    so rework this to a single method, i.e. a single event type. Moreover, when an entity implements the appropriate interface it 
+    should automatically bind to this single method. 
   ✘ rework event emitter system @created(04-09-2021 12:31) @cancelled(04-09-2021 19:26)
     basically entities should be able to have various event emitter, not BE event emitters
     running into the issue again with drag edit shape, which emits a gui event. However in order to 
     actually have undo / redo capabilties, the event MUST also implement IHasUndoRedo and it's not possible
     to constrain this, or at least couldn't figure it out easily. Much rather have this be explicit, i.e.
     when an entity has undo/redo it must implement an eventEmitter<IUndoRedo> At the moment this is not possible.
-      Then again, it does forces me to consider what type of entity should emit what type of events. Like, the fact 
+      Cancelled because it does forces me to consider what type of entity should emit what type of events. Like, the fact 
       a zone should emit undoredo event makes it clear it is, in fact, not a game entity. So in that regard the system
       works as intended by design. 
   ✔ create frame logging system @created(20-06-2021 17:04) @done(04-09-2021 19:26)

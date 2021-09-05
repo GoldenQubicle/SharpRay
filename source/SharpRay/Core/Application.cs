@@ -211,7 +211,7 @@ namespace SharpRay.Core
             }
         }
 
-        private static double FixedUpdateInterval = 1000 / 60 * TickMultiplier;
+        private static double FixedUpdateInterval = 1000 / 120 * TickMultiplier;
         private static double ElapsedUpdateInterval = 0d;
         private static void DoFixedUpdate(double frameTime)
         {
