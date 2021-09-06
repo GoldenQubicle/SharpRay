@@ -123,7 +123,7 @@ Fourth MileStone:
     ☐ global grid @created(05-09-2021 19:03)
       global grid cells or ggc for short have various attributes like which occupant they have, resource or polutant etc. 
       could even just not encapsulate this and just have various arrays for attributes since I want index based lookup anyway
-      ☐ create basic grid & mouse over demo @created(05-09-2021 19:28)
+      ✔ create basic grid & mouse over demo @created(05-09-2021 19:28) @done(05-09-2021 19:49)
     ☐ street tool @created(05-09-2021 19:03)
       segments consisting of 2 nodes
       can be drawn from unoccupied ggc to another unoccupied ggc OR ggc which is node, add node when intersecting
