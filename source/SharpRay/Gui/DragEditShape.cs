@@ -18,6 +18,7 @@ namespace SharpRay.Gui
         protected bool IsDragged { get; set; }
         private Vector2 DragStart { get; set; }
         public Vector2 DragOffSet { get; private set; }
+        public bool IsSelected { get; set; }
 
         /// <summary>
         /// NOTE: the event returned by the func MUST also implement IHasUndoRedo in order to work properly
@@ -28,12 +29,12 @@ namespace SharpRay.Gui
         {
             HasMouseFocus = ContainsPoint(me.Position);
 
-            if (IsDragged)
+            if (IsDragged && IsSelected)
             {
                 Position = me.Position + DragOffSet;
             }
 
-            if (!HasMouseFocus) return;
+            if (!HasMouseFocus || !IsSelected) return;
 
             if (me is MouseLeftClick && OnMouseLeftClick is not null)
                 EmitEvent(OnMouseLeftClick(this));

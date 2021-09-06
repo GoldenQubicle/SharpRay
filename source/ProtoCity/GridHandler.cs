@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
+using SharpRay.Gui;
+using System.Runtime.Intrinsics.X86;
 
 namespace ProtoCity
 {
@@ -14,7 +16,7 @@ namespace ProtoCity
         public static int SelectedCellIndex { get; private set; }
         private static int CellSize { get; set; }
         private static int RowSize { get; set; }
-      
+
         private Dictionary<int, (Occupant occupant, int id)> GridCells = new();
 
         public GridHandler(int cellSize)
@@ -50,7 +52,26 @@ namespace ProtoCity
                 }
                 else
                 {
-                    GridCells.Add(SelectedCellIndex, (Occupant.Empty, 0));
+                    var id = 0;
+                    GridCells.Add(SelectedCellIndex, (Occupant.StreetNode, id));
+                    var edge = new Edge(
+                        id,
+                        new PointHandler
+                        {
+                            Position = IndexToCoordinatesV(SelectedCellIndex),
+                            Radius = CellSize / 2,
+                            ColorDefault = Color.DARKBLUE,
+                            ColorFocused = Color.BLUE,
+                        },
+                        new PointHandler
+                        {
+                            Position = IndexToCoordinatesV(SelectedCellIndex),
+                            Radius = CellSize / 2,
+                            ColorDefault = Color.DARKBLUE,
+                            ColorFocused = Color.BLUE,
+                            IsSelected = true
+                        });
+                    AddEntity(edge);
                 }
             }
         }
@@ -58,6 +79,7 @@ namespace ProtoCity
         public static int CoordinatesToIndex(Vector2 pos) => RowSize * ((int)pos.Y / CellSize) + ((int)pos.X / CellSize);
 
         public static (int x, int y) IndexToCoordinates(int index) => (index % RowSize * CellSize, index / RowSize * CellSize);
+        public static Vector2 IndexToCoordinatesV(int index) => new Vector2(index % RowSize * CellSize, index / RowSize * CellSize);
 
     }
 }

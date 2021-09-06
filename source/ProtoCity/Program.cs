@@ -20,8 +20,6 @@ namespace ProtoCity
             AddEntity(new ImageTexture(background, Color.GRAY));
             AddEntity(new GridHandler(CellSize));
 
-            
-
             Run();
         }
     }
