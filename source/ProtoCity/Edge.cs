@@ -4,12 +4,13 @@ using static Raylib_cs.Raylib;
 using Raylib_cs;
 using static SharpRay.Core.Application;
 using SharpRay.Gui;
+using SharpRay.Eventing;
+using SharpRay.Core;
 
 namespace ProtoCity
 {
     public class Edge : Entity
     {
-        public int Id { get; }
         public PointHandler A { get; }
         public PointHandler B { get; }
         public Vector2 C { get; private set; }
@@ -17,12 +18,15 @@ namespace ProtoCity
 
         private const float rayLength = 1500f;
 
-        public Edge(int id, PointHandler a, PointHandler b)
+        public Edge(PointHandler a, PointHandler b)
         {
-            Id = id;
             A = a;
             B = b;
             C = Vector2.Lerp(A.Position, B.Position, .5f);
+            A.ColorDefault = Color.DARKPURPLE;
+            B.ColorDefault = Color.DARKPURPLE;
+            A.ColorFocused = Color.PURPLE;
+            B.ColorFocused = Color.PURPLE;
             AddEntity(A);
             AddEntity(B);
         }
@@ -35,7 +39,23 @@ namespace ProtoCity
             DrawTextV("B", B.Position - new Vector2(15, 0), 15, Color.BLACK);
 
             DrawRays();
-        } 
+
+            
+        }
+
+        public override void OnMouseEvent(IMouseEvent e)
+        {
+            if( B.IsSelected)
+            {
+                B.Position = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(B.Position));
+            }
+            if(e is MouseLeftRelease && B.IsSelected)
+            {
+                B.Position = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(B.Position));
+                B.IsSelected = false;
+            }
+        }
+
 
         private void DrawRays()
         {

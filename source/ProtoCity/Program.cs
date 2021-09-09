@@ -3,6 +3,7 @@ using SharpRay.Gui;
 using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
+using SharpRay.Eventing;
 
 namespace ProtoCity
 {
@@ -19,8 +20,17 @@ namespace ProtoCity
             var background = GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, Color.BEIGE, Color.BROWN);
             AddEntity(new ImageTexture(background, Color.GRAY));
             AddEntity(new GridHandler(CellSize));
+            AddEntity(new TransitTool());
+
+            SetMouseEventAction(OnMouseEvent);
 
             Run();
         }
+
+        public static void OnMouseEvent(IMouseEvent e)
+        {
+            
+        }
+
     }
 }

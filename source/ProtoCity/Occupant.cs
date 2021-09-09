@@ -8,8 +8,7 @@ namespace ProtoCity
 {
     public enum Occupant
     {
-        Empty,
-        StreetNode,
-        StreetSegment
+        None,
+        TransitNode,
     }
 }

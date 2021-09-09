@@ -13,11 +13,15 @@ namespace SharpRay.Gui
         public Color ColorDefault { get; set; }
         public Color ColorFocused { get; set; }
         public bool CanScale { get; set; }
-        protected Color ColorRender { get; set; }
+        protected Color ColorRender { get; private set; }
 
-        protected bool IsDragged { get; set; }
+        public bool IsDragged { get; private set; }
+        private Vector2 DragOffSet { get; set; }
         private Vector2 DragStart { get; set; }
-        public Vector2 DragOffSet { get; private set; }
+
+        /// <summary>
+        /// NOTE: it is the callers responsibility to maintain selected state!
+        /// </summary>
         public bool IsSelected { get; set; }
 
         /// <summary>
