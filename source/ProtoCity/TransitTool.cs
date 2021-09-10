@@ -3,6 +3,8 @@ using SharpRay.Core;
 using SharpRay.Entities;
 using SharpRay.Eventing;
 using SharpRay.Gui;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 using static SharpRay.Core.Application;
@@ -12,64 +14,65 @@ namespace ProtoCity
     public class TransitTool : Entity
     {
         private bool isActive = true;
-
+        private Dictionary<int, TransitNode> Nodes = new();
+        private int prevIdx = -1;
         public override void Render()
         {
             DrawText($"Transit Tool :  {(isActive ? "Active" : "InActive")}", 100, 10, 15, Color.RAYWHITE);
+            foreach (var node in Nodes.Values)
+            {
+                DrawCircleV(node.Position, 3, Color.DARKPURPLE);
+                DrawTextV(node.Connections.Count.ToString(), node.Position, 10, Color.RAYWHITE);
+               
+                foreach (var con in node.Connections)
+                    DrawLineV(node.Position, con.Position, Color.PURPLE);
+            }
+
+            if (prevIdx != -1)
+            {
+                DrawCircleV(GridHandler.SelectedCellCenter, 3, Color.PINK);
+                DrawLineV(Nodes[prevIdx].Position, GridHandler.SelectedCellCenter, Color.LIME);
+            }
         }
 
         public override void OnMouseEvent(IMouseEvent e)
         {
             if (!isActive) return;
 
+            var (idx, o) = GridHandler.GetCellInfo(e.Position);
+
+            if (o is not Occupant.None && o is not Occupant.TransitNode) return;
+
+            //TODO handle intersections between segments
             if (e is MouseLeftClick mlc)
             {
-                var o = GridHandler.GetCellOccupant(mlc.Position);
+                if (o is Occupant.None)
+                {
+                    GridHandler.AddOccupant(idx, Occupant.TransitNode);
+                    Nodes.Add(idx, new TransitNode { Idx = idx, Position = GridHandler.SelectedCellCenter });
+                }
 
-                if (o is Occupant.TransitNode)
+                if (prevIdx != -1)
                 {
-                    //so here how do we get the actual, existing node?
+                    //hook up nodes
+                    Nodes[idx].Connections.Add(Nodes[prevIdx]);
+                    Nodes[prevIdx].Connections.Add(Nodes[idx]);
                 }
-                else if (o is Occupant.None)
-                {
-                    //player created a new transit segment
-                    //with node A locked in place, 
-                    //node B under cursor to drag out
-                    var pos = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(mlc.Position));
-                    AddEntity(new Edge(new PointHandler 
-                    { 
-                        Position = pos,
-                        Radius = GridHandler.CellSize / 2,
-                    }, new PointHandler 
-                    {
-                        Position = pos,
-                        Radius = GridHandler.CellSize / 2,
-                        IsSelected = true,
-                    }));
-                }
-                else
-                {
-                    //player cannot draw anything from here
-                }
+
+                prevIdx = idx;
             }
 
-
-            if (e is MouseLeftDrag mld)
+            if (e is MouseRightClick mrc && prevIdx != -1)
             {
-                //need to check here if player is moving some node around to begin with
-                //this will be either an end from a newly drawn stub OR
-                //an existing node with N connections
-            }
-
-            if(e is MouseLeftRelease mlr)
-            {
-                //again need to check if player is actually move a node around to begin with
-                //either an existing node has been moved
-                //or node B of the new segment has been placed
-                //either way, things need to be notified and updateded
+                prevIdx = -1;
             }
         }
     }
 
-    
+    public class TransitNode
+    {
+        public List<TransitNode> Connections = new();
+        public int Idx { get; init; }
+        public Vector2 Position { get; set; }
+    }
 }

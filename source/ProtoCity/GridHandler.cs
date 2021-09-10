@@ -17,8 +17,8 @@ namespace ProtoCity
 
         private static Dictionary<int, (Occupant occupant, int id)> GridCells = new();
 
-        private int SelectedCellIndex;
-        private Vector2 SelectedCellCenter;
+        public static int SelectedCellIndex { get; set; }
+        public static Vector2 SelectedCellCenter { get; private set; }
 
         public GridHandler(int cellSize)
         {
@@ -45,6 +45,7 @@ namespace ProtoCity
             {
                 Position = mm.Position;
                 SelectedCellIndex = CoordinatesToIndex(mm.Position);
+                SelectedCellCenter = IndexToCenterCoordinatesV(SelectedCellIndex);
             }
         }
 

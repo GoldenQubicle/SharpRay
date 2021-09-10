@@ -49,6 +49,7 @@ namespace ProtoCity
             {
                 B.Position = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(B.Position));
             }
+
             if(e is MouseLeftRelease && B.IsSelected)
             {
                 B.Position = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(B.Position));
