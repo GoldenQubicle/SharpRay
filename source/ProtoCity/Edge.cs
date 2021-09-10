@@ -23,12 +23,6 @@ namespace ProtoCity
             A = a;
             B = b;
             C = Vector2.Lerp(A.Position, B.Position, .5f);
-            A.ColorDefault = Color.DARKPURPLE;
-            B.ColorDefault = Color.DARKPURPLE;
-            A.ColorFocused = Color.PURPLE;
-            B.ColorFocused = Color.PURPLE;
-            AddEntity(A);
-            AddEntity(B);
         }
 
         public override void Render()
@@ -39,24 +33,7 @@ namespace ProtoCity
             DrawTextV("B", B.Position - new Vector2(15, 0), 15, Color.BLACK);
 
             DrawRays();
-
-            
         }
-
-        public override void OnMouseEvent(IMouseEvent e)
-        {
-            if( B.IsSelected)
-            {
-                B.Position = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(B.Position));
-            }
-
-            if(e is MouseLeftRelease && B.IsSelected)
-            {
-                B.Position = GridHandler.IndexToCenterCoordinatesV(GridHandler.CoordinatesToIndex(B.Position));
-                B.IsSelected = false;
-            }
-        }
-
 
         private void DrawRays()
         {
@@ -71,7 +48,7 @@ namespace ProtoCity
         {
             C = Vector2.Lerp(A.Position, B.Position, .5f);
             var (n1, n2) = GetNormals();
-            var rayOrigin = C + n1; 
+            var rayOrigin = C + n1;
             var rayA = Vector2.Transform(Vector2.Normalize(A.Position - C), Matrix3x2.CreateScale(rayLength) * Matrix3x2.CreateTranslation(rayOrigin));
             var rayB = Vector2.Transform(Vector2.Normalize(B.Position - C), Matrix3x2.CreateScale(rayLength) * Matrix3x2.CreateTranslation(rayOrigin));
             return (rayOrigin, rayA, rayB);

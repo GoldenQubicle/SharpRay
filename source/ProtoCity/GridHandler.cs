@@ -17,8 +17,9 @@ namespace ProtoCity
 
         private static Dictionary<int, (Occupant occupant, int id)> GridCells = new();
 
-        public static int SelectedCellIndex { get; set; }
+        public static int SelectedCellIndex { get; private set; }
         public static Vector2 SelectedCellCenter { get; private set; }
+        public static Occupant SelectedCellOccupant { get; private set; }
 
         public GridHandler(int cellSize)
         {
@@ -28,7 +29,6 @@ namespace ProtoCity
 
         public override void Render()
         {
-            var center = IndexToCenterCoordinatesV(SelectedCellIndex);
             DrawTextV($"index:{SelectedCellIndex}", Position - new Vector2(15, 15), 15, Color.RAYWHITE);
 
             foreach (var cell in GridCells.Keys)
@@ -46,31 +46,28 @@ namespace ProtoCity
                 Position = mm.Position;
                 SelectedCellIndex = CoordinatesToIndex(mm.Position);
                 SelectedCellCenter = IndexToCenterCoordinatesV(SelectedCellIndex);
+                SelectedCellOccupant = GetCellOccupant(mm.Position);
             }
         }
 
-
         internal static void AddOccupant(int idx, Occupant occupant) => GridCells.Add(idx, (occupant, idx));
 
-        internal static (int idx, Occupant occupant) GetCellInfo(Vector2 position) =>
-            (CoordinatesToIndex(position), GetCellOccupant(position));
-
-        internal static Occupant GetCellOccupant(Vector2 position) =>
+        private static Occupant GetCellOccupant(Vector2 position) =>
             IsCellOccupied(position) ? GridCells[CoordinatesToIndex(position)].occupant : Occupant.None;
 
-        internal static bool IsCellOccupied(Vector2 position) =>
+        private static bool IsCellOccupied(Vector2 position) =>
             GridCells.ContainsKey(CoordinatesToIndex(position));
 
-        internal static int CoordinatesToIndex(Vector2 pos) =>
+        private static int CoordinatesToIndex(Vector2 pos) =>
             RowSize * ((int)pos.Y / CellSize) + ((int)pos.X / CellSize);
 
-        internal static (int x, int y) IndexToCoordinates(int index) =>
+        private static (int x, int y) IndexToCoordinates(int index) =>
             (index % RowSize * CellSize, index / RowSize * CellSize);
 
-        internal static Vector2 IndexToCoordinatesV(int index) =>
+        private static Vector2 IndexToCoordinatesV(int index) =>
             new Vector2(index % RowSize * CellSize, index / RowSize * CellSize);
 
-        internal static Vector2 IndexToCenterCoordinatesV(int index) =>
+        private static Vector2 IndexToCenterCoordinatesV(int index) =>
             new Vector2((index % RowSize * CellSize) + CellSize / 2, (index / RowSize * CellSize) + CellSize / 2);
     }
 }

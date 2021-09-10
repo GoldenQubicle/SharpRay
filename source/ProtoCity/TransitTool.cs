@@ -3,7 +3,6 @@ using SharpRay.Core;
 using SharpRay.Entities;
 using SharpRay.Eventing;
 using SharpRay.Gui;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
@@ -13,12 +12,14 @@ namespace ProtoCity
 {
     public class TransitTool : Entity
     {
-        private bool isActive = true;
+        private bool isActive ;
         private Dictionary<int, TransitNode> Nodes = new();
         private int prevIdx = -1;
+       
         public override void Render()
         {
-            DrawText($"Transit Tool :  {(isActive ? "Active" : "InActive")}", 100, 10, 15, Color.RAYWHITE);
+            DrawText($"Transit Tool :  {(isActive ? "Active" : "Inactive")}", 100, 10, 15, Color.RAYWHITE);
+            
             foreach (var node in Nodes.Values)
             {
                 DrawCircleV(node.Position, 3, Color.DARKPURPLE);
@@ -39,11 +40,13 @@ namespace ProtoCity
         {
             if (!isActive) return;
 
-            var (idx, o) = GridHandler.GetCellInfo(e.Position);
+            var o = GridHandler.SelectedCellOccupant;
+            var idx = GridHandler.SelectedCellIndex;
 
             if (o is not Occupant.None && o is not Occupant.TransitNode) return;
 
             //TODO handle intersections between segments
+            //probably want to be able to insert nodes on existing segments at some point in the future?
             if (e is MouseLeftClick mlc)
             {
                 if (o is Occupant.None)
