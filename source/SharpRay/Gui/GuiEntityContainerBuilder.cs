@@ -15,21 +15,23 @@ namespace SharpRay.Gui
             foreach(var e in entities)
                 Application.SetEmitEventActions(e, Application.OnUIEvent, Audio.OnUIEvent, container.OnGuiEvent);
 
-            container.Entities.AddRange(entities);
+            container.Add(entities);
             return container;
         }
 
         public static GuiEntityContainer Translate(this GuiEntityContainer container, Vector2 translate)
         {
-            foreach (var e in container.Entities) e.Position += translate;
+            container.TranslateEntities(translate);
+            
             return container;
         }
 
-        public static GuiEntityContainer OnUIEvent(this GuiEntityContainer container, Action<IGuiEvent, GuiEntityContainer> onUIEventAction)
+        public static GuiEntityContainer OnGuiEvent(this GuiEntityContainer container, Action<IGuiEvent, GuiEntityContainer> onUIEventAction)
         {
             container.OnGuiEventAction += onUIEventAction;
             return container;
         }
+
         public static GuiEntityContainer OnGameEvent(this GuiEntityContainer container, Action<IGameEvent, GuiEntityContainer> onGameEventAction)
         {
             container.OnGameEventAction += onGameEventAction;

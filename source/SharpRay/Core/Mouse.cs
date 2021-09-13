@@ -3,7 +3,6 @@ using System;
 using System.Numerics;
 using SharpRay.Eventing;
 using static Raylib_cs.Raylib;
-using SharpRay.Listeners;
 
 namespace SharpRay.Core
 {

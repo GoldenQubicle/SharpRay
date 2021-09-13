@@ -89,6 +89,7 @@ namespace SharpRay.Core
             });
         }
 
+
         public static void AddEntity(Entity e) => AddEntity(e, null, null);
 
         public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) => AddEntity(e, new[] { Audio.OnUIEvent, onGuiEvent }, null);

@@ -3,20 +3,32 @@ using SharpRay.Eventing;
 using SharpRay.Listeners;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 
 namespace SharpRay.Gui
 {
     public sealed class GuiEntityContainer : Entity, IGuiEventListener<GuiEntityContainer>, IGameEventListener<GuiEntityContainer>
     {
         public GuiEntityContainer(bool isVisible = true) => IsVisible = isVisible;
-        public List<GuiEntity> Entities { get; } = new();
+        private List<GuiEntity> Entities = new();
         public bool IsVisible { get; private set; }
+
+        public TEntity Get<TEntity>() where TEntity : GuiEntity =>
+            Entities.OfType<TEntity>().FirstOrDefault();
+        public void Add(GuiEntity[] entities) => Entities.AddRange(entities);
 
         public void Hide()
         {
             IsVisible = false;
             foreach (var e in Entities) e.HasMouseFocus = false;
         }
+
+        public void TranslateEntities(Vector2 translate)
+        {
+            foreach (var e in Entities) e.Position += translate;
+        }
+
         public void Show() => IsVisible = true;
 
         public override void Render()

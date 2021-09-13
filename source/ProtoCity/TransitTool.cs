@@ -4,27 +4,24 @@ using SharpRay.Entities;
 using SharpRay.Eventing;
 using SharpRay.Gui;
 using System.Collections.Generic;
-using System.Numerics;
 using static Raylib_cs.Raylib;
 using static SharpRay.Core.Application;
 
 namespace ProtoCity
 {
-    public class TransitTool : Entity
+    public class TransitTool : GuiEntity
     {
-        private bool isActive ;
+        public bool IsActive { get; set; }
         private Dictionary<int, TransitNode> Nodes = new();
         private int prevIdx = -1;
-       
+        
         public override void Render()
         {
-            DrawText($"Transit Tool :  {(isActive ? "Active" : "Inactive")}", 100, 10, 15, Color.RAYWHITE);
-            
             foreach (var node in Nodes.Values)
             {
                 DrawCircleV(node.Position, 3, Color.DARKPURPLE);
                 DrawTextV(node.Connections.Count.ToString(), node.Position, 10, Color.RAYWHITE);
-               
+
                 foreach (var con in node.Connections)
                     DrawLineV(node.Position, con.Position, Color.PURPLE);
             }
@@ -38,7 +35,7 @@ namespace ProtoCity
 
         public override void OnMouseEvent(IMouseEvent e)
         {
-            if (!isActive) return;
+            if (!IsActive ) return;
 
             var o = GridHandler.SelectedCellOccupant;
             var idx = GridHandler.SelectedCellIndex;
@@ -47,7 +44,7 @@ namespace ProtoCity
 
             //TODO handle intersections between segments
             //probably want to be able to insert nodes on existing segments at some point in the future?
-            if (e is MouseLeftClick mlc)
+            if (e is MouseLeftClick mlc && !mlc.IsHandled)
             {
                 if (o is Occupant.None)
                 {
@@ -70,12 +67,5 @@ namespace ProtoCity
                 prevIdx = -1;
             }
         }
-    }
-
-    public class TransitNode
-    {
-        public List<TransitNode> Connections = new();
-        public int Idx { get; init; }
-        public Vector2 Position { get; set; }
     }
 }

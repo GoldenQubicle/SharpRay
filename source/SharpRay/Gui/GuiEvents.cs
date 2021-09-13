@@ -6,7 +6,7 @@ using static SharpRay.Core.Application;
 
 namespace SharpRay.Gui
 {
-    public struct GuiEvent : IGuiEvent
+    public class GuiEvent : IGuiEvent
     {
         public GuiEntity GuiComponent { get; init; }
     }
@@ -18,7 +18,7 @@ namespace SharpRay.Gui
         void Redo();
     }
 
-    public struct ScaleEdit : IGuiEvent, IHasUndoRedo
+    public class ScaleEdit : IGuiEvent, IHasUndoRedo
     {
         public GuiEntity GuiComponent { get; init; }
         public float Start { get; init; }
@@ -27,7 +27,7 @@ namespace SharpRay.Gui
         public void Redo() => GuiComponent.Scale = End;
     }
 
-    public struct TranslateEdit : IGuiEvent, IHasUndoRedo
+    public class TranslateEdit : IGuiEvent, IHasUndoRedo
     {
         public GuiEntity GuiComponent { get; init; }
         public Vector2 Start { get; init; }
@@ -36,7 +36,7 @@ namespace SharpRay.Gui
         public void Redo() => GuiComponent.Position = End;
     }
 
-    public struct DeleteEdit : IGuiEvent, IHasUndoRedo
+    public class DeleteEdit : IGuiEvent, IHasUndoRedo
     {
         public GuiEntity GuiComponent { get; init; }
         public void Undo() => AddEntity(GuiComponent);
