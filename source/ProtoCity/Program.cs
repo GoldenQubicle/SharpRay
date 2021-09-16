@@ -12,7 +12,7 @@ namespace ProtoCity
     {
         internal static int WindowWidth = 1080;
         internal static int WindowHeight = 720;
-        internal static int CellSize = 40;
+        internal static int CellSize = 20;
 
         public static void Main(string[] args)
         {
@@ -21,8 +21,7 @@ namespace ProtoCity
             var background = GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, Color.BEIGE, Color.BROWN);
             AddEntity(new ImageTexture(background, Color.GRAY));
             AddEntity(new GridHandler(CellSize));
-            AddEntity(
-                GuiEntityContainerBuilder.CreateNew()
+            AddEntity(GuiEntityContainerBuilder.CreateNew()
                 .AddChildren(
                     new Button
                     {
@@ -46,18 +45,9 @@ namespace ProtoCity
                          b.Text = $"Transit Tool :  {(tt.IsActive ? "Active" : "Inactive")}";
                      }
                  }));
-
-            SetMouseEventAction(OnMouseEvent);
+            AddEntity(new BrushTool());
 
             Run();
         }
-
-
-        public static void OnMouseEvent(IMouseEvent e)
-        {
-
-        }
-
     }
-
 }

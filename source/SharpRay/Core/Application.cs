@@ -67,6 +67,8 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
+        public static void DrawCircleLinesV(Vector2 position, float radius, Color color) => 
+            DrawCircleLines((int)position.X, (int)position.Y, radius, color);
 
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);

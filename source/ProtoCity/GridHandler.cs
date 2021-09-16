@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Numerics;
 using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
-using System.ComponentModel.DataAnnotations;
 
 namespace ProtoCity
 {
@@ -31,10 +30,10 @@ namespace ProtoCity
         {
             DrawTextV($"index:{SelectedCellIndex}", Position - new Vector2(15, 15), 15, Color.RAYWHITE);
 
-            foreach (var cell in GridCells.Keys)
+            foreach (var (idx, cell) in GridCells)
             {
-                var (x, y) = IndexToCoordinates(cell);
-                DrawText(GridCells[cell].occupant.ToString(), x, y, 15, Color.RAYWHITE);
+                var (x, y) = IndexToCoordinates(idx);
+                DrawText(GridCells[idx].occupant.ToString(), x, y, 15, Color.RAYWHITE);
             }
         }
 
