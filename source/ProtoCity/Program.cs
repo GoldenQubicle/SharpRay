@@ -12,7 +12,7 @@ namespace ProtoCity
     {
         internal static int WindowWidth = 1080;
         internal static int WindowHeight = 720;
-        internal static int CellSize = 20;
+        internal static int CellSize = 10;
 
         public static void Main(string[] args)
         {

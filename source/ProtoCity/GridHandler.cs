@@ -15,16 +15,17 @@ namespace ProtoCity
         public static int CellSize { get; private set; }
         private static int RowSize { get; set; }
 
-        private static Dictionary<int, (Occupant occupant, int id)> GridCells = new();
+        private static Dictionary<int, GridCell> GridCells = new();
 
-        private static int SelectedCellIndex { get;  set; }
-        private static Vector2 SelectedCellCenter { get;  set; }
-        private static Occupant SelectedCellOccupant { get;  set; }
+        private static int SelectedCellIndex { get; set; }
+        private static Vector2 SelectedCellCenter { get; set; }
+        private static Occupant SelectedCellOccupant { get; set; }
 
         public GridHandler(int cellSize)
         {
             CellSize = cellSize;
             RowSize = Program.WindowWidth / CellSize;
+            Size = new Vector2(CellSize, CellSize);
         }
 
         public override void Render()
@@ -34,10 +35,14 @@ namespace ProtoCity
             foreach (var (idx, cell) in GridCells)
             {
                 var (x, y) = IndexToCoordinates(idx);
-                DrawText(GridCells[idx].occupant.ToString(), x, y, 15, Color.RAYWHITE);
+                //DrawText(GridCells[idx].occupant.ToString(), x, y, 15, Color.RAYWHITE);
+
+                if (cell.Occupant == Occupant.Zone)
+                {
+                    DrawRectangleV(IndexToCoordinatesV(idx), Size, Color.BEIGE);
+                }
             }
         }
-
 
         public override void OnMouseEvent(IMouseEvent e)
         {
@@ -59,28 +64,28 @@ namespace ProtoCity
             var cols = size.X / CellSize;
             var rows = size.Y / CellSize;
 
-            for(var x = 0; x < cols; x++)
+            for (var x = 0; x < cols; x++)
             {
-                for(var y = 0; y < rows; y++)
+                for (var y = 0; y < rows; y++)
                 {
                     var rp = topLeft + new Vector2(x * CellSize, y * CellSize);
                     var idx = CoordinatesToIndex(rp);
-                    yield return new GridCell(idx, GetCellOccupant(idx), IndexToCenterCoordinatesV(idx));           
+                    yield return new GridCell(idx, GetCellOccupant(idx), IndexToCenterCoordinatesV(idx));
                 }
             }
         }
 
-        internal static void AddOccupant(int idx, Occupant occupant) => 
-            GridCells.Add(idx, (occupant, idx));
+        internal static void AddOccupant(int idx, Occupant occupant) =>
+            GridCells.Add(idx, new(idx, occupant, IndexToCenterCoordinatesV(idx)));
 
         private static Occupant GetCellOccupant(int idx) =>
-        IsCellOccupied(idx) ? GridCells[idx].occupant : Occupant.None;
+            IsCellOccupied(idx) ? GridCells[idx].Occupant : Occupant.None;
 
         private static bool IsCellOccupied(int idx) =>
             GridCells.ContainsKey(idx);
 
         private static Occupant GetCellOccupant(Vector2 position) =>
-            IsCellOccupied(position) ? GridCells[CoordinatesToIndex(position)].occupant : Occupant.None;
+            IsCellOccupied(position) ? GridCells[CoordinatesToIndex(position)].Occupant : Occupant.None;
 
         private static bool IsCellOccupied(Vector2 position) =>
             GridCells.ContainsKey(CoordinatesToIndex(position));
