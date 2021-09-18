@@ -7,4 +7,9 @@ namespace ProtoCity
     {
         public GuiEntity GuiComponent { get; init; }
     }
+
+    public class BrushToolToggle : IGuiEvent
+    {
+        public GuiEntity GuiComponent { get; init; }
+    }
 }

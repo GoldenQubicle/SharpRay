@@ -8,8 +8,10 @@ using static SharpRay.Core.Application;
 
 namespace ProtoCity
 {
-    public class BrushTool : Entity
+    public class BrushTool : GuiEntity
     {
+        public bool IsActive { get; set; }
+
         private float radius = (GridHandler.CellSize / 2) + (GridHandler.CellSize * 2);
         private float radiusIncrement = GridHandler.CellSize;
         private float radiusMin = GridHandler.CellSize / 2;
@@ -17,13 +19,17 @@ namespace ProtoCity
 
         public override void Render()
         {
-            var sCenter = GridHandler.GetSelectedCenter();
-
-            DrawCircleLinesV(sCenter, radius, Color.BEIGE);
+            if (IsActive)
+            {
+                var sCenter = GridHandler.GetSelectedCenter();
+                DrawCircleLinesV(sCenter, radius, Color.BEIGE);
+            }
         }
 
         public override void OnMouseEvent(IMouseEvent e)
         {
+            if (!IsActive) return;
+
             if (e is MouseLeftDrag mlc)
             {
                 var sCenter = GridHandler.GetSelectedCenter();
@@ -46,6 +52,5 @@ namespace ProtoCity
             if (e is MouseWheelDown mwd && radius > radiusMin)
                 radius -= radiusIncrement;
         }
-
     }
 }
