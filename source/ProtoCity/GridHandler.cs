@@ -7,11 +7,13 @@ using System.Numerics;
 using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
 using System;
+using System.Diagnostics;
 
 namespace ProtoCity
 {
     public class GridHandler : Entity
     {
+        public static Vector2 CellSizeV { get; private set; }
         public static int CellSize { get; private set; }
         private static int RowSize { get; set; }
 
@@ -25,12 +27,12 @@ namespace ProtoCity
         {
             CellSize = cellSize;
             RowSize = Program.WindowWidth / CellSize;
-            Size = new Vector2(CellSize, CellSize);
+            CellSizeV = new Vector2(CellSize, CellSize);
         }
 
         public override void Render()
         {
-            DrawTextV($"index:{SelectedCellIndex}", Position - new Vector2(15, 15), 15, Color.RAYWHITE);
+            //DrawTextV($"index:{SelectedCellIndex}", Position - new Vector2(15, 15), 15, Color.RAYWHITE);
 
             foreach (var (idx, cell) in GridCells)
             {
@@ -39,7 +41,12 @@ namespace ProtoCity
 
                 if (cell.Occupant == Occupant.Zone)
                 {
-                    DrawRectangleV(IndexToCoordinatesV(idx), Size, Color.BEIGE);
+                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.BEIGE);
+                }
+
+                if(cell.Occupant == Occupant.TransitNode)
+                {
+                    DrawCircleV(cell.Center, 3, Color.DARKPURPLE);
                 }
             }
         }
