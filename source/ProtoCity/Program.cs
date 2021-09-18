@@ -26,24 +26,18 @@ namespace ProtoCity
                     new Button
                     {
                         Position = new Vector2(10, 10),
-                        Size = new Vector2(200, 25),
-                        Margins = new Vector2(5, 5),
-                        FillColor = Color.BLANK,
-                        FocusColor = Color.GRAY,
-                        TextColor = Color.RAYWHITE,
+                        Size = new Vector2(175, 25),
+                        Margins = new Vector2(12, 5),
                         Text = "Transit Tool : Inactive",
-                        OnMouseLeftClick = e => new TransitToolToggle { GuiComponent = e }
+                        OnMouseLeftClick = b => new TransitToolToggle { GuiEntity = b }
                     },
                     new Button
                     {
-                        Position = new Vector2(250, 10),
-                        Size = new Vector2(200, 25),
-                        Margins = new Vector2(5, 5),
-                        FillColor = Color.BLANK,
-                        FocusColor = Color.GRAY,
-                        TextColor = Color.RAYWHITE,
+                        Position = new Vector2(200, 10),
+                        Size = new Vector2(175, 25),
+                        Margins = new Vector2(12, 5),
                         Text = "Brush Tool : Inactive",
-                        OnMouseLeftClick = e => new BrushToolToggle { GuiComponent = e }
+                        OnMouseLeftClick = b => new BrushToolToggle { GuiEntity = b }
                     },
                     // NOTE order of gui entities within container matters
                     // tooling needs to come after buttons so button can handle mouse events first, and mark event as handled
@@ -58,14 +52,14 @@ namespace ProtoCity
                      if (e is TransitToolToggle ttt && !bt.IsActive)
                      {
                          tt.IsActive = !tt.IsActive;
-                         var b = ttt.GuiComponent as Button;
+                         var b = ttt.GuiEntity as Button;
                          b.Text = $"Transit Tool :  {(tt.IsActive ? "Active" : "Inactive")}";
                      }
 
                      if (e is BrushToolToggle btt && !tt.IsActive)
                      {
                          bt.IsActive = !bt.IsActive;
-                         var b = btt.GuiComponent as Button;
+                         var b = btt.GuiEntity as Button;
                          b.Text = $"Brush Tool :  {(bt.IsActive ? "Active" : "Inactive")}";
                      }
 

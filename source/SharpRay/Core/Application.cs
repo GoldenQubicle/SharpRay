@@ -138,7 +138,7 @@ namespace SharpRay.Core
                 UndoStack.Push(ur);
 
             if (e is DeleteEdit edit)
-                RemoveEntity(edit.GuiComponent);
+                RemoveEntity(edit.GuiEntity);
         }
 
         internal static void OnKeyBoardEvent(IKeyBoardEvent kbe)

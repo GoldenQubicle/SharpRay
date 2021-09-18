@@ -9,8 +9,8 @@ namespace SharpRay.Gui
     {
         public Label() { }
         public string Text { get; set; }
-        public Font Font { get; init; }
-        public Color TextColor { get; init; }
+        public Font Font { get; init; } = GetFontDefault();
+        public Color TextColor { get; init; } = Color.RAYWHITE;
         public Color FillColor { get; set; }
         public Raylib_cs.Rectangle Rectangle
         {
@@ -31,7 +31,7 @@ namespace SharpRay.Gui
         {
             DrawRectangleV(Position, Size, FillColor);
             DrawRectangleLines((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y, TextColor);
-            DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+            DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }
 }

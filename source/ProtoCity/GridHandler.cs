@@ -75,6 +75,9 @@ namespace ProtoCity
             }
         }
 
+        internal static void RemoveCell(int idx) => 
+            GridCells.Remove(idx);
+
         internal static void AddOccupant(int idx, Occupant occupant) =>
             GridCells.Add(idx, new(idx, occupant, IndexToCenterCoordinatesV(idx)));
 

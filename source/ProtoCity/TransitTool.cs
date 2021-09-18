@@ -65,6 +65,12 @@ namespace ProtoCity
 
             if (e is MouseRightClick mrc && prevIdx != -1)
             {
+                if(Nodes[prevIdx].Connections.Count == 0)
+                {
+                    Nodes.Remove(prevIdx);
+                    GridHandler.RemoveCell(prevIdx);
+                }
+
                 prevIdx = -1;
             }
         }
