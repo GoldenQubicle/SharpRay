@@ -124,15 +124,16 @@ Fourth MileStone:
       global grid cells or ggc for short have various attributes like which occupant they have, resource or polutant etc. 
       could even just not encapsulate this and just have various arrays for attributes since I want index based lookup anyway
       ✔ create basic grid & mouse over demo @created(05-09-2021 19:28) @done(05-09-2021 19:49)
-    ☐ street tool @created(05-09-2021 19:03)
-      - segments consists of 2 nodes, nodes have neighbors, segments have bounding box? could be useful to determine ggc occupancy
-      - should have grid snapping 
-      - new segments can be drawn from nodes
-      - intersecting segments add nodes 
-      - underlying ggc should be marked as occupied, i.e. a diagonal creates a sc4 zig zag pattern
+    ✔ street tool @created(05-09-2021 19:03) @done(16-09-2021 20:08)
+      segments consists of 2 nodes, nodes have neighbors, segments have bounding box? could be useful to determine ggc occupancy
+      should have grid snapping DONE
+      new segments can be drawn from nodes DONE
+      intersecting segments add nodes TODO
+      underlying ggc should be marked as occupied, i.e. a diagonal creates a sc4 zig zag pattern TODO
     ☐ brush tool @created(05-09-2021 19:04)
-      - acts on ggc 
-      - outer ggc should be marked as such in order to determine whether or not it has street access
+      acts on ggc 
+      outer ggc should be marked as such in order to determine whether or not it has street access
+        no, am not going to do this as it is JUST theoretical assumption about what I now THINK I'll need in the FUTURE
     ✔ mouse interaction @created(05-09-2021 19:26) @done(11-09-2021 13:27)
       so going to keep this simple I reckon and just have index based lookups. As in, use mouse pos x & y to figure out the grid index. 
 

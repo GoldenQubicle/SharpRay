@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
+using System;
 
 namespace ProtoCity
 {
@@ -16,9 +17,9 @@ namespace ProtoCity
 
         private static Dictionary<int, (Occupant occupant, int id)> GridCells = new();
 
-        public static int SelectedCellIndex { get; private set; }
-        public static Vector2 SelectedCellCenter { get; private set; }
-        public static Occupant SelectedCellOccupant { get; private set; }
+        private static int SelectedCellIndex { get;  set; }
+        private static Vector2 SelectedCellCenter { get;  set; }
+        private static Occupant SelectedCellOccupant { get;  set; }
 
         public GridHandler(int cellSize)
         {
@@ -49,7 +50,34 @@ namespace ProtoCity
             }
         }
 
-        internal static void AddOccupant(int idx, Occupant occupant) => GridCells.Add(idx, (occupant, idx));
+        internal static GridCell GetSelected() => new(SelectedCellIndex, SelectedCellOccupant, SelectedCellCenter);
+
+        internal static Vector2 GetSelectedCenter() => SelectedCellCenter;
+
+        internal static IEnumerable<GridCell> GetCellsInRect(Vector2 topLeft, Vector2 size)
+        {
+            var cols = size.X / CellSize;
+            var rows = size.Y / CellSize;
+
+            for(var x = 0; x < cols; x++)
+            {
+                for(var y = 0; y < rows; y++)
+                {
+                    var rp = topLeft + new Vector2(x * CellSize, y * CellSize);
+                    var idx = CoordinatesToIndex(rp);
+                    yield return new GridCell(idx, GetCellOccupant(idx), IndexToCenterCoordinatesV(idx));           
+                }
+            }
+        }
+
+        internal static void AddOccupant(int idx, Occupant occupant) => 
+            GridCells.Add(idx, (occupant, idx));
+
+        private static Occupant GetCellOccupant(int idx) =>
+        IsCellOccupied(idx) ? GridCells[idx].occupant : Occupant.None;
+
+        private static bool IsCellOccupied(int idx) =>
+            GridCells.ContainsKey(idx);
 
         private static Occupant GetCellOccupant(Vector2 position) =>
             IsCellOccupied(position) ? GridCells[CoordinatesToIndex(position)].occupant : Occupant.None;
@@ -68,5 +96,7 @@ namespace ProtoCity
 
         private static Vector2 IndexToCenterCoordinatesV(int index) =>
             new Vector2((index % RowSize * CellSize) + CellSize / 2, (index / RowSize * CellSize) + CellSize / 2);
+
+        public record GridCell(int Idx, Occupant Occupant, Vector2 Center);
     }
 }

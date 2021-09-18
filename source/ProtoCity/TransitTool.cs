@@ -17,6 +17,8 @@ namespace ProtoCity
         
         public override void Render()
         {
+            var sCenter = GridHandler.GetSelectedCenter();
+
             foreach (var node in Nodes.Values)
             {
                 DrawCircleV(node.Position, 3, Color.DARKPURPLE);
@@ -28,8 +30,8 @@ namespace ProtoCity
 
             if (prevIdx != -1)
             {
-                DrawCircleV(GridHandler.SelectedCellCenter, 3, Color.PINK);
-                DrawLineV(Nodes[prevIdx].Position, GridHandler.SelectedCellCenter, Color.LIME);
+                DrawCircleV(sCenter, 3, Color.PINK);
+                DrawLineV(Nodes[prevIdx].Position, sCenter, Color.LIME);
             }
         }
 
@@ -37,8 +39,7 @@ namespace ProtoCity
         {
             if (!IsActive ) return;
 
-            var o = GridHandler.SelectedCellOccupant;
-            var idx = GridHandler.SelectedCellIndex;
+            var (idx, o, c) = GridHandler.GetSelected();
 
             if (o is not Occupant.None && o is not Occupant.TransitNode) return;
 
@@ -49,7 +50,7 @@ namespace ProtoCity
                 if (o is Occupant.None)
                 {
                     GridHandler.AddOccupant(idx, Occupant.TransitNode);
-                    Nodes.Add(idx, new TransitNode { Idx = idx, Position = GridHandler.SelectedCellCenter });
+                    Nodes.Add(idx, new TransitNode { Idx = idx, Position = c });
                 }
 
                 if (prevIdx != -1)
