@@ -4,7 +4,6 @@
     {
         None,
         TransitNode,
-        Transit,
         Zone
     }
 }

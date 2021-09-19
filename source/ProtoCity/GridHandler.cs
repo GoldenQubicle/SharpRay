@@ -39,23 +39,15 @@ namespace ProtoCity
                 var (x, y) = IndexToCoordinates(idx);
                 //DrawText(GridCells[idx].occupant.ToString(), x, y, 15, Color.RAYWHITE);
 
-
                 if (cell.Occupant == Occupant.Zone)
                 {
                     DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.BEIGE);
-                }
-
-                if (cell.Occupant == Occupant.Transit)
-                {
-                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.BLACK);
                 }
 
                 if (cell.Occupant == Occupant.TransitNode)
                 {
                     DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.GRAY);
                 }
-
-
             }
         }
 

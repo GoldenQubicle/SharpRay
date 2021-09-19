@@ -31,20 +31,8 @@ namespace ProtoCity
 
                 foreach (var con in node.Connections)
                 {
-                    //DrawLineV(node.Position, con.Position, Color.PURPLE);
-
-                    for(var i = 0f; i < 1f; i+=.001f)
-                    {
-                        var l = Vector2.Lerp(node.Position, con.Position, i);
-                        //DrawCircleV(l, 5, Color.PINK);
-                        var idx = GridHandler.CoordinatesToIndex(l);
-                        GridHandler.AddOccupant(idx, Occupant.Transit);
-
-                        //DrawRectangleV(l - GridHandler.CellSizeV / 2, GridHandler.CellSizeV, Color.BLACK);
-                    }
+                    DrawLineV(node.Position, con.Position, Color.PURPLE);
                 }
-
-                
             }
 
             if (prevIdx != -1)
@@ -60,7 +48,7 @@ namespace ProtoCity
 
             var (idx, occupant, center) = GridHandler.GetSelected();
 
-            if (GridHandler.IsCellOccupied(idx) && occupant is not Occupant.TransitNode) return;
+            if (occupant is Occupant.Zone) return;
 
             if (e is MouseLeftClick mlc && !mlc.IsHandled)
             {
