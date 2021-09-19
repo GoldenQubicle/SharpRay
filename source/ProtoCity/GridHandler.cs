@@ -39,15 +39,23 @@ namespace ProtoCity
                 var (x, y) = IndexToCoordinates(idx);
                 //DrawText(GridCells[idx].occupant.ToString(), x, y, 15, Color.RAYWHITE);
 
+
                 if (cell.Occupant == Occupant.Zone)
                 {
                     DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.BEIGE);
                 }
 
-                if(cell.Occupant == Occupant.TransitNode)
+                if (cell.Occupant == Occupant.Transit)
                 {
-                    DrawCircleV(cell.Center, 3, Color.DARKPURPLE);
+                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.BLACK);
                 }
+
+                if (cell.Occupant == Occupant.TransitNode)
+                {
+                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.GRAY);
+                }
+
+
             }
         }
 
@@ -62,9 +70,13 @@ namespace ProtoCity
             }
         }
 
+        internal void Clear() => GridCells.Clear();
+
         internal static GridCell GetSelected() => new(SelectedCellIndex, SelectedCellOccupant, SelectedCellCenter);
 
         internal static Vector2 GetSelectedCenter() => SelectedCellCenter;
+
+        internal static GridCell Get(int idx) => GridCells[idx];
 
         internal static IEnumerable<GridCell> GetCellsInRect(Vector2 topLeft, Vector2 size)
         {
@@ -86,12 +98,12 @@ namespace ProtoCity
             GridCells.Remove(idx);
 
         internal static void AddOccupant(int idx, Occupant occupant) =>
-            GridCells.Add(idx, new(idx, occupant, IndexToCenterCoordinatesV(idx)));
+            GridCells.TryAdd(idx, new(idx, occupant, IndexToCenterCoordinatesV(idx)));
 
         private static Occupant GetCellOccupant(int idx) =>
             IsCellOccupied(idx) ? GridCells[idx].Occupant : Occupant.None;
-
-        private static bool IsCellOccupied(int idx) =>
+        
+        internal static bool IsCellOccupied(int idx) =>
             GridCells.ContainsKey(idx);
 
         private static Occupant GetCellOccupant(Vector2 position) =>
@@ -100,7 +112,7 @@ namespace ProtoCity
         private static bool IsCellOccupied(Vector2 position) =>
             GridCells.ContainsKey(CoordinatesToIndex(position));
 
-        private static int CoordinatesToIndex(Vector2 pos) =>
+        internal static int CoordinatesToIndex(Vector2 pos) =>
             RowSize * ((int)pos.Y / CellSize) + ((int)pos.X / CellSize);
 
         private static (int x, int y) IndexToCoordinates(int index) =>

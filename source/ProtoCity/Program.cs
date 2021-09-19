@@ -5,6 +5,7 @@ using static Raylib_cs.Raylib;
 using Raylib_cs;
 using SharpRay.Eventing;
 using System.Numerics;
+using System;
 
 namespace ProtoCity
 {
@@ -21,7 +22,7 @@ namespace ProtoCity
             var background = GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, Color.BEIGE, Color.BROWN);
             AddEntity(new ImageTexture(background, Color.GRAY));
             AddEntity(new GridHandler(CellSize));
-            AddEntity(GuiEntityContainerBuilder.CreateNew()
+            AddEntity(GuiContainerBuilder.CreateNew()
                 .AddChildren(
                     new Button
                     {
@@ -43,7 +44,7 @@ namespace ProtoCity
                     // tooling needs to come after buttons so button can handle mouse events first, and mark event as handled
                     // otherwise tooling will be active on the same mouse click event, drawing over the button and other dumb stuff
                     new TransitTool(),
-                    new BrushTool()) 
+                    new BrushTool())
                  .OnGuiEvent((e, c) =>
                  {
                      var tt = c.Get<TransitTool>();
@@ -65,7 +66,19 @@ namespace ProtoCity
 
                  }));
 
+            SetKeyBoardEventAction(OnKeyBoardEvent);
+
             Run();
+        }
+
+        private static void OnKeyBoardEvent(IKeyBoardEvent e)
+        {
+            if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_SPACE)
+            {
+                GetEntity<GuiContainer>().Get<TransitTool>().Clear();
+                GetEntity<GuiContainer>().Get<BrushTool>().Clear();
+                GetEntity<GridHandler>().Clear();
+            }
         }
     }
 }

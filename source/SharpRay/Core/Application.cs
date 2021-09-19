@@ -31,6 +31,7 @@ namespace SharpRay.Core
         private static bool DoEventLogging;
 
         #region public api
+
         public static void Initialize(Config config)
         {
             DoEventLogging = config.DoEventLogging;
@@ -44,7 +45,6 @@ namespace SharpRay.Core
 
             //SetTargetFPS(60);
         }
-
         public static void Run()
         {
             sw.Start();
@@ -67,20 +67,27 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
-        public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
-            DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);
-        public static void DrawCircleLinesV(Vector2 position, float radius, Color color) => 
-            DrawCircleLines((int)position.X, (int)position.Y, radius, color);
 
-        public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
-            DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
         public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 
-        public static void RemoveEntitiesOfType<T>() where T : Entity
+
+        public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
+            DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);
+        public static void DrawCircleLinesV(Vector2 position, float radius, Color color) =>
+            DrawCircleLines((int)position.X, (int)position.Y, radius, color);
+        public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
+            DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
+
+
+
+        public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
+
+        public static IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>();
+
+        public static void RemoveEntitiesOfType<TEntity>() where TEntity : Entity
         {
-            foreach (var e in Entities.OfType<T>())
-                RemoveEntity(e);
+            foreach (var e in Entities.OfType<TEntity>()) RemoveEntity(e);
         }
 
         public static void RemoveEntity(Entity e)
@@ -93,16 +100,18 @@ namespace SharpRay.Core
             });
         }
 
-
         public static void AddEntity(Entity e) => AddEntity(e, null, null);
 
-        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) => AddEntity(e, new[] { Audio.OnUIEvent, onGuiEvent }, null);
+        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) => AddEntity(e, new[] { Audio.OnGuiEvent, onGuiEvent }, null);
 
         public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
+
+
 
         public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
 
         public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
+
 
         #endregion
 
@@ -132,7 +141,7 @@ namespace SharpRay.Core
 
         internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
 
-        internal static void OnUIEvent(IGuiEvent e)
+        internal static void OnGuiEvent(IGuiEvent e)
         {
             if (e is IHasUndoRedo ur)
                 UndoStack.Push(ur);
@@ -186,7 +195,7 @@ namespace SharpRay.Core
             if (e is IMouseListener ml) SetEmitEventActions(Mouse, ml.OnMouseEvent);
             if (e is IEventEmitter<IGameEvent> pe) SetEmitEventActions(pe, onGameEventActions);
             if (e is IEventEmitter<IGuiEvent> eui) SetEmitEventActions(eui, onGuiEventActions);
-            if (e is DragEditShape des) SetEmitEventActions(des, OnUIEvent);
+            if (e is DragEditShape des) SetEmitEventActions(des, OnGuiEvent);
         }
 
         private static long GetFrameTime(ref long past)

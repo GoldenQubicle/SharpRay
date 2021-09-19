@@ -15,7 +15,7 @@ namespace SharpRay.Core
             SetMasterVolume(0.15f);
         }
 
-        public static void OnUIEvent(IGuiEvent e) { }// => PlaySound(Sounds[e.GetType()]);
+        public static void OnGuiEvent(IGuiEvent e) { }// => PlaySound(Sounds[e.GetType()]);
         public static void OnGameEvent(IGameEvent e) { }// => PlaySound(Sounds[e.GetType()]);
 
     }

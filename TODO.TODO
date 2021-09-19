@@ -130,12 +130,13 @@ Fourth MileStone:
       new segments can be drawn from nodes DONE
       intersecting segments add nodes TODO
       underlying ggc should be marked as occupied, i.e. a diagonal creates a sc4 zig zag pattern TODO
-    ☐ brush tool @created(05-09-2021 19:04)
+    ✔ brush tool @created(05-09-2021 19:04) @done(18-09-2021 16:50)
       acts on ggc 
       outer ggc should be marked as such in order to determine whether or not it has street access
         no, am not going to do this as it is JUST theoretical assumption about what I now THINK I'll need in the FUTURE
     ✔ mouse interaction @created(05-09-2021 19:26) @done(11-09-2021 13:27)
       so going to keep this simple I reckon and just have index based lookups. As in, use mouse pos x & y to figure out the grid index. 
+    ☐ transit tool marks segments on the grid @created(18-09-2021 16:50)
 
 
 SharpRay:
