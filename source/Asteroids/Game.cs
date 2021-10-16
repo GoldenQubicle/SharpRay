@@ -50,6 +50,8 @@ namespace Asteroids
 
             if (e is AsteroidSpawnNew asn)
             {
+                //take heading of parent asteroid into account because it offers more dynamic 'explosion'
+                //than just using a 'clean' heading, i.e. Vector(.3, .3)
                 var heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau), MathF.Sin(MathF.Tau));
                 AddEntity(new Asteroid(asn.Position, asn.Size, heading, asn.Stage), OnGameEvent);
 

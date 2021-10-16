@@ -1,6 +1,4 @@
-﻿using SharpRay.Entities;
-using SharpRay.Eventing;
-using System.Dynamic;
+﻿using SharpRay.Eventing;
 using System.Numerics;
 
 namespace Asteroids

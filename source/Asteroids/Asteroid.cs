@@ -29,16 +29,18 @@ namespace Asteroids
         {
             Position = position;
             Size = size;
-            Translation = Matrix3x2.CreateTranslation(heading);
+
+            //note the competing notions of position and center.. 
+            //position is a remnant of using simple rectangle colider which anchores ate top left
+            //and is still used by CreateShape and spawing new shapes. Could rewrite it but not worth it atm
+            Center = Position + Size / 2;
             Heading = heading;
             Stage = stage;
             Strength = stage * 20;
-
-            Center = Position + Size / 2;
             Points = GenerateShape();
+            Translation = Matrix3x2.CreateTranslation(Heading);
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
-
-            Collider = new RectProCollider(Center, Size * 0.75f);
+            Collider = new RectProCollider(Center, Size * 0.85f);
         }
 
         public override void Update(double deltaTime)
@@ -63,8 +65,9 @@ namespace Asteroids
             for (var i = 0; i < Points.Length - 1; i++)
                 DrawLineV(Points[i], Points[i + 1], Color.YELLOW);
 
-            Collider.Render();
-            //DrawCircleV(Center, 5, Color.YELLOW);
+            //Collider.Render();
+            //DrawCircleV(Center, 5, Color.GREEN);
+            //DrawCircleV(Position, 5, Color.DARKGREEN);
         }
 
         public void OnCollision(IHasCollider e)
@@ -99,22 +102,6 @@ namespace Asteroids
             {
                 EmitEvent(new ShipHitAsteroid { DamageDone = Strength });
             }
-
-            if (e is Asteroid a)
-            {
-                ReverseDirection();
-                //a.ReverseDirection();
-
-                while (Collider.Overlaps(a.Collider))
-                    Update(0);
-            }
-        }
-
-        public void ReverseDirection()
-        {
-            RotationAngle = -1 * RotationAngle;
-            Matrix3x2.Invert(Translation, out var inverse);
-            Translation = inverse;
         }
 
         private Vector2[] GenerateShape()
