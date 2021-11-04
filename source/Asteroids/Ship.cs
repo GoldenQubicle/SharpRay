@@ -108,19 +108,20 @@ namespace Asteroids
             if (Position.Y > Game.WindowHeight) Position = new Vector2(Position.X, 0);
         }
 
+        
         public override void Render()
         {
-            
             DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
             DrawCircleV(Vertices[0], 5, Color.PURPLE);
 
-            //debug draw
+            //DEBUG DRAW VERTS
             //DrawCircleV(Position, 5, Color.WHITE);
             //Collider.Render();
             //foreach (var p in Vertices.Select((p, i) => (p, i)))
             //    DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
         }
 
+        internal void TakeDamage(int damage) => Health -= damage;
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {

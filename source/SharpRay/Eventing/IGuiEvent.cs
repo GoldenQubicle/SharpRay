@@ -2,6 +2,6 @@
 
 namespace SharpRay.Eventing
 {
-    public interface IGuiEvent : IEvent { GuiEntity GuiComponent { get; init; } }
+    public interface IGuiEvent : IEvent { GuiEntity GuiEntity{ get; init; } }
 
 }

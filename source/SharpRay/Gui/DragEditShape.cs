@@ -46,7 +46,7 @@ namespace SharpRay.Gui
             {
                 EmitEvent(new TranslateEdit
                 {
-                    GuiComponent = this,
+                    GuiEntity = this,
                     Start = DragStart,
                     End = me.Position
                 });
@@ -57,7 +57,7 @@ namespace SharpRay.Gui
             {
                 var start = Scale;
                 Scale += me is MouseWheelUp ? 0.15f : -0.15f;
-                EmitEvent(new ScaleEdit { GuiComponent = this, Start = start, End = Scale });
+                EmitEvent(new ScaleEdit { GuiEntity = this, Start = start, End = Scale });
             }
         }
 
@@ -66,7 +66,7 @@ namespace SharpRay.Gui
             if (!HasMouseFocus) return;
 
             if (ke is KeyDelete)
-                EmitEvent(new DeleteEdit { GuiComponent = this });
+                EmitEvent(new DeleteEdit { GuiEntity = this });
         }
 
         public override void Render()

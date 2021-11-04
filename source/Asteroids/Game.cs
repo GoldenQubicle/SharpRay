@@ -4,7 +4,6 @@ using SharpRay.Core;
 using SharpRay.Eventing;
 using System;
 using Raylib_cs;
-using System.Reflection.PortableExecutable;
 
 namespace Asteroids
 {
@@ -16,22 +15,20 @@ namespace Asteroids
         static void Main(string[] args)
         {
             SetKeyBoardEventAction(OnKeyBoardEvent);
-
+            Initialize(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
             AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64)), OnGameEvent);
 
             AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f, 0), 2), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f, 0), 2), OnGameEvent);
 
-            Run(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
+            Run();
 
         }
 
         public static void OnGameEvent(IGameEvent e)
         {
             if (e is ShipFiredBullet sfb)
-            {
                 AddEntity(new Bullet(sfb.Origin, sfb.Angle, sfb.Force), OnGameEvent);
-            }
 
             if (e is BulletLifeTimeExpired ble)
                 RemoveEntity(ble.Bullet);
@@ -41,7 +38,6 @@ namespace Asteroids
 
             if (e is ShipHitAsteroid sha)
             {
-                
                 Console.WriteLine("Ship has taken damage");
             }
 

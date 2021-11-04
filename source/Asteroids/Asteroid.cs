@@ -36,7 +36,7 @@ namespace Asteroids
             Center = Position + Size / 2;
             Heading = heading;
             Stage = stage;
-            Strength = stage * 20;
+            Strength = stage * 10;
             Points = GenerateShape();
             Translation = Matrix3x2.CreateTranslation(Heading);
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
@@ -100,7 +100,8 @@ namespace Asteroids
 
             if (e is Ship s)
             {
-                EmitEvent(new ShipHitAsteroid { DamageDone = Strength });
+                s.TakeDamage(Strength);
+                EmitEvent(new ShipHitAsteroid { ShipHealth = s.Health });
             }
         }
 

@@ -106,8 +106,6 @@ namespace SharpRay.Core
 
         public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
 
-
-
         public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
 
         public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
@@ -225,7 +223,7 @@ namespace SharpRay.Core
             }
         }
 
-        private static double FixedUpdateInterval = 1000 / 120 * TickMultiplier;
+        private static double FixedUpdateInterval = 1000 / FixedUpdate * TickMultiplier;
         private static double ElapsedUpdateInterval = 0d;
         private static void DoFixedUpdate(double frameTime)
         {

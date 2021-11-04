@@ -33,7 +33,7 @@ namespace Asteroids
         public override void Render()
         {
             DrawCircleV(Position, radius, Color.YELLOW);
-            Collider.Render();
+            //Collider.Render();
         }
 
         public override void Update(double deltaTime)
