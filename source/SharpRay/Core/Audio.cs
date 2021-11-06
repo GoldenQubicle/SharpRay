@@ -8,15 +8,15 @@ using System.IO;
 
 namespace SharpRay.Core
 {
-    internal static class Audio
+    public static class Audio
     {
-        private static Dictionary<string, Sound> Sounds = new();
+        public static Dictionary<string, Sound> Sounds = new();
 
         public static void Initialize()
         {
-            Sounds.Add("Test", LoadSound(Path.Combine(AssestsFolder, "source_SharpRay_assests_error_006.wav")));
             
-            SetMasterVolume(0.15f);
+            
+            //SetMasterVolume(0.15f);
         }
 
         public static void OnGuiEvent(IGuiEvent e) { }// => PlaySound(Sounds[e.GetType()]);

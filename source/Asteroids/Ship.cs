@@ -8,6 +8,7 @@ using SharpRay.Collision;
 using System;
 using SharpRay.Components;
 using System.Collections.Generic;
+using static SharpRay.Core.Audio;
 
 namespace Asteroids
 {
@@ -41,6 +42,8 @@ namespace Asteroids
         private const string RotateOut = nameof(RotateOut);
         private const string Left = nameof(Left);
         private const string Right = nameof(Right);
+        public const string EngineSound = nameof(EngineSound);
+        public const string ThrusterSound = nameof(ThrusterSound);
         public Collider Collider { get; }
         public int Health { get; set; } = 100;
         public Ship(Vector2 position, Vector2 size)
@@ -80,8 +83,6 @@ namespace Asteroids
             else if (n_acceleration > 0)
                 n_acceleration = Motions[Decelerate].GetValue();
 
-            EmitEvent(new ShipEngineVolume { NormalizedVolume = n_acceleration });
-
             if (hasRotation)
                 n_rotation = Motions[RotateIn].GetValue();
             else if (n_rotation > 0)
@@ -108,9 +109,17 @@ namespace Asteroids
             if (Position.X > Game.WindowWidth) Position = new Vector2(0, Position.Y);
             if (Position.Y < 0) Position = new Vector2(Position.X, Game.WindowHeight);
             if (Position.Y > Game.WindowHeight) Position = new Vector2(Position.X, 0);
+
+            //update sounds
+            if (!IsSoundPlaying(Sounds[EngineSound])) PlaySound(Sounds[EngineSound]);
+
+            if (!IsSoundPlaying(Sounds[ThrusterSound])) PlaySound(Sounds[ThrusterSound]);
+
+            SetSoundVolume(Sounds[EngineSound], n_acceleration);
+            SetSoundVolume(Sounds[ThrusterSound], n_rotation);
         }
 
-        
+
         public override void Render()
         {
             DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
