@@ -80,6 +80,8 @@ namespace SharpRay.Core
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
 
 
+        public static void AddSound(string soundName, string soundPath) => Audio.Sounds.Add(soundName, LoadSound(Path.Combine(AssestsFolder, soundPath)));
+
 
         public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
 

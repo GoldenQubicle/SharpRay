@@ -1,10 +1,6 @@
 ﻿using Raylib_cs;
-using System;
 using System.Collections.Generic;
 using SharpRay.Eventing;
-using static Raylib_cs.Raylib;
-using static SharpRay.Core.Application;
-using System.IO;
 
 namespace SharpRay.Core
 {
@@ -14,8 +10,7 @@ namespace SharpRay.Core
 
         public static void Initialize()
         {
-            
-            
+                       
             //SetMasterVolume(0.15f);
         }
 

@@ -1,12 +1,9 @@
 ﻿using System.Numerics;
-using static SharpRay.Core.Audio;
 using static SharpRay.Core.Application;
-using static Raylib_cs.Raylib;
 using SharpRay.Core;
 using SharpRay.Eventing;
 using System;
 using Raylib_cs;
-using System.IO;
 
 namespace Asteroids
 {
@@ -20,16 +17,14 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Initialize(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
-            Sounds.Add(Ship.EngineSound, LoadSound(Path.Combine(AssestsFolder, "spaceEngineLow_001.ogg")));
-            Sounds.Add(Ship.ThrusterSound, LoadSound(Path.Combine(AssestsFolder, "thrusterFire_001.ogg")));
+            AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
+            AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");
 
             AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64)), OnGameEvent);
-
             AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(65, 100), new Vector2(.5f, 0), 2), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(65, 100), new Vector2(-.5f, 0), 2), OnGameEvent);
 
             Run();
-
         }
 
         public static void OnGameEvent(IGameEvent e)
@@ -49,7 +44,7 @@ namespace Asteroids
             if (e is BulletHitAsteroid bha)
                 RemoveEntity(bha.Bullet);
 
-         
+
             if (e is AsteroidDestroyed ad)
                 RemoveEntity(ad.Asteroid);
 
