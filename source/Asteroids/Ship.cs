@@ -80,6 +80,8 @@ namespace Asteroids
             else if (n_acceleration > 0)
                 n_acceleration = Motions[Decelerate].GetValue();
 
+            EmitEvent(new ShipEngineVolume { NormalizedVolume = n_acceleration });
+
             if (hasRotation)
                 n_rotation = Motions[RotateIn].GetValue();
             else if (n_rotation > 0)

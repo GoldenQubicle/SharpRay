@@ -3,6 +3,11 @@ using System.Numerics;
 
 namespace Asteroids
 {
+    public struct ShipEngineVolume : IGameEvent
+    {
+        public float NormalizedVolume { get; set; }
+    }
+
     public struct ShipFiredBullet : IGameEvent
     {
         public Vector2 Origin { get; init; }
