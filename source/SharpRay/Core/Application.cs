@@ -1,6 +1,6 @@
 ﻿using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
-using static SharpRay.Core.Config;
+using static SharpRay.Core.SharpRayConfig;
 using System.Reflection;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace SharpRay.Core
 
         #region public api
 
-        public static void Initialize(Config config)
+        public static void Initialize(SharpRayConfig config)
         {
             DoEventLogging = config.DoEventLogging;
             Mouse.EmitEvent += OnMouseEvent;
@@ -80,7 +80,7 @@ namespace SharpRay.Core
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
 
 
-        public static void AddSound(string soundName, string soundPath) => 
+        public static void AddSound(string soundName, string soundPath) =>
             Audio.Sounds.Add(soundName, LoadSound(Path.Combine(AssestsFolder, soundPath)));
 
 

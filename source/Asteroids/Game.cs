@@ -15,7 +15,7 @@ namespace Asteroids
         static void Main(string[] args)
         {
             SetKeyBoardEventAction(OnKeyBoardEvent);
-            Initialize(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
+            Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
             AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
             AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");

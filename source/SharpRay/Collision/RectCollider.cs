@@ -11,7 +11,7 @@ namespace SharpRay.Collision
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
-        public Rectangle Collider
+        public Rectangle Rect
         {
             get => new()
             {
@@ -21,7 +21,7 @@ namespace SharpRay.Collision
                 height = Size.Y
             };
         }
-        public override void Render() => DrawRectangleLinesEx(Collider, 2, Color);
+        public override void Render() => DrawRectangleLinesEx(Rect, 2, Color);
         
     }
 }

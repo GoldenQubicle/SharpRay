@@ -1,6 +1,6 @@
 ﻿namespace SharpRay.Core
 {
-    public record Config
+    public record SharpRayConfig
     {
         public static readonly double TickMultiplier = 10000d;
         public static readonly double FixedUpdate = 60d; // times per second

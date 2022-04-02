@@ -24,6 +24,8 @@ namespace SharpRay.Gui
 
         public void Add(GuiEntity[] entities) => Children.AddRange(entities);
 
+        public GuiEntity GetEntityByIndex(int idx) => Children[idx];
+
         public void Hide()
         {
             IsVisible = false;

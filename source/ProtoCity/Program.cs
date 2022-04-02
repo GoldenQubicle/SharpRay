@@ -17,7 +17,7 @@ namespace ProtoCity
 
         public static void Main(string[] args)
         {
-            Initialize(new Config { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
+            Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
             var background = GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, Color.BEIGE, Color.BROWN);
             AddEntity(new ImageTexture(background, Color.GRAY));

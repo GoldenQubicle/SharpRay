@@ -2,7 +2,7 @@
 {
     public interface IKeyBoardEvent : IEvent 
     {
-        public bool IsHandled { get; set; }
+        public bool IsHandled { get; set; } 
     }
 
 }

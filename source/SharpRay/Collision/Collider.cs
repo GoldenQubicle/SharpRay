@@ -12,7 +12,7 @@ namespace SharpRay.Collision
         public bool ContainsPoint(Vector2 point) => this switch
         {
             CircleCollider cc => CheckCollisionPointCircle(point, cc.Center, cc.Radius),
-            RectCollider rc => CheckCollisionPointRec(point, rc.Collider),
+            RectCollider rc => CheckCollisionPointRec(point, rc.Rect),
             RectProCollider rpc => false,
             _ => false
         };
@@ -20,10 +20,10 @@ namespace SharpRay.Collision
         public bool Overlaps(Collider collider) => (this, collider) switch
         {
             (CircleCollider cc, CircleCollider cco) => CheckCollisionCircles(cc.Center, cc.Radius, cco.Center, cco.Radius),
-            (CircleCollider cc, RectCollider rc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Collider),
+            (CircleCollider cc, RectCollider rc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Rect),
             (CircleCollider cc, RectProCollider rpc) => CheckCollisionRectProCircle(rpc, cc),
-            (RectCollider rc, RectCollider rco) => CheckCollisionRecs(rc.Collider, rco.Collider),
-            (RectCollider rc, CircleCollider cc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Collider),
+            (RectCollider rc, RectCollider rco) => CheckCollisionRecs(rc.Rect, rco.Rect),
+            (RectCollider rc, CircleCollider cc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Rect),
             (RectCollider rc, RectProCollider rpc) => false,
             (RectProCollider rpc, RectProCollider rpco) => CheckCollisionRectProColliders(rpc, rpco),
             (RectProCollider rpc, CircleCollider cc) => CheckCollisionRectProCircle(rpc, cc),

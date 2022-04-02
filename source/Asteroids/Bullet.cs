@@ -13,7 +13,7 @@ namespace Asteroids
         private Vector2 acceleration;
         private readonly float radius = 2f;
         private readonly float speed = 10f;
-        private readonly double lifeTime = 1350 * Config.TickMultiplier;
+        private readonly double lifeTime = 1350 * SharpRayConfig.TickMultiplier;
         private double elapsed;
         public int Damage { get; } = 25;
         public Collider Collider { get; }
