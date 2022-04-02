@@ -114,9 +114,9 @@ namespace Asteroids
             if (!IsSoundPlaying(Sounds[EngineSound])) PlaySound(Sounds[EngineSound]);
 
             if (!IsSoundPlaying(Sounds[ThrusterSound])) PlaySound(Sounds[ThrusterSound]);
-
-            SetSoundVolume(Sounds[EngineSound], n_acceleration);
-            SetSoundVolume(Sounds[ThrusterSound], n_rotation);
+            //issue: want to set overall sound fx from within game
+            SetSoundVolume(Sounds[EngineSound], n_acceleration * .5f);
+            SetSoundVolume(Sounds[ThrusterSound], n_rotation * .5f);
         }
 
 
