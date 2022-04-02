@@ -15,7 +15,20 @@ namespace SnakeEntities
         private float prevDistance;
         private double current;
         private double interval = FoodSwayInterval * TickMultiplier;
+
+        public ParticleFood(Vector2 position, int foodSize)
+        {
+            Position = position;
+            Size = new Vector2(foodSize, foodSize);
+            Collider = new RectCollider
+            {
+                Position = position,
+                Size = Size,
+            };
+        }
+
         private RectCollider Collider { get; set; }
+        public int FoodSize { get; }
 
         public override void Update(double deltaTime)
         {

@@ -1,5 +1,6 @@
 ﻿using Raylib_cs;
 using SharpRay.Collision;
+using SharpRay.Core;
 using SharpRay.Eventing;
 using SnakeEvents;
 using System;
@@ -91,14 +92,20 @@ namespace SnakeEntities
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            NextDirection = e switch
-            {
-                SnakeUp => Direction.Up,
-                SnakeRight => Direction.Right,
-                SnakeDown => Direction.Down,
-                SnakeLeft => Direction.Left,
-                _ => throw new NotImplementedException(),
-            };
+            if (e is KeyUpDown) Direction = Direction.Down;
+            if (e is KeyRightDown) Direction = Direction.Right;
+            if (e is KeyDownDown) Direction = Direction.Down;
+            if (e is KeyLeftDown) Direction = Direction.Left;
+
+
+            //NextDirection = e switch 
+            //{
+            //    SnakeUp => Direction.Up,
+            //    SnakeRight => Direction.Right,
+            //    SnakeDown => Direction.Down,
+            //    SnakeLeft => Direction.Left,
+            //    //_ => throw new NotImplementedException(),
+            //};
         }
 
         

@@ -128,7 +128,7 @@ namespace SharpRay.Core
 
                 //ignore mouse when loggin as it is way too spammy
                 //same may apply to keyboard as well, we'll see
-                if (DoEventLogging && e is not Mouse m)
+                if (DoEventLogging && e is not Mouse m && e is not KeyBoard k)
                     e.EmitEvent += a =>
                         {
                             Console.WriteLine(

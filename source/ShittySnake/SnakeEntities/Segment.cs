@@ -85,7 +85,12 @@ namespace SnakeEntities
                     Direction.Down => Center + new Vector2(0f, -CellSize),
                     Direction.Left => Center + new Vector2(CellSize, 0f),
                 },
-                Position = Center - Size / 2
+                Position = Center - Size / 2,
+                Collider = new RectCollider
+                {
+                    Position = Position,
+                    Size = Size
+                }
             };
             return Next;
         }

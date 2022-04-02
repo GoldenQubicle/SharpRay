@@ -12,7 +12,7 @@ using SnakeEvents;
 
 namespace SnakeEntities
 {
-    public class FoodParticleSpawner : Entity, IEventEmitter<IGameEvent>, IGameEventListener<FoodParticleSpawner>
+    public class FoodParticleSpawner : GameEntity, IEventEmitter<IGameEvent>, IGameEventListener<FoodParticleSpawner>
     {
         public Action<IGameEvent> EmitEvent { get; set; }
 
