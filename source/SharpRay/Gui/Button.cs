@@ -1,14 +1,17 @@
 ﻿using Raylib_cs;
 using SharpRay.Core;
 using SharpRay.Eventing;
+using System;
 using System.Numerics;
 
 namespace SharpRay.Gui
 {
     public sealed class Button : Label
     {
-        public Color FocusColor { get; init; }
+        public Color FocusColor { get; init; } = Color.GRAY;
         public Color BaseColor { get; init; }
+        
+
         public override void Render()
         {
             FillColor = HasMouseFocus ? FocusColor : BaseColor;
@@ -24,8 +27,11 @@ namespace SharpRay.Gui
         public override void OnMouseEvent(IMouseEvent e)
         {
             base.OnMouseEvent(e);
-            if (HasMouseFocus && e is MouseLeftClick)
-                EmitEvent(OnMouseLeftClick(this));
+            if (HasMouseFocus && e is MouseLeftClick mlc)
+            {
+                EmitEvent?.Invoke(OnMouseLeftClick?.Invoke(this));
+                mlc.IsHandled = true;
+            }
         }
     }
 }

@@ -4,29 +4,70 @@ using SharpRay.Eventing;
 namespace SharpRay.Core
 {
     //general event containing raylib enum
-    public struct KeyPressed : IKeyBoardEvent
+    public class KeyPressed : IKeyBoardEvent
     {
         public KeyboardKey KeyboardKey { get; init; }
+        public bool IsHandled { get; set; }
+
     }
 
     //up, down, left, right down & release events emitted for both arrow and wasd keys
-    public struct KeyUpDown : IKeyBoardEvent { }
-    public struct KeyRightDown : IKeyBoardEvent { }
-    public struct KeyDownDown : IKeyBoardEvent { }
-    public struct KeyLeftDown : IKeyBoardEvent { }
-    
-    public struct KeyUpReleased : IKeyBoardEvent { }
-    public struct KeyRightReleased : IKeyBoardEvent { }
-    public struct KeyDownReleased : IKeyBoardEvent { }
-    public struct KeyLeftReleased : IKeyBoardEvent { }
-    
+    public class KeyUpDown : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyRightDown : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyDownDown : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyLeftDown : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+
+    public class KeyUpReleased : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyRightReleased : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyDownReleased : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyLeftReleased : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+
     //pretty self explanatory
-    public struct KeySpaceBarPressed : IKeyBoardEvent { }
-    public struct KeySpaceBarDown : IKeyBoardEvent { }
-    public struct KeyDelete : IKeyBoardEvent { }
-    
+    public class KeySpaceBarPressed : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeySpaceBarDown : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyDelete : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+
     //emitted on ctr-z & ctrl-y
-    public struct KeyUndo : IKeyBoardEvent { }
-    public struct KeyRedo : IKeyBoardEvent { }
+    public class KeyUndo : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
+    public class KeyRedo : IKeyBoardEvent
+    {
+        public bool IsHandled { get; set; }
+    }
 
 }

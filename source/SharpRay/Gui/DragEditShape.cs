@@ -12,20 +12,33 @@ namespace SharpRay.Gui
         public Action<DragEditShape> OnRightMouseClick { get; set; }
         public Color ColorDefault { get; set; }
         public Color ColorFocused { get; set; }
-        protected Color ColorRender { get; set; }
+        public bool CanScale { get; set; }
+        protected Color ColorRender { get; private set; }
 
-        protected bool IsDragged { get; set; }
+        public bool IsDragged { get; private set; }
+        private Vector2 DragOffSet { get; set; }
         private Vector2 DragStart { get; set; }
-        public Vector2 DragOffSet { get; private set; }
+
+        /// <summary>
+        /// NOTE: it is the callers responsibility to maintain selected state!
+        /// </summary>
+        public bool IsSelected { get; set; }
+
+        /// <summary>
+        /// NOTE: the event returned by the func MUST also implement IHasUndoRedo in order to work properly
+        /// </summary>
+        public Func<GuiEntity, IGuiEvent> OnDelete { get; set; }
 
         public override void OnMouseEvent(IMouseEvent me)
         {
             HasMouseFocus = ContainsPoint(me.Position);
 
-            if (IsDragged)
+            if (IsDragged && IsSelected)
+            {
                 Position = me.Position + DragOffSet;
+            }
 
-            if (!HasMouseFocus) return;
+            if (!HasMouseFocus || !IsSelected) return;
 
             if (me is MouseLeftClick && OnMouseLeftClick is not null)
                 EmitEvent(OnMouseLeftClick(this));
@@ -48,12 +61,12 @@ namespace SharpRay.Gui
                 {
                     GuiEntity = this,
                     Start = DragStart,
-                    End = me.Position
+                    End = Position
                 });
                 IsDragged = false;
             }
 
-            if (me is MouseWheelUp || me is MouseWheelDown)
+            if (CanScale && ( me is MouseWheelUp || me is MouseWheelDown))
             {
                 var start = Scale;
                 Scale += me is MouseWheelUp ? 0.15f : -0.15f;
@@ -66,7 +79,7 @@ namespace SharpRay.Gui
             if (!HasMouseFocus) return;
 
             if (ke is KeyDelete)
-                EmitEvent(new DeleteEdit { GuiEntity = this });
+                EmitEvent(OnDelete?.Invoke(this));
         }
 
         public override void Render()
