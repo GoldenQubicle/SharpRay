@@ -23,7 +23,7 @@ namespace SnakeEntities
         protected Vector2 Center { get; set; }
         protected Segment Next { get; set; }
         protected Color Color { get; set; }
-        private RectCollider Collider { get; set; }
+        protected RectCollider Collider { get; set; }
 
         private static double interval = LocomotionInterval * TickMultiplier;
         private double current = 0d;
@@ -59,7 +59,7 @@ namespace SnakeEntities
             DoLocomotion();
 
             //update position used by collider
-            Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
+            Collider.Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
 
         }
 

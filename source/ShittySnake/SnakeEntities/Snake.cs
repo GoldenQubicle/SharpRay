@@ -17,7 +17,6 @@ namespace SnakeEntities
         public List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
         private Func<DespawnPoop> OnConsumedPoop { get; set; }
-        private RectCollider Collider { get; set; }
 
         public Snake(Vector2 position)
         {
@@ -27,7 +26,7 @@ namespace SnakeEntities
             Center = new Vector2(Position.X + CellSize / 2, Position.Y + CellSize / 2);
             Collider = new RectCollider
             {
-                Position = Position,
+                Position = position,
                 Size = Size,
             };
         }
@@ -92,10 +91,10 @@ namespace SnakeEntities
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyUpDown) Direction = Direction.Down;
-            if (e is KeyRightDown) Direction = Direction.Right;
-            if (e is KeyDownDown) Direction = Direction.Down;
-            if (e is KeyLeftDown) Direction = Direction.Left;
+            if (e is KeyUpDown) NextDirection = Direction.Up;
+            if (e is KeyRightDown) NextDirection = Direction.Right;
+            if (e is KeyDownDown) NextDirection = Direction.Down;
+            if (e is KeyLeftDown) NextDirection = Direction.Left;
 
 
             //NextDirection = e switch 

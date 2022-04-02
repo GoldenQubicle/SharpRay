@@ -18,6 +18,7 @@ namespace ShittySnake
         static void Main(string[] args)
         {
             Initialize(new SharpRayConfig { WindowWidth = Settings.WindowWidth, WindowHeight = Settings.WindowHeight, DoEventLogging = true });
+
             CreateGui();
 
             Run();
@@ -25,6 +26,7 @@ namespace ShittySnake
 
         /// <summary>
         /// create backdrop, 'again' & 'start' menus - in that order. Hides the former, shows the latter
+        /// wires buttons to start the game
         /// </summary>
         private static void CreateGui()
         {
