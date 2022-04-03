@@ -47,7 +47,8 @@ namespace SnakeEntities
                 };
 
             //ignore first segment collision due to locomotion
-            if ((e is Segment s && Segments[1] != s) || e is ParticlePoop p)
+            //(e is Segment s && Segments[1] != s) ||
+            if (e is ParticlePoop p)
                 EmitEvent(new SnakeGameOver { Score = Segments.Count });
 
         }
@@ -85,8 +86,8 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            DrawRectangleRounded(Collider.Rect, .5f, 10, Color.MAGENTA);
-            DrawRectangleRoundedLines(Collider.Rect, .5f, 10, 1, Color.PURPLE);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 10, Color.MAGENTA);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 10, 1, Color.PURPLE);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e) =>

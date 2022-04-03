@@ -10,7 +10,7 @@ using SharpRay.Collision;
 
 namespace SnakeEntities
 {
-    public class ParticleFood : GameEntity
+    public class ParticleFood : GameEntity, IHasCollider
     {
         private float prevDistance;
         private double current;
@@ -27,7 +27,7 @@ namespace SnakeEntities
             };
         }
 
-        private RectCollider Collider { get; set; }
+        public Collider Collider { get; set; }
         public int FoodSize { get; }
 
         public override void Update(double deltaTime)
@@ -46,8 +46,8 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            DrawRectangleRounded(Collider.Rect, .5f, 1, Color.LIME);
-            DrawRectangleRoundedLines(Collider.Rect, .5f, 2, 1, Color.GREEN);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 1, Color.LIME);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 2, 1, Color.GREEN);
         }
     }
 }

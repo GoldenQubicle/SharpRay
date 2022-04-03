@@ -134,9 +134,8 @@ namespace ShittySnake
                 Size = new Vector2(WindowWidth, WindowHeight)
             };
 
-            //EntityEventInitialisation(head, spawner);
             AddEntity(spawner);
-            spawner.EmitEvent += OnGameEvent;
+            spawner.EmitEvent += OnGameEvent; // need manual binding since AddEntity executes as an EventAction at the end of drawing loop, thus EmitEvent will be null when initialising
             spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
 
             //create 3 segment snake to start with bc 2 part snake doesn't collide with itself yet (due to locomotion)
@@ -151,33 +150,34 @@ namespace ShittySnake
 
             //add it all to entities and note insertion order matters w regards to main loop. spawner first, head last!
 
-            AddEntity(tail);
-            AddEntity(neck);
+            AddEntity(tail, OnGameEvent);
+            AddEntity(neck, OnGameEvent);
             AddEntity(head, OnGameEvent);
         }
 
         public static void OnGameEvent(IGameEvent e)
         {
 
-            //if (e is SnakeConsumedFood f)
-            //{
-            //    EventActions.Add(() =>
-            //    {
-            //        Entities.Remove(f.FoodParticle);
 
-            //        EntityEventInitialisation(f.NextSegment);
-            //        var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
-            //        Entities.Insert(idx, f.NextSegment);
-            //    });
-            //}
 
-            //if (e is DespawnPoop p)
-            //{
-            //    EventActions.Add(() =>
-            //    {
-            //        Entities.Remove(p.PoopParticle);
-            //    });
-            //}
+            if (e is SnakeConsumedFood f)
+            {
+                RemoveEntity(f.FoodParticle);
+                AddEntity(f.NextSegment, OnGameEvent);
+                //    EventActions.Add(() =>
+                //    {
+                //        Entities.Remove(f.FoodParticle);
+
+                //        EntityEventInitialisation(f.NextSegment);
+                //        var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
+                //        Entities.Insert(idx, f.NextSegment);
+                //    });
+            }
+
+            if (e is DespawnPoop p)
+            {
+                RemoveEntity(p.PoopParticle);
+            }
 
             if (e is SnakeGameOver go)
             {
@@ -209,19 +209,21 @@ namespace ShittySnake
                 //});
             }
 
-            //if (e is PoopParticleSpawn ps)
-            //{
-            //    EventActions.Add(() =>
-            //    {
-            //        var pp = new ParticlePoop
-            //        {
-            //            Position = ps.Position,
-            //            Size = new Vector2(PoopSize, PoopSize)
-            //        };
-            //        EntityEventInitialisation(pp);
-            //        Entities.Insert(4, pp); // ensure rendering above background, uix2 & particlespawner
-            //    });
-            //}
+            if (e is PoopParticleSpawn ps)
+            {
+                AddEntity(new ParticlePoop(ps.Position, PoopSize), OnGameEvent);
+
+                //    EventActions.Add(() =>
+                //    {
+                //        var pp = new ParticlePoop
+                //        {
+                //            Position = ps.Position,
+                //            Size = new Vector2(PoopSize, PoopSize)
+                //        };
+                //        EntityEventInitialisation(pp);
+                //        Entities.Insert(4, pp); // ensure rendering above background, uix2 & particlespawner
+                //});
+            }
         }
     }
 }

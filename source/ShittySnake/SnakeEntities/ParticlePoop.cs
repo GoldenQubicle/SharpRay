@@ -6,15 +6,28 @@ using static SharpRay.Core.Application;
 using SharpRay.Entities;
 using SharpRay.Collision;
 using SnakeEvents;
+using System.Numerics;
 
 namespace SnakeEntities
 {
-    public class ParticlePoop : GameEntity
+    public class ParticlePoop : GameEntity, IHasCollider
     {
         private float alpha;
         private double current;
         private double interval = PoopDespawnInterval * TickMultiplier;
-        private RectCollider Collider { get; set; }
+        public Collider Collider { get; set; }
+
+        public ParticlePoop(Vector2 position, int poopSize)
+        {
+            Position = position;
+            Size = new Vector2(poopSize);
+            Collider = new RectCollider
+            {
+                Position = position,
+                Size = Size,
+            };
+        }
+
 
         public override void Update(double deltaTime)
         {
@@ -32,8 +45,8 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            DrawRectangleRounded(Collider.Rect, .5f, 5, ColorAlpha(Color.DARKBROWN, alpha));
-            DrawRectangleRoundedLines(Collider.Rect, .5f, 5, 2, Color.BROWN);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 5, ColorAlpha(Color.DARKBROWN, alpha));
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 5, 2, Color.BROWN);
         }
     }
 }

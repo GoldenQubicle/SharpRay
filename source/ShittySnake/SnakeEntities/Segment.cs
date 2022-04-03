@@ -13,7 +13,7 @@ namespace SnakeEntities
 {
     public enum Direction { Up, Right, Down, Left }
 
-    public class Segment : GameEntity
+    public class Segment : GameEntity, IHasCollider
     {
         public Vector2 Bounds { get; init; }
         public Direction Direction { get; set; }
@@ -23,7 +23,7 @@ namespace SnakeEntities
         protected Vector2 Center { get; set; }
         protected Segment Next { get; set; }
         protected Color Color { get; set; }
-        protected RectCollider Collider { get; set; }
+        public Collider Collider { get; set; }
 
         private static double interval = LocomotionInterval * TickMultiplier;
         private double current = 0d;
@@ -59,7 +59,7 @@ namespace SnakeEntities
             DoLocomotion();
 
             //update position used by collider
-            Collider.Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
+           (Collider as RectCollider).Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
 
         }
 
@@ -67,8 +67,8 @@ namespace SnakeEntities
         {
             Color = isDigesting ? Color.BROWN : Color.DARKPURPLE;
 
-            DrawRectangleRounded(Collider.Rect, .35f, 1, Color);
-            DrawRectangleRoundedLines(Collider.Rect, .35f, 1, 2, Color.PURPLE);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .35f, 1, Color);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .35f, 1, 2, Color.PURPLE);
         }
 
         public Segment SetNext()
