@@ -89,24 +89,14 @@ namespace SnakeEntities
             DrawRectangleRoundedLines(Collider.Rect, .5f, 10, 1, Color.PURPLE);
         }
 
-        public override void OnKeyBoardEvent(IKeyBoardEvent e)
-        {
-            if (e is KeyUpDown) NextDirection = Direction.Up;
-            if (e is KeyRightDown) NextDirection = Direction.Right;
-            if (e is KeyDownDown) NextDirection = Direction.Down;
-            if (e is KeyLeftDown) NextDirection = Direction.Left;
-
-
-            //NextDirection = e switch 
-            //{
-            //    SnakeUp => Direction.Up,
-            //    SnakeRight => Direction.Right,
-            //    SnakeDown => Direction.Down,
-            //    SnakeLeft => Direction.Left,
-            //    //_ => throw new NotImplementedException(),
-            //};
-        }
-
-        
+        public override void OnKeyBoardEvent(IKeyBoardEvent e) =>
+            NextDirection = e switch
+            {
+                KeyUpDown => Direction.Up,
+                KeyRightDown => Direction.Right,
+                KeyDownDown => Direction.Down,
+                KeyLeftDown => Direction.Left,
+                _ => NextDirection
+            };
     }
 }

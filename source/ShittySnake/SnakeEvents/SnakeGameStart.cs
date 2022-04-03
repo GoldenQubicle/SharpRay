@@ -3,7 +3,7 @@ using SharpRay.Eventing;
 
 namespace SnakeEvents
 {
-    public class SnakeGameStart : IGuiEvent
+    public struct SnakeGameStart : IGuiEvent
     {
         public GuiEntity GuiEntity { get; init; }
     }

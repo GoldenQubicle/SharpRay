@@ -1,15 +1,15 @@
-﻿using static SharpRay.Core.Application;
+﻿using System.Numerics;
+using System.Linq;
 using SharpRay.Core;
 using SharpRay.Gui;
-using System.Numerics;
-using static Raylib_cs.Color;
-using SnakeEvents;
 using SharpRay.Eventing;
-using static Raylib_cs.Raylib;
-using SnakeEntities;
-using System;
 using SharpRay.Entities;
-using System.Linq;
+using SnakeEvents;
+using SnakeEntities;
+using static SharpRay.Core.Application;
+using static Raylib_cs.Raylib;
+using static Raylib_cs.Color;
+using static ShittySnake.Settings;
 
 namespace ShittySnake
 {
@@ -17,7 +17,15 @@ namespace ShittySnake
     {
         static void Main(string[] args)
         {
-            Initialize(new SharpRayConfig { WindowWidth = Settings.WindowWidth, WindowHeight = Settings.WindowHeight, DoEventLogging = true });
+            Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight, DoEventLogging = true });
+
+            AddSound(nameof(SnakeGameStart), ButtonPushSound);
+            AddSound(nameof(SnakeLocomotion), FootStepSound);
+            AddSound(nameof(SnakeConsumedFood), SnakeGrow);
+            AddSound(nameof(DespawnPoop), PoopDespawn);
+            AddSound(nameof(FoodParticleSpawn), FoodSpawn);
+            AddSound(nameof(PoopParticleSpawn), SnakeShrink);
+            AddSound(nameof(SnakeGameOver), GameOver);
 
             CreateGui();
 
@@ -30,12 +38,12 @@ namespace ShittySnake
         /// </summary>
         private static void CreateGui()
         {
-            AddEntity(new ImageTexture(GenImageChecked(Settings.WindowWidth, Settings.WindowHeight, Settings.CellSize, Settings.CellSize, LIGHTGRAY, GRAY), DARKBLUE));
+            AddEntity(new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LIGHTGRAY, GRAY), DARKBLUE));
             AddEntity(GuiContainerBuilder.CreateNew(isVisible: false).AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
-                    Size = new Vector2(320, Settings.WindowHeight),
+                    Size = new Vector2(320, WindowHeight),
                     Margins = new Vector2(20, 20),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
@@ -45,7 +53,7 @@ namespace ShittySnake
                 new Label
                 {
                     Position = new Vector2(0, 300),
-                    Size = new Vector2(320, Settings.WindowHeight / 6),
+                    Size = new Vector2(320, WindowHeight / 6),
                     Margins = new Vector2(60, 20),
                     FillColor = DARKPURPLE,
                     TextColor = YELLOW,
@@ -63,7 +71,7 @@ namespace ShittySnake
                     Text = "AGAIN!",
                     FontSize = 37,
                 })
-            .Translate(new Vector2(Settings.WindowWidth / 2 - 320 / 2, 0))
+            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
             .OnGuiEvent((e, c) =>
             {
                 if (e is SnakeGameStart)
@@ -82,7 +90,7 @@ namespace ShittySnake
                 new Label
                 {
                     Position = new Vector2(),
-                    Size = new Vector2(320, Settings.WindowHeight),
+                    Size = new Vector2(320, WindowHeight),
                     Margins = new Vector2(18, 40),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
@@ -101,7 +109,7 @@ namespace ShittySnake
                     FontSize = 37,
                     OnMouseLeftClick = e => new SnakeGameStart { GuiEntity = e }
                 })
-            .Translate(new Vector2(Settings.WindowWidth / 2 - 320 / 2, 0))
+            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
             .OnGuiEvent((e, c) =>
             {
                 if (e is SnakeGameStart)
@@ -116,20 +124,20 @@ namespace ShittySnake
         {
             var head = new Snake(new Vector2(400, 160))
             {
-                Bounds = new Vector2(Settings.WindowWidth, Settings.WindowHeight),
+                Bounds = new Vector2(WindowWidth, WindowHeight),
                 Direction = Direction.Right,
                 NextDirection = Direction.Right,
             };
 
             var spawner = new FoodParticleSpawner
             {
-                Size = new Vector2(Settings.WindowWidth, Settings.WindowHeight)
+                Size = new Vector2(WindowWidth, WindowHeight)
             };
 
             //EntityEventInitialisation(head, spawner);
             AddEntity(spawner);
             spawner.EmitEvent += OnGameEvent;
-            spawner.Initialize(Settings.FoodParticleStart); //set 1st random interval and food particles to start with 
+            spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
 
             //create 3 segment snake to start with bc 2 part snake doesn't collide with itself yet (due to locomotion)
             var neck = head.SetNext();
@@ -150,10 +158,6 @@ namespace ShittySnake
 
         public static void OnGameEvent(IGameEvent e)
         {
-            if (e is SnakeLocomotion lm)
-            {
-                //Console.WriteLine("finally");
-            }
 
             //if (e is SnakeConsumedFood f)
             //{
@@ -191,7 +195,7 @@ namespace ShittySnake
 
             if (e is FoodParticleSpawn fs)
             {
-                AddEntity(new ParticleFood(fs.Position, Settings.FoodSize));
+                AddEntity(new ParticleFood(fs.Position, FoodSize));
 
                 //EventActions.Add(() =>
                 //{

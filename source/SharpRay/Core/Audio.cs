@@ -1,6 +1,8 @@
 ﻿using Raylib_cs;
 using System.Collections.Generic;
 using SharpRay.Eventing;
+using System;
+using static Raylib_cs.Raylib;
 
 namespace SharpRay.Core
 {
@@ -10,12 +12,14 @@ namespace SharpRay.Core
 
         public static void Initialize()
         {
-                       
-            //SetMasterVolume(0.15f);
+            SetMasterVolume(1f);
         }
 
-        public static void OnGuiEvent(IGuiEvent e) { }// => PlaySound(Sounds[e.GetType()]);
-        public static void OnGameEvent(IGameEvent e) { }// => PlaySound(Sounds[e.GetType()]);
-
+        public static void OnGuiEvent(IGuiEvent e) => TryPlaySound(e.GetType().Name);
+        public static void OnGameEvent(IGameEvent e) => TryPlaySound(e.GetType().Name);
+        private static void TryPlaySound(string name)
+        {
+            if (Sounds.ContainsKey(name)) PlaySound(Sounds[name]);
+        }
     }
 }
