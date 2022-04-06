@@ -1,14 +1,13 @@
 ﻿using Raylib_cs;
+using SharpRay.Interfaces;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 
 namespace SharpRay.Collision
 {
-    public abstract class Collider
+    public abstract class Collider : ICollider, IHasRender
     {
         protected static Color Color => Color.BLUE;
-        public abstract void Render();
-
         public bool ContainsPoint(Vector2 point) => this switch
         {
             CircleCollider cc => CheckCollisionPointCircle(point, cc.Center, cc.Radius),
@@ -17,7 +16,7 @@ namespace SharpRay.Collision
             _ => false
         };
 
-        public bool Overlaps(Collider collider) => (this, collider) switch
+        public bool Overlaps(ICollider collider) => (this, collider) switch
         {
             (CircleCollider cc, CircleCollider cco) => CheckCollisionCircles(cc.Center, cc.Radius, cco.Center, cco.Radius),
             (CircleCollider cc, RectCollider rc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Rect),
@@ -51,5 +50,9 @@ namespace SharpRay.Collision
 
             return false;
         }
+
+        public string RenderLayer { get; set; }
+
+        public abstract void Render();
     }
 }

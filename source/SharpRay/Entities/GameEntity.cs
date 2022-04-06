@@ -1,5 +1,6 @@
 ﻿using SharpRay.Collision;
 using SharpRay.Eventing;
+using SharpRay.Interfaces;
 using System;
 
 namespace SharpRay.Entities

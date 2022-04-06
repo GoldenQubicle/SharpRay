@@ -9,6 +9,7 @@ using System;
 using SharpRay.Components;
 using System.Collections.Generic;
 using static SharpRay.Core.Audio;
+using SharpRay.Interfaces;
 
 namespace Asteroids
 {
@@ -44,7 +45,7 @@ namespace Asteroids
         private const string Right = nameof(Right);
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
-        public Collider Collider { get; }
+        public ICollider Collider { get; }
         public int Health { get; set; } = 100;
         public Ship(Vector2 position, Vector2 size)
         {

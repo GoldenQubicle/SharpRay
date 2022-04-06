@@ -8,6 +8,7 @@ using static SharpRay.Core.SharpRayConfig;
 using static SharpRay.Core.Application;
 using SharpRay.Collision;
 using SnakeEvents;
+using SharpRay.Interfaces;
 
 namespace SnakeEntities
 {
@@ -23,7 +24,7 @@ namespace SnakeEntities
         protected Vector2 Center { get; set; }
         protected Segment Next { get; set; }
         protected Color Color { get; set; }
-        public Collider Collider { get; set; }
+        public ICollider Collider { get; set; }
 
         private static double interval = LocomotionInterval * TickMultiplier;
         private double current = 0d;
@@ -59,7 +60,7 @@ namespace SnakeEntities
             DoLocomotion();
 
             //update position used by collider
-           (Collider as RectCollider).Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
+            (Collider as RectCollider).Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
 
         }
 
@@ -75,6 +76,7 @@ namespace SnakeEntities
         {
             Next = new Segment
             {
+                RenderLayer = RenderLayer,
                 Size = new Vector2(SegmentSize, SegmentSize),
                 Direction = Direction,
                 Bounds = Bounds,
@@ -105,7 +107,7 @@ namespace SnakeEntities
 
         private void DoLocomotion()
         {
-            var t = Math.Clamp( MapRange(current, 0d, interval, 0d, 1d), 0d, 1d);
+            var t = Math.Clamp(MapRange(current, 0d, interval, 0d, 1d), 0d, 1d);
             var e = Easings.EaseBackInOut((float)t, 0f, CellSize, 1f);
             var d = e - prevDistance;
             prevDistance = e;

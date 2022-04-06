@@ -3,6 +3,7 @@ using SharpRay.Collision;
 using SharpRay.Core;
 using SharpRay.Entities;
 using SharpRay.Eventing;
+using SharpRay.Interfaces;
 using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
@@ -11,7 +12,7 @@ namespace Asteroids
 {
     public class Asteroid : GameEntity, IHasCollider, IHasCollision
     {
-        public Collider Collider { get; }
+        public ICollider Collider { get; }
         public Matrix3x2 Transform { get; private set; }
 
         private int Strength;

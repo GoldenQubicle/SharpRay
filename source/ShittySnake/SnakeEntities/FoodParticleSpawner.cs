@@ -14,8 +14,6 @@ namespace SnakeEntities
 {
     public class FoodParticleSpawner : GameEntity, IEventEmitter<IGameEvent>, IGameEventListener<FoodParticleSpawner>
     {
-        public Action<IGameEvent> EmitEvent { get; set; }
-
         private double rndInterval;
         private double current;
         private readonly Random Random = new();

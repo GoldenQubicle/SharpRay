@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SharpRay.Interfaces;
+using System.Collections.Generic;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 

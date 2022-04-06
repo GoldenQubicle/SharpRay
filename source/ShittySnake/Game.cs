@@ -39,7 +39,7 @@ namespace ShittySnake
         private static void CreateGui()
         {
             AddEntity(new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LIGHTGRAY, GRAY), DARKBLUE));
-            AddEntity(GuiContainerBuilder.CreateNew(isVisible: false).AddChildren(
+            AddEntity(GuiContainerBuilder.CreateNew(isVisible: false, "Menu").AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
@@ -86,7 +86,7 @@ namespace ShittySnake
                     (c.GetEntityByIndex(1) as Label).Text = $"SCORE : {go.Score}";
             }));
 
-            AddEntity(GuiContainerBuilder.CreateNew().AddChildren(
+            AddEntity(GuiContainerBuilder.CreateNew(isVisible: true, "Menu").AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
@@ -127,6 +127,7 @@ namespace ShittySnake
                 Bounds = new Vector2(WindowWidth, WindowHeight),
                 Direction = Direction.Right,
                 NextDirection = Direction.Right,
+                RenderLayer = nameof(Snake)
             };
 
             var spawner = new FoodParticleSpawner
@@ -182,20 +183,12 @@ namespace ShittySnake
             if (e is SnakeGameOver go)
             {
                 RemoveEntitiesOfType<GameEntity>();
-
-                //EventActions.Add(() =>
-                //{
-                //    var preceding = 3;//background, start & game over menu, don't want to remove those                   
-                //    Entities.RemoveRange(preceding, Entities.Count - preceding);
-                //    //Entities.OfType<UIEntityContainer>().First().Show();
-                //});
-
                 GetEntities<GuiContainer>().First().Show();
             }
 
             if (e is FoodParticleSpawn fs)
             {
-                AddEntity(new ParticleFood(fs.Position, FoodSize));
+                AddEntity(new ParticleFood(fs.Position, FoodSize) { RenderLayer = "FoodAndPoop" });
 
                 //EventActions.Add(() =>
                 //{
@@ -211,7 +204,7 @@ namespace ShittySnake
 
             if (e is PoopParticleSpawn ps)
             {
-                AddEntity(new ParticlePoop(ps.Position, PoopSize), OnGameEvent);
+                AddEntity(new ParticlePoop(ps.Position, PoopSize) { RenderLayer = "FoodAndPoop" }, OnGameEvent);
 
                 //    EventActions.Add(() =>
                 //    {

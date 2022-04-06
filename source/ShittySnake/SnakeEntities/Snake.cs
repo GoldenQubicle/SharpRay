@@ -2,6 +2,7 @@
 using SharpRay.Collision;
 using SharpRay.Core;
 using SharpRay.Eventing;
+using SharpRay.Interfaces;
 using SnakeEvents;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,8 @@ namespace SnakeEntities
                 Size = Size,
             };
         }
+
+        
 
         public void OnCollision(IHasCollider e)
         {

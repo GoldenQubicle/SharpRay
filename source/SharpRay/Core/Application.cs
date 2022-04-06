@@ -14,6 +14,7 @@ using SharpRay.Gui;
 using SharpRay.Listeners;
 using System.Numerics;
 using Raylib_cs;
+using SharpRay.Interfaces;
 
 namespace SharpRay.Core
 {
@@ -26,6 +27,7 @@ namespace SharpRay.Core
         private static readonly List<Action> EventActions = new();
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
+        private static Dictionary<string, List<IHasRender>> RenderLayers = new();
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assets");
         private static long FrameCount;
         private static bool DoEventLogging;
@@ -100,6 +102,9 @@ namespace SharpRay.Core
                 KeyBoard.EmitEvent -= e.OnKeyBoardEvent;
                 Mouse.EmitEvent -= e.OnMouseEvent;
                 Entities.Remove(e);
+
+                if (e is IHasRender)
+                    RenderLayers[e.RenderLayer].Remove(e);
             });
         }
 
@@ -185,6 +190,11 @@ namespace SharpRay.Core
             {
                 EntityEventInitialisation(e, onGuiEventActions, onGameEventActions);
                 Entities.Add(e);
+                if (e is IHasRender)
+                {
+                    if (RenderLayers.ContainsKey(e.RenderLayer)) RenderLayers[e.RenderLayer].Add(e);
+                    else RenderLayers.Add(e.RenderLayer, new List<IHasRender> { e });
+                }
             });
         }
 
@@ -245,7 +255,8 @@ namespace SharpRay.Core
         {
             BeginDrawing();
             ClearBackground(GRAY);
-            foreach (var e in Entities) e.Render();
+            foreach (var rl in RenderLayers.Values)
+                foreach (var e in rl) e.Render();
             EndDrawing();
         }
 

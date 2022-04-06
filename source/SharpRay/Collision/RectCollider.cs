@@ -1,6 +1,7 @@
 ﻿using static Raylib_cs.Raylib;
 using System.Numerics;
 using Raylib_cs;
+using SharpRay.Interfaces;
 
 namespace SharpRay.Collision
 {

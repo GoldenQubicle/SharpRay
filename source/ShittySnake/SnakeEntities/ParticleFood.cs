@@ -7,6 +7,7 @@ using static ShittySnake.Settings;
 using static SharpRay.Core.SharpRayConfig;
 using static SharpRay.Core.Application;
 using SharpRay.Collision;
+using SharpRay.Interfaces;
 
 namespace SnakeEntities
 {
@@ -27,7 +28,7 @@ namespace SnakeEntities
             };
         }
 
-        public Collider Collider { get; set; }
+        public ICollider Collider { get; set; }
         public int FoodSize { get; }
 
         public override void Update(double deltaTime)

@@ -5,6 +5,7 @@ using System;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 using SharpRay.Core;
+using SharpRay.Interfaces;
 
 namespace Asteroids
 {
@@ -16,7 +17,7 @@ namespace Asteroids
         private readonly double lifeTime = 1350 * SharpRayConfig.TickMultiplier;
         private double elapsed;
         public int Damage { get; } = 25;
-        public Collider Collider { get; }
+        public ICollider Collider { get; }
 
         public Bullet(Vector2 origin, float angle, float initialForce)
         {

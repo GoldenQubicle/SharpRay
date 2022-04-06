@@ -7,6 +7,7 @@ using SharpRay.Entities;
 using SharpRay.Collision;
 using SnakeEvents;
 using System.Numerics;
+using SharpRay.Interfaces;
 
 namespace SnakeEntities
 {
@@ -15,7 +16,7 @@ namespace SnakeEntities
         private float alpha;
         private double current;
         private double interval = PoopDespawnInterval * TickMultiplier;
-        public Collider Collider { get; set; }
+        public ICollider Collider { get; set; }
 
         public ParticlePoop(Vector2 position, int poopSize)
         {

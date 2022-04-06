@@ -1,4 +1,4 @@
-﻿using SharpRay.Entities;
+﻿using SharpRay.Interfaces;
 
 namespace SharpRay.Collision
 {
