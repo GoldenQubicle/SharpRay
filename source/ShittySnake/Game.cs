@@ -10,6 +10,7 @@ using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
 using static ShittySnake.Settings;
+using System;
 
 namespace ShittySnake
 {
@@ -17,7 +18,7 @@ namespace ShittySnake
     {
         static void Main(string[] args)
         {
-            Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight, DoEventLogging = true });
+            Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight, DoEventLogging = false });
 
             AddSound(nameof(SnakeGameStart), ButtonPushSound);
             AddSound(nameof(SnakeLocomotion), FootStepSound);
@@ -122,62 +123,18 @@ namespace ShittySnake
 
         private static void StartGame(IGuiEvent e)
         {
-            var head = new Snake(new Vector2(400, 160))
-            {
-                Bounds = new Vector2(WindowWidth, WindowHeight),
-                Direction = Direction.Right,
-                NextDirection = Direction.Right,
-                RenderLayer = nameof(Snake)
-            };
-
-            var spawner = new FoodParticleSpawner
-            {
-                Size = new Vector2(WindowWidth, WindowHeight)
-            };
-
-            AddEntity(spawner);
-            spawner.EmitEvent += OnGameEvent; // need manual binding since AddEntity executes as an EventAction at the end of drawing loop, thus EmitEvent will be null when initialising
-            spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
-
-            //create 3 segment snake to start with bc 2 part snake doesn't collide with itself yet (due to locomotion)
-            var neck = head.SetNext();
-            var tail = neck.SetNext();
-            head.Segments.Add(neck);
-            head.Segments.Add(tail);
-
-            //binding in order to get game over event to game over screen, and spawner tracks particles 
-            head.EmitEvent += GetEntity<GuiContainer>().OnGameEvent;
-            head.EmitEvent += spawner.OnGameEvent;
-
-            //add it all to entities and note insertion order matters w regards to main loop. spawner first, head last!
-
-            AddEntity(tail, OnGameEvent);
-            AddEntity(neck, OnGameEvent);
-            AddEntity(head, OnGameEvent);
+            InitializeFoodSpawner();
+            InitializeHead();
         }
 
         public static void OnGameEvent(IGameEvent e)
         {
-
-
-
             if (e is SnakeConsumedFood f)
             {
                 RemoveEntity(f.FoodParticle);
                 AddEntity(f.NextSegment, OnGameEvent);
-                //    EventActions.Add(() =>
-                //    {
-                //        Entities.Remove(f.FoodParticle);
-
-                //        EntityEventInitialisation(f.NextSegment);
-                //        var idx = Entities.Count - f.SnakeLength; // ensure snake segments render above particles & background
-                //        Entities.Insert(idx, f.NextSegment);
-                //    });
-            }
-
-            if (e is DespawnPoop p)
-            {
-                RemoveEntity(p.PoopParticle);
+                GetEntity<FoodParticleSpawner>().OnGameEvent(e);
+                //update score in here?!
             }
 
             if (e is SnakeGameOver go)
@@ -187,36 +144,42 @@ namespace ShittySnake
             }
 
             if (e is FoodParticleSpawn fs)
-            {
                 AddEntity(new ParticleFood(fs.Position, FoodSize) { RenderLayer = "FoodAndPoop" });
 
-                //EventActions.Add(() =>
-                //{
-                //    var fp = new ParticleFood
-                //    {
-                //        Position = fs.Position,
-                //        Size = new Vector2(FoodSize, FoodSize),
-                //    };
-                //    EntityEventInitialisation(fp);
-                //    Entities.Insert(4, fp); // ensure rendering above background, uix2 & particlespawner
-                //});
-            }
-
             if (e is PoopParticleSpawn ps)
-            {
                 AddEntity(new ParticlePoop(ps.Position, PoopSize) { RenderLayer = "FoodAndPoop" }, OnGameEvent);
 
-                //    EventActions.Add(() =>
-                //    {
-                //        var pp = new ParticlePoop
-                //        {
-                //            Position = ps.Position,
-                //            Size = new Vector2(PoopSize, PoopSize)
-                //        };
-                //        EntityEventInitialisation(pp);
-                //        Entities.Insert(4, pp); // ensure rendering above background, uix2 & particlespawner
-                //});
-            }
+            if (e is DespawnPoop p)
+                RemoveEntity(p.PoopParticle);
+        }
+
+        private static void InitializeHead()
+        {
+            var head = new Snake(new Vector2(400, 160))
+            {
+                Bounds = new Vector2(WindowWidth, WindowHeight),
+                Direction = Direction.Right,
+                NextDirection = Direction.Right,
+                RenderLayer = nameof(Snake)
+            };
+
+            AddEntity(head, OnGameEvent);
+            AddEntity(head.SetNext(), OnGameEvent);
+
+            //binding in order to get game over event to game over screen
+            head.EmitEvent += GetEntity<GuiContainer>().OnGameEvent;
+        }
+
+        private static void InitializeFoodSpawner()
+        {
+            var spawner = new FoodParticleSpawner
+            {
+                Size = new Vector2(WindowWidth, WindowHeight)
+            };
+
+            AddEntity(spawner);
+            spawner.EmitEvent += OnGameEvent; // binding since AddEntity executes as an EventAction at the end of drawing loop thus EmitEvent, called in spawner constructor, will be null when initialising.
+            spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
         }
     }
 }

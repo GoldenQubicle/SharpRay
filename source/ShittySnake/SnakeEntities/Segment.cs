@@ -19,10 +19,9 @@ namespace SnakeEntities
         public Vector2 Bounds { get; init; }
         public Direction Direction { get; set; }
         public Direction NextDirection { get; set; }
-
         protected bool IntervalElapsed { get; set; }
         protected Vector2 Center { get; set; }
-        protected Segment Next { get; set; }
+        public Segment Next { get; set; }
         protected Color Color { get; set; }
         public ICollider Collider { get; set; }
 
@@ -61,7 +60,6 @@ namespace SnakeEntities
 
             //update position used by collider
             (Collider as RectCollider).Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
-
         }
 
         public override void Render()
@@ -70,12 +68,15 @@ namespace SnakeEntities
 
             DrawRectangleRounded((Collider as RectCollider).Rect, .35f, 1, Color);
             DrawRectangleRoundedLines((Collider as RectCollider).Rect, .35f, 1, 2, Color.PURPLE);
+
+            DrawCircleV(Center, 4, Color.YELLOW);
         }
 
         public Segment SetNext()
         {
             Next = new Segment
             {
+                Position = Center - Size / 2,
                 RenderLayer = RenderLayer,
                 Size = new Vector2(SegmentSize, SegmentSize),
                 Direction = Direction,
@@ -87,7 +88,6 @@ namespace SnakeEntities
                     Direction.Down => Center + new Vector2(0f, -CellSize),
                     Direction.Left => Center + new Vector2(CellSize, 0f),
                 },
-                Position = Center - Size / 2,
                 Collider = new RectCollider
                 {
                     Position = Position,

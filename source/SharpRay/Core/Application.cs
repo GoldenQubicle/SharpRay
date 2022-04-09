@@ -63,7 +63,9 @@ namespace SharpRay.Core
                 DoCollisions();
                 DoFixedUpdate(frameTime);
                 DoRender();
-                DoEventActions();
+
+                if (EventActions.Count > 0)
+                    DoEventActions();
             }
             CloseAudioDevice();
             CloseWindow();
@@ -114,12 +116,9 @@ namespace SharpRay.Core
 
         public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
 
-
-
         public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
 
         public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
-
 
         #endregion
 
@@ -131,8 +130,7 @@ namespace SharpRay.Core
             {
                 e.EmitEvent += action;
 
-                //ignore mouse when loggin as it is way too spammy
-                //same may apply to keyboard as well, we'll see
+                //ignore mouse & keyboard when logging as it is way too spammy
                 if (DoEventLogging && e is not Mouse m && e is not KeyBoard k)
                     e.EmitEvent += a =>
                         {

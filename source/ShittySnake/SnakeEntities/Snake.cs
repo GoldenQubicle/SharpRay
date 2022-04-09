@@ -5,8 +5,6 @@ using SharpRay.Eventing;
 using SharpRay.Interfaces;
 using SnakeEvents;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using static Raylib_cs.Raylib;
 using static ShittySnake.Settings;
@@ -15,44 +13,48 @@ namespace SnakeEntities
 {
     public class Snake : Segment, IHasCollision
     {
-        public List<Segment> Segments { get; } = new();
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
         private Func<DespawnPoop> OnConsumedPoop { get; set; }
-
+        private int _segmentCount;
         public Snake(Vector2 position)
         {
             Position = position;
             Size = new Vector2(HeadSize, HeadSize);
-            Segments.Add(this);
             Center = new Vector2(Position.X + CellSize / 2, Position.Y + CellSize / 2);
             Collider = new RectCollider
             {
                 Position = position,
                 Size = Size,
             };
+            _segmentCount = 1;
         }
-
-        
 
         public void OnCollision(IHasCollider e)
         {
             if (e is ParticleFood f)
+            {
+                _segmentCount++;
+                SetIsDigesting(true);
+                Console.WriteLine("Hello");
+
+                var last = Next;
+                while (last.Next is not null)
+                    last = last.Next;
+
                 OnConsumedFood = () =>
                 {
-                    var next = Segments.Last().SetNext();
-                    Segments.Add(next);
                     return new SnakeConsumedFood
                     {
                         FoodParticle = f,
-                        NextSegment = next,
-                        SnakeLength = Segments.Count
+                        NextSegment = last.SetNext(),
+                        SnakeLength = _segmentCount
                     };
                 };
+            }
 
             //ignore first segment collision due to locomotion
-            //(e is Segment s && Segments[1] != s) ||
-            if (e is ParticlePoop p)
-                EmitEvent(new SnakeGameOver { Score = Segments.Count });
+            if (e is Segment s && s != Next || e is ParticlePoop p)
+                EmitEvent(new SnakeGameOver { Score = _segmentCount });
 
         }
 
@@ -84,7 +86,7 @@ namespace SnakeEntities
             }
 
             if (Center.X >= Bounds.X || Center.X <= 0 || Center.Y >= Bounds.Y || Center.Y <= 0)
-                EmitEvent(new SnakeGameOver { Score = Segments.Count });
+                EmitEvent(new SnakeGameOver { Score = _segmentCount });
         }
 
         public override void Render()

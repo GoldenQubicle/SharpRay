@@ -22,7 +22,7 @@ namespace SnakeEntities
 
         public void Initialize(int particles)
         {
-            rndInterval = MapRange(Random.NextDouble(), 0d, 1d, MinFoodSpawnInterval, MaxFoodSpawnInterval) * TickMultiplier;
+            SetRandomInterval();
             for (var i = 0; i < particles; i++)
                 EmitEvent(new FoodParticleSpawn { Position = GetNewFoodParticlePosition() });
         }
@@ -33,10 +33,12 @@ namespace SnakeEntities
             if (current > rndInterval)
             {
                 EmitEvent(new FoodParticleSpawn { Position = GetNewFoodParticlePosition() });
-                rndInterval = MapRange(Random.NextDouble(), 0d, 1d, MinFoodSpawnInterval, MaxFoodSpawnInterval) * TickMultiplier;
+                SetRandomInterval();
                 current = 0d;
             }
         }
+
+        private void SetRandomInterval() => rndInterval = MapRange(Random.NextDouble(), 0d, 1d, MinFoodSpawnInterval, MaxFoodSpawnInterval) * TickMultiplier;
 
         private Vector2 GetNewFoodParticlePosition()
         {
