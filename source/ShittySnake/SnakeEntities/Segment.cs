@@ -91,7 +91,7 @@ namespace SnakeEntities
                 Collider = new RectCollider
                 {
                     Position = Position,
-                    Size = Size
+                    Size = new Vector2(SegmentSize, SegmentSize)
                 }
             };
             return Next;
