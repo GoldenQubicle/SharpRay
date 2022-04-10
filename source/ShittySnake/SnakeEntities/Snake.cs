@@ -15,7 +15,8 @@ namespace SnakeEntities
     {
         private Func<SnakeConsumedFood> OnConsumedFood { get; set; }
         private Func<DespawnPoop> OnConsumedPoop { get; set; }
-        private int _segmentCount;
+        private Color HeadColor { get; set; }
+        private int segmentCount = 3;
         public Snake(Vector2 position)
         {
             Position = position;
@@ -26,16 +27,13 @@ namespace SnakeEntities
                 Position = position,
                 Size = Size,
             };
-            _segmentCount = 1;
         }
 
         public void OnCollision(IHasCollider e)
         {
             if (e is ParticleFood f)
             {
-                _segmentCount++;
                 SetIsDigesting(true);
-                Console.WriteLine("Hello");
 
                 var last = Next;
                 while (last.Next is not null)
@@ -43,18 +41,19 @@ namespace SnakeEntities
 
                 OnConsumedFood = () =>
                 {
+                    segmentCount++;
+
                     return new SnakeConsumedFood
                     {
                         FoodParticle = f,
-                        NextSegment = last.SetNext(),
-                        SnakeLength = _segmentCount
+                        NextSegment = last.SetNext()
                     };
                 };
             }
 
             //ignore first segment collision due to locomotion
             if (e is Segment s && s != Next || e is ParticlePoop p)
-                EmitEvent(new SnakeGameOver { Score = _segmentCount });
+                EmitEvent(new SnakeGameOver { Score = segmentCount });
 
         }
 
@@ -73,6 +72,7 @@ namespace SnakeEntities
                 {
                     EmitEvent(OnConsumedFood());
                     OnConsumedFood = null;
+                    SetIsDigesting(false);
                     Next.SetIsDigesting(true);
                 }
 
@@ -86,12 +86,13 @@ namespace SnakeEntities
             }
 
             if (Center.X >= Bounds.X || Center.X <= 0 || Center.Y >= Bounds.Y || Center.Y <= 0)
-                EmitEvent(new SnakeGameOver { Score = _segmentCount });
+                EmitEvent(new SnakeGameOver { Score = segmentCount });
         }
 
         public override void Render()
         {
-            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 10, Color.MAGENTA);
+            HeadColor = IsDigesting ? Color.PINK : Color.MAGENTA; 
+            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 10, HeadColor);
             DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 10, 1, Color.PURPLE);
         }
 

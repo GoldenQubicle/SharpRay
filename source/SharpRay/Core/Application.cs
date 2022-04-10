@@ -22,7 +22,7 @@ namespace SharpRay.Core
     {
         private static readonly Mouse Mouse = new();
         private static readonly KeyBoard KeyBoard = new();
-        private static readonly List<Entity> Entities = new();
+        public static readonly List<Entity> Entities = new();
         private static readonly Stopwatch sw = new();
         private static readonly List<Action> EventActions = new();
         private static readonly Stack<IHasUndoRedo> UndoStack = new();

@@ -15,7 +15,7 @@ namespace SnakeEntities
     {
         private float alpha;
         private double current;
-        private double interval = PoopDespawnInterval * TickMultiplier;
+        private readonly double interval = PoopDespawnInterval * TickMultiplier;
         public ICollider Collider { get; set; }
 
         public ParticlePoop(Vector2 position, int poopSize)

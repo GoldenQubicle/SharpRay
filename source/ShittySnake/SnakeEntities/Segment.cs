@@ -21,14 +21,17 @@ namespace SnakeEntities
         public Direction NextDirection { get; set; }
         protected bool IntervalElapsed { get; set; }
         protected Vector2 Center { get; set; }
-        public Segment Next { get; set; }
+        public Segment Next { get; private set; }
         protected Color Color { get; set; }
+        protected Color ScaleColor { get; set; }
         public ICollider Collider { get; set; }
 
         private static double interval = LocomotionInterval * TickMultiplier;
         private double current = 0d;
         private double prevDistance = 0f;
-        private bool isDigesting = false;
+        protected bool IsDigesting { get; private set; }
+        private bool goNext = false;
+        
 
         public override void Update(double deltaTime)
         {
@@ -40,20 +43,25 @@ namespace SnakeEntities
                 prevDistance = 0d;
                 IntervalElapsed = true;
 
-                if (isDigesting && Next is not null)
+                if (IsDigesting && goNext && Next is not null)
                 {
                     Next.SetIsDigesting(true);
-                    isDigesting = false;
+                    SetIsDigesting(false);
+                    goNext = false;
                 }
 
-                if (isDigesting && Next is null)
+                if (IsDigesting && goNext && Next is null)
                 {
                     EmitEvent(new PoopParticleSpawn
                     {
-                        Position = Center - new Vector2(CellSize - PoopSize, CellSize - PoopSize) / 2
+                        Position = Center - new Vector2(CellSize - PoopSize, CellSize - PoopSize) / 2,
                     });
-                    isDigesting = false;
+                    SetIsDigesting(false);
+                    goNext = false;
                 }
+
+                if (IsDigesting && !goNext)
+                    goNext = true;
             }
 
             DoLocomotion();
@@ -64,12 +72,21 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            Color = isDigesting ? Color.BROWN : Color.DARKPURPLE;
+            Color = IsDigesting ? Color.BROWN : Color.DARKPURPLE;
 
             DrawRectangleRounded((Collider as RectCollider).Rect, .35f, 1, Color);
             DrawRectangleRoundedLines((Collider as RectCollider).Rect, .35f, 1, 2, Color.PURPLE);
 
-            DrawCircleV(Center, 4, Color.YELLOW);
+            var (start, end) = Direction switch
+            {
+                Direction.Up => (-270, -90),
+                Direction.Right => (180, 0),
+                Direction.Down => (90, -90),
+                Direction.Left => (-180, 0),
+            };
+
+            ScaleColor = IsDigesting ? Color.GOLD : Color.YELLOW;
+            DrawCircleSectorLines(Center, SegmentSize/3, start, end, 16, ScaleColor);
         }
 
         public Segment SetNext()
@@ -90,7 +107,7 @@ namespace SnakeEntities
                 },
                 Collider = new RectCollider
                 {
-                    Position = Position,
+                    Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2),
                     Size = new Vector2(SegmentSize, SegmentSize)
                 }
             };
@@ -103,7 +120,7 @@ namespace SnakeEntities
             Direction = nextDirection;
         }
 
-        public void SetIsDigesting(bool b) => isDigesting = b;
+        public void SetIsDigesting(bool b) => IsDigesting = b;
 
         private void DoLocomotion()
         {

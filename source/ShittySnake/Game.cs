@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Linq;
 using SharpRay.Core;
 using SharpRay.Gui;
 using SharpRay.Eventing;
@@ -10,7 +9,6 @@ using static SharpRay.Core.Application;
 using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
 using static ShittySnake.Settings;
-using System;
 
 namespace ShittySnake
 {
@@ -84,7 +82,10 @@ namespace ShittySnake
             .OnGameEvent((e, c) =>
             {
                 if (e is SnakeGameOver go)
+                {
                     (c.GetEntityByIndex(1) as Label).Text = $"SCORE : {go.Score}";
+                    c.Show();
+                }
             }));
 
             AddEntity(GuiContainerBuilder.CreateNew(isVisible: true, "Menu").AddChildren(
@@ -134,14 +135,10 @@ namespace ShittySnake
                 RemoveEntity(f.FoodParticle);
                 AddEntity(f.NextSegment, OnGameEvent);
                 GetEntity<FoodParticleSpawner>().OnGameEvent(e);
-                //update score in here?!
             }
 
             if (e is SnakeGameOver go)
-            {
                 RemoveEntitiesOfType<GameEntity>();
-                GetEntities<GuiContainer>().First().Show();
-            }
 
             if (e is FoodParticleSpawn fs)
                 AddEntity(new ParticleFood(fs.Position, FoodSize) { RenderLayer = "FoodAndPoop" });
@@ -165,8 +162,9 @@ namespace ShittySnake
 
             AddEntity(head, OnGameEvent);
             AddEntity(head.SetNext(), OnGameEvent);
+            AddEntity(head.Next.SetNext(), OnGameEvent);
 
-            //binding in order to get game over event to game over screen
+            //binding to emit gameover event to the corresponding menu, which happens to be the 1st gui container added
             head.EmitEvent += GetEntity<GuiContainer>().OnGameEvent;
         }
 
