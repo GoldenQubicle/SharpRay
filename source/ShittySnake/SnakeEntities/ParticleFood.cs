@@ -43,6 +43,7 @@ namespace SnakeEntities
             var d = e - prevDistance;
             prevDistance = e;
             Position += new Vector2(0f, (float)d);
+            (Collider as RectCollider).Position = Position;
         }
 
         public override void Render()
