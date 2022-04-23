@@ -10,7 +10,6 @@ using SharpRay.Components;
 using System.Collections.Generic;
 using static SharpRay.Core.Audio;
 using SharpRay.Interfaces;
-using System.Linq;
 
 namespace Asteroids
 {
@@ -136,9 +135,9 @@ namespace Asteroids
 
             //DEBUG DRAW VERTS
             //DrawCircleV(Position, 5, Color.WHITE);
-            Collider.Render();
-            foreach (var p in Vertices.Select((p, i) => (p, i)))
-                DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
+            //Collider.Render();
+            //foreach (var p in Vertices.Select((p, i) => (p, i)))
+            //    DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
 
             //DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
             //DrawCircleV(Vertices[0], 5, Color.PURPLE);
