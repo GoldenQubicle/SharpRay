@@ -54,7 +54,7 @@ namespace Asteroids
             Position = position;
             Size = size;
             radius = Size.X / 2;
-
+            RenderLayer = 2;
             Collider = new CircleCollider
             {
                 Center = Position,

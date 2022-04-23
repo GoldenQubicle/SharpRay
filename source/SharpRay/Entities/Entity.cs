@@ -12,7 +12,7 @@ namespace SharpRay.Entities
 
         public Vector2 Position { get; set; }
 
-        public int RenderLayer { get; set; } = 0;
+        public int RenderLayer { get; set; }
         
         public virtual void Render() { }
 
