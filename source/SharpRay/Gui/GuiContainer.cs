@@ -10,7 +10,7 @@ namespace SharpRay.Gui
 {
     public sealed class GuiContainer : Entity, IGuiEventListener<GuiContainer>, IGameEventListener<GuiContainer>
     {
-        public GuiContainer(bool isVisible = true, string renderLayer = "")
+        public GuiContainer(bool isVisible = true, int renderLayer = 0)
         {
             IsVisible = isVisible;
             RenderLayer = renderLayer;

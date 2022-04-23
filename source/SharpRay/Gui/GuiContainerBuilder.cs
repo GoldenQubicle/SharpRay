@@ -8,7 +8,7 @@ namespace SharpRay.Gui
 {
     public static class GuiContainerBuilder
     {
-        public static GuiContainer CreateNew(bool isVisible = true, string renderLayer = "") => 
+        public static GuiContainer CreateNew(bool isVisible = true, int renderLayer = 0) => 
             new GuiContainer(isVisible, renderLayer);
 
         public static GuiContainer AddChildren(this GuiContainer container, params GuiEntity[] entities)

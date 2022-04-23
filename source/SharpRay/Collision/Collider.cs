@@ -51,7 +51,7 @@ namespace SharpRay.Collision
             return false;
         }
 
-        public string RenderLayer { get; set; }
+        public int RenderLayer { get; set; }
 
         public abstract void Render();
     }

@@ -27,7 +27,7 @@ namespace SharpRay.Core
         private static readonly List<Action> EventActions = new();
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
-        private static Dictionary<string, List<IHasRender>> RenderLayers = new();
+        private static Dictionary<int, List<IHasRender>> RenderLayers = new();
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assets");
         private static long FrameCount;
         private static bool DoEventLogging;

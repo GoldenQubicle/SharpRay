@@ -2,7 +2,7 @@
 {
     public interface IHasRender
     {
-        string RenderLayer { get; set; }
+        int RenderLayer { get; set; }
         void Render();
     }
 }

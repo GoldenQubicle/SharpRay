@@ -38,7 +38,7 @@ namespace ShittySnake
         private static void CreateGui()
         {
             AddEntity(new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LIGHTGRAY, GRAY), DARKBLUE));
-            AddEntity(GuiContainerBuilder.CreateNew(isVisible: false, "Menu").AddChildren(
+            AddEntity(GuiContainerBuilder.CreateNew(isVisible: false).AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
@@ -88,7 +88,7 @@ namespace ShittySnake
                 }
             }));
 
-            AddEntity(GuiContainerBuilder.CreateNew(isVisible: true, "Menu").AddChildren(
+            AddEntity(GuiContainerBuilder.CreateNew(isVisible: true ).AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
@@ -141,10 +141,10 @@ namespace ShittySnake
                 RemoveEntitiesOfType<GameEntity>();
 
             if (e is FoodParticleSpawn fs)
-                AddEntity(new ParticleFood(fs.Position, FoodSize) { RenderLayer = "FoodAndPoop" });
+                AddEntity(new ParticleFood(fs.Position, FoodSize) { RenderLayer = 1 });
 
             if (e is PoopParticleSpawn ps)
-                AddEntity(new ParticlePoop(ps.Position, PoopSize) { RenderLayer = "FoodAndPoop" }, OnGameEvent);
+                AddEntity(new ParticlePoop(ps.Position, PoopSize) { RenderLayer = 1 }, OnGameEvent);
 
             if (e is DespawnPoop p)
                 RemoveEntity(p.PoopParticle);
@@ -157,7 +157,7 @@ namespace ShittySnake
                 Bounds = new Vector2(WindowWidth, WindowHeight),
                 Direction = Direction.Right,
                 NextDirection = Direction.Right,
-                RenderLayer = nameof(Snake)
+                RenderLayer = 2
             };
 
             AddEntity(head, OnGameEvent);
