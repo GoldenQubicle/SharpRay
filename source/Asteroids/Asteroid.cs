@@ -14,13 +14,11 @@ namespace Asteroids
         public Vector2 Heading { get; }
         private Vector2 offset;
         private Vector2 texturePos;
-        private int Strength;
         private int Stage;
         private readonly Texture2D texture;
         private float RotationAngle; //inital orientation
         private float RotationSpeed;// in radians per fixed update
         private Matrix3x2 Translation;
-        private bool isDirty;
 
         public Asteroid(Vector2 position, Vector2 heading, int stage, Texture2D texture)
         {
@@ -30,7 +28,6 @@ namespace Asteroids
             Stage = stage;
             offset = Size / 2;
             this.texture = texture;
-            Strength = stage * 10;
             Translation = Matrix3x2.CreateTranslation(Heading);
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
@@ -45,11 +42,9 @@ namespace Asteroids
             (Collider as RectCollider).Position = Position - offset;
             RotationAngle += RotationSpeed;
 
-
-
             //bounds check
-            if (Position.X < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0));
-            if (Position.X > Game.WindowWidth) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0));
+            if (Position.X < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0));
+            if (Position.X > Game.WindowWidth) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0));
             if (Position.Y < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, -1.5f));
             if (Position.Y > Game.WindowHeight) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, 1.5f));
         }
@@ -65,18 +60,15 @@ namespace Asteroids
 
         public void OnCollision(IHasCollider e)
         {
-            if (e is Bullet b && Strength > 0)
+            if (e is Bullet b)
             {
-                Strength -= b.Damage;
 
-                if (Strength <= 0 && Stage == 1)
+                if (Stage == 1)
                 {
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
                 }
-
-                if (Strength <= 0 && Stage > 1 && !isDirty)
+                else
                 {
-                    isDirty = true; //prevent emitting multiple spawn events per frame when dealing with an onslaught of bullets
                     EmitEvent(new AsteroidDestroyed { Asteroid = this });
                     EmitEvent(new AsteroidSpawnNew
                     {
@@ -91,8 +83,7 @@ namespace Asteroids
 
             if (e is Ship s)
             {
-                s.TakeDamage(Strength);
-                EmitEvent(new ShipHitAsteroid { ShipHealth = s.Health });
+                EmitEvent(new ShipHitAsteroid());
             }
         }
 

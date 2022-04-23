@@ -30,7 +30,7 @@ namespace Asteroids
             LoadAssets();
 
             AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64), GetTexture2D(ships[2]["red"])), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(1.5f, 0), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
 
             Run();
@@ -102,18 +102,16 @@ namespace Asteroids
 
             if (e is AsteroidSpawnNew asn)
             {
-                //take heading of parent asteroid into account because it offers more dynamic 'explosion'
-                //than just using a 'clean' heading, i.e. Vector(.3, .3)
                 var size = asn.Stage == 3 ? "med" : asn.Stage == 2 ? "small" : "tiny";
+                var amount = asn.Stage == 3 ? 7 : asn.Stage == 2 ? 5 : 3;
 
-                var heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau), MathF.Sin(MathF.Tau));
-                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
-
-                heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .33333f), MathF.Sin(MathF.Tau * .33333f));
-                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
-
-                heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .66666f), MathF.Sin(MathF.Tau * .66666f));
-                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
+                for (var i = 0; i < amount; i++)
+                {
+                    //TODO fix angle
+                    var angle = (MathF.Tau / amount)*i;
+                    var heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * angle), MathF.Sin(MathF.Tau * angle));
+                    AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
+                }
             }
         }
 

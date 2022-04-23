@@ -47,7 +47,6 @@ namespace Asteroids
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
         public ICollider Collider { get; }
-        public int Health { get; set; } = 100;
 
         public Ship(Vector2 position, Vector2 size, Texture2D ship)
         {
@@ -144,8 +143,6 @@ namespace Asteroids
             //DrawCircleV(Position, 5, Color.VIOLET);
             //DrawCircleV(tp, 5, Color.RED);
         }
-
-        internal void TakeDamage(int damage) => Health -= damage;
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
