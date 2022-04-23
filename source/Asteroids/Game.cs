@@ -6,6 +6,9 @@ using System;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace Asteroids
 {
@@ -14,22 +17,67 @@ namespace Asteroids
         public const int WindowWidth = 1080;
         public const int WindowHeight = 720;
 
+        private const string PNG = nameof(PNG);
+
+        private static readonly Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors = new();
+        private static readonly Dictionary<int, Dictionary<string, string>> ships = new();
+        
         static void Main(string[] args)
         {
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
+            LoadAssets();
+
+            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64), GetTexture2D(ships[2]["red"])), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(1.5f, 0), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
+
+            Run();
+        }
+
+        private static void LoadAssets()
+        {
             AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
             AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");
 
-            var shipTexture = LoadTexture(Path.Combine(AssestsFolder, @"PNG\playerShip2_orange.png"));
-            var meteorTexture = LoadTexture(Path.Combine(AssestsFolder, @"PNG\Meteors\meteorBrown_big1.png"));
+            //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
+            var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");
+            Directory.GetFiles(AssestsFolder, @"PNG\Meteors\")
+                .Select(Path.GetFileNameWithoutExtension)
+                .Select(f => meteorRegex.Match(f).Groups)
+                .Select(g => (color: g["Color"].Value, size: g["Size"].Value, variation: int.Parse(g["Variation"].Value), file: g["0"].Value)).ToList()
+                .ForEach(c =>
+                {
+                    if (!meteors.ContainsKey(c.color)) meteors.Add(c.color, new Dictionary<string, Dictionary<int, string>>());
+                    if (!meteors[c.color].ContainsKey(c.size)) meteors[c.color].Add(c.size, new Dictionary<int, string>());
+                    meteors[c.color][c.size].Add(c.variation, c.file);
+                });
 
-            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64), shipTexture), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), 2, meteorTexture), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 2, meteorTexture), OnGameEvent);
+            //actually load texture into memory
+            string getMeteorPath(string name) => @$"PNG\Meteors\meteor{name}.png";
+            foreach (var m in meteors.SelectMany(c => c.Value.SelectMany(s => s.Value)))
+                LoadTexture2D(m.Value, getMeteorPath(m.Value));
 
-            Run();
+
+            //fill ship dictionary by [Type][Color] => name with which to retrieve it with GetTexture2D
+            var shipRegex = new Regex(@"(?<Type>1|2|3|).(?<Color>blue|green|orange|red)");
+            Directory.GetFiles(AssestsFolder, @"PNG\Ships\")
+                .Select(Path.GetFileNameWithoutExtension)
+                .Select(f => shipRegex.Match(f).Groups)
+                .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: g["0"].Value)).ToList()
+                .ForEach(c =>
+                {
+                    if (!ships.ContainsKey(c.type)) ships.Add(c.type, new Dictionary<string, string> { { c.color, c.File } });
+                    else ships[c.type].Add(c.color, c.File);
+                    
+                });
+
+            //actually load texture into memory
+            string getShipPath(string name) => @$"PNG\Ships\playerShip{name}.png";
+            foreach (var s in ships.SelectMany(t => t.Value))
+                LoadTexture2D(s.Value, getShipPath(s.Value));
+
         }
 
         public static void OnGameEvent(IGameEvent e)
@@ -49,23 +97,23 @@ namespace Asteroids
             if (e is BulletHitAsteroid bha)
                 RemoveEntity(bha.Bullet);
 
-
             if (e is AsteroidDestroyed ad)
                 RemoveEntity(ad.Asteroid);
 
             if (e is AsteroidSpawnNew asn)
             {
-                var meteorTexture = LoadTexture(Path.Combine(AssestsFolder, @"PNG\Meteors\meteorBrown_med1.png"));
                 //take heading of parent asteroid into account because it offers more dynamic 'explosion'
                 //than just using a 'clean' heading, i.e. Vector(.3, .3)
+                var size = asn.Stage == 3 ? "med" : asn.Stage == 2 ? "small" : "tiny";
+
                 var heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau), MathF.Sin(MathF.Tau));
-                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, meteorTexture), OnGameEvent);
+                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
 
                 heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .33333f), MathF.Sin(MathF.Tau * .33333f));
-                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, meteorTexture), OnGameEvent);
+                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
 
                 heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * .66666f), MathF.Sin(MathF.Tau * .66666f));
-                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, meteorTexture), OnGameEvent);
+                AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
             }
         }
 
@@ -77,12 +125,17 @@ namespace Asteroids
         {
             if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_E)
             {
-                var meteorTexture = LoadTexture(Path.Combine(AssestsFolder, @"PNG\Meteors\meteorBrown_big1.png"));
                 RemoveEntitiesOfType<Asteroid>();
-                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), 2, meteorTexture), OnGameEvent);
-                AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 2, meteorTexture), OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), 4, GetRandomAsteroidTexture("big")) , OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 2, GetRandomAsteroidTexture("tiny")), OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), 2, GetRandomAsteroidTexture("med")), OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), 2, GetRandomAsteroidTexture("small")), OnGameEvent);
             }
         }
+
+        private static Texture2D GetRandomAsteroidTexture(string size) => GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
+        private static string PickAsteroidColor() => GetRandomValue(0, 1) == 1 ? "Grey" : "Brown";
+        private static int PickAsteroidVariation(string size) => size.Equals("big") ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
 
     }
 }

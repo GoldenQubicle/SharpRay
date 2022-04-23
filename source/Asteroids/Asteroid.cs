@@ -25,7 +25,7 @@ namespace Asteroids
         public Asteroid(Vector2 position, Vector2 heading, int stage, Texture2D texture)
         {
             Position = position;
-            Size = new Vector2 (texture.width, texture.height);
+            Size = new Vector2(texture.width, texture.height);
             Heading = heading;
             Stage = stage;
             offset = Size / 2;
@@ -44,6 +44,14 @@ namespace Asteroids
             texturePos = Vector2.Transform(Position - offset, Matrix3x2.CreateRotation(RotationAngle, Position));
             (Collider as RectCollider).Position = Position - offset;
             RotationAngle += RotationSpeed;
+
+
+
+            //bounds check
+            if (Position.X < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0));
+            if (Position.X > Game.WindowWidth) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0));
+            if (Position.Y < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, -1.5f));
+            if (Position.Y > Game.WindowHeight) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, 1.5f));
         }
 
         public override void Render()
@@ -91,7 +99,7 @@ namespace Asteroids
 
         public override void OnMouseEvent(IMouseEvent e)
         {
-           
+
         }
     }
 }

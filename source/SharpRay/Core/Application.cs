@@ -27,6 +27,7 @@ namespace SharpRay.Core
         private static readonly List<Action> EventActions = new();
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
+        private static Dictionary<string, Texture2D> Textures = new();
         private static SortedDictionary<int, List<IHasRender>> RenderLayers = new();
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assets");
         private static long FrameCount;
@@ -67,6 +68,9 @@ namespace SharpRay.Core
                 if (EventActions.Count > 0)
                     DoEventActions();
             }
+
+            foreach (var t in Textures) UnloadTexture(t.Value);
+            foreach (var a in Audio.Sounds) UnloadSound(a.Value);
             CloseAudioDevice();
             CloseWindow();
         }
@@ -86,7 +90,14 @@ namespace SharpRay.Core
         public static void AddSound(string soundName, string soundFileName) =>
             Audio.Sounds.Add(soundName, LoadSound(Path.Combine(AssestsFolder, soundFileName)));
 
-        
+        public static Texture2D GetTexture2D(string name) => Textures[name];
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key" name of the texure >
+        /// <param name="filePath" relative to asset folder></param>
+        public static void LoadTexture2D(string name, string filePath) => Textures.Add(name, LoadTexture(Path.Combine(AssestsFolder, filePath)));
 
         public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
 
@@ -238,6 +249,9 @@ namespace SharpRay.Core
 
         private static double FixedUpdateInterval = 1000 / FixedUpdate * TickMultiplier;
         private static double ElapsedUpdateInterval = 0d;
+
+
+
         private static void DoFixedUpdate(double frameTime)
         {
             ElapsedUpdateInterval += frameTime;
