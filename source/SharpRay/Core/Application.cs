@@ -87,6 +87,9 @@ namespace SharpRay.Core
         public static void AddSound(string soundName, string soundFileName) =>
             Audio.Sounds.Add(soundName, LoadSound(Path.Combine(AssestsFolder, soundFileName)));
 
+        //public static Image LoadImage(string filePath) =>
+        //    LoadImage(Path.Combine(AssestsFolder, filePath));
+
 
         public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
 

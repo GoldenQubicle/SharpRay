@@ -10,6 +10,7 @@ using SharpRay.Components;
 using System.Collections.Generic;
 using static SharpRay.Core.Audio;
 using SharpRay.Interfaces;
+using System.Linq;
 
 namespace Asteroids
 {
@@ -30,6 +31,7 @@ namespace Asteroids
         private readonly double rotateInTime = 300 * SharpRayConfig.TickMultiplier; // time it takes to reach max rotation angle
         private readonly double rotateOutTime = 550 * SharpRayConfig.TickMultiplier; // time it takes from max rotation angle to come to a stand still
         private readonly float maxRotation = 3.5f * DEG2RAD; // in radians per frame, essentially
+        private readonly Texture2D texture;
         private float n_rotation = 0f; //normalized 0-1
         private float rotation = 0f;
         private bool hasRotation;
@@ -47,7 +49,8 @@ namespace Asteroids
         public const string ThrusterSound = nameof(ThrusterSound);
         public ICollider Collider { get; }
         public int Health { get; set; } = 100;
-        public Ship(Vector2 position, Vector2 size)
+
+        public Ship(Vector2 position, Vector2 size, Texture2D ship)
         {
             Position = position;
             Size = size;
@@ -71,6 +74,7 @@ namespace Asteroids
                 { RotateIn,   new Easing(Easings.EaseSineOut, rotateInTime) },
                 { RotateOut,  new Easing(Easings.EaseSineIn, rotateOutTime, isReversed: true) },
             };
+            texture = ship;
         }
 
         public override void Update(double deltaTime)
@@ -123,14 +127,23 @@ namespace Asteroids
 
         public override void Render()
         {
-            DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
-            DrawCircleV(Vertices[0], 5, Color.PURPLE);
+            
+            var offset = Position - new Vector2(texture.width / 2, texture.height / 2);
+            var tp = Vector2.Transform(offset, Matrix3x2.CreateRotation(rotation, Position));
+
+            DrawTextureEx(texture, tp, RAD2DEG * rotation, 1f, Color.WHITE);
+
 
             //DEBUG DRAW VERTS
             //DrawCircleV(Position, 5, Color.WHITE);
-            //Collider.Render();
-            //foreach (var p in Vertices.Select((p, i) => (p, i)))
-            //    DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
+            Collider.Render();
+            foreach (var p in Vertices.Select((p, i) => (p, i)))
+                DrawText($"{p.i}", (int)p.p.X, (int)p.p.Y, 4, Color.BLACK);
+
+            //DrawTriangleLines(Vertices[0], Vertices[1], Vertices[2], Color.PINK);
+            //DrawCircleV(Vertices[0], 5, Color.PURPLE);
+            //DrawCircleV(Position, 5, Color.VIOLET);
+            //DrawCircleV(tp, 5, Color.RED);
         }
 
         internal void TakeDamage(int damage) => Health -= damage;

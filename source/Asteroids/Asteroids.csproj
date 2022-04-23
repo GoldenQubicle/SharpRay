@@ -8,10 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SharpRay\SharpRay.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="assets\PNG\playerShip1_blue.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="assets\source_SharpRay_assests_error_006.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

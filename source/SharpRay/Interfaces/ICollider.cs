@@ -6,5 +6,6 @@ namespace SharpRay.Interfaces
     {
         bool Overlaps(ICollider collider);
         bool ContainsPoint(Vector2 point);
+        void Render();
     }
 }
