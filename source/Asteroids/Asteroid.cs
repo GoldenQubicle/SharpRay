@@ -8,13 +8,13 @@ using static Raylib_cs.Raylib;
 
 namespace Asteroids
 {
-    public class Asteroid : GameEntity, IHasCollider, IHasCollision
+    public class Asteroid : GameEntity, IHasCollider
     {
         public ICollider Collider { get; }
         public Vector2 Heading { get; }
         private Vector2 offset;
         private Vector2 texturePos;
-        private int Stage;
+        public int Stage { get; }
         private readonly Texture2D texture;
         private float RotationAngle; //inital orientation
         private float RotationSpeed;// in radians per fixed update
@@ -56,35 +56,6 @@ namespace Asteroids
             //DEBUG
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.DARKGREEN);
-        }
-
-        public void OnCollision(IHasCollider e)
-        {
-            if (e is Bullet b)
-            {
-
-                if (Stage == 1)
-                {
-                    EmitEvent(new AsteroidDestroyed { Asteroid = this });
-                }
-                else
-                {
-                    EmitEvent(new AsteroidDestroyed { Asteroid = this });
-                    EmitEvent(new AsteroidSpawnNew
-                    {
-                        Stage = Stage - 1,
-                        Position = Vector2.Lerp(Position, Position + Size / 2, .5f),
-                        Heading = Heading
-                    });
-                }
-
-                EmitEvent(new BulletHitAsteroid { Bullet = b });
-            }
-
-            if (e is Ship s)
-            {
-                EmitEvent(new ShipHitAsteroid());
-            }
         }
 
 

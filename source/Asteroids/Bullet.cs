@@ -9,7 +9,7 @@ using SharpRay.Interfaces;
 
 namespace Asteroids
 {
-    public class Bullet : GameEntity, IHasCollider
+    public class Bullet : GameEntity, IHasCollider, IHasCollision
     {
         private Vector2 acceleration;
         private readonly float radius = 2f;
@@ -25,11 +25,12 @@ namespace Asteroids
             acceleration = new Vector2(MathF.Cos(angle) * (speed + initialForce), MathF.Sin(angle) * (speed + initialForce));
 
             Collider = new CircleCollider
-            { 
-                Center = Position, 
+            {
+                Center = Position,
                 Radius = radius
             };
         }
+
 
         public override void Render()
         {
@@ -47,6 +48,28 @@ namespace Asteroids
             Position += acceleration;
 
             (Collider as CircleCollider).Center = Position;
+        }
+
+        public void OnCollision(IHasCollider e)
+        {
+            if (e is Asteroid a)
+            {
+                EmitEvent(new BulletHitAsteroid { Bullet = this });
+
+                if (a.Stage == 1)
+                {
+                    EmitEvent(new AsteroidDestroyed { Asteroid = a });
+                    return;
+                }
+
+                EmitEvent(new AsteroidDestroyed { Asteroid = a });
+                EmitEvent(new AsteroidSpawnNew
+                {
+                    Stage = a.Stage - 1,
+                    Position = a.Position,
+                    Heading = a.Heading
+                });
+            }
         }
     }
 }

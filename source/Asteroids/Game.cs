@@ -1,14 +1,14 @@
 ﻿using System.Numerics;
-using static SharpRay.Core.Application;
 using SharpRay.Core;
 using SharpRay.Eventing;
 using System;
 using Raylib_cs;
-using static Raylib_cs.Raylib;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using static Raylib_cs.Raylib;
+using static SharpRay.Core.Application;
 
 namespace Asteroids
 {
@@ -21,7 +21,7 @@ namespace Asteroids
 
         private static readonly Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors = new();
         private static readonly Dictionary<int, Dictionary<string, string>> ships = new();
-        
+        public const string damageTexture = "ship2damage1";
         static void Main(string[] args)
         {
             SetKeyBoardEventAction(OnKeyBoardEvent);
@@ -29,7 +29,7 @@ namespace Asteroids
 
             LoadAssets();
 
-            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), new Vector2(64, 64), GetTexture2D(ships[2]["red"])), OnGameEvent);
+            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[2]["red"])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
 
@@ -70,7 +70,7 @@ namespace Asteroids
                 {
                     if (!ships.ContainsKey(c.type)) ships.Add(c.type, new Dictionary<string, string> { { c.color, c.File } });
                     else ships[c.type].Add(c.color, c.File);
-                    
+
                 });
 
             //actually load texture into memory
@@ -78,6 +78,7 @@ namespace Asteroids
             foreach (var s in ships.SelectMany(t => t.Value))
                 LoadTexture2D(s.Value, getShipPath(s.Value));
 
+            LoadTexture2D(damageTexture, $@"PNG\Damage\playerShip2_damage3.png");
         }
 
         public static void OnGameEvent(IGameEvent e)
@@ -105,11 +106,10 @@ namespace Asteroids
                 var size = asn.Stage == 3 ? "med" : asn.Stage == 2 ? "small" : "tiny";
                 var amount = asn.Stage == 3 ? 7 : asn.Stage == 2 ? 5 : 3;
 
-                for (var i = 0; i < amount; i++)
+                for (var i = 1; i <= amount; i++)
                 {
-                    //TODO fix angle
-                    var angle = (MathF.Tau / amount)*i;
-                    var heading = asn.Heading + new Vector2(MathF.Cos(MathF.Tau * angle), MathF.Sin(MathF.Tau * angle));
+                    var angle = (MathF.Tau / amount) * i;
+                    var heading = asn.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
                     AddEntity(new Asteroid(asn.Position, heading, asn.Stage, GetRandomAsteroidTexture(size)), OnGameEvent);
                 }
             }
@@ -124,7 +124,7 @@ namespace Asteroids
             if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_E)
             {
                 RemoveEntitiesOfType<Asteroid>();
-                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), 4, GetRandomAsteroidTexture("big")) , OnGameEvent);
+                AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), 4, GetRandomAsteroidTexture("big")), OnGameEvent);
                 AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 2, GetRandomAsteroidTexture("tiny")), OnGameEvent);
                 AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), 2, GetRandomAsteroidTexture("med")), OnGameEvent);
                 AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), 2, GetRandomAsteroidTexture("small")), OnGameEvent);
