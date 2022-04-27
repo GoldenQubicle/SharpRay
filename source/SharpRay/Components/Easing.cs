@@ -33,7 +33,7 @@ namespace SharpRay.Components
         /// <summary>
         /// Get normalized value 0-1 based on the elapsed time
         /// </summary>
-        /// </param>
+        /// <param></param>
         /// <returns>float</returns>
         public float GetValue()
         {

@@ -22,14 +22,20 @@ namespace Asteroids
         private static readonly Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors = new();
         private static readonly Dictionary<int, Dictionary<string, string>> ships = new();
         public const string damageTexture = "ship2damage1";
-        
+
         static void Main(string[] args)
         {
             SetKeyBoardEventAction(OnKeyBoardEvent);
-            Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight, ShowFPS = true });
+            Initialize(new SharpRayConfig
+            {
+                WindowWidth = WindowWidth,
+                WindowHeight = WindowHeight,
+                ShowFPS = true,
+                BackGroundColor = new Color(12, 24, 64, 0)
+            });
 
             LoadAssets();
-
+            
             AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[2]["red"])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
@@ -59,7 +65,7 @@ namespace Asteroids
             //actually load texture into memory
             string getMeteorPath(string name) => @$"PNG\Meteors\meteor{name}.png";
             foreach (var m in meteors.SelectMany(c => c.Value.SelectMany(s => s.Value)))
-                LoadTexture2D(m.Value, getMeteorPath(m.Value));
+                AddTexture2D(m.Value, getMeteorPath(m.Value));
 
 
             //fill ship dictionary by [Type][Color] => name with which to retrieve it with GetTexture2D
@@ -78,11 +84,13 @@ namespace Asteroids
             //actually load texture into memory
             string getShipPath(string name) => @$"PNG\Ships\playerShip{name}.png";
             foreach (var s in ships.SelectMany(t => t.Value))
-                LoadTexture2D(s.Value, getShipPath(s.Value));
+                AddTexture2D(s.Value, getShipPath(s.Value));
 
-            LoadTexture2D(damageTexture, $@"PNG\Damage\playerShip2_damage3.png");
-
-            LoadTexture2D("starTexture", $@"PNG\star_v1.png");
+            AddTexture2D(damageTexture, $@"PNG\Damage\playerShip2_damage3.png");
+            
+            AddTexture2D("supersmallstar", $@"PNG\star_extra_small.png");
+            AddTexture2D("starSmallTexture", $@"PNG\star_small.png");
+            AddTexture2D("starTexture", $@"PNG\star_v1.png");
         }
 
         public static void OnGameEvent(IGameEvent e)

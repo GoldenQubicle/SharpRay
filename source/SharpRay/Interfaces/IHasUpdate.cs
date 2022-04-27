@@ -5,7 +5,7 @@
         /// <summary>
         /// Delta time is the interval since last render frame in ticks!
         /// </summary>
-        /// <param name="deltaTime"></para
+        /// <param name="deltaTime"></param>
         void Update(double deltaTime);
     }
 }

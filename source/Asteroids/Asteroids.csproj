@@ -178,6 +178,12 @@
     <None Update="assets\PNG\Ships\playerShip3_red.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="assets\PNG\star_extra_small.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="assets\PNG\star_small.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\PNG\star_v1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

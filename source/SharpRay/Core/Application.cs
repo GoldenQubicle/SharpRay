@@ -22,7 +22,7 @@ namespace SharpRay.Core
     {
         private static readonly Mouse Mouse = new();
         private static readonly KeyBoard KeyBoard = new();
-        public static readonly List<Entity> Entities = new();
+        private static readonly List<Entity> Entities = new();
         private static readonly Stopwatch sw = new();
         private static readonly List<Action> EventActions = new();
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
@@ -33,13 +33,21 @@ namespace SharpRay.Core
         private static long FrameCount;
         private static bool DoEventLogging;
         private static bool ShowFPS;
+        private static Color backGroundColor;
 
         #region public api
 
+        /// <summary>
+        /// Initialize the SharpRay application with the given configuration.
+        /// <see cref="SharpRayConfig"/> for available options.
+        /// </summary>
+        /// <param name="config"></param>
         public static void Initialize(SharpRayConfig config)
         {
-            DoEventLogging = config.DoEventLogging;
             ShowFPS = config.ShowFPS;
+            DoEventLogging = config.DoEventLogging;
+            backGroundColor = config.BackGroundColor;
+
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
@@ -50,6 +58,13 @@ namespace SharpRay.Core
 
             //SetTargetFPS(60);
         }
+
+
+        /// <summary>
+        /// The main loop of the SharpRay application. 
+        /// Handles rendering, collision, eventing, etc.
+        /// Unloads assets from memory when the SharpRay application is closed. 
+        /// </summary>
         public static void Run()
         {
             sw.Start();
@@ -78,39 +93,62 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
+       
+        /// <summary>
+        /// Loads a <see cref="Sound"/> from file, and adds it the Sounds dictionary with the given key. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="soundFileName"></param>
+        public static void AddSound(string key, string soundFileName) =>
+            Audio.Sounds.Add(key, LoadSound(Path.Combine(AssestsFolder, soundFileName)));
 
-        public static double MapRange(double s, double a1, double a2, double b1, double b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
-        public static float MapRange(float s, float a1, float a2, float b1, float b2) => b1 + (s - a1) * (b2 - b1) / (a2 - a1);
-
-
-        public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
-            DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);
-        public static void DrawCircleLinesV(Vector2 position, float radius, Color color) =>
-            DrawCircleLines((int)position.X, (int)position.Y, radius, color);
-        public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
-            DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
-
-        public static void AddSound(string soundName, string soundFileName) =>
-            Audio.Sounds.Add(soundName, LoadSound(Path.Combine(AssestsFolder, soundFileName)));
-
-        public static Texture2D GetTexture2D(string name) => Textures[name];
 
         /// <summary>
-        /// 
+        /// Retrieves a <see cref="Texture2D"/> from the Textures dictionary. Will throw an exception if the given key is not present.
         /// </summary>
-        /// <param name="key" name of the texure >
-        /// <param name="filePath" relative to asset folder></param>
-        public static void LoadTexture2D(string name, string filePath) => Textures.Add(name, LoadTexture(Path.Combine(AssestsFolder, filePath)));
+        /// <param name="key"></param>
+        /// <returns><see cref="Texture2D"/></returns>
+        public static Texture2D GetTexture2D(string key) => Textures[key];
 
+
+        /// <summary>
+        /// Loads a <see cref="Texture2D"/> from file, and adds it to the Textures dictionary with the given key.
+        /// </summary>
+        /// <param name="key">The key used in texture dictionary</param>
+        /// <param name="filePath">relative to asset folder</param>
+        public static void AddTexture2D(string key, string filePath) => Textures.Add(key, LoadTexture(Path.Combine(AssestsFolder, filePath)));
+
+
+        /// <summary>
+        /// Gets the first <typeparamref name="TEntity"/> from the Entity list.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
         public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
 
+
+        /// <summary>
+        /// Gets all <typeparamref name="TEntity"/> from the Entity list. 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
         public static IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>();
 
+
+        /// <summary>
+        /// Removes all <typeparamref name="TEntity"/> from the Entity list, and unsubscribes them from events. 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
         public static void RemoveEntitiesOfType<TEntity>() where TEntity : Entity
         {
             foreach (var e in Entities.OfType<TEntity>()) RemoveEntity(e);
         }
 
+
+        /// <summary>
+        /// Remove the given Enity from the Enity list,and unsubscribe from events. 
+        /// </summary>
+        /// <param name="e"></param>
         public static void RemoveEntity(Entity e)
         {
             EventActions.Add(() =>
@@ -124,15 +162,76 @@ namespace SharpRay.Core
             });
         }
 
+
+        /// <summary>
+        /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
+        /// </summary>
+        /// <param name="e"></param>
         public static void AddEntity(Entity e) => AddEntity(e, null, null);
 
+
+        /// <summary>
+        /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="onGuiEvent">The method to call when the entity emits an IGuiEvent</param>
         public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) => AddEntity(e, new[] { Audio.OnGuiEvent, onGuiEvent }, null);
 
+
+        /// <summary>
+        /// /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="onGameEvent">The method to call when the entity emits an IGameEvent</param>
         public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
 
+
+        /// <summary>
+        /// Binds KeyBoard events to the given method. Note GameEntities receive KeyBoard events by default. 
+        /// </summary>
+        /// <param name="action">The method to call when an KeyBoard event is emitted</param>
         public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
 
+
+        /// <summary>
+        /// Binds Mouse events to the given method. Note GameEntities receive Mouse events by default. 
+        /// </summary>
+        /// <param name="action">The method to call when a Mouse event is emitted</param>
         public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
+
+
+        /// <summary>
+        /// Maps a given source value to a target range value.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="sourceMin"></param>
+        /// <param name="sourceMax"></param>
+        /// <param name="targetMin"></param>
+        /// <param name="targetMax"></param>
+        /// <returns></returns>
+        public static double MapRange(double source, double sourceMin, double sourceMax, double targetMin, double targetMax) =>
+            targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
+
+
+        /// <summary>
+        /// Maps a given source value to a target range value.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="sourceMin"></param>
+        /// <param name="sourceMax"></param>
+        /// <param name="targetMin"></param>
+        /// <param name="targetMax"></param>
+        /// <returns></returns>
+        public static float MapRange(float source, float sourceMin, float sourceMax, float targetMin, float targetMax) =>
+            targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
+
+        public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
+            DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);
+        public static void DrawCircleLinesV(Vector2 position, float radius, Color color) =>
+            DrawCircleLines((int)position.X, (int)position.Y, radius, color);
+        public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
+            DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
+
 
         #endregion
 
@@ -253,8 +352,6 @@ namespace SharpRay.Core
         private static double FixedUpdateInterval = 1000 / FixedUpdate * TickMultiplier;
         private static double ElapsedUpdateInterval = 0d;
 
-
-
         private static void DoFixedUpdate(double frameTime)
         {
             ElapsedUpdateInterval += frameTime;
@@ -269,7 +366,7 @@ namespace SharpRay.Core
         private static void DoRender()
         {
             BeginDrawing();
-            ClearBackground(BLANK);
+            ClearBackground(backGroundColor);
             foreach (var rl in RenderLayers.Values)
                 foreach (var e in rl) e.Render();
             EndDrawing();

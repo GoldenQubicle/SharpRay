@@ -17,7 +17,7 @@ namespace ShittySnake
         static void Main(string[] args)
         {
             Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight, DoEventLogging = false });
-
+            
             AddSound(nameof(SnakeGameStart), ButtonPushSound);
             AddSound(nameof(SnakeLocomotion), FootStepSound);
             AddSound(nameof(SnakeConsumedFood), SnakeGrow);
@@ -25,7 +25,7 @@ namespace ShittySnake
             AddSound(nameof(FoodParticleSpawn), FoodSpawn);
             AddSound(nameof(PoopParticleSpawn), SnakeShrink);
             AddSound(nameof(SnakeGameOver), GameOver);
-
+            
             CreateGui();
 
             Run();

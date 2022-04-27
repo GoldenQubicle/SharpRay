@@ -15,8 +15,168 @@
             </summary>
             <param name="v"></param>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:SharpRay.Components.Easing.GetValue" -->
-        <!-- Badly formed XML comment ignored for member "M:SharpRay.Core.Application.LoadTexture2D(System.String,System.String)" -->
+        <member name="M:SharpRay.Components.Easing.GetValue">
+            <summary>
+            Get normalized value 0-1 based on the elapsed time
+            </summary>
+            <param></param>
+            <returns>float</returns>
+        </member>
+        <member name="M:SharpRay.Core.Application.Initialize(SharpRay.Core.SharpRayConfig)">
+            <summary>
+            Initialize the SharpRay application with the given configuration.
+            <see cref="T:SharpRay.Core.SharpRayConfig"/> for available options.
+            </summary>
+            <param name="config"></param>
+        </member>
+        <member name="M:SharpRay.Core.Application.Run">
+            <summary>
+            The main loop of the SharpRay application. 
+            Handles rendering, collision, eventing, etc.
+            Unloads assets from memory when the SharpRay application is closed. 
+            </summary>
+        </member>
+        <member name="M:SharpRay.Core.Application.AddSound(System.String,System.String)">
+            <summary>
+            Loads a <see cref="T:Raylib_cs.Sound"/> from file, and adds it the Sounds dictionary with the given key. 
+            </summary>
+            <param name="key"></param>
+            <param name="soundFileName"></param>
+        </member>
+        <member name="M:SharpRay.Core.Application.GetTexture2D(System.String)">
+            <summary>
+            Retrieves a <see cref="T:Raylib_cs.Texture2D"/> from the Textures dictionary. Will throw an exception if the given key is not present.
+            </summary>
+            <param name="key"></param>
+            <returns><see cref="T:Raylib_cs.Texture2D"/></returns>
+        </member>
+        <member name="M:SharpRay.Core.Application.AddTexture2D(System.String,System.String)">
+            <summary>
+            Loads a <see cref="T:Raylib_cs.Texture2D"/> from file, and adds it to the Textures dictionary with the given key.
+            </summary>
+            <param name="key">The key used in texture dictionary</param>
+            <param name="filePath">relative to asset folder</param>
+        </member>
+        <member name="M:SharpRay.Core.Application.GetEntity``1">
+            <summary>
+            Gets the first <typeparamref name="TEntity"/> from the Entity list.
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:SharpRay.Core.Application.GetEntities``1">
+            <summary>
+            Gets all <typeparamref name="TEntity"/> from the Entity list. 
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:SharpRay.Core.Application.RemoveEntitiesOfType``1">
+            <summary>
+            Removes all <typeparamref name="TEntity"/> from the Entity list, and unsubscribes them from events. 
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+        </member>
+        <member name="M:SharpRay.Core.Application.RemoveEntity(SharpRay.Entities.Entity)">
+            <summary>
+            Remove the given Enity from the Enity list,and unsubscribe from events. 
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:SharpRay.Core.Application.AddEntity(SharpRay.Entities.Entity)">
+            <summary>
+            Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:SharpRay.Core.Application.AddEntity(SharpRay.Entities.Entity,System.Action{SharpRay.Eventing.IGuiEvent})">
+            <summary>
+            Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
+            </summary>
+            <param name="e"></param>
+            <param name="onGuiEvent">The method to call when the entity emits an IGuiEvent</param>
+        </member>
+        <member name="M:SharpRay.Core.Application.AddEntity(SharpRay.Entities.Entity,System.Action{SharpRay.Eventing.IGameEvent})">
+            <summary>
+            /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
+            </summary>
+            <param name="e"></param>
+            <param name="onGameEvent">The method to call when the entity emits an IGameEvent</param>
+        </member>
+        <member name="M:SharpRay.Core.Application.SetKeyBoardEventAction(System.Action{SharpRay.Eventing.IKeyBoardEvent})">
+            <summary>
+            Binds KeyBoard events to the given method. Note GameEntities receive KeyBoard events by default. 
+            </summary>
+            <param name="action">The method to call when an KeyBoard event is emitted</param>
+        </member>
+        <member name="M:SharpRay.Core.Application.SetMouseEventAction(System.Action{SharpRay.Eventing.IMouseEvent})">
+            <summary>
+            Binds Mouse events to the given method. Note GameEntities receive Mouse events by default. 
+            </summary>
+            <param name="action">The method to call when a Mouse event is emitted</param>
+        </member>
+        <member name="M:SharpRay.Core.Application.MapRange(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Maps a given source value to a target range value.
+            </summary>
+            <param name="source"></param>
+            <param name="sourceMin"></param>
+            <param name="sourceMax"></param>
+            <param name="targetMin"></param>
+            <param name="targetMax"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SharpRay.Core.Application.MapRange(System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Maps a given source value to a target range value.
+            </summary>
+            <param name="source"></param>
+            <param name="sourceMin"></param>
+            <param name="sourceMax"></param>
+            <param name="targetMin"></param>
+            <param name="targetMax"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SharpRay.Core.SharpRayConfig">
+            <summary>
+            Configuration for the SharpRay application, passed in <seealso cref="M:SharpRay.Core.Application.Initialize(SharpRay.Core.SharpRayConfig)"/>
+            </summary>
+        </member>
+        <member name="F:SharpRay.Core.SharpRayConfig.TickMultiplier">
+            <summary>
+            Used internally for rendering. By convention all times are in milliseconds * TickMultiplier
+            </summary>
+        </member>
+        <member name="F:SharpRay.Core.SharpRayConfig.FixedUpdate">
+            <summary>
+            How many times should fixed update be performed
+            </summary>
+        </member>
+        <member name="P:SharpRay.Core.SharpRayConfig.WindowWidth">
+            <summary>
+            Width of the application window.
+            </summary>
+        </member>
+        <member name="P:SharpRay.Core.SharpRayConfig.WindowHeight">
+            <summary>
+            Height of the application window.
+            </summary>
+        </member>
+        <member name="P:SharpRay.Core.SharpRayConfig.DoEventLogging">
+            <summary>
+            When true will output event logging to the RayLib console. 
+            </summary>
+        </member>
+        <member name="P:SharpRay.Core.SharpRayConfig.ShowFPS">
+            <summary>
+            When true will show the current Frames per Second in the upper left corner of the window. 
+            </summary>
+        </member>
+        <member name="P:SharpRay.Core.SharpRayConfig.BackGroundColor">
+            <summary>
+            The background color set every frame in the rendering loop. Grey by default. 
+            </summary>
+        </member>
         <member name="T:SharpRay.Entities.GuiEntity">
             <summary>
             Classes implementing GuiEntity can enable mouse focus by overriding ContainsPoint, and calling base.OnMouseEvent
@@ -32,6 +192,11 @@
             NOTE: the event returned by the func MUST also implement IHasUndoRedo in order to work properly
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:SharpRay.Interfaces.IHasUpdate.Update(System.Double)" -->
+        <member name="M:SharpRay.Interfaces.IHasUpdate.Update(System.Double)">
+            <summary>
+            Delta time is the interval since last render frame in ticks!
+            </summary>
+            <param name="deltaTime"></param>
+        </member>
     </members>
 </doc>

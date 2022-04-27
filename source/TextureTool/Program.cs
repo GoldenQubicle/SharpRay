@@ -8,26 +8,31 @@ namespace TextureTool
 {
     class Program
     {
-        private const int size = 512;
+        private const int size = 64;
         private const string ExportFolder = @"..\..\..\export";
         static void Main(string[] args)
         {
             SetKeyBoardEventAction(OnKeyBoardEvent);
 
-            Initialize(new SharpRayConfig { WindowHeight = size, WindowWidth = size });
-            
-            AddEntity(new Star(size));
+            Initialize(new SharpRayConfig
+            {
+                WindowHeight = size,
+                WindowWidth = size,
+                BackGroundColor = Color.BLACK
+            });
 
+            AddEntity(new Star(size));
+            
             Run();
         }
 
         private static void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
-            if(ke is KeyPressed kp && kp.KeyboardKey is KeyboardKey.KEY_S)
+            if (ke is KeyPressed kp && kp.KeyboardKey is KeyboardKey.KEY_S)
             {
                 var image = GetScreenData();
-                
-                ExportImage(image, $"{ExportFolder}\\star_v1.png");
+                //ImageAlphaClear(ref image, Color.WHITE, .5f);
+                ExportImage(image, $"{ExportFolder}\\star_extra_small.png");
             }
         }
     }
