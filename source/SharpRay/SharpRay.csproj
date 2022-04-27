@@ -18,6 +18,10 @@
     <DebugType>Embedded</DebugType>
   </PropertyGroup>
   
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\Erik\source\repos\SharpRayEngine\source\SharpRay\SharpRay.xml</DocumentationFile>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Raylib-cs" Version="3.7.0" />
   </ItemGroup>

@@ -7,5 +7,7 @@
         public int WindowWidth { get; init; }
         public int WindowHeight { get; init; }
         public bool DoEventLogging { get; init; }
+
+        public bool ShowFPS { get; init; }
     }
 }

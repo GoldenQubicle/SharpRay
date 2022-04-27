@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SharpRay</name>
+    </assembly>
+    <members>
+        <member name="T:SharpRay.Collision.RectCollider">
+            <summary>
+            Basic rectangle collider. Cannot be rotated. 
+            </summary>
+        </member>
+        <member name="M:SharpRay.Components.Easing.SetElapsedTime(System.Single)">
+            <summary>
+            Set the elapsed interval time based on normalized value 0-1
+            </summary>
+            <param name="v"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:SharpRay.Components.Easing.GetValue" -->
+        <!-- Badly formed XML comment ignored for member "M:SharpRay.Core.Application.LoadTexture2D(System.String,System.String)" -->
+        <member name="T:SharpRay.Entities.GuiEntity">
+            <summary>
+            Classes implementing GuiEntity can enable mouse focus by overriding ContainsPoint, and calling base.OnMouseEvent
+            </summary>
+        </member>
+        <member name="P:SharpRay.Gui.DragEditShape.IsSelected">
+            <summary>
+            NOTE: it is the callers responsibility to maintain selected state!
+            </summary>
+        </member>
+        <member name="P:SharpRay.Gui.DragEditShape.OnDelete">
+            <summary>
+            NOTE: the event returned by the func MUST also implement IHasUndoRedo in order to work properly
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:SharpRay.Interfaces.IHasUpdate.Update(System.Double)" -->
+    </members>
+</doc>

@@ -32,15 +32,15 @@ namespace Asteroids
         private readonly float radius;
         private Dictionary<string, Easing> Motions;
 
-        private readonly double accelerateTime = 500 * SharpRayConfig.TickMultiplier; // time it takes to reach max acceleration
-        private readonly double decelerateTime = 2500 * SharpRayConfig.TickMultiplier; // time it takes from max acceleration to come to a stand still
+        private readonly double accelerateTime = 500 ; // time it takes to reach max acceleration
+        private readonly double decelerateTime = 2500 ; // time it takes from max acceleration to come to a stand still
         private readonly float maxAcceleration = 10;
         private float n_acceleration = 0f; //normalized 0-1
         private float acceleration = 0f;
         private bool hasAcceleration;
 
-        private readonly double rotateInTime = 300 * SharpRayConfig.TickMultiplier; // time it takes to reach max rotation angle
-        private readonly double rotateOutTime = 550 * SharpRayConfig.TickMultiplier; // time it takes from max rotation angle to come to a stand still
+        private readonly double rotateInTime = 300 ; // time it takes to reach max rotation angle
+        private readonly double rotateOutTime = 550 ; // time it takes from max rotation angle to come to a stand still
         private readonly float maxRotation = 3.5f * DEG2RAD; // in radians per frame, essentially
         private float n_rotation = 0f; //normalized 0-1
         private float rotation = 0f;

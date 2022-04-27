@@ -32,12 +32,14 @@ namespace SharpRay.Core
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assets");
         private static long FrameCount;
         private static bool DoEventLogging;
+        private static bool ShowFPS;
 
         #region public api
 
         public static void Initialize(SharpRayConfig config)
         {
             DoEventLogging = config.DoEventLogging;
+            ShowFPS = config.ShowFPS;
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
@@ -55,8 +57,9 @@ namespace SharpRay.Core
 
             while (!WindowShouldClose())
             {
-                FrameCount++;
-                DrawFPS(0, 0);
+                if (DoEventLogging) FrameCount++;
+                if (ShowFPS) DrawFPS(0, 0);
+
                 var frameTime = GetFrameTime(ref previous);
 
                 Mouse.DoEvents();
@@ -266,7 +269,7 @@ namespace SharpRay.Core
         private static void DoRender()
         {
             BeginDrawing();
-            ClearBackground(GRAY);
+            ClearBackground(BLANK);
             foreach (var rl in RenderLayers.Values)
                 foreach (var e in rl) e.Render();
             EndDrawing();

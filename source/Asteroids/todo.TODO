@@ -7,6 +7,9 @@
 ☐ show visible damage @created(23-04-2022 19:37)
     3 textures availables so after that it's game over, could consider weighing asteroid stage as multiplyer  @created(23-04-2022 19:37)
 
-
+☐ background @created(27-04-2022 11:16)
+    ☐ make simple star texture in new texture tool @created(27-04-2022 11:16)
+    ☐ load said star texture, animate it @created(27-04-2022 11:16)
+    ☐ distribute animated starts w perlin noise or something @created(27-04-2022 11:17)
     
 

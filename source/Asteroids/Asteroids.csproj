@@ -178,6 +178,9 @@
     <None Update="assets\PNG\Ships\playerShip3_red.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="assets\PNG\star_v1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\source_SharpRay_assests_error_006.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
