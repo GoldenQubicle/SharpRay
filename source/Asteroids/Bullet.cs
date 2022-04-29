@@ -29,6 +29,7 @@ namespace Asteroids
                 Center = Position,
                 Radius = radius
             };
+            RenderLayer = 1;
         }
 
 

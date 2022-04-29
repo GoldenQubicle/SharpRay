@@ -137,7 +137,7 @@ namespace Asteroids
             DrawTextureEx(texture, texPos, RAD2DEG * rotation, 1f, Color.WHITE);
 
             if (damgageTexture.HasValue)
-                DrawTextureEx(damgageTexture.Value, texPos, RAD2DEG * rotation, 1f, Color.WHITE);
+                DrawTextureEx(damgageTexture.Value, texPos, RAD2DEG * rotation, 1f, Color.DARKGRAY);
 
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);

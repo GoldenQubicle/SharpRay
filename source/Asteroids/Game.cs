@@ -19,9 +19,13 @@ namespace Asteroids
 
         private const string PNG = nameof(PNG);
 
-        private static readonly Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors = new();
-        private static readonly Dictionary<int, Dictionary<string, string>> ships = new();
+        private static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors;
+        private static Dictionary<int, Dictionary<string, string>> ships;
         public const string damageTexture = "ship2damage1";
+
+        public const string starTexture = nameof(starTexture);
+        public const string shipTexture = nameof(shipTexture);
+        public const string shipDamageTexture = nameof(shipDamageTexture);
 
         static void Main(string[] args)
         {
@@ -36,11 +40,11 @@ namespace Asteroids
 
             LoadAssets();
             
-            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[2]["red"])), OnGameEvent);
+            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[2]["blue"])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
-            AddEntity(new Star(new Vector2(200, 500)));
-
+            AddEntity(new StarFieldGenerator());
+            
             Run();
         }
 
@@ -51,16 +55,13 @@ namespace Asteroids
 
             //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
             var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");
-            Directory.GetFiles(AssestsFolder, @"PNG\Meteors\")
-                .Select(Path.GetFileNameWithoutExtension)
-                .Select(f => meteorRegex.Match(f).Groups)
-                .Select(g => (color: g["Color"].Value, size: g["Size"].Value, variation: int.Parse(g["Variation"].Value), file: g["0"].Value)).ToList()
-                .ForEach(c =>
-                {
-                    if (!meteors.ContainsKey(c.color)) meteors.Add(c.color, new Dictionary<string, Dictionary<int, string>>());
-                    if (!meteors[c.color].ContainsKey(c.size)) meteors[c.color].Add(c.size, new Dictionary<int, string>());
-                    meteors[c.color][c.size].Add(c.variation, c.file);
-                });
+            meteors = Directory.GetFiles(AssestsFolder, @"PNG\Meteors\")
+                 .Select(f => meteorRegex.Match(f).Groups)
+                 .Select(g => (color: g["Color"].Value, size: g["Size"].Value, variation: int.Parse(g["Variation"].Value), file: g["0"].Value))
+                 .GroupBy(t => t.color).ToDictionary(g => g.Key, g =>
+                     g.GroupBy(t => t.size).ToDictionary(g => g.Key, g => 
+                        g.ToDictionary(t => t.variation, t => t.file)));
+                
 
             //actually load texture into memory
             string getMeteorPath(string name) => @$"PNG\Meteors\meteor{name}.png";
@@ -70,16 +71,11 @@ namespace Asteroids
 
             //fill ship dictionary by [Type][Color] => name with which to retrieve it with GetTexture2D
             var shipRegex = new Regex(@"(?<Type>1|2|3|).(?<Color>blue|green|orange|red)");
-            Directory.GetFiles(AssestsFolder, @"PNG\Ships\")
-                .Select(Path.GetFileNameWithoutExtension)
+            ships = Directory.GetFiles(AssestsFolder, @"PNG\Ships\")
                 .Select(f => shipRegex.Match(f).Groups)
-                .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: g["0"].Value)).ToList()
-                .ForEach(c =>
-                {
-                    if (!ships.ContainsKey(c.type)) ships.Add(c.type, new Dictionary<string, string> { { c.color, c.File } });
-                    else ships[c.type].Add(c.color, c.File);
-
-                });
+                .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: g["0"].Value))
+                .GroupBy(t => t.type).ToDictionary(g => g.Key, g => 
+                    g.ToDictionary(t => t.color, t => t.File));
 
             //actually load texture into memory
             string getShipPath(string name) => @$"PNG\Ships\playerShip{name}.png";
@@ -88,9 +84,7 @@ namespace Asteroids
 
             AddTexture2D(damageTexture, $@"PNG\Damage\playerShip2_damage3.png");
             
-            AddTexture2D("supersmallstar", $@"PNG\star_extra_small.png");
-            AddTexture2D("starSmallTexture", $@"PNG\star_small.png");
-            AddTexture2D("starTexture", $@"PNG\star_v1.png");
+            AddTexture2D(starTexture, $@"PNG\star_extra_small.png");
         }
 
         public static void OnGameEvent(IGameEvent e)
@@ -142,9 +136,14 @@ namespace Asteroids
             }
         }
 
-        private static Texture2D GetRandomAsteroidTexture(string size) => GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
-        private static string PickAsteroidColor() => GetRandomValue(0, 1) == 1 ? "Grey" : "Brown";
-        private static int PickAsteroidVariation(string size) => size.Equals("big") ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
+        private static Texture2D GetRandomAsteroidTexture(string size) => 
+            GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
+
+        private static string PickAsteroidColor() => 
+            GetRandomValue(0, 1) == 1 ? "Grey" : "Brown";
+
+        private static int PickAsteroidVariation(string size) => 
+            size.Equals("big") ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
 
     }
 }
