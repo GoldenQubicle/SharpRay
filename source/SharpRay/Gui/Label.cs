@@ -10,14 +10,15 @@ namespace SharpRay.Gui
         public Label() { }
         public string Text { get; set; }
         public Font Font { get; init; } = GetFontDefault();
-        public Color TextColor { get; init; } = Color.RAYWHITE;
+        public Color TextColor { get; set; } = Color.BLANK;
         public Color FillColor { get; set; }
+
         public Raylib_cs.Rectangle Rectangle
         {
             get => new Raylib_cs.Rectangle
             {
-                x = Position.X + Margins.X,
-                y = Position.Y + Margins.Y,
+                x = Position.X - Size.X / 2 + Margins.X,
+                y = Position.Y - Size.Y / 2 + Margins.Y,
                 width = Size.X - Margins.X,
                 height = Size.Y - Margins.Y
             };
@@ -29,8 +30,9 @@ namespace SharpRay.Gui
 
         public override void Render()
         {
-            DrawRectangleV(Position, Size, FillColor);
-            DrawRectangleLines((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y, TextColor);
+            var offset = Position - Size / 2;
+            DrawRectangleV(offset, Size, FillColor);
+            DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
             DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }

@@ -21,5 +21,10 @@ namespace Asteroids
             public GuiEntity GuiEntity { get; init; }
             public string ShipColor { get; init; }
         }
+
+        public struct GameStart : IGuiEvent
+        {
+            public GuiEntity GuiEntity { get; init; }
+        }
     }
 }

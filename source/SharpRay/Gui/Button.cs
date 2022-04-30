@@ -18,10 +18,10 @@ namespace SharpRay.Gui
         }
 
         public override bool ContainsPoint(Vector2 point) =>
-                point.X > Position.X &&
-                point.X < Position.X + Size.X &&
-                point.Y > Position.Y &&
-                point.Y < Position.Y + Size.Y;
+                point.X > Position.X - Size.X / 2 &&
+                point.X < Position.X + Size.X / 2 &&
+                point.Y > Position.Y - Size.Y / 2 &&
+                point.Y < Position.Y + Size.Y / 2;
 
         public override void OnMouseEvent(IMouseEvent e)
         {
