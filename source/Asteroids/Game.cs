@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using SharpRay.Core;
 using SharpRay.Eventing;
+using SharpRay.Gui;
 using System;
 using Raylib_cs;
 using System.IO;
@@ -9,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using static Raylib_cs.Raylib;
 using static SharpRay.Core.Application;
+using System.Threading.Tasks;
+using static Asteroids.GuiEvents;
 
 namespace Asteroids
 {
@@ -29,12 +32,11 @@ namespace Asteroids
         public const string shipDamageTexture = nameof(shipDamageTexture);
 
         private static int ShipType = 3; // 1 | 2 | 3
-        private const string ShipColor = "green"; // blue | green | red
+        private static string ShipColor = "green"; // blue | green | red
         private static int ShipDamage = 0;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            SetKeyBoardEventAction(OnKeyBoardEvent);
             Initialize(new SharpRayConfig
             {
                 WindowWidth = WindowWidth,
@@ -44,17 +46,123 @@ namespace Asteroids
                 DoEventLogging = true
             });
 
-            LoadAssets();
+            SetKeyBoardEventAction(OnKeyBoardEvent);
+            await LoadAssets();
 
-            AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
+
             AddEntity(new StarFieldGenerator());
+
+            AddEntity(GuiContainerBuilder.CreateNew()
+                .AddChildren(
+                    new Label
+                    {
+                        Text = "Meteor Madness",
+                        TextColor = Color.VIOLET,
+                        FillColor = Color.LIME,
+                        FontSize = 45,
+                        Position = new Vector2((WindowWidth / 2) - 200, WindowHeight / 8),
+                        Size = new Vector2(400, 100),
+                        Margins = new Vector2(35, 30),
+                    },
+                    new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
+                    {
+                        Position = new Vector2(WindowWidth / 2, WindowHeight / 2)
+                    },
+                    new Button
+                    { // left
+                        Tag = "left",
+                        Position = new Vector2(WindowWidth * .2f, WindowHeight / 2),
+                        Size = new Vector2(20, 50),
+                        BaseColor = Color.LIME,
+                        FocusColor = Color.GREEN,
+                        OnMouseLeftClick = e => new ChangeShipType
+                        {
+                            GuiEntity = e,
+                            ShipType = ShipType == 1 ? 3 : ShipType - 1
+                        }
+                    },
+                    new Button
+                    { //right
+                        Tag = "right",
+                        Position = new Vector2(WindowWidth * .8f, WindowHeight / 2),
+                        Size = new Vector2(20, 50),
+                        BaseColor = Color.LIME,
+                        FocusColor = Color.GREEN,
+                        OnMouseLeftClick = e => new ChangeShipType
+                        {
+                            GuiEntity = e,
+                            ShipType = ShipType == 3 ? 1 : ShipType + 1
+                        }
+                    },
+                    new Button
+                    {
+                        Position = new Vector2(WindowWidth * .25f, WindowHeight * .8f),
+                        Size = new Vector2(50, 20),
+                        BaseColor = Color.DARKBLUE,
+                        FocusColor = Color.BLUE,
+                        OnMouseLeftClick = e => new ChangeShipColor
+                        {
+                            GuiEntity = e,
+                            ShipColor = "blue"
+                        }
+                    },
+                    new Button
+                    {
+                        Position = new Vector2(WindowWidth * .5f, WindowHeight * .8f),
+                        Size = new Vector2(50, 20),
+                        BaseColor = Color.LIME,
+                        FocusColor = Color.GREEN,
+                        OnMouseLeftClick = e => new ChangeShipColor
+                        {
+                            GuiEntity = e,
+                            ShipColor = "green"
+                        }
+                    },
+                    new Button
+                    {
+                        Position = new Vector2(WindowWidth * .75f, WindowHeight * .8f),
+                        Size = new Vector2(50, 20),
+                        BaseColor = Color.MAROON,
+                        FocusColor = Color.RED,
+                        OnMouseLeftClick = e => new ChangeShipColor
+                        {
+                            GuiEntity = e,
+                            ShipColor = "red"
+                        }
+                    }).OnGuiEvent((e, c) =>
+                    {
+                        if(e is ChangeShipType cst)
+                        {
+                            ShipType = cst.ShipType;
+                            c.Get<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
+                        }
+
+                        if (e is ChangeShipColor csc)
+                        {
+                            ShipColor = csc.ShipColor;
+                            c.Get<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
+                            var color = ShipColor == "blue" ? Color.DARKBLUE : ShipColor == "red" ? Color.MAROON : Color.LIME;
+                            var focusColor = ShipColor == "blue" ? Color.BLUE : ShipColor == "red" ? Color.RED : Color.GREEN;
+                            c.Get<Label>().FillColor = color;
+                            c.GetEntities<Button>()
+                                .Where(b => b.Tag == "left" || b.Tag == "right").ToList()
+                                .ForEach(b =>
+                                {
+                                    b.BaseColor = color;
+                                    b.FocusColor = focusColor;
+                                });
+                        }
+                    }));
+
+            //AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
+            //AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
+            //AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
+
 
             Run();
         }
 
-
+     
 
         public static void OnGameEvent(IGameEvent e)
         {
@@ -93,28 +201,15 @@ namespace Asteroids
             }
         }
 
-        public static void OnGuiEvent(IGuiEvent e)
-        {
-        }
-
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
             if (e is KeyPressed kp)
             {
-                if(kp.KeyboardKey == KeyboardKey.KEY_Q)
-                {
-                    ShipType = ShipType == 3 ? 1 : ShipType + 1;
-                    var ship = GetEntity<Ship>();
-                    ship.ShipTexture = GetTexture2D(ships[ShipType][ShipColor]);
-                    if(ShipDamage > 0 && ShipDamage < 4)
-                        ship.DamgageTexture = GetTexture2D(damage[ShipType][ShipDamage]);
-
-                }
-
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)
                 {
                     RemoveEntitiesOfType<Asteroid>();
                     RemoveEntitiesOfType<Ship>();
+                    ShipDamage = 0;
                     AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
                     AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), 4, GetRandomAsteroidTexture("big")), OnGameEvent);
                     AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 2, GetRandomAsteroidTexture("tiny")), OnGameEvent);
@@ -135,7 +230,7 @@ namespace Asteroids
         private static int PickAsteroidVariation(string size) =>
             size.Equals("big") ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
 
-        private static void LoadAssets()
+        private static async Task LoadAssets()
         {
             AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
             AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");

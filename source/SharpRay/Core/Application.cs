@@ -249,9 +249,9 @@ namespace SharpRay.Core
                         {
                             Console.WriteLine(
                                 $"Frame    | {FrameCount}\n" +
-                                $"Emitter  | {e.GetType()} {e.GetHashCode()}\n" +
-                                $"Event    | {a.GetType()}\n" +
-                                $"Receiver | {action.GetMethodInfo().DeclaringType}.{action.GetMethodInfo().Name} {action.GetHashCode()}" +
+                                $"Emitter  | {e?.GetType()} {e?.GetHashCode()}\n" +
+                                $"Event    | {a?.GetType()}\n" +
+                                $"Receiver | {action.GetMethodInfo().DeclaringType}.{action?.GetMethodInfo().Name} {action?.GetHashCode()}" +
                                 $"\n");
                         };
 

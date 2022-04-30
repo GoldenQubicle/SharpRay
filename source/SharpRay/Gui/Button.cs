@@ -8,10 +8,9 @@ namespace SharpRay.Gui
 {
     public sealed class Button : Label
     {
-        public Color FocusColor { get; init; } = Color.GRAY;
-        public Color BaseColor { get; init; }
+        public Color FocusColor { get; set; } = Color.GRAY;
+        public Color BaseColor { get; set; }
         
-
         public override void Render()
         {
             FillColor = HasMouseFocus ? FocusColor : BaseColor;
