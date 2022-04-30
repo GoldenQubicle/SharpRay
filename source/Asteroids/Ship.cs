@@ -32,15 +32,15 @@ namespace Asteroids
         private readonly float radius;
         private Dictionary<string, Easing> Motions;
 
-        private readonly double accelerateTime = 500 ; // time it takes to reach max acceleration
-        private readonly double decelerateTime = 2500 ; // time it takes from max acceleration to come to a stand still
+        private readonly double accelerateTime = 500; // time it takes to reach max acceleration
+        private readonly double decelerateTime = 2500; // time it takes from max acceleration to come to a stand still
         private readonly float maxAcceleration = 10;
         private float n_acceleration = 0f; //normalized 0-1
         private float acceleration = 0f;
         private bool hasAcceleration;
 
-        private readonly double rotateInTime = 300 ; // time it takes to reach max rotation angle
-        private readonly double rotateOutTime = 550 ; // time it takes from max rotation angle to come to a stand still
+        private readonly double rotateInTime = 300; // time it takes to reach max rotation angle
+        private readonly double rotateOutTime = 550; // time it takes from max rotation angle to come to a stand still
         private readonly float maxRotation = 3.5f * DEG2RAD; // in radians per frame, essentially
         private float n_rotation = 0f; //normalized 0-1
         private float rotation = 0f;
@@ -48,18 +48,18 @@ namespace Asteroids
         private string direction;
 
         private readonly Vector2 offset; //used for render position textures
-        private readonly Texture2D texture;
-        private Texture2D? damgageTexture;
+        public Texture2D ShipTexture { get; set; }
+        public Texture2D? DamgageTexture { get; set; }
 
 
-        public Ship(Vector2 position, Texture2D ship)
+        public Ship(Vector2 position, Texture2D texture)
         {
             Position = position;
-            Size = new Vector2(ship.width, ship.height);
+            Size = new Vector2(texture.width, texture.height);
             RenderLayer = 2;
 
-            texture = ship;
-            offset = new Vector2(ship.width / 2, ship.height / 2);
+            ShipTexture = texture;
+            offset = new Vector2(texture.width / 2, texture.height / 2);
             radius = Size.X / 2;
 
             Collider = new CircleCollider
@@ -114,7 +114,7 @@ namespace Asteroids
             //update sounds
             if (!IsSoundPlaying(Sounds[EngineSound])) PlaySound(Sounds[EngineSound]);
             if (!IsSoundPlaying(Sounds[ThrusterSound])) PlaySound(Sounds[ThrusterSound]);
-            
+
             //TODO: want to set overall sound fx from within game
             SetSoundVolume(Sounds[EngineSound], n_acceleration * .5f);
             SetSoundVolume(Sounds[ThrusterSound], n_rotation * .5f);
@@ -124,9 +124,11 @@ namespace Asteroids
         {
             if (e is Asteroid a)
             {
-                EmitEvent(new ShipHitAsteroid());
+                EmitEvent(new ShipHitAsteroid
+                {
+                    Asteroid = a,
+                });
 
-                damgageTexture = GetTexture2D(Game.damageTexture);
             }
         }
 
@@ -134,10 +136,10 @@ namespace Asteroids
         {
             var texPos = Vector2.Transform(Position - offset, Matrix3x2.CreateRotation(rotation, Position));
 
-            DrawTextureEx(texture, texPos, RAD2DEG * rotation, 1f, Color.WHITE);
+            DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, 1f, Color.WHITE);
 
-            if (damgageTexture.HasValue)
-                DrawTextureEx(damgageTexture.Value, texPos, RAD2DEG * rotation, 1f, Color.DARKGRAY);
+            if (DamgageTexture.HasValue)
+                DrawTextureEx(DamgageTexture.Value, texPos, RAD2DEG * rotation, 1f, Color.DARKGRAY);
 
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);
