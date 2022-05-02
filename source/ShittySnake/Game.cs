@@ -43,7 +43,7 @@ namespace ShittySnake
                 {
                     Position = new Vector2(),
                     Size = new Vector2(320, WindowHeight),
-                    Margins = new Vector2(20, 20),
+                    Margins = new Vector2(20, 60),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
                     FontSize = 90f,
@@ -51,7 +51,7 @@ namespace ShittySnake
                 },
                 new Label
                 {
-                    Position = new Vector2(0, 300),
+                    Position = new Vector2(0, 120),
                     Size = new Vector2(320, WindowHeight / 6),
                     Margins = new Vector2(60, 20),
                     FillColor = DARKPURPLE,
@@ -60,7 +60,7 @@ namespace ShittySnake
                 },
                 new Button
                 {
-                    Position = new Vector2(200, 160),
+                    Position = new Vector2(80, 0),
                     Size = new Vector2(80, 100),
                     Margins = new Vector2(10, 3),
                     BaseColor = DARKBLUE,
@@ -70,7 +70,7 @@ namespace ShittySnake
                     Text = "AGAIN!",
                     FontSize = 37,
                 })
-            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
+            .Translate(new Vector2(WindowWidth / 2 , WindowHeight /2))
             .OnGuiEvent((e, c) =>
             {
                 if (e is SnakeGameStart)
@@ -101,7 +101,7 @@ namespace ShittySnake
                 },
                 new Button
                 {
-                    Position = new Vector2(120, 160),
+                    Position = new Vector2(80, 160),
                     Size = new Vector2(120, 40),
                     Margins = new Vector2(14, 3),
                     BaseColor = DARKBLUE,
@@ -111,7 +111,7 @@ namespace ShittySnake
                     FontSize = 37,
                     OnMouseLeftClick = e => new SnakeGameStart { GuiEntity = e }
                 })
-            .Translate(new Vector2(WindowWidth / 2 - 320 / 2, 0))
+            .Translate(new Vector2(WindowWidth / 2 , WindowHeight / 2))
             .OnGuiEvent((e, c) =>
             {
                 if (e is SnakeGameStart)

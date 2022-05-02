@@ -192,6 +192,11 @@
             NOTE: the event returned by the func MUST also implement IHasUndoRedo in order to work properly
             </summary>
         </member>
+        <member name="T:SharpRay.Gui.Label">
+            <summary>
+            A simple text label. Postion is the center from which the label is drawn. 
+            </summary>
+        </member>
         <member name="M:SharpRay.Interfaces.IHasUpdate.Update(System.Double)">
             <summary>
             Delta time is the interval since last render frame in ticks!

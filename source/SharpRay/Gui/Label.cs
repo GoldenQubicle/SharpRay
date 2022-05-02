@@ -5,13 +5,16 @@ using System.Numerics;
 
 namespace SharpRay.Gui
 {
+    /// <summary>
+    /// A simple text label. Postion is the center from which the label is drawn. 
+    /// </summary>
     public class Label : GuiEntity
     {
         public Label() { }
         public string Text { get; set; }
         public Font Font { get; init; } = GetFontDefault();
-        public Color TextColor { get; set; } = Color.BLANK;
-        public Color FillColor { get; set; }
+        public Color TextColor { get; set; } = Color.WHITE;
+        public Color FillColor { get; set; } = Color.LIGHTGRAY;
 
         public Raylib_cs.Rectangle Rectangle
         {

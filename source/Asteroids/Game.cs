@@ -119,6 +119,7 @@ namespace Asteroids
 
                 if (kp.KeyboardKey == KeyboardKey.KEY_M)
                 {
+                    RemoveEntitiesOfType<Bullet>();
                     RemoveEntitiesOfType<Asteroid>();
                     RemoveEntitiesOfType<Ship>();
                     GetEntity<GuiContainer>().Show();

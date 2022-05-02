@@ -1,15 +1,30 @@
 ☐ create menu screen @created(23-04-2022 16:46)
-    ☐ pick ship type & color @created(23-04-2022 16:46)
+    ✔ pick ship type & color @created(23-04-2022 16:46) @done(30-04-2022 19:35)
         ✔ load shape ship textures @created(23-04-2022 17:10) @done(23-04-2022 19:23)
     ☐ set audio volume @created(23-04-2022 16:46)
         ☐ load audio @created(23-04-2022 17:11)
 
-☐ show visible damage @created(23-04-2022 19:37)
+✔ show visible damage @created(23-04-2022 19:37) @done(30-04-2022 19:35)
     3 textures availables so after that it's game over, could consider weighing asteroid stage as multiplyer  @created(23-04-2022 19:37)
 
-☐ background @created(27-04-2022 11:16)
+✔ background @created(27-04-2022 11:16) @done(30-04-2022 19:35)
     ✔ make simple star texture in new texture tool @created(27-04-2022 11:16) @done(27-04-2022 17:45)
     ✔ load said star texture, animate it @created(27-04-2022 11:16) @started(27-04-2022 17:45) @done(27-04-2022 17:45) @lasted(19s)
-    ☐ distribute animated starts w perlin noise or something @created(27-04-2022 11:17)
+    ✔ distribute animated starts w perlin noise or something @created(27-04-2022 11:17) @done(30-04-2022 19:35)
+
+☐ score system @created(30-04-2022 19:36)
+    3 damage stages x 3 lifes..? 
+    each damage stage is N health
+    each asteroid hit is -N health based on size
+    asteroids destroyed ++points based on size
+    points unlock powerups
+
+    ☐ powerups..?! @created(30-04-2022 19:36)
+        shield texture! 
+        laser texture!
+        restore ship damage
+        gain extra life
+
+
     
 

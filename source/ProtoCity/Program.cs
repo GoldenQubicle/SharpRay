@@ -26,7 +26,7 @@ namespace ProtoCity
                 .AddChildren(
                     new Button
                     {
-                        Position = new Vector2(10, 10),
+                        Position = new Vector2(100, 35),
                         Size = new Vector2(175, 25),
                         Margins = new Vector2(12, 5),
                         Text = "Transit Tool : Inactive",
@@ -34,7 +34,7 @@ namespace ProtoCity
                     },
                     new Button
                     {
-                        Position = new Vector2(200, 10),
+                        Position = new Vector2(300, 35),
                         Size = new Vector2(175, 25),
                         Margins = new Vector2(12, 5),
                         Text = "Brush Tool : Inactive",
