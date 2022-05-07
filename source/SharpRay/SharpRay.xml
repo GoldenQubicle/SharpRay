@@ -64,6 +64,14 @@
             <typeparam name="TEntity"></typeparam>
             <returns></returns>
         </member>
+        <member name="M:SharpRay.Core.Application.GetEntityByTag``1(System.String)">
+            <summary>
+            Gets an entity by tag, assumes every entity has an unique tag!
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
         <member name="M:SharpRay.Core.Application.GetEntities``1">
             <summary>
             Gets all <typeparamref name="TEntity"/> from the Entity list. 

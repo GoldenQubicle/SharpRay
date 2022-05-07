@@ -29,7 +29,7 @@ namespace Asteroids
                 Center = Position,
                 Radius = radius
             };
-            RenderLayer = 1;
+            RenderLayer = Game.RlAsteroidsBullets;
         }
 
 
@@ -55,20 +55,10 @@ namespace Asteroids
         {
             if (e is Asteroid a)
             {
-                EmitEvent(new BulletHitAsteroid { Bullet = this });
-
-                if (a.Stage == 1)
+                EmitEvent(new AsteroidHitByWeapon
                 {
-                    EmitEvent(new AsteroidDestroyed { Asteroid = a });
-                    return;
-                }
-
-                EmitEvent(new AsteroidDestroyed { Asteroid = a });
-                EmitEvent(new AsteroidSpawnNew
-                {
-                    Stage = a.Stage - 1,
-                    Position = a.Position,
-                    Heading = a.Heading
+                    Asteroid = a,
+                    Bullet = this
                 });
             }
         }

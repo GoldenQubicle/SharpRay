@@ -10,7 +10,6 @@ namespace SharpRay.Gui
     /// </summary>
     public class Label : GuiEntity
     {
-        public Label() { }
         public string Text { get; set; }
         public Font Font { get; init; } = GetFontDefault();
         public Color TextColor { get; set; } = Color.WHITE;

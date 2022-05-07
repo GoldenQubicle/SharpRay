@@ -23,8 +23,13 @@
         shield texture! 
         laser texture!
         restore ship damage
-        gain extra life
+        gain extra 
+        
+☐ refactor asset loading @created(07-05-2022 16:49)
+    make a proper asset record to hold the dicitonaries
+    single function to pass regex & mapping functions
 
+✔ proper render layer constants @created(07-05-2022 16:50) @done(07-05-2022 19:41)
 
     
 

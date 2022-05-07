@@ -8,6 +8,8 @@ namespace SharpRay.Entities
 
     public abstract class Entity : IKeyBoardListener, IMouseListener, IHasUpdate, IHasRender
     {
+        public string Tag { get; set; }
+
         public Vector2 Size { get; init; }
 
         public Vector2 Position { get; set; }

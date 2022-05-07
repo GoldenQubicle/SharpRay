@@ -57,6 +57,7 @@ namespace SharpRay.Core
             SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
             //SetTargetFPS(60);
+            //ToggleFullscreen();
         }
 
 
@@ -125,6 +126,15 @@ namespace SharpRay.Core
         /// <typeparam name="TEntity"></typeparam>
         /// <returns></returns>
         public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
+
+        /// <summary>
+        /// Gets an entity by tag, assumes every entity has an unique tag!
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public static TEntity GetEntityByTag<TEntity>(string tag) where TEntity : Entity =>
+            Entities.OfType<TEntity>().FirstOrDefault(e => e.Tag.Equals(tag));
 
 
         /// <summary>
@@ -258,7 +268,8 @@ namespace SharpRay.Core
             }
         }
 
-        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => SetEmitEventActions(e, onEventActions?.ToList() ?? new());
+        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => 
+            SetEmitEventActions(e, onEventActions?.ToList() ?? new());
 
         internal static void OnGuiEvent(IGuiEvent e)
         {

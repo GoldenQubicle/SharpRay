@@ -32,7 +32,7 @@ namespace Asteroids
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
             Collider = new RectCollider { Position = Position, Size = Size };
-            RenderLayer = 1;
+            RenderLayer = Game.RlAsteroidsBullets;
         }
 
         public override void Update(double deltaTime)

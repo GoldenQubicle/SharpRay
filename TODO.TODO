@@ -145,6 +145,11 @@ Fourth MileStone:
 
 
 SharpRay:
+  ☐ have general audio, key & mouse control and display menu available @created(07-05-2022 19:41)
+  ☐ being able to pass multiple ongame event actions when adding an entity @created(07-05-2022 18:34)
+      currently running into an issue with asteroids in that I want to bind a menu to the event emitter of a bullet, 
+      however, the public api only allows for 1 game action to be passed, and changing it to accept params causes 
+      a conflicting signature within the internal api..
   ✔ update main w asteroids branch @created(03-09-2021 11:06) @done(04-09-2021 12:55)
   ☐ proper click & double click mouse events @created(06-06-2021 14:21)
   ☐ rework and extend undo and redo system @created(04-09-2021 20:23)
@@ -201,7 +206,7 @@ Next MileStones / Challenging Ideas:
   ☐ do another spirograph animation tool @created(20-06-2021 14:11)
     reasons: proper animation of easyings could be fun and usefull and it would neat a lot of ui work, like lists and scroll stuff etc, 
     so that would improve the whole ui side of things. 
-  ☐ create frame logging system @created(20-06-2021 17:04)
+  ✔ create frame logging system @created(20-06-2021 17:04) @done(07-05-2022 18:34)
     reason: technical challenge and long term beneficial. At the moment there's a weird bug in snake game 
     wherein the order of update vs collision in the main loop is causing food consumption to be triggered twice. 
     Not sure why that is and when figuring it out it would be super helpfull the have a way to tell which events

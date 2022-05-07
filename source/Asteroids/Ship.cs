@@ -56,7 +56,7 @@ namespace Asteroids
         {
             Position = position;
             Size = new Vector2(texture.width, texture.height);
-            RenderLayer = 2;
+            RenderLayer = Game.RlShip;
 
             ShipTexture = texture;
             offset = new Vector2(texture.width / 2, texture.height / 2);

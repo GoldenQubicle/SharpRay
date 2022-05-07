@@ -15,22 +15,10 @@ namespace Asteroids
         public float Force { get; init; }
     }
 
-    public struct BulletHitAsteroid : IGameEvent
-    {
-        public Bullet Bullet { get; init; }
-
-    }
-
-    public struct AsteroidDestroyed : IGameEvent
+    public struct AsteroidHitByWeapon : IGameEvent
     {
         public Asteroid Asteroid { get; init; }
-    }
-
-    public struct AsteroidSpawnNew : IGameEvent
-    {
-        public int Stage { get; init; }
-        public Vector2 Position { get; init; }
-        public Vector2 Heading { get; init; }
+        public Bullet Bullet { get; init; }
     }
 
     public struct ShipHitAsteroid : IGameEvent

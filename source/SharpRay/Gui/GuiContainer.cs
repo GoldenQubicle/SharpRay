@@ -10,17 +10,18 @@ namespace SharpRay.Gui
 {
     public sealed class GuiContainer : Entity, IGuiEventListener<GuiContainer>, IGameEventListener<GuiContainer>
     {
-        public GuiContainer(bool isVisible = true, int renderLayer = 0)
+        public GuiContainer(bool isVisible = true, int renderLayer = 0, string tag = "")
         {
             IsVisible = isVisible;
             RenderLayer = renderLayer;
+            Tag = tag;
         }
 
         private List<GuiEntity> Children { get; } = new();
 
         public bool IsVisible { get; private set; }
 
-        public TEntity Get<TEntity>() where TEntity : GuiEntity =>
+        public TEntity GetEntity<TEntity>() where TEntity : GuiEntity =>
             Children.OfType<TEntity>().FirstOrDefault();
 
         public IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : GuiEntity => 

@@ -9,7 +9,6 @@ namespace SharpRay.Entities
     /// </summary>
     public abstract class GuiEntity : Entity, IEventEmitter<IGuiEvent>
     {
-        public string Tag { get; set; }
         public Action<IGuiEvent> EmitEvent { get; set; }
         public Func<GuiEntity, IGuiEvent> OnMouseLeftClick { get; set; }
         public float Scale { get; set; } = 1f;

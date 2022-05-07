@@ -47,8 +47,8 @@ namespace ProtoCity
                     new BrushTool())
                  .OnGuiEvent((e, c) =>
                  {
-                     var tt = c.Get<TransitTool>();
-                     var bt = c.Get<BrushTool>();
+                     var tt = c.GetEntity<TransitTool>();
+                     var bt = c.GetEntity<BrushTool>();
 
                      if (e is TransitToolToggle ttt && !bt.IsActive)
                      {
@@ -75,8 +75,8 @@ namespace ProtoCity
         {
             if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_SPACE)
             {
-                GetEntity<GuiContainer>().Get<TransitTool>().Clear();
-                GetEntity<GuiContainer>().Get<BrushTool>().Clear();
+                GetEntity<GuiContainer>().GetEntity<TransitTool>().Clear();
+                GetEntity<GuiContainer>().GetEntity<BrushTool>().Clear();
                 GetEntity<GridHandler>().Clear();
             }
         }

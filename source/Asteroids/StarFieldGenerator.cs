@@ -37,6 +37,7 @@ namespace Asteroids
 
         public StarFieldGenerator()
         {
+            RenderLayer = Game.RlBackground;
             texture = GetTexture2D(Game.starTexture);
             textureOffset = new Vector2(texture.width / 2, texture.height / 2);
 
@@ -79,7 +80,6 @@ namespace Asteroids
                     DrawTextureEx(texture, star.Position - new Vector2(0, texture.height * 0.7f) * scale, 45, scale, star.Color);
                 else
                     DrawTextureEx(texture, star.Position - textureOffset * scale, 0, scale, star.Color);
-
 
                 EndBlendMode();
             }
