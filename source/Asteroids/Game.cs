@@ -181,7 +181,7 @@ namespace Asteroids
                },
                new Button
                {
-                   Position = new Vector2(WindowWidth * .25f, WindowHeight * .75f),
+                   Position = new Vector2(WindowWidth * .2f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
                    BaseColor = Color.DARKBLUE,
                    FocusColor = Color.BLUE,
@@ -193,7 +193,7 @@ namespace Asteroids
                },
                new Button
                {
-                   Position = new Vector2(WindowWidth * .5f, WindowHeight * .75f),
+                   Position = new Vector2(WindowWidth * .4f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
                    BaseColor = Color.LIME,
                    FocusColor = Color.GREEN,
@@ -205,7 +205,7 @@ namespace Asteroids
                },
                new Button
                {
-                   Position = new Vector2(WindowWidth * .75f, WindowHeight * .75f),
+                   Position = new Vector2(WindowWidth * .6f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
                    BaseColor = Color.MAROON,
                    FocusColor = Color.RED,
@@ -215,6 +215,18 @@ namespace Asteroids
                        ShipColor = "red"
                    }
                },
+                new Button
+                {
+                    Position = new Vector2(WindowWidth * .8f, WindowHeight * .75f),
+                    Size = new Vector2(50, 20),
+                    BaseColor = new Color(200, 100, 0, 255),
+                    FocusColor = Color.ORANGE,
+                    OnMouseLeftClick = e => new ChangeShipColor
+                    {
+                        GuiEntity = e,
+                        ShipColor = "orange"
+                    }
+                },
                new Button
                {
                    Tag = "start",
@@ -248,8 +260,14 @@ namespace Asteroids
                {
                    ShipColor = csc.ShipColor;
                    c.Get<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
-                   var color = ShipColor == "blue" ? Color.DARKBLUE : ShipColor == "red" ? Color.MAROON : Color.LIME;
-                   var focusColor = ShipColor == "blue" ? Color.BLUE : ShipColor == "red" ? Color.RED : Color.GREEN;
+                   var color = ShipColor == "blue" ? Color.DARKBLUE 
+                              : ShipColor == "red" ? Color.MAROON 
+                              : ShipColor == "orange" ? Color.ORANGE :  Color.LIME;
+
+                   var focusColor = ShipColor == "blue" ? Color.BLUE 
+                                    : ShipColor == "red" ? Color.RED 
+                                    : ShipColor == "orange" ? Color.ORANGE: Color.GREEN;
+
                    c.Get<Label>().FillColor = color;
                    c.GetEntities<Button>()
                         .Where(b => b.Tag == "left" || b.Tag == "right" || b.Tag == "start").ToList()
