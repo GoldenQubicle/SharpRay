@@ -145,6 +145,9 @@ Fourth MileStone:
 
 
 SharpRay:
+  ☐ consider adding GUI container children to entity list so we can grab them directly by tag  @created(14-05-2022 19:50)
+      note tho this will mean they will be render twice, probably..
+      could also just consider an overload with 2 tags, specifically for gui containers..
   ☐ have general audio, key & mouse control and display menu available @created(07-05-2022 19:41)
   ☐ being able to pass multiple ongame event actions when adding an entity @created(07-05-2022 18:34)
       currently running into an issue with asteroids in that I want to bind a menu to the event emitter of a bullet, 

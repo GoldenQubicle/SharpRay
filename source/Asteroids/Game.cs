@@ -22,10 +22,10 @@ namespace Asteroids
 
         //Tags
         private const string GuiShipSelection = nameof(GuiShipSelection);
-        private const string GuiGameOverlay = nameof(GuiGameOverlay);
+        private const string GuiScoreOverlay = nameof(GuiScoreOverlay);
         private const string GuiHealth = nameof(GuiHealth);
         private const string GuiScore = nameof(GuiScore);
-        private static string GuiLifeIcon(int n) => $"PlayerLife{n}"; 
+        private static string GuiLifeIcon(int n) => $"PlayerLife{n}";
         private static string GetScoreString(int s) => $"Score : {s}";
         private static string GetHealthString(int h) => $"Health : {h}";
 
@@ -34,24 +34,25 @@ namespace Asteroids
         internal const int RlGuiShipSelection = 1;
         internal const int RlAsteroidsBullets = 2;
         internal const int RlShip = 3;
-        internal const int RlGuiGameOverlay = 4;
+        internal const int RlGuiScoreOverlay = 4;
 
         //Assets 
         private static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors;
         private static Dictionary<int, Dictionary<string, string>> ships;
         private static Dictionary<int, Dictionary<string, string>> shipsIcons;
         private static Dictionary<int, Dictionary<int, string>> shipDamage;
-
+        
         public const string starTexture = nameof(starTexture);
 
-        //Game 
+        //Game state & stats
         private static int ShipType = 3; // 1 | 2 | 3
         private static string ShipColor = "green"; // blue | green | red | orange
-        private static int ShipDamageTextureIdx = 1;
+        private static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         private static int Score = 0;
         private static int Health;
-        private static int MaxHealth = 20;
-        private static int PlayerLifes = 3;
+        private static readonly int MaxHealth = 15;
+        private static int PlayerLifes;
+        private static readonly int MaxPlayerLifes = 3;
 
 
         static async Task Main(string[] args)
@@ -70,7 +71,7 @@ namespace Asteroids
 
             AddEntity(new StarFieldGenerator());
             AddEntity(CreateShipSelectionMenu());
-            AddEntity(CreateScoreOverLay());
+
             Run();
         }
 
@@ -78,6 +79,7 @@ namespace Asteroids
         public static void StartGame()
         {
             Health = MaxHealth;
+            PlayerLifes = MaxPlayerLifes;
 
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
@@ -85,20 +87,21 @@ namespace Asteroids
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
 
-            var overlay = GetEntityByTag<GuiContainer>(GuiGameOverlay);
+
+            var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
             overlay.Show();
-
+            AddEntity(overlay);
         }
 
         public static void OnGameEvent(IGameEvent e)
         {
             if (e is ShipHitAsteroid sha)
             {
-                //TODO bug fix actually showing proper damage textures
-                Health -= sha.Asteroid.Stage * 2;
-
                 RemoveEntity(sha.Asteroid);
+                Health -= sha.Asteroid.Stage * 2;
+                GetEntityByTag<GuiContainer>(GuiScoreOverlay)
+                    .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
                 var idx = (int)MapRange(Health, 0, MaxHealth, 3, 1);
 
@@ -110,47 +113,41 @@ namespace Asteroids
 
                 if (Health <= 0)
                 {
-                    Health = MaxHealth;
-
-                    var overlay = GetEntityByTag<GuiContainer>(GuiGameOverlay);
-
+                    //grey out player life icon 
+                    var overlay = GetEntityByTag<GuiContainer>(GuiScoreOverlay);
                     overlay.GetEntityByTag<ImageTexture>(GuiLifeIcon(PlayerLifes)).Color = Color.DARKGRAY;
                     overlay.GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
-                    PlayerLifes--;
-                    GetEntity<Ship>().HasTakenDamage = false;
-                    ShipDamageTextureIdx = 1;
+                    GetEntity<Ship>().HasTakenDamage = false; // prevent damage texture from being visible
+                    ShipDamageTextureIdx = -1; 
+                    Health = MaxHealth;
+                    PlayerLifes--; // needs to happen last otherwise we can't get the icon
                 }
 
                 if (PlayerLifes == 0)
                 {
-                    RemoveEntitiesOfType<Ship>();
-                    RemoveEntitiesOfType<Asteroid>();
-                    PlayerLifes = 3;
-                    var overlay = GetEntityByTag<GuiContainer>(GuiGameOverlay);
-                    overlay.Hide();
-                    overlay.GetEntityByTag<Label>(GuiScore).Text = GetScoreString(0);
-                    overlay.GetEntities<ImageTexture>().ToList().ForEach(it => it.Color = Color.WHITE);
-
+                    ResetGame();
                     GetEntityByTag<GuiContainer>(GuiShipSelection).Show();
-                    //TODO show proper game over screen
-                    return;
                 }
             }
 
             if (e is ShipFiredBullet sfb)
             {
                 var bullet = new Bullet(sfb.Origin, sfb.Angle, sfb.Force);
-                bullet.EmitEvent += GetEntityByTag<GuiContainer>(GuiGameOverlay).OnGameEvent;
+                bullet.EmitEvent += GetEntityByTag<GuiContainer>(GuiScoreOverlay).OnGameEvent;
                 AddEntity(bullet, OnGameEvent);
             }
 
             if (e is BulletLifeTimeExpired ble)
+            {
                 RemoveEntity(ble.Bullet);
+            }
 
             if (e is AsteroidHitByWeapon ahw)
             {
                 Score += ahw.Asteroid.Stage;
+                GetEntityByTag<GuiContainer>(GuiScoreOverlay)
+                    .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
 
                 if (ahw.Asteroid.Stage > 1)
                 {
@@ -170,6 +167,20 @@ namespace Asteroids
             }
         }
 
+        private static void ResetGame()
+        {
+            //remove entities
+            RemoveEntitiesOfType<Ship>();
+            RemoveEntitiesOfType<Bullet>();
+            RemoveEntitiesOfType<Asteroid>();
+            RemoveEntity(GetEntityByTag<GuiContainer>(GuiScoreOverlay));
+
+            //reset game stats
+            Score = 0;
+            Health = MaxHealth;
+            PlayerLifes = MaxPlayerLifes;
+        }
+
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
             if (e is KeyPressed kp)
@@ -187,12 +198,9 @@ namespace Asteroids
 
                 if (kp.KeyboardKey == KeyboardKey.KEY_M)
                 {
-                    //prompt to stop and exit to menu..
-                    RemoveEntitiesOfType<Bullet>();
-                    RemoveEntitiesOfType<Asteroid>();
-                    RemoveEntitiesOfType<Ship>();
-                    GetEntities<GuiContainer>().First(c => c.Tag.Equals(GuiShipSelection)).Show();
-                    GetEntities<GuiContainer>().First(c => c.Tag.Equals(GuiGameOverlay)).Hide();
+                    //TODO prompt to stop and exit to menu..
+                    ResetGame();
+                    GetEntityByTag<GuiContainer>(GuiShipSelection).Show();
                 }
             }
         }
@@ -209,7 +217,7 @@ namespace Asteroids
         private static GuiContainer CreateScoreOverLay()
         {
             //create container 
-            var container = GuiContainerBuilder.CreateNew(isVisible: false, tag: GuiGameOverlay, renderLayer: RlGuiGameOverlay);
+            var container = GuiContainerBuilder.CreateNew(isVisible: false, tag: GuiScoreOverlay, renderLayer: RlGuiScoreOverlay);
 
             //add score & health displays
             container.AddChildren(
@@ -238,7 +246,8 @@ namespace Asteroids
 
             //add player life icons
             var icon = GetTexture2D(shipsIcons[ShipType][ShipColor]);
-            Enumerable.Range(1, PlayerLifes).ToList().ForEach(i =>
+
+            for (var i = 1; i <= PlayerLifes; i++)
             {
                 var pos = new Vector2(icon.width + (i * icon.width * 1.5f), 10);
                 container.AddChildren(
@@ -247,21 +256,7 @@ namespace Asteroids
                          Tag = GuiLifeIcon(i),
                          Position = pos,
                      });
-            });
-
-            //add update score & health behaviour
-            container.OnGameEvent((e, c) =>
-            {
-                if (e is AsteroidHitByWeapon ahw)
-                {
-                    c.GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
-                }
-
-                if (e is ShipHitAsteroid sha)
-                {
-                    c.GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
-                }
-            });
+            }
 
             return container;
         }
