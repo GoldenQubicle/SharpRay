@@ -19,6 +19,14 @@
     asteroids destroyed ++points based on size
     points unlock powerups
 
+    large => 7 mediums
+    medium => 5 small
+
+    small does 1 damage, medium does 5 damage? large does 35 damage..?
+    also same point count..? 1 for small, 5 for mediu, 35 for large..?
+    how many hits does it take for a asteroid to be destroyed?!
+    have a health bar going from 0 - 100
+
     ☐ powerups..?! @created(30-04-2022 19:36)
         shield texture! 
         laser texture!

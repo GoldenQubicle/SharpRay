@@ -57,7 +57,6 @@ namespace SharpRay.Core
             SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
             //SetTargetFPS(60);
-            //ToggleFullscreen();
         }
 
 

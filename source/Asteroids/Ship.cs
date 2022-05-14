@@ -49,8 +49,8 @@ namespace Asteroids
 
         private readonly Vector2 offset; //used for render position textures
         public Texture2D ShipTexture { get; set; }
-        public Texture2D? DamgageTexture { get; set; }
-
+        public Texture2D DamgageTexture { get; set; }
+        public bool HasTakenDamage { get; set; }
 
         public Ship(Vector2 position, Texture2D texture)
         {
@@ -124,11 +124,12 @@ namespace Asteroids
         {
             if (e is Asteroid a)
             {
+                HasTakenDamage = true;
+
                 EmitEvent(new ShipHitAsteroid
                 {
                     Asteroid = a,
                 });
-
             }
         }
 
@@ -138,8 +139,8 @@ namespace Asteroids
 
             DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, 1f, Color.WHITE);
 
-            if (DamgageTexture.HasValue)
-                DrawTextureEx(DamgageTexture.Value, texPos, RAD2DEG * rotation, 1f, Color.DARKGRAY);
+            if (HasTakenDamage)
+                DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, 1f, Color.DARKGRAY);
 
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);

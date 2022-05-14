@@ -7,7 +7,7 @@ namespace SharpRay.Gui
     public sealed class ImageTexture : GuiEntity
     {
         public Texture2D Texture2D { get; set; }
-        public Color Color { get; init; }
+        public Color Color { get; set; }
 
         public ImageTexture(Image image, Color color)
         {

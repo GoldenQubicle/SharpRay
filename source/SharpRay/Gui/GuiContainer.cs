@@ -26,6 +26,8 @@ namespace SharpRay.Gui
 
         public IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : GuiEntity => 
             Children.OfType<TEntity>();
+        public TEntity GetEntityByTag<TEntity>(string tag) where TEntity : Entity =>
+            Children.OfType<TEntity>().FirstOrDefault(e => e.Tag.Equals(tag));
 
         public void Add(GuiEntity[] entities) => Children.AddRange(entities);
 
