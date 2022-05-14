@@ -145,6 +145,10 @@ Fourth MileStone:
 
 
 SharpRay:
+  ☐ rework Entity to just be an abstract class @created(14-05-2022 20:10)
+      basically all bevaviour should be on interfaces so we can compose to our liking
+      reason being, atm AddEntity() automatically adds it to keyboard & mouse, however lot of times
+      entities do not need to listening for keyboard & mouse events, like for example the bullets and asteroids in Meteor Madness
   ☐ consider adding GUI container children to entity list so we can grab them directly by tag  @created(14-05-2022 19:50)
       note tho this will mean they will be render twice, probably..
       could also just consider an overload with 2 tags, specifically for gui containers..
@@ -197,7 +201,7 @@ SharpRay:
     
 
 Next MileStones / Challenging Ideas:
-  ☐ rework shitty snake w new project structure @created(02-09-2021 14:12)
+  ✔ rework shitty snake w new project structure @created(02-09-2021 14:12) @done(14-05-2022 20:09)
     i.e. put all game related entities and logic into down project
   ☐ manipulate a custom shader in realtime with ui controls @created(07-06-2021 19:41)
     reason: shaders are the bread and butter of a proper runnning game, technical challenging

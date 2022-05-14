@@ -37,10 +37,10 @@ namespace Asteroids
         internal const int RlGuiScoreOverlay = 4;
 
         //Assets 
-        private static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors;
-        private static Dictionary<int, Dictionary<string, string>> ships;
-        private static Dictionary<int, Dictionary<string, string>> shipsIcons;
-        private static Dictionary<int, Dictionary<int, string>> shipDamage;
+        internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors;
+        internal static Dictionary<int, Dictionary<string, string>> ships;
+        internal static Dictionary<int, Dictionary<string, string>> shipsIcons;
+        internal static Dictionary<int, Dictionary<int, string>> shipDamage;
         
         public const string starTexture = nameof(starTexture);
 
@@ -70,6 +70,7 @@ namespace Asteroids
             await LoadAssets();
 
             AddEntity(new StarFieldGenerator());
+            AddEntity(new AsteroidGenerator());
             AddEntity(CreateShipSelectionMenu());
 
             Run();
@@ -82,11 +83,10 @@ namespace Asteroids
             PlayerLifes = MaxPlayerLifes;
 
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
-
+            
             AddEntity(ship, OnGameEvent);
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
-
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -113,14 +113,15 @@ namespace Asteroids
 
                 if (Health <= 0)
                 {
+                    GetEntity<Ship>().HasTakenDamage = false; // prevent damage texture from being visible
+                    ShipDamageTextureIdx = -1;
+                    Health = MaxHealth;
+
                     //grey out player life icon 
                     var overlay = GetEntityByTag<GuiContainer>(GuiScoreOverlay);
                     overlay.GetEntityByTag<ImageTexture>(GuiLifeIcon(PlayerLifes)).Color = Color.DARKGRAY;
                     overlay.GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
-
-                    GetEntity<Ship>().HasTakenDamage = false; // prevent damage texture from being visible
-                    ShipDamageTextureIdx = -1; 
-                    Health = MaxHealth;
+                    
                     PlayerLifes--; // needs to happen last otherwise we can't get the icon
                 }
 
@@ -135,6 +136,7 @@ namespace Asteroids
             {
                 var bullet = new Bullet(sfb.Origin, sfb.Angle, sfb.Force);
                 bullet.EmitEvent += GetEntityByTag<GuiContainer>(GuiScoreOverlay).OnGameEvent;
+                bullet.EmitEvent += AsteroidGenerator.OnGameEvent;
                 AddEntity(bullet, OnGameEvent);
             }
 
@@ -149,21 +151,7 @@ namespace Asteroids
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
 
-                if (ahw.Asteroid.Stage > 1)
-                {
-                    var stage = ahw.Asteroid.Stage - 1;
-                    var size = stage == 3 ? "med" : stage == 2 ? "small" : "tiny";
-                    var amount = stage == 3 ? 7 : stage == 2 ? 5 : 3;
-                    for (var i = 1; i <= amount; i++)
-                    {
-                        var angle = (MathF.Tau / amount) * i;
-                        var heading = ahw.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                        AddEntity(new Asteroid(ahw.Asteroid.Position, heading, stage, GetRandomAsteroidTexture(size)), OnGameEvent);
-                    }
-                }
-
                 RemoveEntity(ahw.Bullet);
-                RemoveEntity(ahw.Asteroid);
             }
         }
 
