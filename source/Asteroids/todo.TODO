@@ -1,4 +1,4 @@
-☐ create menu screen @created(23-04-2022 16:46)
+✔ create menu screen @created(23-04-2022 16:46) @done(14-05-2022 20:56)
     ✔ pick ship type & color @created(23-04-2022 16:46) @done(30-04-2022 19:35)
         ✔ load shape ship textures @created(23-04-2022 17:10) @done(23-04-2022 19:23)
 
@@ -11,16 +11,8 @@
     ✔ distribute animated starts w perlin noise or something @created(27-04-2022 11:17) @done(30-04-2022 19:35)
 
 ✔ proper reset function @created(14-05-2022 15:15) @done(14-05-2022 19:37)
-☐ sort audio files @created(14-05-2022 19:51)
-
-☐ asteroid spawn generator thing @created(14-05-2022 19:40)
-    come in waves ..?
-    spawn first big asteroid towards player position
-
-☐ life loss notification screen @created(14-05-2022 19:38)
-    reset ship position to middle screen? => if so check for nearby asteroids
-☐ game over menu screen @created(14-05-2022 15:15)
-☐ score system @created(30-04-2022 19:36)
+✔ proper render layer constants @created(07-05-2022 16:50) @done(07-05-2022 19:41)
+✔ score system @created(30-04-2022 19:36) @done(15-05-2022 19:52)
     3 damage stages x 3 lifes..? 
     each damage stage is N health
     each asteroid hit is -N health based on size
@@ -35,17 +27,43 @@
     how many hits does it take for a asteroid to be destroyed?!
     have a health bar going from 0 - 100
 
-    ☐ powerups..?! @created(30-04-2022 19:36)
-        shield texture! 
-        laser texture!
-        restore ship damage
-        gain extra 
+    
+☐ fix asteroid bounds bug @created(15-05-2022 19:31)
+    basically have to take the sign of the heading vector into account,
+    in order to determine how to flip it
+
+☐ sort audio files @created(14-05-2022 19:51)
+
+☐ asteroid spawn generator thing @created(14-05-2022 19:40)
+    come in waves ..?
+    spawn first big asteroid towards player position, in fact what about always spawning towards the current player position
+    so to discourage camping in the corner or something
+    can also consider breaking into more and more pieces as waves increase. atm it's hardcoded like 7 - 5 - 3
+    also, atm drawing all asteroid at scale 1, can play with that to have more variety size wise 
+    and in addition the 'reflection' speed bump is now 1.5, could also vary with size?!
+
+☐ life loss notification screen @created(14-05-2022 19:38)
+    reset ship position to middle screen? => if so check for nearby asteroids
+
+☐ game over menu screen @created(14-05-2022 15:15)
+
+
+
+☐ powerups..?! @created(30-04-2022 19:36)
+    shield texture! 
+    laser texture!
+    restore ship damage
+    gain extra 
         
+☐ main menu @created(14-05-2022 20:54)
+    audio controls 
+    credits section 
+    possible full screen toggle?!
+
 ☐ refactor asset loading @created(07-05-2022 16:49)
     make a proper asset record to hold the dicitonaries
     single function to pass regex & mapping functions
 
-✔ proper render layer constants @created(07-05-2022 16:50) @done(07-05-2022 19:41)
 
     
 

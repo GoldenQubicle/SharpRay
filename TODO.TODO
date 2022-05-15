@@ -145,6 +145,7 @@ Fourth MileStone:
 
 
 SharpRay:
+  ☐ merge builds branch to main & setup build for all projects @created(14-05-2022 20:53)
   ☐ rework Entity to just be an abstract class @created(14-05-2022 20:10)
       basically all bevaviour should be on interfaces so we can compose to our liking
       reason being, atm AddEntity() automatically adds it to keyboard & mouse, however lot of times

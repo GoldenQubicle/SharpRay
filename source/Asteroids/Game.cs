@@ -71,8 +71,8 @@ namespace Asteroids
 
             AddEntity(new StarFieldGenerator());
             AddEntity(new AsteroidGenerator());
-            AddEntity(CreateShipSelectionMenu());
-
+            //AddEntity(CreateShipSelectionMenu());
+            StartGame();
             Run();
         }
 
@@ -85,7 +85,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
             
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, -1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, 1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
             AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
 
             var overlay = CreateScoreOverLay();
@@ -128,7 +128,8 @@ namespace Asteroids
                 if (PlayerLifes == 0)
                 {
                     ResetGame();
-                    GetEntityByTag<GuiContainer>(GuiShipSelection).Show();
+                    StartGame();
+                    //GetEntityByTag<GuiContainer>(GuiShipSelection).Show();
                 }
             }
 
