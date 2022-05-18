@@ -1,18 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using static Raylib_cs.Raylib;
-using SharpRay.Core;
-using System.Numerics;
-using SharpRay.Collision;
-using System;
-using SharpRay.Components;
-using System.Collections.Generic;
-using static SharpRay.Core.Audio;
-using SharpRay.Interfaces;
-using static SharpRay.Core.Application;
-
-namespace Asteroids
+﻿namespace Asteroids
 {
     public class Ship : GameEntity, IHasCollider, IHasCollision
     {

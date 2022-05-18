@@ -1,17 +1,22 @@
-﻿using System.Numerics;
-using SharpRay.Core;
-using SharpRay.Eventing;
-using SharpRay.Gui;
-using System;
-using Raylib_cs;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using static Raylib_cs.Raylib;
-using static SharpRay.Core.Application;
-using System.Threading.Tasks;
-using static Asteroids.GuiEvents;
+﻿global using Raylib_cs;
+global using static Raylib_cs.Raylib;
+global using SharpRay.Core;
+global using SharpRay.Components;
+global using SharpRay.Collision;
+global using SharpRay.Eventing;
+global using SharpRay.Entities;
+global using SharpRay.Interfaces;
+global using SharpRay.Gui;
+global using static SharpRay.Core.Application;
+global using static SharpRay.Core.Audio;
+global using System;
+global using System.IO;
+global using System.Linq;
+global using System.Numerics;
+global using System.Text.RegularExpressions;
+global using System.Collections.Generic;
+global using System.Threading.Tasks;
+global using static Asteroids.GuiEvents;
 
 namespace Asteroids
 {
@@ -62,7 +67,7 @@ namespace Asteroids
                 WindowWidth = WindowWidth,
                 WindowHeight = WindowHeight,
                 BackGroundColor = new Color(12, 24, 64, 0),
-                ShowFPS = false,
+                ShowFPS = true,
                 DoEventLogging = false
             });
 

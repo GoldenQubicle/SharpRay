@@ -1,12 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Collision;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using SharpRay.Interfaces;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-
-namespace Asteroids
+﻿namespace Asteroids
 {
     public class Asteroid : GameEntity, IHasCollider
     {

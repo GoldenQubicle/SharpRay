@@ -1,7 +1,4 @@
-﻿using SharpRay.Eventing;
-using System.Numerics;
-
-namespace Asteroids
+﻿namespace Asteroids
 {
     public struct ShipEngineVolume : IGameEvent
     {

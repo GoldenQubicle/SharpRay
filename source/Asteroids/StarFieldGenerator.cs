@@ -1,14 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Entities;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using static SharpRay.Core.Application;
-using SharpRay.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Asteroids
+﻿namespace Asteroids
 {
     public class StarFieldGenerator : GameEntity
     {
