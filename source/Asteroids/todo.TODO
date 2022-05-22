@@ -27,10 +27,11 @@
     how many hits does it take for a asteroid to be destroyed?!
     have a health bar going from 0 - 100
 
-    
 ☐ fix asteroid bounds bug @created(15-05-2022 19:31)
     basically have to take the sign of the heading vector into account,
     in order to determine how to flip it
+
+☐ fix audio playing after game over bug @created(22-05-2022 15:50)
 
 ☐ sort audio files @created(14-05-2022 19:51)
 

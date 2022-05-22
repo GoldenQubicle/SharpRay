@@ -34,11 +34,26 @@
             (Collider as RectCollider).Position = Position - offset;
             RotationAngle += RotationSpeed;
 
+            Translation = Position switch
+            {
+                Vector2 { X: < 0 } when Heading.X < 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0)),
+                Vector2 { X: > Game.WindowWidth } when Heading.X < 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0)),
+                Vector2 { X: > Game.WindowWidth } when Heading.X > 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0)),
+                Vector2 { X: < 0 } when Heading.X > 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0)),
+
+                Vector2 { Y: < 0 } when Heading.Y < 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(0, -1.5f)),
+                Vector2 { Y: > Game.WindowHeight } when Heading.Y < 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(0, 1.5f)),
+                Vector2 { Y: > Game.WindowHeight } when Heading.Y > 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(0, -1.5f)),
+                Vector2 { Y: < 0 } when Heading.Y > 0 => Matrix3x2.CreateTranslation(Heading * new Vector2(0, 1.5f)),
+
+                _ => Translation
+            };
+
             //bounds check
-            if (Position.X < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0));
-            if (Position.X > Game.WindowWidth) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0));
-            if (Position.Y < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, -1.5f));
-            if (Position.Y > Game.WindowHeight) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, 1.5f));
+            //if (Position.X < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(1.5f, 0));
+            //if (Position.X > Game.WindowWidth) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(-1.5f, 0));
+            //if (Position.Y < 0) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, -1.5f));
+            //if (Position.Y > Game.WindowHeight) Translation = Matrix3x2.CreateTranslation(Heading * new Vector2(0, 1.5f));
         }
 
         public override void Render()

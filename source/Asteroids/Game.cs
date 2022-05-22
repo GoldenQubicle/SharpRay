@@ -91,7 +91,7 @@ namespace Asteroids
             
             AddEntity(ship, OnGameEvent);
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, 1.5f), 4, GetTexture2D(meteors["Grey"]["big"][1])), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(0f, -5f), 4, GetTexture2D(meteors["Grey"]["tiny"][2])), OnGameEvent);
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
