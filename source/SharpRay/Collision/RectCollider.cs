@@ -1,9 +1,4 @@
-﻿using static Raylib_cs.Raylib;
-using System.Numerics;
-using Raylib_cs;
-using SharpRay.Interfaces;
-
-namespace SharpRay.Collision
+﻿namespace SharpRay.Collision
 {
     /// <summary>
     /// Basic rectangle collider. Cannot be rotated. 
@@ -12,7 +7,7 @@ namespace SharpRay.Collision
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
-        public Rectangle Rect
+        public Raylib_cs.Rectangle Rect
         {
             get => new()
             {

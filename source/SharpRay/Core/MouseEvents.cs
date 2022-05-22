@@ -1,9 +1,5 @@
-﻿using System.Numerics;
-using SharpRay.Eventing;
-
-namespace SharpRay.Core
+﻿namespace SharpRay.Core
 {
-
     public class MouseLeftClick : IMouseEvent
     {
         public Vector2 Position { get; init; }

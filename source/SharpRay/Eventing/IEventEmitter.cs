@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SharpRay.Eventing
+﻿namespace SharpRay.Eventing
 {
     public interface IEventEmitter<TEvent> where TEvent : IEvent
     {

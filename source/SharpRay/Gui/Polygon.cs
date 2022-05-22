@@ -1,9 +1,4 @@
-﻿using Raylib_cs;
-using static Raylib_cs.Raylib;
-using SharpRay.Eventing;
-using System;
-using System.Numerics;
-using SharpRay.Core;
+﻿using SharpRay.Core;
 
 namespace SharpRay.Gui
 {
@@ -12,8 +7,8 @@ namespace SharpRay.Gui
         public int Sides { get; }
         public float Radius { get; }
 
-        //points are ordered anti-clockwise and are drawn relative to Position, i.e. as if Position were 0,0
-        //if the points array is not closed, position will act as the 1st point and opens/closes the polygon
+        // Points are ordered anti-clockwise and are drawn relative to Position, i.e. as if Position were 0,0.
+        // If the points array is not closed, position will act as the 1st point and opens/closes the polygon.
         private Vector2[] Points { get; set; }
         private Vector2[] TextCoords { get; init; }
 

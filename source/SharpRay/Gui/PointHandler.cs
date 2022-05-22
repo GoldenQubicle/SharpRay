@@ -1,7 +1,4 @@
-﻿using static Raylib_cs.Raylib;
-using System.Numerics;
-
-namespace SharpRay.Gui
+﻿namespace SharpRay.Gui
 {
     public sealed class PointHandler : DragEditShape
     {

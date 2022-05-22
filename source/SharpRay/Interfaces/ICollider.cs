@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace SharpRay.Interfaces
+﻿namespace SharpRay.Interfaces
 {
     public interface ICollider
     {

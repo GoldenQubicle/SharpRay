@@ -1,20 +1,20 @@
-﻿using static Raylib_cs.Raylib;
-using static Raylib_cs.Color;
-using static SharpRay.Core.SharpRayConfig;
-using System.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.IO;
-using SharpRay.Collision;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using SharpRay.Gui;
-using SharpRay.Listeners;
-using System.Numerics;
-using Raylib_cs;
-using SharpRay.Interfaces;
+﻿global using static Raylib_cs.Raylib;
+global using static Raylib_cs.Color;
+global using static SharpRay.Core.SharpRayConfig;
+global using System.Reflection;
+global using System;
+global using System.Collections.Generic;
+global using System.Diagnostics;
+global using System.Linq;
+global using System.IO;
+global using SharpRay.Collision;
+global using SharpRay.Entities;
+global using SharpRay.Eventing;
+global using SharpRay.Gui;
+global using SharpRay.Listeners;
+global using System.Numerics;
+global using Raylib_cs;
+global using SharpRay.Interfaces;
 
 namespace SharpRay.Core
 {

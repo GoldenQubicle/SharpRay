@@ -4,5 +4,4 @@
     {
         public bool IsHandled { get; set; } 
     }
-
 }

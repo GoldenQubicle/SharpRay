@@ -1,7 +1,7 @@
-﻿using SharpRay.Entities;
-
-namespace SharpRay.Eventing
+﻿namespace SharpRay.Eventing
 {
-    public interface IGuiEvent : IEvent { GuiEntity GuiEntity { get; init; } }
-
+    public interface IGuiEvent : IEvent
+    {
+        GuiEntity GuiEntity { get; init; }
+    }
 }

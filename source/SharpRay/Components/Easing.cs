@@ -1,6 +1,4 @@
 ﻿using static SharpRay.Core.Application;
-using System;
-using SharpRay.Core;
 
 namespace SharpRay.Components
 {
@@ -15,7 +13,7 @@ namespace SharpRay.Components
         public Easing(Func<float, float, float, float, float> easingFunction, double intervalTime, bool isReversed = false, bool isRepeated = false)
         {
             EasingFunction = easingFunction;
-            IntervalTime = intervalTime * SharpRayConfig.TickMultiplier;
+            IntervalTime = intervalTime * TickMultiplier;
             IsReversed = isReversed;
             IsRepeated = isRepeated;
         }

@@ -1,10 +1,4 @@
-﻿using Raylib_cs;
-using System.Collections.Generic;
-using SharpRay.Eventing;
-using System;
-using static Raylib_cs.Raylib;
-
-namespace SharpRay.Core
+﻿namespace SharpRay.Core
 {
     public static class Audio
     {

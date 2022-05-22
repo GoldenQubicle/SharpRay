@@ -1,12 +1,4 @@
-﻿using SharpRay.Entities;
-using SharpRay.Eventing;
-using SharpRay.Listeners;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-
-namespace SharpRay.Gui
+﻿namespace SharpRay.Gui
 {
     public sealed class GuiContainer : Entity, IGuiEventListener<GuiContainer>, IGameEventListener<GuiContainer>
     {

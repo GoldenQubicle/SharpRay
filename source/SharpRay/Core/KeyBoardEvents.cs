@@ -1,7 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Eventing;
-
-namespace SharpRay.Core
+﻿namespace SharpRay.Core
 {
     //general event containing raylib enum
     public class KeyPressed : IKeyBoardEvent

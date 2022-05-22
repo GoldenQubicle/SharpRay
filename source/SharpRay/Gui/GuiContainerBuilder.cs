@@ -1,8 +1,4 @@
 ﻿using SharpRay.Core;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using System;
-using System.Numerics;
 
 namespace SharpRay.Gui
 {

@@ -1,9 +1,4 @@
-﻿using Raylib_cs;
-using static Raylib_cs.Raylib;
-using SharpRay.Entities;
-using System.Numerics;
-
-namespace SharpRay.Gui
+﻿namespace SharpRay.Gui
 {
     /// <summary>
     /// A simple text label. Postion is the center from which the label is drawn. 

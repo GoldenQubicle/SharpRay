@@ -1,6 +1,4 @@
-﻿using Raylib_cs;
-
-namespace SharpRay.Core
+﻿namespace SharpRay.Core
 {
     /// <summary>
     /// Configuration for the SharpRay application, passed in <seealso cref="Application.Initialize(SharpRayConfig)"/>

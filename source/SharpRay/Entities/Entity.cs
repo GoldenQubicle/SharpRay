@@ -1,11 +1,5 @@
-﻿using SharpRay.Eventing;
-using SharpRay.Interfaces;
-using SharpRay.Listeners;
-using System.Numerics;
-
-namespace SharpRay.Entities
+﻿namespace SharpRay.Entities
 {
-
     public abstract class Entity : IKeyBoardListener, IMouseListener, IHasUpdate, IHasRender
     {
         public string Tag { get; set; }

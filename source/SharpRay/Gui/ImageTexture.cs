@@ -1,8 +1,4 @@
-﻿using Raylib_cs;
-using static Raylib_cs.Raylib;
-using SharpRay.Entities;
-
-namespace SharpRay.Gui
+﻿namespace SharpRay.Gui
 {
     public sealed class ImageTexture : GuiEntity
     {

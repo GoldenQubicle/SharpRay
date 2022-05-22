@@ -1,6 +1,4 @@
-﻿using SharpRay.Collision;
-
-namespace SharpRay.Interfaces
+﻿namespace SharpRay.Interfaces
 {
     public interface IHasCollider
     {

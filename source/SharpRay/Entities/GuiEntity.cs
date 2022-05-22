@@ -1,8 +1,4 @@
-﻿using SharpRay.Eventing;
-using System;
-using System.Numerics;
-
-namespace SharpRay.Entities
+﻿namespace SharpRay.Entities
 {
     /// <summary>
     /// Classes implementing GuiEntity can enable mouse focus by overriding ContainsPoint, and calling base.OnMouseEvent

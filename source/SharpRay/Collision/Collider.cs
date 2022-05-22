@@ -1,9 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Interfaces;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-
-namespace SharpRay.Collision
+﻿namespace SharpRay.Collision
 {
     public abstract class Collider : ICollider, IHasRender
     {
