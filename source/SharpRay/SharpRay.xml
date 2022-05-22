@@ -145,6 +145,11 @@
             <param name="targetMax"></param>
             <returns></returns>
         </member>
+        <member name="M:SharpRay.Core.Audio.StopAllSounds">
+            <summary>
+            Stop all sounds from playing. 
+            </summary>
+        </member>
         <member name="T:SharpRay.Core.SharpRayConfig">
             <summary>
             Configuration for the SharpRay application, passed in <seealso cref="M:SharpRay.Core.Application.Initialize(SharpRay.Core.SharpRayConfig)"/>

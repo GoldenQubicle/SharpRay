@@ -16,5 +16,11 @@
             if (string.IsNullOrEmpty(name)) return;
             if (Sounds.ContainsKey(name)) PlaySound(Sounds[name]);
         }
+
+        /// <summary>
+        /// Stop all sounds from playing. 
+        /// </summary>
+        public static void StopAllSounds() => Sounds.Values.Where(s => IsSoundPlaying(s)).ToList().ForEach(s => StopSound(s));
+        
     }
 }

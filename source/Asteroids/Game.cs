@@ -163,6 +163,8 @@ namespace Asteroids
 
         private static void ResetGame()
         {
+            StopAllSounds();
+
             //remove entities
             RemoveEntitiesOfType<Ship>();
             RemoveEntitiesOfType<Bullet>();
