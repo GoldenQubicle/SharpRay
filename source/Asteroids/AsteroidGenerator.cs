@@ -1,12 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using System;
-using System.Numerics;
-using static SharpRay.Core.Application;
-using static Raylib_cs.Raylib;
-
-namespace Asteroids
+﻿namespace Asteroids
 {
     public class AsteroidGenerator : GameEntity
     {
