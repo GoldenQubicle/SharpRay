@@ -112,10 +112,10 @@
             {
                 HasTakenDamage = true;
 
-                EmitEvent(new ShipHitAsteroid
-                {
-                    Asteroid = a,
-                });
+                //EmitEvent(new ShipHitAsteroid
+                //{
+                //    Asteroid = a,
+                //});
             }
         }
 

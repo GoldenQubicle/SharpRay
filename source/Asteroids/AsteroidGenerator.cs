@@ -9,6 +9,7 @@
         private const string Brown = nameof(Brown);
         private const string Grey = nameof(Grey);
 
+        private float radius = Game.WindowHeight ;
         public AsteroidGenerator()
         {
             var theta = MathF.Tau / 10;
@@ -16,8 +17,14 @@
             {
                 var x = MathF.Cos(i * theta) * radius;
                 var y = MathF.Sin(i * theta) * radius;
+                
                 var pos = new Vector2(x, y) + new Vector2(Game.WindowWidth / 2, Game.WindowHeight / 2);
-                AddEntity(new Asteroid(pos, Vector2.Zero, 3, GetRandomAsteroidTexture(Medium)));
+
+                var target = new Vector2(150 , Game.WindowHeight /2);
+                var heading = Vector2.Normalize(target - pos);
+                heading *= new Vector2(5, 5);
+
+                AddEntity(new Asteroid(pos, heading, 3, GetRandomAsteroidTexture(Medium)));
             }
         }
 
@@ -37,22 +44,22 @@
                         AddEntity(new Asteroid(ahw.Asteroid.Position, heading, stage, GetRandomAsteroidTexture(size)), OnGameEvent);
                     }
                 }
-
                 RemoveEntity(ahw.Asteroid);
             }
         }
 
-        private float radius = Game.WindowWidth/3;
+        
 
         public override void Render()
         {
             var theta = MathF.Tau / 10;
-            for(var i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var x = MathF.Cos(i * theta) * radius;
                 var y = MathF.Sin(i * theta) * radius;
                 var pos = new Vector2(x, y) + new Vector2(Game.WindowWidth / 2, Game.WindowHeight / 2);
                 DrawCircleV(pos, 5, Color.BLUE);
+                DrawText(i.ToString(), (int)pos.X, (int)pos.Y,  10, Color.RAYWHITE);
             }
         }
 
