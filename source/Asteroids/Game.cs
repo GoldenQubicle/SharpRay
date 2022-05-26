@@ -75,7 +75,7 @@ namespace Asteroids
             await LoadAssets();
 
             AddEntity(new StarFieldGenerator());
-            AddEntity(new AsteroidGenerator());
+            AddEntity(new AsteroidManager());
             //AddEntity(CreateShipSelectionMenu());
             StartGame();
             Run();
@@ -90,8 +90,8 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, 1.5f), AsteroidGenerator.Large), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidGenerator.Tiny), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, 1.5f), AsteroidManager.Large), OnGameEvent);
+            AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -104,7 +104,7 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= sha.Asteroid.Stage * 2;
+                Health -= AsteroidManager.Stages[sha.Asteroid.Stage] * 2;
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
@@ -142,7 +142,7 @@ namespace Asteroids
             {
                 var bullet = new Bullet(sfb.Origin, sfb.Angle, sfb.Force);
                 bullet.EmitEvent += GetEntityByTag<GuiContainer>(GuiScoreOverlay).OnGameEvent;
-                bullet.EmitEvent += AsteroidGenerator.OnGameEvent;
+                bullet.EmitEvent += AsteroidManager.OnGameEvent;
                 AddEntity(bullet, OnGameEvent);
             }
 
@@ -151,13 +151,13 @@ namespace Asteroids
                 RemoveEntity(ble.Bullet);
             }
 
-            if (e is AsteroidHitByWeapon ahw)
+            if (e is AsteroidDestroyed ad)
             {
-                Score += ahw.Asteroid.Stage;
+                Score += AsteroidManager.Stages[ad.Asteroid.Stage];
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
-                AsteroidGenerator.OnGameEvent(ahw);// kinda silly
-                RemoveEntity(ahw.Bullet);
+                AsteroidManager.OnGameEvent(ad);// kinda silly
+                RemoveEntity(ad.Bullet);
             }
         }
 
@@ -186,10 +186,10 @@ namespace Asteroids
                     RemoveEntitiesOfType<Asteroid>();
                     RemoveEntitiesOfType<Ship>();
                     AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), AsteroidGenerator.Large), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), AsteroidGenerator.Tiny), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), AsteroidGenerator.Medium), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), AsteroidGenerator.Small), OnGameEvent);
+                    AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), AsteroidManager.Large), OnGameEvent);
+                    AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), AsteroidManager.Tiny), OnGameEvent);
+                    AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), AsteroidManager.Medium), OnGameEvent);
+                    AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), AsteroidManager.Small), OnGameEvent);
                 }
 
                 if (kp.KeyboardKey == KeyboardKey.KEY_M)

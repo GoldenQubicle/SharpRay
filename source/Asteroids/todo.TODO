@@ -33,6 +33,11 @@
 
 ✔ fix audio playing after game over bug @created(22-05-2022 15:50) @done(22-05-2022 17:47)
 
+✔ asteroids take damage @created(26-05-2022 17:49) @done(26-05-2022 20:10)
+
+☐ different weapons @created(26-05-2022 20:19)
+    increase score with each hit, or only as the asteroid is destroyed?
+
 ☐ sort audio files @created(14-05-2022 19:51)
 
 ☐ asteroid spawn generator thing @created(14-05-2022 19:40)

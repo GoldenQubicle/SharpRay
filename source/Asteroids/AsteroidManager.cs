@@ -1,6 +1,6 @@
 ﻿namespace Asteroids
 {
-    public class AsteroidGenerator : GameEntity
+    public class AsteroidManager : GameEntity
     {
         public const string Large = "big";
         public const string Medium = "med";
@@ -22,13 +22,13 @@
 
         public static Dictionary<string, int> HitPoints { get; } = new()
         {
-            { Large, 4 },
-            { Medium, 3 },
-            { Small, 2 },
+            { Large, 8 },
+            { Medium, 5 },
+            { Small, 3 },
             { Tiny, 1 }
         };
 
-        public AsteroidGenerator()
+        public AsteroidManager()
         {
             var theta = MathF.Tau / 10;
             for (var i = 0; i < 10; i++)
@@ -48,11 +48,11 @@
 
         public static void OnGameEvent(IGameEvent e)
         {
-            if (e is AsteroidHitByWeapon ahw)
+            if (e is AsteroidDestroyed ahw)
             {
-                if (ahw.Asteroid.Stage > 1)
+                if (Stages[ahw.Asteroid.Stage] > 1)
                 {
-                    var stage = ahw.Asteroid.Stage - 1;
+                    var stage = Stages[ahw.Asteroid.Stage] - 1;
                     var size = stage == 3 ? Medium : stage == 2 ? Small : Tiny;
                     var amount = stage == 3 ? 7 : stage == 2 ? 5 : 3;
                     for (var i = 1; i <= amount; i++)

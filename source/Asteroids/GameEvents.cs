@@ -12,7 +12,7 @@
         public float Force { get; init; }
     }
 
-    public struct AsteroidHitByWeapon : IGameEvent
+    public struct AsteroidDestroyed : IGameEvent
     {
         public Asteroid Asteroid { get; init; }
         public Bullet Bullet { get; init; }

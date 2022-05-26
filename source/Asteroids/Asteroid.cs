@@ -3,25 +3,27 @@
     public class Asteroid : GameEntity, IHasCollider, IHasCollision
     {
         public ICollider Collider { get; }
+        public string Stage { get; }
         public Vector2 Heading { get; private set; }
-        private Vector2 offset;
-        private Vector2 texturePos;
-        public int Stage { get; }
+
         private int HitPoints { get; set; }
-        private readonly Texture2D texture;
+        private Vector2 TextureOffset { get; }
+        private Vector2 TexturePos { get; set; }
+        private Texture2D Texture { get; }
+
         private float RotationAngle; //inital orientation
         private float RotationSpeed;// in radians per fixed update
         private bool HasSpawned;
 
-        public Asteroid(Vector2 position, Vector2 heading, string size)
+        public Asteroid(Vector2 position, Vector2 heading, string stage)
         {
             Position = position;
-            texture = AsteroidGenerator.GetRandomAsteroidTexture(size);
-            Size = new Vector2(texture.width, texture.height);
+            Texture = AsteroidManager.GetRandomAsteroidTexture(stage);
+            Size = new Vector2(Texture.width, Texture.height);
             Heading = heading;
-            Stage = AsteroidGenerator.Stages[size];
-            HitPoints = AsteroidGenerator.HitPoints[size];
-            offset = Size / 2;
+            Stage = stage;
+            HitPoints = AsteroidManager.HitPoints[stage];
+            TextureOffset = Size / 2;
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
             Collider = new RectCollider { Position = Position, Size = Size };
@@ -31,10 +33,9 @@
         public override void Update(double deltaTime)
         {
             Position += Heading;
-            texturePos = Vector2.Transform(Position - offset, Matrix3x2.CreateRotation(RotationAngle, Position));
-            (Collider as RectCollider).Position = Position - offset;
+            TexturePos = Vector2.Transform(Position - TextureOffset, Matrix3x2.CreateRotation(RotationAngle, Position));
+            (Collider as RectCollider).Position = Position - TextureOffset;
             RotationAngle += RotationSpeed;
-
 
             Heading = Position switch
             {
@@ -53,15 +54,16 @@
         {
             if (e is Bullet b)
             {
+                //depending on weapon type obviously
                 HitPoints -= 1;
 
                 EmitEvent(new BulletLifeTimeExpired
                 {
                     Bullet = b
                 });
-                
-                if(HitPoints == 0)
-                    EmitEvent(new AsteroidHitByWeapon
+
+                if (HitPoints == 0)
+                    EmitEvent(new AsteroidDestroyed
                     {
                         Asteroid = this,
                         Bullet = b
@@ -72,7 +74,13 @@
 
         public override void Render()
         {
-            DrawTextureEx(texture, texturePos, RAD2DEG * RotationAngle, 1f, Color.WHITE);
+            DrawTextureEx(Texture, TexturePos, RAD2DEG * RotationAngle, 1f, Color.WHITE);
+
+            var startPos = Position - new Vector2(Size.X / 2, -Size.Y / 2);
+            var endPos = Position + new Vector2(Size.X / 2, Size.Y / 2);
+            var a = MapRange(HitPoints, 0, AsteroidManager.HitPoints[Stage], 0, 1);
+            var l = Vector2.Lerp(startPos, endPos, a);
+            DrawLineEx(startPos, l, 5, Color.GREEN);
 
             //DEBUG
             //Collider.Render();
