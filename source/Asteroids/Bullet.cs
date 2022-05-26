@@ -1,6 +1,6 @@
 ﻿namespace Asteroids
 {
-    public class Bullet : GameEntity, IHasCollider, IHasCollision
+    public class Bullet : GameEntity, IHasCollider
     {
         private Vector2 acceleration;
         private readonly float radius = 2f;
@@ -40,18 +40,6 @@
             Position += acceleration;
 
             (Collider as CircleCollider).Center = Position;
-        }
-
-        public void OnCollision(IHasCollider e)
-        {
-            if (e is Asteroid a)
-            {
-                EmitEvent(new AsteroidHitByWeapon
-                {
-                    Asteroid = a,
-                    Bullet = this
-                });
-            }
         }
     }
 }

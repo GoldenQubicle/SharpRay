@@ -1,24 +1,27 @@
 ﻿namespace Asteroids
 {
-    public class Asteroid : GameEntity, IHasCollider
+    public class Asteroid : GameEntity, IHasCollider, IHasCollision
     {
         public ICollider Collider { get; }
         public Vector2 Heading { get; private set; }
         private Vector2 offset;
         private Vector2 texturePos;
         public int Stage { get; }
+        private int HitPoints { get; set; }
         private readonly Texture2D texture;
         private float RotationAngle; //inital orientation
         private float RotationSpeed;// in radians per fixed update
         private bool HasSpawned;
-        public Asteroid(Vector2 position, Vector2 heading, int stage, Texture2D texture)
+
+        public Asteroid(Vector2 position, Vector2 heading, string size)
         {
             Position = position;
+            texture = AsteroidGenerator.GetRandomAsteroidTexture(size);
             Size = new Vector2(texture.width, texture.height);
             Heading = heading;
-            Stage = stage;
+            Stage = AsteroidGenerator.Stages[size];
+            HitPoints = AsteroidGenerator.HitPoints[size];
             offset = Size / 2;
-            this.texture = texture;
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
             Collider = new RectCollider { Position = Position, Size = Size };
@@ -40,13 +43,32 @@
                 _ => Heading
             };
 
-            if (!HasSpawned
-                && Position.X > 0 && Position.X < Game.WindowWidth
-                && Position.Y > 0 && Position.Y < Game.WindowHeight)
+            HasSpawned = Position.X > 0 && Position.X < Game.WindowWidth
+                      && Position.Y > 0 && Position.Y < Game.WindowHeight;
+
+        }
+
+
+        public void OnCollision(IHasCollider e)
+        {
+            if (e is Bullet b)
             {
-                HasSpawned = true;
+                HitPoints -= 1;
+
+                EmitEvent(new BulletLifeTimeExpired
+                {
+                    Bullet = b
+                });
+                
+                if(HitPoints == 0)
+                    EmitEvent(new AsteroidHitByWeapon
+                    {
+                        Asteroid = this,
+                        Bullet = b
+                    });
             }
         }
+
 
         public override void Render()
         {

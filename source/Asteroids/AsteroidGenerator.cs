@@ -2,29 +2,47 @@
 {
     public class AsteroidGenerator : GameEntity
     {
-        private static string Large = "big";
-        private static string Medium = "med";
-        private static string Small = "small";
-        private static string Tiny = "tiny";
+        public const string Large = "big";
+        public const string Medium = "med";
+        public const string Small = "small";
+        public const string Tiny = "tiny";
+
         private const string Brown = nameof(Brown);
         private const string Grey = nameof(Grey);
 
-        private float radius = Game.WindowHeight ;
+        private readonly float spawnRadius = Game.WindowHeight;
+
+        public static Dictionary<string, int> Stages { get; } = new()
+        {
+            { Large, 4 },
+            { Medium, 3 },
+            { Small, 2 },
+            { Tiny, 1 }
+        };
+
+        public static Dictionary<string, int> HitPoints { get; } = new()
+        {
+            { Large, 4 },
+            { Medium, 3 },
+            { Small, 2 },
+            { Tiny, 1 }
+        };
+
         public AsteroidGenerator()
         {
             var theta = MathF.Tau / 10;
             for (var i = 0; i < 10; i++)
             {
-                var x = MathF.Cos(i * theta) * radius;
-                var y = MathF.Sin(i * theta) * radius;
-                
+                var x = MathF.Cos(i * theta) * spawnRadius;
+                var y = MathF.Sin(i * theta) * spawnRadius;
+
                 var pos = new Vector2(x, y) + new Vector2(Game.WindowWidth / 2, Game.WindowHeight / 2);
 
-                var target = new Vector2(150 , Game.WindowHeight /2);
+                var target = new Vector2(150, Game.WindowHeight / 2);
                 var heading = Vector2.Normalize(target - pos);
                 heading *= new Vector2(5, 5);
 
-                AddEntity(new Asteroid(pos, heading, 3, GetRandomAsteroidTexture(Medium)));
+                AddEntity(new Asteroid(pos, heading, Medium), Game.OnGameEvent);
             }
         }
 
@@ -41,29 +59,29 @@
                     {
                         var angle = (MathF.Tau / amount) * i;
                         var heading = ahw.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                        AddEntity(new Asteroid(ahw.Asteroid.Position, heading, stage, GetRandomAsteroidTexture(size)), OnGameEvent);
+                        AddEntity(new Asteroid(ahw.Asteroid.Position, heading, size), Game.OnGameEvent);
                     }
                 }
                 RemoveEntity(ahw.Asteroid);
             }
         }
 
-        
+
 
         public override void Render()
         {
             var theta = MathF.Tau / 10;
             for (var i = 0; i < 10; i++)
             {
-                var x = MathF.Cos(i * theta) * radius;
-                var y = MathF.Sin(i * theta) * radius;
+                var x = MathF.Cos(i * theta) * spawnRadius;
+                var y = MathF.Sin(i * theta) * spawnRadius;
                 var pos = new Vector2(x, y) + new Vector2(Game.WindowWidth / 2, Game.WindowHeight / 2);
                 DrawCircleV(pos, 5, Color.BLUE);
-                DrawText(i.ToString(), (int)pos.X, (int)pos.Y,  10, Color.RAYWHITE);
+                DrawText(i.ToString(), (int)pos.X, (int)pos.Y, 10, Color.RAYWHITE);
             }
         }
 
-        private static Texture2D GetRandomAsteroidTexture(string size) =>
+        public static Texture2D GetRandomAsteroidTexture(string size) =>
             GetTexture2D(Game.meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
 
         private static string PickAsteroidColor() =>
