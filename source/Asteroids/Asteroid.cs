@@ -6,7 +6,7 @@
         public string Stage { get; }
         public Vector2 Heading { get; private set; }
 
-        private int HitPoints { get; set; }
+        public int HitPoints { get; private set; }
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
         private Texture2D Texture { get; }
@@ -22,7 +22,7 @@
             Size = new Vector2(Texture.width, Texture.height);
             Heading = heading;
             Stage = stage;
-            HitPoints = AsteroidManager.HitPoints[stage];
+            HitPoints = AsteroidManager.HitPointsPerLevelStage[Game.Level][stage];
             TextureOffset = Size / 2;
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
@@ -37,10 +37,11 @@
             (Collider as RectCollider).Position = Position - TextureOffset;
             RotationAngle += RotationSpeed;
 
+            //TODO make reflection speed depending on asteroid stage
             Heading = Position switch
             {
-                Vector2 { X: < 0 } or Vector2 { X: > Game.WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * new Vector2(1.15f, 1.15f),
-                Vector2 { Y: < 0 } or Vector2 { Y: > Game.WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * new Vector2(1.15f, 1.15f),
+                Vector2 { X: < 0 } or Vector2 { X: > Game.WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * new Vector2(1.05f, 1.05f),
+                Vector2 { Y: < 0 } or Vector2 { Y: > Game.WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * new Vector2(1.05f, 1.05f),
                 _ => Heading
             };
 
@@ -78,7 +79,7 @@
 
             var startPos = Position - new Vector2(Size.X / 2, -Size.Y / 2);
             var endPos = Position + new Vector2(Size.X / 2, Size.Y / 2);
-            var a = MapRange(HitPoints, 0, AsteroidManager.HitPoints[Stage], 0, 1);
+            var a = MapRange(HitPoints, 0, AsteroidManager.HitPointsPerLevelStage[Game.Level][Stage], 0, 1);
             var l = Vector2.Lerp(startPos, endPos, a);
             DrawLineEx(startPos, l, 5, Color.GREEN);
 

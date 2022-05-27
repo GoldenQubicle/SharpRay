@@ -2,6 +2,7 @@
 {
     public class AsteroidManager : GameEntity
     {
+        //texture keys
         public const string Large = "big";
         public const string Medium = "med";
         public const string Small = "small";
@@ -20,12 +21,41 @@
             { Tiny, 1 }
         };
 
-        public static Dictionary<string, int> HitPoints { get; } = new()
+        public static Dictionary<int, Dictionary<string, int>> HitPointsPerLevelStage { get; } = new()
         {
-            { Large, 8 },
-            { Medium, 5 },
-            { Small, 3 },
-            { Tiny, 1 }
+            {
+                1,
+                new()
+                {
+                    { Large, 5 },
+                    { Medium, 3 },
+                    { Small, 2 },
+                    { Tiny, 1 }
+                }
+            }
+        };
+
+        private static Dictionary<int, Dictionary<string, int>> AsteroidShatterPerLevelStage = new()
+        {
+            {
+                1,
+                new()
+                {
+                    { Large, 5 },
+                    { Medium, 3 },
+                    { Small, 2 }
+                }
+            }
+        };
+
+        private static Dictionary<int, int> LargeAsteroidSpawnPerLevel = new()
+        {
+            { 1, 2 } // 1st level has 3 total
+        };
+
+        private static Dictionary<int, double> LargestAsteroidSpawnTimePerLevel = new()
+        {
+            { 1, 1500 * SharpRayConfig.TickMultiplier }
         };
 
         public AsteroidManager()
@@ -42,7 +72,31 @@
                 var heading = Vector2.Normalize(target - pos);
                 heading *= new Vector2(5, 5);
 
-                AddEntity(new Asteroid(pos, heading, Medium), Game.OnGameEvent);
+                //AddEntity(new Asteroid(pos, heading, Medium), Game.OnGameEvent);
+            }
+        }
+
+        private double currentTime = 0d;
+        public int Spawned { get; set; } = 1;
+        public override void Update(double deltaTime)
+        {
+            currentTime += deltaTime;
+            if(currentTime > LargestAsteroidSpawnTimePerLevel[Game.Level] 
+                && Spawned <= LargeAsteroidSpawnPerLevel[Game.Level])
+            {
+                var theta = RAD2DEG * (360 / GetRandomValue(1, 36));
+                var x = MathF.Cos(theta) * spawnRadius;
+                var y = MathF.Sin(theta) * spawnRadius;
+
+                var pos = new Vector2(x, y) + new Vector2(Game.WindowWidth / 2, Game.WindowHeight / 2);
+
+                var target = GetEntity<Ship>().Position;
+                var heading = Vector2.Normalize(target - pos);
+                heading *= new Vector2(1.5f, 1.5f);
+
+                AddEntity(new Asteroid(pos, heading, Large), Game.OnGameEvent);
+                currentTime = 0d;
+                Spawned++;
             }
         }
 
@@ -52,9 +106,9 @@
             {
                 if (Stages[ahw.Asteroid.Stage] > 1)
                 {
-                    var stage = Stages[ahw.Asteroid.Stage] - 1;
-                    var size = stage == 3 ? Medium : stage == 2 ? Small : Tiny;
-                    var amount = stage == 3 ? 7 : stage == 2 ? 5 : 3;
+                    var nextStage = Stages[ahw.Asteroid.Stage] - 1;
+                    var size = nextStage == 3 ? Medium : nextStage == 2 ? Small : Tiny;
+                    var amount = AsteroidShatterPerLevelStage[Game.Level][ahw.Asteroid.Stage];
                     for (var i = 1; i <= amount; i++)
                     {
                         var angle = (MathF.Tau / amount) * i;

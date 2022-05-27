@@ -7,7 +7,6 @@
         private readonly float speed = 10f;
         private readonly double lifeTime = 1350 * SharpRayConfig.TickMultiplier;
         private double elapsed;
-        public int Damage { get; } = 25;
         public ICollider Collider { get; }
 
         public Bullet(Vector2 origin, float angle, float initialForce)

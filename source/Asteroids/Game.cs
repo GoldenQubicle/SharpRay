@@ -26,10 +26,10 @@ namespace Asteroids
         public const int WindowHeight = 720;
 
         //Tags
-        private const string GuiShipSelection = nameof(GuiShipSelection);
-        private const string GuiScoreOverlay = nameof(GuiScoreOverlay);
-        private const string GuiHealth = nameof(GuiHealth);
-        private const string GuiScore = nameof(GuiScore);
+        public const string GuiShipSelection = nameof(GuiShipSelection);
+        public const string GuiScoreOverlay = nameof(GuiScoreOverlay);
+        public const string GuiHealth = nameof(GuiHealth);
+        public const string GuiScore = nameof(GuiScore);
         private static string GuiLifeIcon(int n) => $"PlayerLife{n}";
         private static string GetScoreString(int s) => $"Score : {s}";
         private static string GetHealthString(int h) => $"Health : {h}";
@@ -55,10 +55,10 @@ namespace Asteroids
         private static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         private static int Score = 0;
         private static int Health;
-        private static readonly int MaxHealth = 15;
+        private static readonly int MaxHealth = 10;
         private static int PlayerLifes;
         private static readonly int MaxPlayerLifes = 3;
-
+        public static int Level = 1;
 
         static async Task Main(string[] args)
         {
@@ -74,7 +74,7 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             await LoadAssets();
 
-            AddEntity(new StarFieldGenerator());
+            
             AddEntity(new AsteroidManager());
             //AddEntity(CreateShipSelectionMenu());
             StartGame();
@@ -91,7 +91,9 @@ namespace Asteroids
 
             AddEntity(ship, OnGameEvent);
             AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, 1.5f), AsteroidManager.Large), OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
+            //AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
+
+            AddEntity(new StarField());
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -99,12 +101,30 @@ namespace Asteroids
             AddEntity(overlay);
         }
 
+        private static void ResetGame()
+        {
+            StopAllSounds();
+
+            //remove entities
+            RemoveEntitiesOfType<Ship>();
+            RemoveEntitiesOfType<Bullet>();
+            RemoveEntitiesOfType<Asteroid>();
+            RemoveEntitiesOfType<StarField>();
+            RemoveEntity(GetEntityByTag<GuiContainer>(GuiScoreOverlay));
+
+            //reset game stats
+            Score = 0;
+            Health = MaxHealth;
+            PlayerLifes = MaxPlayerLifes;
+            AsteroidManager.Spawned = 1;
+        }
+
         public static void OnGameEvent(IGameEvent e)
         {
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= AsteroidManager.Stages[sha.Asteroid.Stage] * 2;
+                Health -= AsteroidManager.HitPointsPerLevelStage[Level][sha.Asteroid.Stage] * 2;
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
@@ -138,14 +158,6 @@ namespace Asteroids
                 }
             }
 
-            if (e is ShipFiredBullet sfb)
-            {
-                var bullet = new Bullet(sfb.Origin, sfb.Angle, sfb.Force);
-                bullet.EmitEvent += GetEntityByTag<GuiContainer>(GuiScoreOverlay).OnGameEvent;
-                bullet.EmitEvent += AsteroidManager.OnGameEvent;
-                AddEntity(bullet, OnGameEvent);
-            }
-
             if (e is BulletLifeTimeExpired ble)
             {
                 RemoveEntity(ble.Bullet);
@@ -153,7 +165,7 @@ namespace Asteroids
 
             if (e is AsteroidDestroyed ad)
             {
-                Score += AsteroidManager.Stages[ad.Asteroid.Stage];
+                Score += AsteroidManager.HitPointsPerLevelStage[Level][ad.Asteroid.Stage];
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
                 AsteroidManager.OnGameEvent(ad);// kinda silly
@@ -161,21 +173,7 @@ namespace Asteroids
             }
         }
 
-        private static void ResetGame()
-        {
-            StopAllSounds();
-
-            //remove entities
-            RemoveEntitiesOfType<Ship>();
-            RemoveEntitiesOfType<Bullet>();
-            RemoveEntitiesOfType<Asteroid>();
-            RemoveEntity(GetEntityByTag<GuiContainer>(GuiScoreOverlay));
-
-            //reset game stats
-            Score = 0;
-            Health = MaxHealth;
-            PlayerLifes = MaxPlayerLifes;
-        }
+        
 
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
@@ -183,13 +181,13 @@ namespace Asteroids
             {
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)
                 {
-                    RemoveEntitiesOfType<Asteroid>();
-                    RemoveEntitiesOfType<Ship>();
-                    AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), AsteroidManager.Large), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), AsteroidManager.Tiny), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), AsteroidManager.Medium), OnGameEvent);
-                    AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), AsteroidManager.Small), OnGameEvent);
+                    ResetGame();
+                    StartGame();
+                    //AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
+                    //AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), AsteroidManager.Large), OnGameEvent);
+                    //AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), AsteroidManager.Tiny), OnGameEvent);
+                    //AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), AsteroidManager.Medium), OnGameEvent);
+                    //AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), AsteroidManager.Small), OnGameEvent);
                 }
 
                 if (kp.KeyboardKey == KeyboardKey.KEY_M)
@@ -221,7 +219,7 @@ namespace Asteroids
                 {
                     Tag = GuiScore,
                     Position = new Vector2(WindowWidth - 200, 35),
-                    Size = new Vector2(170, 50),
+                    Size = new Vector2(200, 50),
                     Text = GetScoreString(Score),
                     TextColor = Color.RAYWHITE,
                     FillColor = Color.BLANK,

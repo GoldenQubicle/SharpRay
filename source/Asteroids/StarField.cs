@@ -1,6 +1,6 @@
 ﻿namespace Asteroids
 {
-    public class StarFieldGenerator : GameEntity
+    public class StarField : GameEntity
     {
         private struct Star
         {
@@ -16,36 +16,47 @@
 
         private Texture2D texture;
         private Vector2 textureOffset;
-        private IList<Star> stars;
+        private List<Star> stars = new();
 
-        private IList<Color> starColors = new List<Color>
+        private List<Color> starColors = new()
         {
-            Color.YELLOW, Color.GOLD, Color.ORANGE,
-            Color.PINK, Color.PURPLE, Color.DARKPURPLE,
-            Color.DARKBLUE, Color.DARKGRAY, Color.MAGENTA
+            Color.YELLOW,
+            Color.GOLD,
+            Color.ORANGE,
+            Color.PINK,
+            Color.PURPLE,
+            Color.DARKPURPLE,
+            Color.DARKBLUE,
+            Color.DARKGRAY,
+            Color.MAGENTA
         };
 
-        public StarFieldGenerator()
+        private List<Func<float, float, float, float, float>> scaleEasings = new()
+        {
+            Easings.EaseBounceInOut,
+            Easings.EaseBackInOut,
+        };
+
+        public StarField()
         {
             RenderLayer = Game.RlBackground;
             texture = GetTexture2D(Game.starTexture);
             textureOffset = new Vector2(texture.width / 2, texture.height / 2);
+            Generate();
+        }
 
-            var scaleEasings = new List<Func<float, float, float, float, float>>
-            {
-               Easings.EaseBounceInOut,
-               Easings.EaseBackInOut,
-            };
-
+        public void Generate()
+        {
+            stars.Clear();
             stars = Enumerable.Range(0, 75)
-                .Select(s => new Star
-                {
-                    Position = new Vector2(GetRandomValue(0, Game.WindowWidth), GetRandomValue(0, Game.WindowHeight)),
-                    Easing = new Easing(scaleEasings[GetRandomValue(0, 1)], GetRandomValue(3500, 7500), isRepeated: true),
-                    ScaleRange = GetRandomValue(3, 17) / 100f,
-                    Color = starColors[GetRandomValue(0, starColors.Count - 1)],
-                    IsDiagonal = GetRandomValue(0, 1) == 1,
-                }).ToList();
+               .Select(s => new Star
+               {
+                   Position = new Vector2(GetRandomValue(0, Game.WindowWidth), GetRandomValue(0, Game.WindowHeight)),
+                   Easing = new Easing(scaleEasings[GetRandomValue(0, 1)], GetRandomValue(3500, 7500), isRepeated: true),
+                   ScaleRange = GetRandomValue(3, 17) / 100f,
+                   Color = starColors[GetRandomValue(0, starColors.Count - 1)],
+                   IsDiagonal = GetRandomValue(0, 1) == 1,
+               }).ToList();
 
             foreach (var star in stars)
                 star.Easing.SetElapsedTime(GetRandomValue(3500, 7500));

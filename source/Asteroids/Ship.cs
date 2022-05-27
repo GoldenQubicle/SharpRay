@@ -3,6 +3,7 @@
     public class Ship : GameEntity, IHasCollider, IHasCollision
     {
         public ICollider Collider { get; }
+        private IPrimaryWeapon PrimaryWeapon { get; }
 
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
@@ -33,6 +34,7 @@
         private bool hasRotation;
         private string direction;
 
+        private float scale = .75f;
         private readonly Vector2 offset; //used for render position textures
         public Texture2D ShipTexture { get; set; }
         public Texture2D DamgageTexture { get; set; }
@@ -43,10 +45,9 @@
             Position = position;
             Size = new Vector2(texture.width, texture.height);
             RenderLayer = Game.RlShip;
-
             ShipTexture = texture;
-            offset = new Vector2(texture.width / 2, texture.height / 2);
-            radius = Size.X / 2;
+            offset = new Vector2(texture.width / 2, texture.height / 2) * scale;
+            radius = (Size.X / 2) * scale;
 
             Collider = new CircleCollider
             {
@@ -54,6 +55,8 @@
                 Radius = radius,
                 HitPoints = 16
             };
+
+            PrimaryWeapon = new WeaponSingleShooter();
 
             Motions = new Dictionary<string, Easing>
             {
@@ -112,23 +115,22 @@
             {
                 HasTakenDamage = true;
 
-                //EmitEvent(new ShipHitAsteroid
-                //{
-                //    Asteroid = a,
-                //});
+                EmitEvent(new ShipHitAsteroid
+                {
+                    Asteroid = a,
+                });
             }
         }
 
         public override void Render()
         {
             var texPos = Vector2.Transform(Position - offset, Matrix3x2.CreateRotation(rotation, Position));
-
-            DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, 1f, Color.WHITE);
+            DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, scale, Color.WHITE);
 
             if (HasTakenDamage)
-                DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, 1f, Color.DARKGRAY);
+                DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DARKGRAY);
 
-            //Collider.Render();
+            Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);
             //DrawCircleV(tp, 5, Color.DARKPURPLE);
         }
@@ -152,7 +154,7 @@
 
             //obvisouly this will change w primary & secondary weapon
             if (e is KeySpaceBarPressed)
-                EmitEvent(new ShipFiredBullet
+                PrimaryWeapon.Fire(new ShipFiredBullet
                 {
                     Origin = Position + new Vector2(MathF.Cos(rotation - HalfPI) * radius, MathF.Sin(rotation - HalfPI) * radius),
                     Angle = rotation - HalfPI,
