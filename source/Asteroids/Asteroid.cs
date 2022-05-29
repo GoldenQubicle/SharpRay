@@ -19,7 +19,7 @@
         private readonly float scale;
         private int damage;
 
-        public Asteroid(AsteroidSize size, AsteroidType type, int hp, Vector2 position, Vector2 heading)
+        public Asteroid(AsteroidSize size, AsteroidType type, Vector2 position, Vector2 heading)
         {
             aSize = size;
             aType = type;
@@ -32,7 +32,7 @@
             TextureOffset = Size / 2;
 
 
-            HitPoints = hp;
+            HitPoints = AsteroidManager.GetHitPoints(size, type);
             Position = position;
             Heading = heading;
             RotationAngle = GetRandomValue(-50, 50) / 1000f;

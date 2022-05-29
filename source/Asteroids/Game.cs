@@ -90,7 +90,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(AsteroidSize.Big, AsteroidType.Dirt, 5, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
+            AddEntity(new Asteroid(AsteroidSize.Big, AsteroidType.Stone, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
             //AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
 
             AddEntity(new StarField());

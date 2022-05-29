@@ -1,15 +1,12 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Asteroids
+﻿namespace Asteroids
 {
     public enum AsteroidSize
     {
-        Tiny,
-        Small,
-        Medium,
-        Large,
-        Big
+        Tiny = 1,
+        Small = 2,
+        Medium = 3,
+        Large = 4,
+        Big = 5
     }
 
     public enum AsteroidType
@@ -34,86 +31,89 @@ namespace Asteroids
 
         private readonly float spawnRadius = Game.WindowHeight;
 
-        private static int GetHitPoints(AsteroidSize size, AsteroidType type) => (size, type) switch
+        public static int GetHitPoints(AsteroidSize size, AsteroidType type) => (size, type) switch
         {
-            (AsteroidSize.Big, AsteroidType.Dirt) => 5,
-            (AsteroidSize.Large, AsteroidType.Dirt) => 4,
-            (AsteroidSize.Medium, AsteroidType.Dirt) => 3,
-            (AsteroidSize.Small, AsteroidType.Dirt) => 2,
-            (AsteroidSize.Tiny, AsteroidType.Dirt) => 1,
+            (_, AsteroidType.Dirt) => (int)size,
+            (_, AsteroidType.Stone) => (int)size * 2,
+            (_, AsteroidType.Emerald) => (int)size * 3,
+            (_, AsteroidType.Ruby) => (int)size * 4,
+            (_, AsteroidType.Saphire) => (int)size * 5
         };
 
-        private static List<AsteroidData> GetSpawns(AsteroidSize size, AsteroidType type) => (size, type) switch
+        private static List<(AsteroidSize Size, AsteroidType Type)> GetSpawns(AsteroidSize size, AsteroidType type) => (size, type) switch
         {
-            (AsteroidSize.Big, AsteroidType.Dirt) => new()
+            (_, AsteroidType.Dirt) => size switch
             {
-                new AsteroidData(AsteroidSize.Large, AsteroidType.Dirt),
-                new AsteroidData(AsteroidSize.Medium, AsteroidType.Dirt),
-                new AsteroidData(AsteroidSize.Large, AsteroidType.Dirt),
-                new AsteroidData(AsteroidSize.Medium, AsteroidType.Dirt),
-                new AsteroidData(AsteroidSize.Small, AsteroidType.Dirt),
-                new AsteroidData(AsteroidSize.Medium, AsteroidType.Dirt),
+                AsteroidSize.Big => new()
+                {
+                    (AsteroidSize.Large, AsteroidType.Dirt),
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+                    (AsteroidSize.Large, AsteroidType.Dirt),
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+                    (AsteroidSize.Large, AsteroidType.Dirt),
+                },
+                AsteroidSize.Large => new()
+                {
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+
+                },
+                AsteroidSize.Medium => new() 
+                {
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Tiny, AsteroidType.Dirt),
+                },
+                AsteroidSize.Small => new()
+                {
+                    (AsteroidSize.Tiny, AsteroidType.Dirt),
+                    (AsteroidSize.Tiny, AsteroidType.Dirt),
+                },
+                AsteroidSize.Tiny => new() { },
             },
-            (AsteroidSize.Large, AsteroidType.Dirt) => new()
+
+            (_, AsteroidType.Stone) => size switch
             {
-                new AsteroidData(AsteroidSize.Medium, AsteroidType.Dirt),
+                AsteroidSize.Big => new()
+                {
+                    (AsteroidSize.Large, AsteroidType.Stone),
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+                    (AsteroidSize.Large, AsteroidType.Stone),
+                    (AsteroidSize.Medium, AsteroidType.Dirt),
+                    (AsteroidSize.Large, AsteroidType.Stone),
+                },
+                AsteroidSize.Large => new()
+                {
+                    (AsteroidSize.Medium, AsteroidType.Stone),
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Medium, AsteroidType.Stone),
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Medium, AsteroidType.Stone),
 
-            },
-            (AsteroidSize.Medium, AsteroidType.Dirt) => new() { },
-            (AsteroidSize.Small, AsteroidType.Dirt) => new() { },
-            (AsteroidSize.Tiny, AsteroidType.Dirt) => new() { },
+                },
+                AsteroidSize.Medium => new()
+                {
+                    (AsteroidSize.Small, AsteroidType.Stone),
+                    (AsteroidSize.Small, AsteroidType.Dirt),
+                    (AsteroidSize.Tiny, AsteroidType.Stone),
+                },
+                AsteroidSize.Small => new()
+                {
+                    (AsteroidSize.Tiny, AsteroidType.Stone),
+                    (AsteroidSize.Tiny, AsteroidType.Dirt),
+                },
+                AsteroidSize.Tiny => new() 
+                {
+                    (AsteroidSize.Tiny, AsteroidType.Dirt),
+                    (AsteroidSize.Tiny, AsteroidType.Dirt),
+                },
+            }
+
         };
 
-        protected record AsteroidData(AsteroidSize Size, AsteroidType Type)
-        {
-            public int Hitpoints { get => GetHitPoints(Size, Type); }
-            public List<AsteroidData> Spawns { get => GetSpawns(Size, Type); }
-        }
-
-        private static readonly List<AsteroidData> AsteroidDefinitions = new()
-        {
-            new AsteroidData(AsteroidSize.Big, AsteroidType.Dirt),
-
-            //new AsteroidData
-            //{
-            //    Size = AsteroidSize.Large,
-            //    Type = AsteroidType.Dirt,
-            //    Hitpoints = 4,
-            //    Spawns = new()
-            //    {
-            //        (AsteroidSize.Medium, AsteroidType.Dirt),
-            //        (AsteroidSize.Small, AsteroidType.Dirt),
-            //    }
-            //},
-            //new AsteroidData
-            //{
-            //    Size = AsteroidSize.Medium,
-            //    Type = AsteroidType.Dirt,
-            //    Hitpoints = 3,
-            //    Spawns = new()
-            //    {
-            //        (AsteroidSize.Small, AsteroidType.Dirt),
-            //        (AsteroidSize.Tiny, AsteroidType.Dirt),
-            //    }
-            //},
-            //new AsteroidData
-            //{
-            //    Size = AsteroidSize.Small,
-            //    Type = AsteroidType.Dirt,
-            //    Hitpoints = 2,
-            //    Spawns = new()
-            //    {
-            //        (AsteroidSize.Tiny, AsteroidType.Dirt),
-            //    }
-            //},
-            //new AsteroidData
-            //{
-            //    Size = AsteroidSize.Tiny,
-            //    Type = AsteroidType.Dirt,
-            //    Hitpoints = 1,
-            //    Spawns = new() { }
-            //}
-        };
 
         public static (Texture2D texture, float scale, Color color) GetRenderData(AsteroidSize size, AsteroidType type) => type switch
         {
@@ -147,12 +147,8 @@ namespace Asteroids
             _ => throw new ArgumentOutOfRangeException($"No texture key found for asteroid size {size}")
         };
 
-        public static int GetTotalHitPoints(AsteroidSize size, AsteroidType type)
-        {
-            var a = AsteroidDefinitions.First(a => a.Size == size && a.Type == type);
-            return a.Hitpoints + a.Spawns.Sum(t => AsteroidDefinitions.First(ad => ad.Size == t.Size && ad.Type == t.Type).Hitpoints);
-        }
-
+        public static int GetTotalHitPoints(AsteroidSize size, AsteroidType type) =>
+               GetHitPoints(size, type) + GetSpawns(size, type).Sum(t => GetHitPoints(t.Size, t.Type));
 
 
         public AsteroidManager()
@@ -169,8 +165,6 @@ namespace Asteroids
                 var heading = Vector2.Normalize(target - pos);
                 heading *= new Vector2(5, 5);
 
-                var defs = JsonSerializer.Serialize(AsteroidDefinitions);
-                File.WriteAllText(Path.Combine(AssestsFolder, "AsteroidDefitions.json"), defs);
                 //AddEntity(new Asteroid(pos, heading, Medium), Game.OnGameEvent);
             }
         }
@@ -203,28 +197,15 @@ namespace Asteroids
         {
             if (e is AsteroidDestroyed ahw)
             {
-                var a = AsteroidDefinitions.First(a => ahw.Asteroid.aSize == a.Size && ahw.Asteroid.aType == a.Type);
+                var spawns = GetSpawns(ahw.Asteroid.aSize, ahw.Asteroid.aType);
 
-                foreach (var (s, i) in a.Spawns.Select((s, i) => (s, i)))
+                foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
                 {
-                    var angle = (MathF.Tau / a.Spawns.Count) * i;
+                    var angle = (MathF.Tau / spawns.Count) * i;
                     var heading = ahw.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                    var hp = AsteroidDefinitions.First(ad => ad.Size == s.Size && ad.Type == s.Type).Hitpoints;
-                    AddEntity(new Asteroid(s.Size, s.Type, hp, ahw.Asteroid.Position, heading), Game.OnGameEvent);
+                    AddEntity(new Asteroid(s.Size, s.Type, ahw.Asteroid.Position, heading), Game.OnGameEvent);
                 }
 
-                //if (Stages[ahw.Asteroid.Stage] > 1)
-                //{
-                //    var nextStage = Stages[ahw.Asteroid.Stage] - 1;
-                //    var size = nextStage == 3 ? tkMedium : nextStage == 2 ? tkSmall : tkTiny;
-                //    var amount = AsteroidShatterPerLevelStage[Game.Level][ahw.Asteroid.Stage];
-                //    for (var i = 1; i <= amount; i++)
-                //    {
-                //        var angle = (MathF.Tau / amount) * i;
-                //        var heading = ahw.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                //        AddEntity(new Asteroid(ahw.Asteroid.Position, heading, size), Game.OnGameEvent);
-                //    }
-                //}
                 RemoveEntity(ahw.Asteroid);
             }
         }
