@@ -1,4 +1,4 @@
-✔ create menu screen @created(23-04-2022 16:46) @done(14-05-2022 20:56)
+    ✔ create menu screen @created(23-04-2022 16:46) @done(14-05-2022 20:56)
     ✔ pick ship type & color @created(23-04-2022 16:46) @done(30-04-2022 19:35)
         ✔ load shape ship textures @created(23-04-2022 17:10) @done(23-04-2022 19:23)
 
@@ -32,39 +32,75 @@
     in order to determine how to flip it
 
 ✔ fix audio playing after game over bug @created(22-05-2022 15:50) @done(22-05-2022 17:47)
-
 ✔ asteroids take damage @created(26-05-2022 17:49) @done(26-05-2022 20:10)
-
-☐ different weapons @created(26-05-2022 20:19)
-    increase score with each hit, or only as the asteroid is destroyed?
-
-☐ sort audio files @created(14-05-2022 19:51)
-
-☐ asteroid spawn generator thing @created(14-05-2022 19:40)
+✔ asteroid spawn generator thing @created(14-05-2022 19:40) @done(28-05-2022 22:13)
     come in waves ..?
     spawn first big asteroid towards player position, in fact what about always spawning towards the current player position
     so to discourage camping in the corner or something
     can also consider breaking into more and more pieces as waves increase. atm it's hardcoded like 7 - 5 - 3
     also, atm drawing all asteroid at scale 1, can play with that to have more variety size wise 
     and in addition the 'reflection' speed bump is now 1.5, could also vary with size?!
+☐ MVP Game Design, going w different levels.  @created(28-05-2022 20:20)
+    asteroids have fixed number of hitpoints & scatter ratio
+    difficulty progression comes from increasing bounciness, meteor spawn rate & size
+    ship damage is sum of meteor hitpoint, e.g. meteor medium 3 hp, spawms 2 small 1 hp = 1 * 3 + 2 * 1 = 5 damage to ship
 
-☐ life loss notification screen @created(14-05-2022 19:38)
-    reset ship position to middle screen? => if so check for nearby asteroids
+    ☐ encapulate level data @created(28-05-2022 20:24)
+        meteor spawn total, rate, size
+        pickups available
+        level of bounciness
+        GetTotalHitpoits
 
-☐ game over menu screen @created(14-05-2022 15:15)
+    ☐ create more meteor variety  @created(28-05-2022 20:25)
+        5 or 7 perhaps in terms of size by scaling texture
+        and what about different 'materials' by texture coloring?
 
+    ☐ parameterize bounciness @created(28-05-2022 20:25)
+        ✔ create fixed upper limit bounciness @created(29-05-2022 12:16) @done(29-05-2022 12:16)
+        ☐ set the number of bounces it takes to reach said limit as an easing? @created(29-05-2022 12:17)
+        @bug edge case when meteor goes into corner. Could fix this by first calculating 
+        the next position (pos + heading), then keep reflecting untill the next position returns the 
+        meteor into screen bounds
 
+    ☐ create some sort of 'splash' screen thing @created(28-05-2022 22:09)
+        to announce level start & end
+        to announce life lost
+        to show pickups..?
 
-☐ powerups..?! @created(30-04-2022 19:36)
-    shield texture! 
-    laser texture!
-    restore ship damage
-    gain extra 
+    ☐ pickups @created(29-05-2022 12:06)
+        ☐ different weapons @created(26-05-2022 20:19)
+            primary
+                3 shooter
+                5 shooter
+            secondary 
+                radius blast 
+                turrets..?
         
-☐ main menu @created(14-05-2022 20:54)
-    audio controls 
-    credits section 
-    possible full screen toggle?!
+        ☐ shield @created(28-05-2022 22:10)
+            half
+            full
+            strenght
+
+        ☐ different ammo @created(29-05-2022 12:06)
+            fire bullet
+            explosive bullet
+            laser blast
+            plasma blast
+
+        ☐ health restoration? @created(29-05-2022 12:08)
+        
+    ☐ show shield & weapon slots on screen @created(28-05-2022 22:10)
+        so player knows about what is available
+
+    ☐ audio @created(14-05-2022 19:51)  
+        go over kenny assets and pick files
+         
+    ☐ game over menu screen @created(14-05-2022 15:15)
+        audio controls 
+        credits section 
+        possible full screen toggle?!
+
+
 
 ☐ refactor asset loading @created(07-05-2022 16:49)
     make a proper asset record to hold the dicitonaries

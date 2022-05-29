@@ -21,6 +21,7 @@
     public struct ShipHitAsteroid : IGameEvent
     {
         public Asteroid Asteroid { get; init; }
+
     }
 
     public struct BulletLifeTimeExpired : IGameEvent

@@ -42,10 +42,10 @@ namespace Asteroids
         internal const int RlGuiScoreOverlay = 4;
 
         //Assets 
-        internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors;
-        internal static Dictionary<int, Dictionary<string, string>> ships;
-        internal static Dictionary<int, Dictionary<string, string>> shipsIcons;
-        internal static Dictionary<int, Dictionary<int, string>> shipDamage;
+        internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors; //[Color][Size][Variation] 
+        internal static Dictionary<int, Dictionary<string, string>> ships; // [Type][Color]
+        internal static Dictionary<int, Dictionary<string, string>> shipsIcons; // [Type][Color]
+        internal static Dictionary<int, Dictionary<int, string>> shipDamage; // [Type][Stage]
 
         public const string starTexture = nameof(starTexture);
 
@@ -90,7 +90,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(new Vector2(800, 100), new Vector2(0, 1.5f), AsteroidManager.Large), OnGameEvent);
+            AddEntity(new Asteroid(AsteroidSize.Big, AsteroidType.Dirt, 5, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
             //AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
 
             AddEntity(new StarField());
@@ -124,13 +124,13 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= AsteroidManager.HitPointsPerLevelStage[Level][sha.Asteroid.Stage] * 2;
+                Health -= AsteroidManager.GetTotalHitPoints(sha.Asteroid.aSize, sha.Asteroid.aType);
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
                 var idx = (int)MapRange(Health, 0, MaxHealth, 3, 1);
 
-                if (idx != ShipDamageTextureIdx)
+                if (idx != ShipDamageTextureIdx && idx <= 3)
                 {
                     ShipDamageTextureIdx = idx;
                     GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[ShipType][ShipDamageTextureIdx]);
@@ -165,7 +165,7 @@ namespace Asteroids
 
             if (e is AsteroidDestroyed ad)
             {
-                Score += AsteroidManager.HitPointsPerLevelStage[Level][ad.Asteroid.Stage];
+                Score += ad.Asteroid.HitPoints;
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
                 AsteroidManager.OnGameEvent(ad);// kinda silly

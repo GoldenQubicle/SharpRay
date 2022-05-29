@@ -3,27 +3,38 @@
     public class Asteroid : GameEntity, IHasCollider, IHasCollision
     {
         public ICollider Collider { get; }
-        public string Stage { get; }
         public Vector2 Heading { get; private set; }
+        public int HitPoints { get; }
+        public AsteroidSize aSize { get; }
+        public AsteroidType aType { get; }
 
-        public int HitPoints { get; private set; }
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
         private Texture2D Texture { get; }
 
-        private float RotationAngle; //inital orientation
-        private float RotationSpeed;// in radians per fixed update
+        private float RotationAngle;  //inital orientation
+        private float RotationSpeed; // in radians per fixed update
         private bool HasSpawned;
+        private Color color;
+        private readonly float scale;
+        private int damage;
 
-        public Asteroid(Vector2 position, Vector2 heading, string stage)
+        public Asteroid(AsteroidSize size, AsteroidType type, int hp, Vector2 position, Vector2 heading)
         {
-            Position = position;
-            Texture = AsteroidManager.GetRandomAsteroidTexture(stage);
-            Size = new Vector2(Texture.width, Texture.height);
-            Heading = heading;
-            Stage = stage;
-            HitPoints = AsteroidManager.HitPointsPerLevelStage[Game.Level][stage];
+            aSize = size;
+            aType = type;
+            var rd = AsteroidManager.GetRenderData(size, type);
+            color = rd.color;
+            scale = rd.scale;
+            Texture = rd.texture;
+
+            Size = new Vector2(Texture.width, Texture.height) * scale;
             TextureOffset = Size / 2;
+
+
+            HitPoints = hp;
+            Position = position;
+            Heading = heading;
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
             Collider = new RectCollider { Position = Position, Size = Size };
@@ -37,11 +48,14 @@
             (Collider as RectCollider).Position = Position - TextureOffset;
             RotationAngle += RotationSpeed;
 
-            //TODO make reflection speed depending on asteroid stage
+            //TODO make reflection speed & max speed depending on asteroid size & game level
+            var bounciness = BouncyLimitReached() ? Vector2.One : new Vector2(1.05f, 1.05f);
+            bool BouncyLimitReached() => Math.Abs(Heading.X) > 10 || Math.Abs(Heading.Y) > 10;
+
             Heading = Position switch
             {
-                Vector2 { X: < 0 } or Vector2 { X: > Game.WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * new Vector2(1.05f, 1.05f),
-                Vector2 { Y: < 0 } or Vector2 { Y: > Game.WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * new Vector2(1.05f, 1.05f),
+                Vector2 { X: < 0 } or Vector2 { X: > Game.WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * bounciness,
+                Vector2 { Y: < 0 } or Vector2 { Y: > Game.WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * bounciness,
                 _ => Heading
             };
 
@@ -56,14 +70,14 @@
             if (e is Bullet b)
             {
                 //depending on weapon type obviously
-                HitPoints -= 1;
+                damage++;
 
                 EmitEvent(new BulletLifeTimeExpired
                 {
                     Bullet = b
                 });
 
-                if (HitPoints == 0)
+                if (damage >= HitPoints)
                     EmitEvent(new AsteroidDestroyed
                     {
                         Asteroid = this,
@@ -75,16 +89,16 @@
 
         public override void Render()
         {
-            DrawTextureEx(Texture, TexturePos, RAD2DEG * RotationAngle, 1f, Color.WHITE);
+            DrawTextureEx(Texture, TexturePos, RAD2DEG * RotationAngle, scale, color);
 
             var startPos = Position - new Vector2(Size.X / 2, -Size.Y / 2);
             var endPos = Position + new Vector2(Size.X / 2, Size.Y / 2);
-            var a = MapRange(HitPoints, 0, AsteroidManager.HitPointsPerLevelStage[Game.Level][Stage], 0, 1);
+            var a = MapRange(damage, HitPoints, 0, 0, 1);
             var l = Vector2.Lerp(startPos, endPos, a);
             DrawLineEx(startPos, l, 5, Color.GREEN);
 
             //DEBUG
-            //Collider.Render();
+            Collider.Render();
             //DrawCircleV(Position, 5, Color.DARKGREEN);
         }
 
