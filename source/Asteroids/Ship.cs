@@ -130,7 +130,7 @@
             if (HasTakenDamage)
                 DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DARKGRAY);
 
-            Collider.Render();
+            //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);
             //DrawCircleV(tp, 5, Color.DARKPURPLE);
         }

@@ -2,7 +2,7 @@
 {
     public abstract class Entity : IKeyBoardListener, IMouseListener, IHasUpdate, IHasRender
     {
-        public string Tag { get; set; }
+        public string Tag { get; set; } = string.Empty;
 
         public Vector2 Size { get; init; }
 

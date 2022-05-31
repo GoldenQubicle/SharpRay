@@ -31,6 +31,9 @@ namespace Asteroids
         public const string GuiScoreOverlay = nameof(GuiScoreOverlay);
         public const string GuiHealth = nameof(GuiHealth);
         public const string GuiScore = nameof(GuiScore);
+        public const string btnStartGame = nameof(btnStartGame);
+        public const string btnShipSelectRight = nameof(btnShipSelectRight);
+        public const string btnShipSelectLeft = nameof(btnShipSelectLeft);
         private static string GuiLifeIcon(int n) => $"PlayerLife{n}";
         private static string GetScoreString(int s) => $"Score : {s}";
         private static string GetHealthString(int h) => $"Health : {h}";
@@ -51,7 +54,6 @@ namespace Asteroids
         private static readonly int MaxHealth = 10;
         private static int PlayerLifes;
         private static readonly int MaxPlayerLifes = 3;
-        public static int Level = 1;
 
         static async Task Main(string[] args)
         {
@@ -66,6 +68,8 @@ namespace Asteroids
 
             SetKeyBoardEventAction(OnKeyBoardEvent);
             await Load();
+
+            File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
             AddEntity(CreateShipSelectionMenu());
@@ -82,10 +86,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(Asteroid.Size.Big, Asteroid.Type.Stone, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
-            //AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
-
-            
+            AddEntity(new Asteroid(Asteroid.Size.Big, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -107,6 +108,8 @@ namespace Asteroids
             Score = 0;
             Health = MaxHealth;
             PlayerLifes = MaxPlayerLifes;
+            
+            //generate new back ground
             GetEntity<StarField>().Generate();
         }
 
@@ -115,7 +118,7 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= Asteroid.GetTotalHitPoints(sha.Asteroid.aSize, sha.Asteroid.aType);
+                Health -= Asteroid.GetDamageDone(sha.Asteroid.aSize, sha.Asteroid.aType);
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
@@ -163,21 +166,18 @@ namespace Asteroids
 
                 //spawn new asteroids from the one destroyed
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.aSize, ad.Asteroid.aType);
-
                 foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
                 {
-                    var angle = (MathF.Tau / spawns.Count) * i;
+                    var angle = MathF.Tau / spawns.Count * i + (DEG2RAD * GetRandomValue(-10, 10));
                     var heading = ad.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
                     AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
                 }
-                
+
                 // remove the entities 
                 RemoveEntity(ad.Asteroid);
                 RemoveEntity(ad.Bullet);
             }
         }
-
-        
 
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
@@ -187,11 +187,6 @@ namespace Asteroids
                 {
                     ResetGame();
                     StartGame();
-                    //AddEntity(new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor])), OnGameEvent);
-                    //AddEntity(new Asteroid(new Vector2(150, 100), new Vector2(.5f, 0), AsteroidManager.Large), OnGameEvent);
-                    //AddEntity(new Asteroid(new Vector2(350, 100), new Vector2(-.5f, 0), AsteroidManager.Tiny), OnGameEvent);
-                    //AddEntity(new Asteroid(new Vector2(800, 500), new Vector2(-.05f, -.5f), AsteroidManager.Medium), OnGameEvent);
-                    //AddEntity(new Asteroid(new Vector2(500, 500), new Vector2(.75f, 1.5f), AsteroidManager.Small), OnGameEvent);
                 }
 
                 if (kp.KeyboardKey == KeyboardKey.KEY_M)
@@ -203,7 +198,7 @@ namespace Asteroids
             }
         }
 
-     
+
 
         private static GuiContainer CreateScoreOverLay()
         {
@@ -271,7 +266,7 @@ namespace Asteroids
                },
                new Button
                {
-                   Tag = "left",
+                   Tag = btnShipSelectLeft,
                    Position = new Vector2(WindowWidth * .2f, WindowHeight / 2),
                    Size = new Vector2(20, 50),
                    BaseColor = Color.LIME,
@@ -284,7 +279,7 @@ namespace Asteroids
                },
                new Button
                {
-                   Tag = "right",
+                   Tag = btnShipSelectRight,
                    Position = new Vector2(WindowWidth * .8f, WindowHeight / 2),
                    Size = new Vector2(20, 50),
                    BaseColor = Color.LIME,
@@ -345,7 +340,7 @@ namespace Asteroids
                },
                new Button
                {
-                   Tag = "start",
+                   Tag = btnStartGame,
                    Text = "Start",
                    TextColor = Color.YELLOW,
                    FontSize = 24,
@@ -386,7 +381,7 @@ namespace Asteroids
 
                    c.GetEntity<Label>().FillColor = color;
                    c.GetEntities<Button>()
-                        .Where(b => b.Tag == "left" || b.Tag == "right" || b.Tag == "start").ToList()
+                        .Where(b => b.Tag.Equals(btnShipSelectLeft) || b.Tag.Equals(btnShipSelectRight) || b.Tag.Equals(btnStartGame)).ToList()
                         .ForEach(b =>
                            {
                                b.BaseColor = color;
@@ -395,6 +390,6 @@ namespace Asteroids
                }
            });
 
-       
+
     }
 }
