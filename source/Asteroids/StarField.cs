@@ -5,11 +5,10 @@
         private struct Star
         {
             public Vector2 Position { get; init; }
-            public bool IsDiagonal { get; init; }
-            public Color Color { get; init; }
             public Easing Easing { get; init; }
+            public Color Color { get; init; }
+            public bool IsDiagonal { get; init; }
             public float ScaleRange { private get; init; }
-
             public float GetScale() =>
                 MapRange(Easing.GetValue(), 0f, 1f, -ScaleRange, ScaleRange);
         }
@@ -18,7 +17,7 @@
         private Vector2 textureOffset;
         private List<Star> stars = new();
 
-        private List<Color> starColors = new()
+        private readonly List<Color> colors = new()
         {
             Color.YELLOW,
             Color.GOLD,
@@ -31,7 +30,7 @@
             Color.MAGENTA
         };
 
-        private List<Func<float, float, float, float, float>> scaleEasings = new()
+        private readonly List<Func<float, float, float, float, float>> scaleEasings = new()
         {
             Easings.EaseBounceInOut,
             Easings.EaseBackInOut,
@@ -40,7 +39,7 @@
         public StarField()
         {
             RenderLayer = Game.RlBackground;
-            texture = GetTexture2D(Game.starTexture);
+            texture = GetTexture2D(starTexture);
             textureOffset = new Vector2(texture.width / 2, texture.height / 2);
             Generate();
         }
@@ -53,9 +52,9 @@
                {
                    Position = new Vector2(GetRandomValue(0, Game.WindowWidth), GetRandomValue(0, Game.WindowHeight)),
                    Easing = new Easing(scaleEasings[GetRandomValue(0, 1)], GetRandomValue(3500, 7500), isRepeated: true),
-                   ScaleRange = GetRandomValue(3, 17) / 100f,
-                   Color = starColors[GetRandomValue(0, starColors.Count - 1)],
+                   Color = colors[GetRandomValue(0, colors.Count - 1)],
                    IsDiagonal = GetRandomValue(0, 1) == 1,
+                   ScaleRange = GetRandomValue(3, 17) / 100f,
                }).ToList();
 
             foreach (var star in stars)
@@ -67,7 +66,6 @@
             foreach (var star in stars)
                 star.Easing.Update(deltaTime);
         }
-
 
         public override void Render()
         {

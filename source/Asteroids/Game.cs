@@ -17,6 +17,7 @@ global using System.Text.RegularExpressions;
 global using System.Collections.Generic;
 global using System.Threading.Tasks;
 global using static Asteroids.GuiEvents;
+global using static Asteroids.Assets;
 
 namespace Asteroids
 {
@@ -41,14 +42,6 @@ namespace Asteroids
         internal const int RlShip = 3;
         internal const int RlGuiScoreOverlay = 4;
 
-        //Assets 
-        internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors; //[Color][Size][Variation] 
-        internal static Dictionary<int, Dictionary<string, string>> ships; // [Type][Color]
-        internal static Dictionary<int, Dictionary<string, string>> shipsIcons; // [Type][Color]
-        internal static Dictionary<int, Dictionary<int, string>> shipDamage; // [Type][Stage]
-
-        public const string starTexture = nameof(starTexture);
-
         //Game state & stats
         private static int ShipType = 3; // 1 | 2 | 3
         private static string ShipColor = "green"; // blue | green | red | orange
@@ -72,12 +65,11 @@ namespace Asteroids
             });
 
             SetKeyBoardEventAction(OnKeyBoardEvent);
-            await LoadAssets();
+            await Load();
 
-            
-            AddEntity(new AsteroidManager());
-            //AddEntity(CreateShipSelectionMenu());
-            StartGame();
+            AddEntity(new StarField());
+            AddEntity(CreateShipSelectionMenu());
+            //StartGame();
             Run();
         }
 
@@ -90,10 +82,10 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(AsteroidSize.Big, AsteroidType.Stone, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
+            AddEntity(new Asteroid(Asteroid.Size.Big, Asteroid.Type.Stone, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
             //AddEntity(new Asteroid(new Vector2(500, 100), new Vector2(5f, 5f), AsteroidManager.Tiny), OnGameEvent);
 
-            AddEntity(new StarField());
+            
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -109,14 +101,13 @@ namespace Asteroids
             RemoveEntitiesOfType<Ship>();
             RemoveEntitiesOfType<Bullet>();
             RemoveEntitiesOfType<Asteroid>();
-            RemoveEntitiesOfType<StarField>();
             RemoveEntity(GetEntityByTag<GuiContainer>(GuiScoreOverlay));
 
             //reset game stats
             Score = 0;
             Health = MaxHealth;
             PlayerLifes = MaxPlayerLifes;
-            AsteroidManager.Spawned = 1;
+            GetEntity<StarField>().Generate();
         }
 
         public static void OnGameEvent(IGameEvent e)
@@ -124,7 +115,7 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= AsteroidManager.GetTotalHitPoints(sha.Asteroid.aSize, sha.Asteroid.aType);
+                Health -= Asteroid.GetTotalHitPoints(sha.Asteroid.aSize, sha.Asteroid.aType);
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
@@ -165,10 +156,23 @@ namespace Asteroids
 
             if (e is AsteroidDestroyed ad)
             {
-                Score += ad.Asteroid.HitPoints;
+                //update gui
+                Score += Asteroid.GetHitPoints(ad.Asteroid.aSize, ad.Asteroid.aType);
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
-                AsteroidManager.OnGameEvent(ad);// kinda silly
+
+                //spawn new asteroids from the one destroyed
+                var spawns = Asteroid.GetSpawns(ad.Asteroid.aSize, ad.Asteroid.aType);
+
+                foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
+                {
+                    var angle = (MathF.Tau / spawns.Count) * i;
+                    var heading = ad.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+                    AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
+                }
+                
+                // remove the entities 
+                RemoveEntity(ad.Asteroid);
                 RemoveEntity(ad.Bullet);
             }
         }
@@ -199,14 +203,7 @@ namespace Asteroids
             }
         }
 
-        private static Texture2D GetRandomAsteroidTexture(string size) =>
-            GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
-
-        private static string PickAsteroidColor() =>
-            GetRandomValue(0, 1) == 1 ? "Grey" : "Brown";
-
-        private static int PickAsteroidVariation(string size) =>
-            size.Equals("big") ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
+     
 
         private static GuiContainer CreateScoreOverLay()
         {
@@ -398,68 +395,6 @@ namespace Asteroids
                }
            });
 
-        private static async Task LoadAssets()
-        {
-            AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
-            AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");
-
-            //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
-            var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");
-            meteors = Directory.GetFiles(AssestsFolder, @"PNG\Meteors\")
-                 .Select(f => meteorRegex.Match(f).Groups)
-                 .Select(g => (color: g["Color"].Value, size: g["Size"].Value, variation: int.Parse(g["Variation"].Value), file: g["0"].Value))
-                 .GroupBy(t => t.color).ToDictionary(g => g.Key, g =>
-                     g.GroupBy(t => t.size).ToDictionary(g => g.Key, g =>
-                        g.ToDictionary(t => t.variation, t => t.file)));
-
-
-            //actually load texture into memory
-            string getMeteorPath(string name) => @$"PNG\Meteors\meteor{name}.png";
-            foreach (var m in meteors.SelectMany(c => c.Value.SelectMany(s => s.Value)))
-                AddTexture2D(m.Value, getMeteorPath(m.Value));
-
-
-            //fill ship dictionary by [Type][Color] => name with which to retrieve it with GetTexture2D
-            var shipRegex = new Regex(@"(?<Type>1|2|3|).(?<Color>blue|green|orange|red)");
-            ships = Directory.GetFiles(AssestsFolder, @"PNG\Ships\")
-                .Select(f => shipRegex.Match(f).Groups)
-                .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: g["0"].Value))
-                .GroupBy(t => t.type).ToDictionary(g => g.Key, g =>
-                    g.ToDictionary(t => t.color, t => t.File));
-
-            //actually load texture into memory
-            string getShipPath(string name) => @$"PNG\Ships\playerShip{name}.png";
-            foreach (var s in ships.SelectMany(t => t.Value))
-                AddTexture2D(s.Value, getShipPath(s.Value));
-
-            var iconRegex = new Regex(@"(?<Type>1|2|3).(?<Color>blue|green|orange|red)");
-            shipsIcons = Directory.GetFiles(AssestsFolder, @"PNG\UI\")
-                .Select(f => iconRegex.Match(f).Groups)
-                .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: "icon_" + g["0"].Value))
-                .GroupBy(t => t.type).ToDictionary(g => g.Key, g =>
-                    g.ToDictionary(t => t.color, t => t.File));
-
-            //actually load texture into memory
-            string getIconPath(string name) => @$"PNG\UI\playerLife{name[5..]}.png";
-            foreach (var s in shipsIcons.SelectMany(t => t.Value))
-                AddTexture2D(s.Value, getIconPath(s.Value));
-
-
-            //fill damage dictionary by [Type][Stage] => name with which to retrieve it with GetTexture2D
-            var damageRegex = new Regex(@"(?<Type>playerShip(1|2|3)).(?<Stage>damage(1|2|3))");
-            shipDamage = Directory.GetFiles(AssestsFolder, @"PNG\Damage\")
-                    .Select(f => damageRegex.Match(f).Groups)
-                    .Select(g => (type: int.Parse(g["Type"].Value.Last().ToString()), stage: int.Parse(g["Stage"].Value.Last().ToString()), file: g["0"].Value))
-                    .GroupBy(t => t.type).ToDictionary(g => g.Key, g =>
-                        g.ToDictionary(t => t.stage, t => t.file));
-
-            //actually load texture into memory
-            string getDamagePath(string name) => @$"PNG\Damage\{name}.png";
-            foreach (var s in shipDamage.SelectMany(t => t.Value))
-                AddTexture2D(s.Value, getDamagePath(s.Value));
-
-
-            AddTexture2D(starTexture, $@"PNG\star_extra_small.png");
-        }
+       
     }
 }
