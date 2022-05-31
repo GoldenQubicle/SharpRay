@@ -26,7 +26,7 @@ namespace Asteroids
         public const int WindowWidth = 1080;
         public const int WindowHeight = 720;
 
-        //Tags
+        //Gui Tags
         public const string GuiShipSelection = nameof(GuiShipSelection);
         public const string GuiScoreOverlay = nameof(GuiScoreOverlay);
         public const string GuiHealth = nameof(GuiHealth);
@@ -45,9 +45,31 @@ namespace Asteroids
         internal const int RlShip = 3;
         internal const int RlGuiScoreOverlay = 4;
 
+        //ship colors
+        public const string Blue = "blue";
+        public const string Red = "red";
+        public const string Green = "green";
+        public const string Orange = "orange";
+
+        private static Dictionary<string, Color> GuiShipBaseColor = new()
+        {
+            { Blue, Color.DARKBLUE },
+            { Red, Color.MAROON },
+            { Green, Color.LIME },
+            { Orange, new Color(200, 100, 0, 255) },
+        };
+
+        private static Dictionary<string, Color> GuiShipFocusColor = new()
+        {
+            { Blue, Color.BLUE },
+            { Red, Color.RED },
+            { Green, Color.GREEN },
+            { Orange, Color.ORANGE },
+        };
+
         //Game state & stats
         private static int ShipType = 3; // 1 | 2 | 3
-        private static string ShipColor = "green"; // blue | green | red | orange
+        private static string ShipColor = Green;
         private static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         private static int Score = 0;
         private static int Health;
@@ -108,7 +130,7 @@ namespace Asteroids
             Score = 0;
             Health = MaxHealth;
             PlayerLifes = MaxPlayerLifes;
-            
+
             //generate new back ground
             GetEntity<StarField>().Generate();
         }
@@ -118,7 +140,7 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= Asteroid.GetDamageDone(sha.Asteroid.aSize, sha.Asteroid.aType);
+                Health -= Asteroid.GetDamageDone(sha.Asteroid.Definition);
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiHealth).Text = GetHealthString(Health);
 
@@ -160,12 +182,12 @@ namespace Asteroids
             if (e is AsteroidDestroyed ad)
             {
                 //update gui
-                Score += Asteroid.GetHitPoints(ad.Asteroid.aSize, ad.Asteroid.aType);
+                Score += Asteroid.GetHitPoints(ad.Asteroid.Definition);
                 GetEntityByTag<GuiContainer>(GuiScoreOverlay)
                     .GetEntityByTag<Label>(GuiScore).Text = GetScoreString(Score);
 
                 //spawn new asteroids from the one destroyed
-                var spawns = Asteroid.GetSpawns(ad.Asteroid.aSize, ad.Asteroid.aType);
+                var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
                 foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
                 {
                     var angle = MathF.Tau / spawns.Count * i + (DEG2RAD * GetRandomValue(-10, 10));
@@ -247,13 +269,15 @@ namespace Asteroids
             return container;
         }
 
+   
+
         private static GuiContainer CreateShipSelectionMenu() =>
            GuiContainerBuilder.CreateNew(tag: GuiShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",
                    TextColor = Color.YELLOW,
-                   FillColor = Color.LIME,
+                   FillColor = GuiShipBaseColor[ShipColor],
                    FontSize = 45,
                    Position = new Vector2((WindowWidth / 2), WindowHeight / 8),
                    Size = new Vector2(400, 100),
@@ -269,8 +293,8 @@ namespace Asteroids
                    Tag = btnShipSelectLeft,
                    Position = new Vector2(WindowWidth * .2f, WindowHeight / 2),
                    Size = new Vector2(20, 50),
-                   BaseColor = Color.LIME,
-                   FocusColor = Color.GREEN,
+                   BaseColor = GuiShipBaseColor[ShipColor],
+                   FocusColor = GuiShipFocusColor[ShipColor],
                    OnMouseLeftClick = e => new ChangeShipType
                    {
                        GuiEntity = e,
@@ -282,8 +306,8 @@ namespace Asteroids
                    Tag = btnShipSelectRight,
                    Position = new Vector2(WindowWidth * .8f, WindowHeight / 2),
                    Size = new Vector2(20, 50),
-                   BaseColor = Color.LIME,
-                   FocusColor = Color.GREEN,
+                   BaseColor = GuiShipBaseColor[ShipColor],
+                   FocusColor = GuiShipFocusColor[ShipColor],
                    OnMouseLeftClick = e => new ChangeShipType
                    {
                        GuiEntity = e,
@@ -294,48 +318,48 @@ namespace Asteroids
                {
                    Position = new Vector2(WindowWidth * .2f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
-                   BaseColor = Color.DARKBLUE,
-                   FocusColor = Color.BLUE,
+                   BaseColor = GuiShipBaseColor[Blue],
+                   FocusColor = GuiShipFocusColor[Blue],
                    OnMouseLeftClick = e => new ChangeShipColor
                    {
                        GuiEntity = e,
-                       ShipColor = "blue"
+                       ShipColor = Blue
                    }
                },
                new Button
                {
                    Position = new Vector2(WindowWidth * .4f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
-                   BaseColor = Color.LIME,
-                   FocusColor = Color.GREEN,
+                   BaseColor = GuiShipBaseColor[Green],
+                   FocusColor = GuiShipFocusColor[Green],
                    OnMouseLeftClick = e => new ChangeShipColor
                    {
                        GuiEntity = e,
-                       ShipColor = "green"
+                       ShipColor = Green
                    }
                },
                new Button
                {
                    Position = new Vector2(WindowWidth * .6f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
-                   BaseColor = Color.MAROON,
-                   FocusColor = Color.RED,
+                   BaseColor = GuiShipBaseColor[Red],
+                   FocusColor = GuiShipFocusColor[Red],
                    OnMouseLeftClick = e => new ChangeShipColor
                    {
                        GuiEntity = e,
-                       ShipColor = "red"
+                       ShipColor = Red
                    }
                },
                new Button
                {
                    Position = new Vector2(WindowWidth * .8f, WindowHeight * .75f),
                    Size = new Vector2(50, 20),
-                   BaseColor = new Color(200, 100, 0, 255),
-                   FocusColor = Color.ORANGE,
+                   BaseColor = GuiShipBaseColor[Orange],
+                   FocusColor = GuiShipFocusColor[Orange],
                    OnMouseLeftClick = e => new ChangeShipColor
                    {
                        GuiEntity = e,
-                       ShipColor = "orange"
+                       ShipColor = Orange
                    }
                },
                new Button
@@ -347,8 +371,8 @@ namespace Asteroids
                    Margins = new Vector2(28, 15),
                    Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
                    Size = new Vector2(125, 50),
-                   BaseColor = Color.LIME,
-                   FocusColor = Color.GREEN,
+                   BaseColor = GuiShipBaseColor[ShipColor],
+                   FocusColor = GuiShipFocusColor[ShipColor],
                    OnMouseLeftClick = e => new GameStart { GuiEntity = e }
                })
            .OnGuiEvent((e, c) =>
@@ -371,21 +395,13 @@ namespace Asteroids
                {
                    ShipColor = csc.ShipColor;
                    c.GetEntity<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
-                   var color = ShipColor == "blue" ? Color.DARKBLUE
-                              : ShipColor == "red" ? Color.MAROON
-                              : ShipColor == "orange" ? Color.ORANGE : Color.LIME;
-
-                   var focusColor = ShipColor == "blue" ? Color.BLUE
-                                    : ShipColor == "red" ? Color.RED
-                                    : ShipColor == "orange" ? Color.ORANGE : Color.GREEN;
-
-                   c.GetEntity<Label>().FillColor = color;
+                   c.GetEntity<Label>().FillColor = GuiShipBaseColor[ShipColor];
                    c.GetEntities<Button>()
                         .Where(b => b.Tag.Equals(btnShipSelectLeft) || b.Tag.Equals(btnShipSelectRight) || b.Tag.Equals(btnStartGame)).ToList()
                         .ForEach(b =>
                            {
-                               b.BaseColor = color;
-                               b.FocusColor = focusColor;
+                               b.BaseColor = GuiShipBaseColor[ShipColor]; ;
+                               b.FocusColor = GuiShipFocusColor[ShipColor]; ;
                            });
                }
            });

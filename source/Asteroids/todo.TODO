@@ -45,13 +45,16 @@
     difficulty progression comes from increasing bounciness, meteor spawn rate & size
     ship damage is sum of meteor hitpoint, e.g. meteor medium 3 hp, spawms 2 small 1 hp = 1 * 3 + 2 * 1 = 5 damage to ship
 
+    ☐ mouse control ship @created(31-05-2022 20:40)
+        think it would play really nice if the mouse rotates the ship and left & right click fire primary & secondary weapon respectivly
+
     ☐ encapulate level data @created(28-05-2022 20:24)
         meteor spawn total, rate, size
         pickups available
         level of bounciness
         GetTotalHitpoits
 
-    ☐ create more meteor variety  @created(28-05-2022 20:25)
+    ✔ create more meteor variety  @created(28-05-2022 20:25) @done(31-05-2022 20:39)
         5 or 7 perhaps in terms of size by scaling texture
         and what about different 'materials' by texture coloring?
 

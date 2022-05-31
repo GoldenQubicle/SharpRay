@@ -3,14 +3,15 @@
     public static class Assets
     {
         //asteroid texture keys
-        public const string tkBig = "big";
-        public const string tkMedium = "med";
-        public const string tkSmall = "small";
-        public const string tkTiny = "tiny";
+        private const string tkBig = "big";
+        private const string tkMedium = "med";
+        private const string tkSmall = "small";
+        private const string tkTiny = "tiny";
 
         private const string Brown = nameof(Brown);
         private const string Grey = nameof(Grey);
 
+    
 
         internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors; //[Color][Size][Variation] 
         internal static Dictionary<int, Dictionary<string, string>> ships; // [Type][Color]
@@ -18,8 +19,8 @@
         internal static Dictionary<int, Dictionary<int, string>> shipDamage; // [Type][Stage]
 
         public const string starTexture = nameof(starTexture);
-        public static Texture2D GetAsteroidTexture(Asteroid.Size size, Asteroid.Type type) =>
-            GetTexture2D(meteors[GetAsteroidColorKey(type)][GetTextureKey(size)][PickAsteroidVariation(GetTextureKey(size))]);
+        public static Texture2D GetAsteroidTexture((Asteroid.Size size, Asteroid.Type type) a) =>
+            GetTexture2D(meteors[GetAsteroidColorKey(a.type)][GetTextureKey(a.size)][PickAsteroidVariation(GetTextureKey(a.size))]);
 
         public static Texture2D GetRandomAsteroidTexture(string size) =>
            GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);

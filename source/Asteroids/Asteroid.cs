@@ -22,8 +22,9 @@
 
         public ICollider Collider { get; }
         public Vector2 Heading { get; private set; }
-        public Size aSize { get; }
-        public Type aType { get; }
+        public (Size size, Type type) Definition { get; private set; }
+
+
 
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
@@ -36,9 +37,8 @@
 
         public Asteroid(Size size, Type type, Vector2 position, Vector2 heading)
         {
-            aSize = size;
-            aType = type;
-            Texture = GetAsteroidTexture(size, type);
+            Definition = (size, type);
+            Texture = GetAsteroidTexture(Definition);
             //NOTE need to call base.Size for the Vector2 since the Size enum hides it otherwise
             base.Size = new Vector2(Texture.width, Texture.height) * GetScale(size);
             TextureOffset = base.Size / 2;
@@ -86,7 +86,7 @@
                     Bullet = b
                 });
 
-                if (damage >= GetHitPoints(aSize, aType))
+                if (damage >= GetHitPoints(Definition))
                     EmitEvent(new AsteroidDestroyed
                     {
                         Asteroid = this,
@@ -97,11 +97,11 @@
 
         public override void Render()
         {
-            DrawTextureEx(Texture, TexturePos, RAD2DEG * RotationAngle, GetScale(aSize), GetColor(aType));
+            DrawTextureEx(Texture, TexturePos, RAD2DEG * RotationAngle, GetScale(Definition.size), GetColor(Definition.type));
 
             var startPos = Position - new Vector2(base.Size.X / 2, -base.Size.Y / 2);
             var endPos = Position + new Vector2(base.Size.X / 2, base.Size.Y / 2);
-            var a = MapRange(damage, GetHitPoints(aSize, aType), 0, 0, 1);
+            var a = MapRange(damage, GetHitPoints(Definition), 0, 0, 1);
             var l = Vector2.Lerp(startPos, endPos, a);
             DrawLineEx(startPos, l, 5, Color.GREEN);
 
@@ -124,23 +124,24 @@
             _ => 1f
         };
 
-        public static int GetHitPoints(Size size, Type type) => (size, type) switch
+        public static int GetHitPoints((Size size, Type type) a) => a switch
         {
-            (_, Type.Dirt) => (int)size,
-            (_, Type.Stone) => (int)size * 2,
-            (_, Type.Emerald) => (int)size * 3,
-            (_, Type.Ruby) => (int)size * 4,
-            (_, Type.Saphire) => (int)size * 5
+            (_, Type.Dirt) => (int)a.size,
+            (_, Type.Stone) => (int)a.size * 2,
+            (_, Type.Emerald) => (int)a.size * 3,
+            (_, Type.Ruby) => (int)a.size * 4,
+            (_, Type.Saphire) => (int)a.size * 5
         };
-        public static int GetDamageDone(Size size, Type type) =>
-            GetTotalHitPoints(size, type) / GetHitPoints(size, type);
 
-        private static int GetTotalHitPoints(Size size, Type type) => GetHitPoints(size, type) +
-            (GetSpawns(size, type).Any() ? GetSpawns(size, type).Sum(t => GetTotalHitPoints(t.Size, t.Type)) : 0);
+        public static int GetDamageDone((Size size, Type type) a) =>
+            GetTotalHitPoints(a) / GetHitPoints(a);
 
-        public static List<(Size Size, Type Type)> GetSpawns(Size size, Type type) => (size, type) switch
+        private static int GetTotalHitPoints((Size size, Type type) a) => GetHitPoints(a) +
+            (GetSpawns(a).Any() ? GetSpawns(a).Sum(t => GetTotalHitPoints((t.Size, t.Type))) : 0);
+
+        public static List<(Size Size, Type Type)> GetSpawns((Size size, Type type) a) => a switch
         {
-            (_, Type.Dirt) => size switch
+            (_, Type.Dirt) => a.size switch
             {
                 Size.Big => new()
                 {
@@ -172,7 +173,7 @@
                 Size.Tiny => new() { },
             },
 
-            (_, Type.Stone) => size switch
+            (_, Type.Stone) => a.size switch
             {
                 Size.Big => new()
                 {
@@ -218,7 +219,7 @@
 
             foreach (var type in Enum.GetValues<Type>())
                 foreach (var size in Enum.GetValues<Size>())
-                    stats.Add($"Asteroid {type} {size} has {GetHitPoints(size, type)} HitPoints, {GetTotalHitPoints(size, type)} Total Hitpoints and does {GetDamageDone(size, type)} Damage");
+                    stats.Add($"Asteroid {type} {size} has {GetHitPoints((size, type))} HitPoints, {GetTotalHitPoints((size, type))} Total Hitpoints and does {GetDamageDone((size, type))} Damage");
 
             return stats;
         }
