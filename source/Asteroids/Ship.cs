@@ -95,10 +95,10 @@
             (Collider as CircleCollider).Center = Position;
 
             //bounds check
-            if (Position.X < 0) Position = new Vector2(Game.WindowWidth, Position.Y);
-            if (Position.X > Game.WindowWidth) Position = new Vector2(0, Position.Y);
-            if (Position.Y < 0) Position = new Vector2(Position.X, Game.WindowHeight);
-            if (Position.Y > Game.WindowHeight) Position = new Vector2(Position.X, 0);
+            if (Position.X < 0) Position = new Vector2(WindowWidth, Position.Y);
+            if (Position.X > WindowWidth) Position = new Vector2(0, Position.Y);
+            if (Position.Y < 0) Position = new Vector2(Position.X, WindowHeight);
+            if (Position.Y > WindowHeight) Position = new Vector2(Position.X, 0);
 
             //update sounds
             if (!IsSoundPlaying(Sounds[EngineSound])) PlaySound(Sounds[EngineSound]);
