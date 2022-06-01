@@ -99,6 +99,24 @@ namespace Asteroids
             Run();
         }
 
+        static LevelData testLevel = new LevelData
+        (
+            SpawnStart: new()
+                {
+                    new Asteroid(Asteroid.Size.Large, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)),
+                },
+            SpawnDuring: new()
+                {
+                    (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                    (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                    (Asteroid.Size.Tiny, Asteroid.Type.Dirt),
+                    (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                    (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                    (Asteroid.Size.Small, Asteroid.Type.Dirt),
+                },
+            InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
+            SpawnTime: 20000f,
+            Easing: Easings.EaseSineInOut);
 
         public static void StartGame()
         {
@@ -108,7 +126,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Level());
+            AddEntity(new Level(testLevel));
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -221,8 +239,6 @@ namespace Asteroids
             }
         }
 
-
-
         private static GuiContainer CreateScoreOverLay()
         {
             //create container 
@@ -269,8 +285,6 @@ namespace Asteroids
 
             return container;
         }
-
-   
 
         private static GuiContainer CreateShipSelectionMenu() =>
            GuiContainerBuilder.CreateNew(tag: GuiShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
