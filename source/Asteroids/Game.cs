@@ -94,8 +94,8 @@ namespace Asteroids
             File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
-            AddEntity(CreateShipSelectionMenu());
-            //StartGame();
+            //AddEntity(CreateShipSelectionMenu());
+            StartGame();
             Run();
         }
 
@@ -108,7 +108,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
 
             AddEntity(ship, OnGameEvent);
-            AddEntity(new Asteroid(Asteroid.Size.Big, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)), OnGameEvent);
+            AddEntity(new Level());
 
             var overlay = CreateScoreOverLay();
             ship.EmitEvent += overlay.OnGameEvent;
@@ -124,6 +124,7 @@ namespace Asteroids
             RemoveEntitiesOfType<Ship>();
             RemoveEntitiesOfType<Bullet>();
             RemoveEntitiesOfType<Asteroid>();
+            RemoveEntitiesOfType<Level>();
             RemoveEntity(GetEntityByTag<GuiContainer>(GuiScoreOverlay));
 
             //reset game stats

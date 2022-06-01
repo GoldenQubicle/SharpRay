@@ -54,7 +54,7 @@ namespace SharpRay.Core
             InitAudioDevice();
             Audio.Initialize();
             InitWindow(config.WindowWidth, config.WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
-            SetWindowPosition(GetMonitorWidth(0) / 2 + 128, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
+            SetWindowPosition(GetMonitorWidth(0) / 2 - config.WindowWidth / 2, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
             //SetTargetFPS(60);
         }
@@ -93,7 +93,7 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
-       
+
         /// <summary>
         /// Loads a <see cref="Sound"/> from file, and adds it the Sounds dictionary with the given key. 
         /// </summary>
@@ -267,7 +267,7 @@ namespace SharpRay.Core
             }
         }
 
-        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent => 
+        internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent =>
             SetEmitEventActions(e, onEventActions?.ToList() ?? new());
 
         internal static void OnGuiEvent(IGuiEvent e)

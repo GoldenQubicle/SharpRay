@@ -23,9 +23,6 @@
         public ICollider Collider { get; }
         public Vector2 Heading { get; private set; }
         public (Size size, Type type) Definition { get; private set; }
-
-
-
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
         private Texture2D Texture { get; }

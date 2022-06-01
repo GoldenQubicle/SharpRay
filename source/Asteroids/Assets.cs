@@ -20,7 +20,7 @@
 
         public const string starTexture = nameof(starTexture);
         public static Texture2D GetAsteroidTexture((Asteroid.Size size, Asteroid.Type type) a) =>
-            GetTexture2D(meteors[GetAsteroidColorKey(a.type)][GetTextureKey(a.size)][PickAsteroidVariation(GetTextureKey(a.size))]);
+            GetTexture2D(meteors[GetAsteroidColorKey(a.type)][GetAsteroidTextureKey(a.size)][PickAsteroidVariation(GetAsteroidTextureKey(a.size))]);
 
         public static Texture2D GetRandomAsteroidTexture(string size) =>
            GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
@@ -34,7 +34,7 @@
             Asteroid.Type.Saphire => Grey,
         };
 
-        private static string GetTextureKey(Asteroid.Size size) => size switch
+        private static string GetAsteroidTextureKey(Asteroid.Size size) => size switch
         {
             Asteroid.Size.Big or Asteroid.Size.Large => tkBig,
             Asteroid.Size.Medium => tkMedium,
