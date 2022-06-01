@@ -5,7 +5,7 @@
         private Vector2 acceleration;
         private readonly float radius = 2f;
         private readonly float speed = 10f;
-        private readonly double lifeTime = 1350 * SharpRayConfig.TickMultiplier;
+        private readonly double lifeTime = 750 * SharpRayConfig.TickMultiplier;
         private double elapsed;
         public ICollider Collider { get; }
 
@@ -21,7 +21,6 @@
             };
             RenderLayer = Game.RlAsteroidsBullets;
         }
-
 
         public override void Render()
         {
@@ -39,6 +38,14 @@
             Position += acceleration;
 
             (Collider as CircleCollider).Center = Position;
+
+            //bounds check
+            if (Position.X < 0) Position = new Vector2(WindowWidth, Position.Y);
+            if (Position.X > WindowWidth) Position = new Vector2(0, Position.Y);
+            if (Position.Y < 0) Position = new Vector2(Position.X, WindowHeight);
+            if (Position.Y > WindowHeight) Position = new Vector2(Position.X, 0);
+
+            
         }
     }
 }

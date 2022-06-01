@@ -49,7 +49,7 @@
         think it would play really nice if the mouse rotates the ship and left & right click fire primary & secondary weapon respectivly
 
     ☐ encapulate level data @created(28-05-2022 20:24)
-        meteor spawn total, rate, size
+        ✔ meteor spawn total, rate, size @done(22-06-01 12:14)
         pickups available
         level of bounciness
         GetTotalHitpoits
@@ -85,6 +85,7 @@
             strenght
 
         ☐ different ammo @created(29-05-2022 12:06)
+            play around w bullet lifetime as well! i.e. reach
             fire bullet
             explosive bullet
             laser blast
