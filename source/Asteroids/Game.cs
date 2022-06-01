@@ -31,8 +31,9 @@ namespace Asteroids
         internal const int RlBackground = 0;
         internal const int RlGuiShipSelection = 1;
         internal const int RlAsteroidsBullets = 2;
-        internal const int RlShip = 3;
-        internal const int RlGuiScoreOverlay = 4;
+        internal const int RlPickUps = 3;
+        internal const int RlShip = 4;
+        internal const int RlGuiScoreOverlay = 5;
 
         //Game state & stats
         internal static int ShipType = 3; // 1 | 2 | 3
@@ -59,7 +60,7 @@ namespace Asteroids
             await Load();
 
             File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
-            
+
             AddEntity(new StarField());
             //AddEntity(CreateShipSelectionMenu());
             StartGame();
@@ -82,7 +83,15 @@ namespace Asteroids
                 },
             InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
             SpawnTime: 20000f,
-            Easing: Easings.EaseSineInOut);
+            Easing: Easings.EaseSineInOut,
+            PickUps: new()
+                {
+                    new PickUp
+                    {
+                        OnPickUp = s => s.PrimaryWeapon = new WeaponTripleShooter()
+                    }
+                }
+            );
 
         public static void StartGame()
         {

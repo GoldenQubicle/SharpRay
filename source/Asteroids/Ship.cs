@@ -3,7 +3,7 @@
     public class Ship : GameEntity, IHasCollider, IHasCollision
     {
         public ICollider Collider { get; }
-        private IPrimaryWeapon PrimaryWeapon { get; }
+        public IPrimaryWeapon PrimaryWeapon { get; set; }
 
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
@@ -119,6 +119,11 @@
                 {
                     Asteroid = a,
                 });
+            }
+
+            if(e is PickUp p)
+            {
+                p.OnPickUp(this);
             }
         }
 
