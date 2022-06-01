@@ -251,20 +251,22 @@ namespace SharpRay.Core
             foreach (var action in onEventActions)
             {
                 e.EmitEvent += action;
-
-                //ignore mouse & keyboard when logging as it is way too spammy
-                if (DoEventLogging && e is not Mouse m && e is not KeyBoard k)
-                    e.EmitEvent += a =>
-                        {
-                            Console.WriteLine(
-                                $"Frame    | {FrameCount}\n" +
-                                $"Emitter  | {e?.GetType()} {e?.GetHashCode()}\n" +
-                                $"Event    | {a?.GetType()}\n" +
-                                $"Receiver | {action.GetMethodInfo().DeclaringType}.{action?.GetMethodInfo().Name} {action?.GetHashCode()}" +
-                                $"\n");
-                        };
-
             }
+
+            //ignore mouse & keyboard when logging as it is way too spammy
+            if (DoEventLogging && e is not Mouse m && e is not KeyBoard k)
+                e.EmitEvent?.GetInvocationList().ToList().ForEach(d =>
+                {
+                    e.EmitEvent += a =>
+                    {
+                        Console.WriteLine(
+                            $"Frame    | {FrameCount}\n" +
+                            $"Emitter  | {e?.GetType()} {e?.GetHashCode()}\n" +
+                            $"Event    | {a?.GetType()}\n" +
+                            $"Receiver | {d.GetMethodInfo().DeclaringType}.{d?.GetMethodInfo().Name} {d?.GetHashCode()}" +
+                            $"\n");
+                    };
+                });
         }
 
         internal static void SetEmitEventActions<T>(IEventEmitter<T> e, params Action<T>[] onEventActions) where T : IEvent =>

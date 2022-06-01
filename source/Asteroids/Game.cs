@@ -55,7 +55,7 @@ namespace Asteroids
                 WindowHeight = WindowHeight,
                 BackGroundColor = new Color(12, 24, 64, 0),
                 ShowFPS = true,
-                DoEventLogging = false
+                DoEventLogging = true
             });
 
             SetKeyBoardEventAction(OnKeyBoardEvent);
