@@ -23,9 +23,6 @@
         public ICollider Collider { get; }
         public Vector2 Heading { get; private set; }
         public (Size size, Type type) Definition { get; private set; }
-
-
-
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
         private Texture2D Texture { get; }
@@ -141,6 +138,7 @@
 
         public static List<(Size Size, Type Type)> GetSpawns((Size size, Type type) a) => a switch
         {
+            //quick note, medium and small texture are already scaled versions in kenny assets, so use sparingly!
             (_, Type.Dirt) => a.size switch
             {
                 Size.Big => new()

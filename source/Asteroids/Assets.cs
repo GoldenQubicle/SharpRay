@@ -11,7 +11,7 @@
         private const string Brown = nameof(Brown);
         private const string Grey = nameof(Grey);
 
-    
+
 
         internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors; //[Color][Size][Variation] 
         internal static Dictionary<int, Dictionary<string, string>> ships; // [Type][Color]
@@ -20,10 +20,10 @@
 
         public const string starTexture = nameof(starTexture);
         public static Texture2D GetAsteroidTexture((Asteroid.Size size, Asteroid.Type type) a) =>
-            GetTexture2D(meteors[GetAsteroidColorKey(a.type)][GetTextureKey(a.size)][PickAsteroidVariation(GetTextureKey(a.size))]);
+            GetTexture2D(meteors[GetAsteroidColorKey(a.type)][GetAsteroidSizeKey(a.size)][GetAsteroidVariation(a.size)]);
 
-        public static Texture2D GetRandomAsteroidTexture(string size) =>
-           GetTexture2D(meteors[PickAsteroidColor()][size][PickAsteroidVariation(size)]);
+        public static Texture2D GetRandomAsteroidTexture(Asteroid.Size size) =>
+           GetTexture2D(meteors[PickAsteroidColor()][PickAsteroidColor()][GetAsteroidVariation(size)]);
 
         private static string GetAsteroidColorKey(Asteroid.Type type) => type switch
         {
@@ -34,7 +34,7 @@
             Asteroid.Type.Saphire => Grey,
         };
 
-        private static string GetTextureKey(Asteroid.Size size) => size switch
+        private static string GetAsteroidSizeKey(Asteroid.Size size) => size switch
         {
             Asteroid.Size.Big or Asteroid.Size.Large => tkBig,
             Asteroid.Size.Medium => tkMedium,
@@ -43,13 +43,11 @@
             _ => throw new ArgumentOutOfRangeException($"No texture key found for asteroid size {size}")
         };
 
-
         private static string PickAsteroidColor() =>
             GetRandomValue(0, 1) == 1 ? Grey : Brown;
 
-        private static int PickAsteroidVariation(string size) =>
-            size.Equals(tkBig) ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
-
+        private static int GetAsteroidVariation(Asteroid.Size size) =>
+            GetAsteroidSizeKey(size).Equals(tkBig) ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
 
         public static async Task Load()
         {
