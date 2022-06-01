@@ -11,6 +11,7 @@
             Size = new Vector2(25, 25);
             Collider = new RectCollider
             {
+                Position = new Vector2(200, 200),
                 Size = Size
             };
 
@@ -24,7 +25,8 @@
 
         public override void Render()
         {
-             DrawRectanglePro((Collider as RectCollider).Rect, Position, 0f, Color.YELLOW);
+            Collider.Render();
+            DrawRectangleV(Position, Size, Color.YELLOW);
         }
     }
 }

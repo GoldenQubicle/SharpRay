@@ -34,9 +34,9 @@
 
             if (Score > 5 && !pickupSpawned)
             {
-                var pickUp = Data.PickUps.First();
-                pickUp.Position = new Vector2(200, 200);
-                (pickUp.Collider as RectCollider).Position = new Vector2(200, 200);
+                  var pickUp = Data.PickUps.First();
+                pickUp.Position = new Vector2(600, 200);
+                (pickUp.Collider as RectCollider).Position = new Vector2(600, 200);
                 AddEntity(pickUp);
                 pickupSpawned = true;
             }

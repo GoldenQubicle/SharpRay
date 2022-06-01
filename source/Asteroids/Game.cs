@@ -67,7 +67,7 @@ namespace Asteroids
             Run();
         }
 
-        static LevelData testLevel = new(
+        static LevelData testLevel => new(
             SpawnStart: new()
                 {
                     new Asteroid(Asteroid.Size.Large, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)),

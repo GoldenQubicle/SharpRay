@@ -5,7 +5,7 @@
         private Vector2 acceleration;
         private readonly float radius = 2f;
         private readonly float speed = 10f;
-        private readonly double lifeTime = 1350 * SharpRayConfig.TickMultiplier;
+        private readonly double lifeTime = 750 * SharpRayConfig.TickMultiplier;
         private double elapsed;
         public ICollider Collider { get; }
 

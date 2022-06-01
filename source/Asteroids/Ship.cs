@@ -124,6 +124,7 @@
             if(e is PickUp p)
             {
                 p.OnPickUp(this);
+                RemoveEntity(p);
             }
         }
 
