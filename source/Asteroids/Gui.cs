@@ -11,6 +11,7 @@
             public const string StartGame = nameof(StartGame);
             public const string ShipSelectRight = nameof(ShipSelectRight);
             public const string ShipSelectLeft = nameof(ShipSelectLeft);
+            public const string Notification = nameof(Notification);
         }
 
         public static string PlayerLifeIcon(int n) => $"PlayerLife{n}";
@@ -38,6 +39,32 @@
             { Green, Color.GREEN },
             { Orange, Color.ORANGE },
         };
+
+        public static GuiContainer CreatePickUpNotification() =>
+            GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.Notification, renderLayer: RlGuiScoreOverlay)
+                .AddChildren(
+                    new Label
+                    {
+                        Tag = Tags.Notification,
+                        Size = new Vector2 (200, 75),
+                        Position = new Vector2(WindowWidth/2, WindowHeight/2),
+                        FillColor = Color.SKYBLUE,
+                        TextColor = Color.RAYWHITE,
+                        FontSize = 16,
+                        Margins = new Vector2(8, 16)
+                    },
+                    new Label
+                    {
+                        Size = new Vector2(150, 30),
+                        Position = new Vector2(WindowWidth/2, WindowHeight/2 + 35),
+                        FillColor = Color.BLANK,
+                        TextColor = Color.RAYWHITE,
+                        FontSize = 10,
+                        Text = "Press space bar to continue" ,
+                        HasOutlines = false,
+                        Margins = new Vector2(5, 0)
+                    }
+                );
 
         public static GuiContainer CreateScoreOverLay()
         {

@@ -44,7 +44,7 @@
         {
             Position = position;
             Size = new Vector2(texture.width, texture.height);
-            RenderLayer = Game.RlShip;
+            RenderLayer = RlShip;
             ShipTexture = texture;
             offset = new Vector2(texture.width / 2, texture.height / 2) * scale;
             radius = (Size.X / 2) * scale;
@@ -69,6 +69,8 @@
 
         public override void Update(double deltaTime)
         {
+            if (IsPaused) return;
+
             //update motions
             foreach (var m in Motions.Values) m.Update(deltaTime);
 
@@ -121,10 +123,13 @@
                 });
             }
 
-            if(e is PickUp p)
+            if (e is PickUp p)
             {
                 p.OnPickUp(this);
-                RemoveEntity(p);
+                EmitEvent(new ShipPickUp
+                {
+                    PickUp = p
+                });
             }
         }
 
@@ -143,6 +148,11 @@
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
+            if (IsPaused)
+            {
+                return;
+            }
+
             (hasRotation, direction) = e switch
             {
                 KeyLeftDown when !hasRotation => StartRotateIn(Left),

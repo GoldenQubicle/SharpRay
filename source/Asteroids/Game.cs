@@ -45,6 +45,8 @@ namespace Asteroids
         internal static int PlayerLifes;
         internal static readonly int MaxPlayerLifes = 3;
 
+        public static bool IsPaused { get; set; }
+
         static async Task Main(string[] args)
         {
             Initialize(new SharpRayConfig
@@ -62,6 +64,7 @@ namespace Asteroids
             File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
+            AddEntity(Gui.CreatePickUpNotification());
             //AddEntity(CreateShipSelectionMenu());
             StartGame();
             Run();
@@ -69,29 +72,29 @@ namespace Asteroids
 
         static LevelData testLevel => new(
             SpawnStart: new()
-                {
-                    new Asteroid(Asteroid.Size.Large, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)),
-                },
+            {
+                new Asteroid(Asteroid.Size.Large, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)),
+            },
             SpawnDuring: new()
-                {
-                    (Asteroid.Size.Large, Asteroid.Type.Dirt),
-                    (Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                    (Asteroid.Size.Tiny, Asteroid.Type.Dirt),
-                    (Asteroid.Size.Large, Asteroid.Type.Dirt),
-                    (Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                    (Asteroid.Size.Small, Asteroid.Type.Dirt),
-                },
+            {
+                (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Tiny, Asteroid.Type.Dirt),
+                (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Small, Asteroid.Type.Dirt),
+            },
             InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
             SpawnTime: 20000f,
             Easing: Easings.EaseSineInOut,
             PickUps: new()
+            {
+                new PickUp
                 {
-                    new PickUp
-                    {
-                        OnPickUp = s => s.PrimaryWeapon = new WeaponTripleShooter()
-                    }
+                    Description = "Triple Shooter Weapon!",
+                    OnPickUp = s => s.PrimaryWeapon = new WeaponTripleShooter()
                 }
-            );
+            });
 
         public static void StartGame()
         {
@@ -149,6 +152,7 @@ namespace Asteroids
 
                 if (Health <= 0)
                 {
+                    IsPaused = true;
                     GetEntity<Ship>().HasTakenDamage = false; // prevent damage texture from being visible
                     ShipDamageTextureIdx = -1;
                     Health = MaxHealth;
@@ -159,6 +163,10 @@ namespace Asteroids
                     overlay.GetEntityByTag<Label>(Gui.Tags.Health).Text = Gui.GetHealthString(Health);
 
                     PlayerLifes--; // needs to happen last otherwise we can't get the icon
+
+                    var notice = GetEntityByTag<GuiContainer>(Gui.Tags.Notification);
+                    notice.GetEntityByTag<Label>(Gui.Tags.Notification).Text = $"      You lost a ship! \n     {PlayerLifes} ships remaining";
+                    notice.Show();
                 }
 
                 if (PlayerLifes == 0)
@@ -167,6 +175,15 @@ namespace Asteroids
                     StartGame();
                     //GetEntityByTag<GuiContainer>(GuiShipSelection).Show();
                 }
+            }
+
+            if (e is ShipPickUp spu)
+            {
+                IsPaused = true;
+                var notice = GetEntityByTag<GuiContainer>(Gui.Tags.Notification);
+                notice.GetEntityByTag<Label>(Gui.Tags.Notification).Text = spu.PickUp.Description;
+                notice.Show();
+                RemoveEntity(spu.PickUp);
             }
 
             if (e is BulletLifeTimeExpired ble)
@@ -198,6 +215,12 @@ namespace Asteroids
 
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
+            if (e is KeySpaceBarPressed && IsPaused)
+            {
+                GetEntityByTag<GuiContainer>(Gui.Tags.Notification).Hide();
+                IsPaused = false;
+            }
+
             if (e is KeyPressed kp)
             {
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)

@@ -24,12 +24,14 @@
         public float Spacing { get; init; } = 1f;
         public bool WordWrap { get; init; } = false;
         public Vector2 Margins { get; init; }
-
+        public bool HasOutlines { get; init; } = true;
         public override void Render()
         {
             var offset = Position - Size / 2;
             DrawRectangleV(offset, Size, FillColor);
-            DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
+            if(HasOutlines)
+                DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
+            
             DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }

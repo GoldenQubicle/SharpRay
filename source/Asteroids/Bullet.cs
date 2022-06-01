@@ -30,6 +30,8 @@
 
         public override void Update(double deltaTime)
         {
+            if (IsPaused) return;
+
             elapsed += deltaTime;
 
             if (elapsed > lifeTime)

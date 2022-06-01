@@ -30,6 +30,8 @@
 
         public override void Update(double deltaTime)
         {
+            if (IsPaused) return;
+
             currentTime += deltaTime;
 
             if (Score > 5 && !pickupSpawned)

@@ -50,6 +50,8 @@
 
         public override void Update(double deltaTime)
         {
+            if (IsPaused) return;
+
             Position += Heading;
             TexturePos = Vector2.Transform(Position - TextureOffset, Matrix3x2.CreateRotation(RotationAngle, Position));
             (Collider as RectCollider).Position = Position - TextureOffset;
@@ -61,13 +63,13 @@
 
             Heading = Position switch
             {
-                Vector2 { X: < 0 } or Vector2 { X: > Game.WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * bounciness,
-                Vector2 { Y: < 0 } or Vector2 { Y: > Game.WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * bounciness,
+                Vector2 { X: < 0 } or Vector2 { X: > WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * bounciness,
+                Vector2 { Y: < 0 } or Vector2 { Y: > WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * bounciness,
                 _ => Heading
             };
 
-            HasSpawned = Position.X > 0 && Position.X < Game.WindowWidth
-                      && Position.Y > 0 && Position.Y < Game.WindowHeight;
+            HasSpawned = Position.X > 0 && Position.X < WindowWidth
+                      && Position.Y > 0 && Position.Y < WindowHeight;
 
         }
 

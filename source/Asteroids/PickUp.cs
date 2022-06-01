@@ -5,6 +5,7 @@
         public ICollider Collider { get; }
 
         public Action<Ship> OnPickUp { get; init; }
+        public string Description { get; init; }
 
         public PickUp()
         {
