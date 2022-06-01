@@ -133,7 +133,7 @@
         public static int GetDamageDone((Size size, Type type) a) =>
             GetTotalHitPoints(a) / GetHitPoints(a);
 
-        private static int GetTotalHitPoints((Size size, Type type) a) => GetHitPoints(a) +
+        public static int GetTotalHitPoints((Size size, Type type) a) => GetHitPoints(a) +
             (GetSpawns(a).Any() ? GetSpawns(a).Sum(t => GetTotalHitPoints((t.Size, t.Type))) : 0);
 
         public static List<(Size Size, Type Type)> GetSpawns((Size size, Type type) a) => a switch

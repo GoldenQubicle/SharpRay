@@ -6,7 +6,7 @@
       Vector2 InitialHeadingSpeed,
       float SpawnTime,
       Func<float, float, float, float, float> Easing);
-
+    
     public class Level : Entity, IHasUpdate
     {
         private LevelData Data { get; }
