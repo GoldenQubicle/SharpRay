@@ -35,7 +35,7 @@
             elapsed += deltaTime;
 
             if (elapsed > lifeTime)
-                EmitEvent(new BulletLifeTimeExpired { Bullet = this });
+                RemoveEntity(this);
 
             Position += acceleration;
 

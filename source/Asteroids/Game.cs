@@ -123,6 +123,7 @@ namespace Asteroids
             RemoveEntitiesOfType<Bullet>();
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<Level>();
+            RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.Notification));
 
@@ -160,8 +161,6 @@ namespace Asteroids
 
                     ShipDamageTextureIdx = -1;
                     PlayerLifes--; 
-
-                  
                 }
 
                 if (PlayerLifes == 0)
@@ -179,11 +178,6 @@ namespace Asteroids
                 notice.GetEntityByTag<Label>(Gui.Tags.Notification).Text = spu.PickUp.Description;
                 notice.Show();
                 RemoveEntity(spu.PickUp);
-            }
-
-            if (e is BulletLifeTimeExpired ble)
-            {
-                RemoveEntity(ble.Bullet);
             }
 
             if (e is AsteroidDestroyed ad)

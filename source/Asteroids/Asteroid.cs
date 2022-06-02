@@ -81,10 +81,7 @@
                 //depending on weapon type obviously
                 damage++;
 
-                EmitEvent(new BulletLifeTimeExpired
-                {
-                    Bullet = b
-                });
+                RemoveEntity(b);
 
                 if (damage >= GetHitPoints(Definition))
                     EmitEvent(new AsteroidDestroyed

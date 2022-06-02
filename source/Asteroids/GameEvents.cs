@@ -30,9 +30,4 @@
     {
         public PickUp PickUp { get; init; }
     }
-
-    public struct BulletLifeTimeExpired : IGameEvent
-    {
-        public Bullet Bullet { get; init; }
-    }
 }
