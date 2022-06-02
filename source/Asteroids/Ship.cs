@@ -4,7 +4,10 @@
     {
         public ICollider Collider { get; }
         public IPrimaryWeapon PrimaryWeapon { get; set; }
-
+        public Texture2D ShipTexture { get; set; }
+        public Texture2D DamgageTexture { get; set; }
+        public bool HasTakenDamage { get; set; }
+        public int Health { get; set; } = MaxHealth;
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
 
@@ -36,9 +39,7 @@
 
         private float scale = .75f;
         private readonly Vector2 offset; //used for render position textures
-        public Texture2D ShipTexture { get; set; }
-        public Texture2D DamgageTexture { get; set; }
-        public bool HasTakenDamage { get; set; }
+
 
         public Ship(Vector2 position, Texture2D texture)
         {
@@ -116,9 +117,12 @@
             if (e is Asteroid a)
             {
                 HasTakenDamage = true;
-
+                Health -= Asteroid.GetDamageDone(a.Definition);
                 EmitEvent(new ShipHitAsteroid
                 {
+                    LifeLost = Health <= 0,
+                    LifeIconIdx = PlayerLifes,
+                    ShipHealth = Health,
                     Asteroid = a,
                 });
             }
@@ -148,10 +152,10 @@
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (IsPaused)
-            {
-                return;
-            }
+            //if (IsPaused)
+            //{
+            //    return;
+            //}
 
             (hasRotation, direction) = e switch
             {

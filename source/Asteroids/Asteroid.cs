@@ -45,7 +45,8 @@
             RotationAngle = GetRandomValue(-50, 50) / 1000f;
             RotationSpeed = GetRandomValue(-50, 50) / 1000f;
             Collider = new RectCollider { Position = Position, Size = base.Size };
-            RenderLayer = Game.RlAsteroidsBullets;
+            TexturePos = Vector2.Transform(Position - TextureOffset, Matrix3x2.CreateRotation(RotationAngle, Position));
+            RenderLayer = RlAsteroidsBullets;
         }
 
         public override void Update(double deltaTime)

@@ -34,6 +34,12 @@ namespace SharpRay.Gui
             container.OnGameEventAction += onGameEventAction;
             return container;
         }
+
+        public static GuiContainer OnKeyBoardEvent(this GuiContainer container, Action<IKeyBoardEvent, GuiContainer> onKeyBoardEventAction)
+        {
+            container.OnKeyBoardEventAction += onKeyBoardEventAction;
+            return container;
+        }
     }
 }
 

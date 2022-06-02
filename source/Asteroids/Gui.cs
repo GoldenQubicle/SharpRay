@@ -40,14 +40,14 @@
             { Orange, Color.ORANGE },
         };
 
-        public static GuiContainer CreatePickUpNotification() =>
+        public static GuiContainer CreateNotification() =>
             GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.Notification, renderLayer: RlGuiScoreOverlay)
                 .AddChildren(
                     new Label
                     {
                         Tag = Tags.Notification,
-                        Size = new Vector2 (200, 75),
-                        Position = new Vector2(WindowWidth/2, WindowHeight/2),
+                        Size = new Vector2(200, 75),
+                        Position = new Vector2(WindowWidth / 2, WindowHeight / 2),
                         FillColor = Color.SKYBLUE,
                         TextColor = Color.RAYWHITE,
                         FontSize = 16,
@@ -56,15 +56,30 @@
                     new Label
                     {
                         Size = new Vector2(150, 30),
-                        Position = new Vector2(WindowWidth/2, WindowHeight/2 + 35),
+                        Position = new Vector2(WindowWidth / 2, WindowHeight / 2 + 35),
                         FillColor = Color.BLANK,
                         TextColor = Color.RAYWHITE,
                         FontSize = 10,
-                        Text = "Press space bar to continue" ,
+                        Text = "Press space bar to continue",
                         HasOutlines = false,
                         Margins = new Vector2(5, 0)
-                    }
-                );
+                    })
+                .OnGameEvent((e, c) =>
+                    {
+                        if (e is ShipHitAsteroid sha && sha.LifeLost)
+                        {
+                            c.GetEntityByTag<Label>(Tags.Notification).Text = $"      You lost a ship! \n     {PlayerLifes} ships remaining";
+                            c.Show();
+                        }
+                    })
+                .OnKeyBoardEvent((e, c) =>
+                    {
+                        if (e is KeySpaceBarPressed && IsPaused)
+                        {
+                            c.Hide();
+                            IsPaused = false;
+                        }
+                    });
 
         public static GuiContainer CreateScoreOverLay()
         {
@@ -94,6 +109,19 @@
                     FillColor = Color.BLANK,
                     FontSize = 32,
                     Margins = new Vector2(10, 10)
+                }).OnGameEvent((e, c) =>
+                {
+                    if (e is ShipHitAsteroid sha)
+                    {
+                        var health = sha.LifeLost ? MaxHealth : sha.ShipHealth;
+
+                        c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
+
+                        if (sha.LifeLost)
+                        {
+                            c.GetEntityByTag<ImageTexture>(PlayerLifeIcon(sha.LifeIconIdx)).Color = Color.DARKGRAY;
+                        }
+                    }
                 });
 
             //add player life icons

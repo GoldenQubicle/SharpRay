@@ -40,7 +40,7 @@ namespace Asteroids
         internal static string ShipColor = Gui.Green;
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         internal static int Score = 0;
-        internal static int Health;
+        //internal static int Health;
         internal static readonly int MaxHealth = 10;
         internal static int PlayerLifes;
         internal static readonly int MaxPlayerLifes = 3;
@@ -64,7 +64,6 @@ namespace Asteroids
             File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
-            AddEntity(Gui.CreatePickUpNotification());
             //AddEntity(CreateShipSelectionMenu());
             StartGame();
             Run();
@@ -98,18 +97,21 @@ namespace Asteroids
 
         public static void StartGame()
         {
-            Health = MaxHealth;
             PlayerLifes = MaxPlayerLifes;
 
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
             var overlay = Gui.CreateScoreOverLay();
+            var notice = Gui.CreateNotification();
             ship.EmitEvent += OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;
+            ship.EmitEvent += notice.OnGameEvent;
             overlay.Show();
 
-            AddEntity(overlay);
             AddEntity(ship);
+            AddEntity(overlay);
+            AddEntity(notice);
             AddEntity(new Level(testLevel));
+            IsPaused = false;
         }
 
         private static void ResetGame()
@@ -122,10 +124,10 @@ namespace Asteroids
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<Level>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
+            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.Notification));
 
             //reset game stats
             Score = 0;
-            Health = MaxHealth;
             PlayerLifes = MaxPlayerLifes;
 
             //generate new back ground
@@ -137,12 +139,8 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                Health -= Asteroid.GetDamageDone(sha.Asteroid.Definition);
 
-                GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay)
-                    .GetEntityByTag<Label>(Gui.Tags.Health).Text = Gui.GetHealthString(Health);
-
-                var idx = (int)MapRange(Health, 0, MaxHealth, 3, 1);
+                var idx = (int)MapRange(sha.ShipHealth, 0, MaxHealth, 3, 1);
 
                 if (idx != ShipDamageTextureIdx && idx <= 3)
                 {
@@ -150,23 +148,20 @@ namespace Asteroids
                     GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[ShipType][ShipDamageTextureIdx]);
                 }
 
-                if (Health <= 0)
+                //player life lost
+                if (sha.LifeLost)
                 {
                     IsPaused = true;
-                    GetEntity<Ship>().HasTakenDamage = false; // prevent damage texture from being visible
+
+                    var ship = GetEntity<Ship>();
+                    ship.HasTakenDamage = false; // prevent damage texture from being visible
+                    ship.Health = MaxHealth;
+                    ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
+
                     ShipDamageTextureIdx = -1;
-                    Health = MaxHealth;
+                    PlayerLifes--; 
 
-                    //grey out player life icon 
-                    var overlay = GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay);
-                    overlay.GetEntityByTag<ImageTexture>(Gui.PlayerLifeIcon(PlayerLifes)).Color = Color.DARKGRAY;
-                    overlay.GetEntityByTag<Label>(Gui.Tags.Health).Text = Gui.GetHealthString(Health);
-
-                    PlayerLifes--; // needs to happen last otherwise we can't get the icon
-
-                    var notice = GetEntityByTag<GuiContainer>(Gui.Tags.Notification);
-                    notice.GetEntityByTag<Label>(Gui.Tags.Notification).Text = $"      You lost a ship! \n     {PlayerLifes} ships remaining";
-                    notice.Show();
+                  
                 }
 
                 if (PlayerLifes == 0)
@@ -215,12 +210,7 @@ namespace Asteroids
 
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeySpaceBarPressed && IsPaused)
-            {
-                GetEntityByTag<GuiContainer>(Gui.Tags.Notification).Hide();
-                IsPaused = false;
-            }
-
+            
             if (e is KeyPressed kp)
             {
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)

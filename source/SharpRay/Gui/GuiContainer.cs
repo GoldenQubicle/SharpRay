@@ -56,7 +56,12 @@
 
         public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
-            if (IsVisible) foreach (var e in Children) e.OnKeyBoardEvent(ke);
+
+            if (IsVisible)
+            {
+                OnKeyBoardEventAction?.Invoke(ke, this);
+                //foreach (var e in Children) e.OnKeyBoardEvent(ke); // not sure if this is right..
+            }
         }
 
         public Action<IGuiEvent, GuiContainer> OnGuiEventAction { get; set; }
@@ -66,6 +71,8 @@
         public Action<IGameEvent, GuiContainer> OnGameEventAction { get; set; }
 
         public void OnGameEvent(IGameEvent e) => OnGameEventAction?.Invoke(e, this);
+
+        public Action<IKeyBoardEvent, GuiContainer> OnKeyBoardEventAction { get; set; }
 
     }
 }
