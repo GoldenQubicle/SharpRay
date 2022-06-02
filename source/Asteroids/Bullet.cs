@@ -19,7 +19,7 @@
                 Center = Position,
                 Radius = radius
             };
-            RenderLayer = Game.RlAsteroidsBullets;
+            RenderLayer = RlAsteroidsBullets;
         }
 
         public override void Render()

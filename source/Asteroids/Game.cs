@@ -102,15 +102,17 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
             var overlay = Gui.CreateScoreOverLay();
             var notice = Gui.CreateNotification();
+            
             ship.EmitEvent += OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;
             ship.EmitEvent += notice.OnGameEvent;
-            overlay.Show();
 
             AddEntity(ship);
             AddEntity(overlay);
             AddEntity(notice);
             AddEntity(new Level(testLevel));
+
+            overlay.Show();
             IsPaused = false;
         }
 
@@ -174,9 +176,6 @@ namespace Asteroids
             if (e is ShipPickUp spu)
             {
                 IsPaused = true;
-                var notice = GetEntityByTag<GuiContainer>(Gui.Tags.Notification);
-                notice.GetEntityByTag<Label>(Gui.Tags.Notification).Text = spu.PickUp.Description;
-                notice.Show();
                 RemoveEntity(spu.PickUp);
             }
 
