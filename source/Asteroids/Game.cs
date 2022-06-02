@@ -64,7 +64,7 @@ namespace Asteroids
             File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
-            //AddEntity(CreateShipSelectionMenu());
+            AddEntity(Gui.CreateShipSelectionMenu());
             StartGame();
             Run();
         }
@@ -102,7 +102,7 @@ namespace Asteroids
             var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
             var overlay = Gui.CreateScoreOverLay();
             var notice = Gui.CreateNotification();
-            
+
             ship.EmitEvent += OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;
             ship.EmitEvent += notice.OnGameEvent;
@@ -137,6 +137,11 @@ namespace Asteroids
             GetEntity<StarField>().Generate();
         }
 
+        internal static void OnGuiEvent(IGuiEvent guiEvent)
+        {
+
+        }
+
         public static void OnGameEvent(IGameEvent e)
         {
             if (e is ShipHitAsteroid sha)
@@ -162,14 +167,14 @@ namespace Asteroids
                     ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
 
                     ShipDamageTextureIdx = -1;
-                    PlayerLifes--; 
+                    PlayerLifes--;
                 }
 
                 if (PlayerLifes == 0)
                 {
                     ResetGame();
-                    StartGame();
-                    //GetEntityByTag<GuiContainer>(GuiShipSelection).Show();
+                    //StartGame();
+                    GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
                 }
             }
 
@@ -183,8 +188,7 @@ namespace Asteroids
             {
                 //update gui
                 Score += Asteroid.GetHitPoints(ad.Asteroid.Definition);
-                GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay)
-                    .GetEntityByTag<Label>(Gui.Tags.Score).Text = Gui.GetScoreString(Score);
+                GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
 
                 //spawn new asteroids from the one destroyed
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
@@ -203,7 +207,7 @@ namespace Asteroids
 
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            
+
             if (e is KeyPressed kp)
             {
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)
