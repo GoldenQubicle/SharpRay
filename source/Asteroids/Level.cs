@@ -26,21 +26,21 @@
                 .ToArray();
         }
 
-        private bool pickupSpawned;
-
         public override void Update(double deltaTime)
         {
-            if (IsPaused) return;
+            if (IsPaused)
+            {
+                return;
+            }
 
             currentTime += deltaTime;
 
-            if (Score > 5 && !pickupSpawned)
+            foreach (var pickUp in Data.PickUps)
             {
-                  var pickUp = Data.PickUps.First();
-                pickUp.Position = new Vector2(600, 200);
-                (pickUp.Collider as RectCollider).Position = new Vector2(600, 200);
-                AddEntity(pickUp);
-                pickupSpawned = true;
+                if (Score >= pickUp.SpawnScore && !pickUp.HasSpawned)
+                {
+                    pickUp.OnSpawn(new Vector2(600, 200));
+                }
             }
 
             if (spawnIndex < timings.Length && currentTime > timings[spawnIndex])
