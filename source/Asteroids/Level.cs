@@ -1,8 +1,12 @@
 ﻿namespace Asteroids
 {
     public record LevelData(
-      List<Asteroid> SpawnStart,
-      List<(Asteroid.Size size, Asteroid.Type type)> SpawnDuring,
+      string Description,
+      int WinScore,
+      Vector2 ShipSpawnLocation,
+      int Lifes,
+      List<Asteroid> AsteroidSpawnStart,
+      List<(Asteroid.Size size, Asteroid.Type type)> AsteroidSpawnDuring,
       Vector2 InitialHeadingSpeed,
       float SpawnTime,
       Func<float, float, float, float, float> Easing,
@@ -10,20 +14,49 @@
 
     public class Level : Entity, IHasUpdate
     {
-        private LevelData Data { get; }
+        private LevelData Data { get; set; }
         private double[] timings;
         private int spawnIndex = 0;
         private double currentTime = 0d;
 
-        public Level(LevelData data)
+        public void OnEnter(LevelData data)
         {
             Data = data;
-            foreach (var asteroid in Data.SpawnStart)
+
+            var ship = new Ship(Data.ShipSpawnLocation, GetTexture2D(ships[ShipType][ShipColor]));
+            var overlay = Gui.CreateScoreOverLay(Data.Lifes);
+            var notice = Gui.CreateNotification();
+
+            ship.EmitEvent += Game.OnGameEvent;
+            ship.EmitEvent += overlay.OnGameEvent;
+            ship.EmitEvent += notice.OnGameEvent;
+
+            AddEntity(ship);
+            AddEntity(overlay);
+            AddEntity(notice);
+
+            foreach (var asteroid in Data.AsteroidSpawnStart)
                 AddEntity(asteroid, Game.OnGameEvent);
 
-            timings = Enumerable.Range(1, Data.SpawnDuring.Count)
-                .Select(n => Data.Easing(n, 0, Data.SpawnTime, Data.SpawnDuring.Count) * SharpRayConfig.TickMultiplier)
+            timings = Enumerable.Range(1, Data.AsteroidSpawnDuring.Count)
+                .Select(n => Data.Easing(n, 0, Data.SpawnTime, Data.AsteroidSpawnDuring.Count) * SharpRayConfig.TickMultiplier)
                 .ToArray();
+
+            IsPaused = false;
+        }
+
+        public void OnExit()
+        {
+            IsPaused = true;
+            Score = 0;
+            StopAllSounds();
+            RemoveEntitiesOfType<Ship>();
+            RemoveEntitiesOfType<Bullet>();
+            RemoveEntitiesOfType<Asteroid>();
+            RemoveEntitiesOfType<PickUp>();
+            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
+            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.Notification));
+            AddEntity(Gui.CreateLevelWin());
         }
 
         public override void Update(double deltaTime)
@@ -35,6 +68,9 @@
 
             currentTime += deltaTime;
 
+            if (Score >= Data.WinScore)
+                OnExit();
+
             foreach (var pickUp in Data.PickUps)
             {
                 if (Score >= pickUp.SpawnScore && !pickUp.HasSpawned)
@@ -45,7 +81,7 @@
 
             if (spawnIndex < timings.Length && currentTime > timings[spawnIndex])
             {
-                var def = Data.SpawnDuring[spawnIndex];
+                var def = Data.AsteroidSpawnDuring[spawnIndex];
                 var theta = MathF.Tau / timings.Length;
 
                 var x = MathF.Cos(spawnIndex + 1 * theta) * WindowHeight;

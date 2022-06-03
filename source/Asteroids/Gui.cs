@@ -40,6 +40,38 @@
             { Orange, Color.ORANGE },
         };
 
+        public static GuiContainer CreateLevelWin() =>
+            GuiContainerBuilder.CreateNew(isVisible: true).AddChildren(
+                new Label
+                {
+                    Size = new Vector2(200, 200),
+                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2),
+                    FillColor = Color.LIME,
+                    Text = "Level Won!",
+                    TextColor = Color.GOLD,
+                    FontSize = 16,
+                },
+                new Button
+                {
+                    Size = new Vector2(75, 35),
+                    Position = new Vector2(WindowWidth / 2 - 50, WindowHeight / 2),
+                    FillColor = Color.BLANK,
+                    FocusColor = Color.GREEN,
+                    Text = "Next Level",
+                    FontSize = 12,
+                    OnMouseLeftClick = e => new NextLevel { GuiEntity = e }
+                })
+            .OnGuiEvent((e,c) =>
+            {
+                if(e is NextLevel nl)
+                {
+                    c.Hide();
+                    RemoveEntity(c);
+                    GetEntity<Level>().OnEnter(testLevel);
+                }
+            });
+
+
         public static GuiContainer CreateNotification() =>
             GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.Notification, renderLayer: RlGuiScoreOverlay).AddChildren(
                 new Label
@@ -90,10 +122,10 @@
                         Game.OnGuiEvent(new GuiEvent());
                     }
                 });
-        public static GuiContainer CreateScoreOverLay()
+        public static GuiContainer CreateScoreOverLay(int playerLifes)
         {
             //create container 
-            var container = GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ScoreOverlay, renderLayer: RlGuiScoreOverlay);
+            var container = GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ScoreOverlay, renderLayer: RlGuiScoreOverlay);
 
             //add score & health displays
             container.AddChildren(
@@ -142,7 +174,7 @@
             //add player life icons
             var icon = GetTexture2D(shipsIcons[ShipType][ShipColor]);
 
-            for (var i = 1; i <= MaxPlayerLifes; i++)
+            for (var i = 1; i <= playerLifes; i++)
             {
                 var pos = new Vector2(icon.width + (i * icon.width * 1.5f), 10);
                 container.AddChildren(
@@ -156,7 +188,7 @@
         }
 
         public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible:false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",

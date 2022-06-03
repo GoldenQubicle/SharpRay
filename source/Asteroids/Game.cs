@@ -69,12 +69,16 @@ namespace Asteroids
             Run();
         }
 
-        static LevelData testLevel => new(
-            SpawnStart: new()
+        public static LevelData testLevel => new(
+            Description: "Test Level",
+            WinScore: 10,
+            ShipSpawnLocation: new Vector2(WindowWidth/2, WindowHeight/2),
+            Lifes: 3,
+            AsteroidSpawnStart: new()
             {
                 new Asteroid(Asteroid.Size.Large, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)),
             },
-            SpawnDuring: new()
+            AsteroidSpawnDuring: new()
             {
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
@@ -98,23 +102,11 @@ namespace Asteroids
 
         public static void StartGame()
         {
-            PlayerLifes = MaxPlayerLifes;
-
-            var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[ShipType][ShipColor]));
-            var overlay = Gui.CreateScoreOverLay();
-            var notice = Gui.CreateNotification();
-
-            ship.EmitEvent += OnGameEvent;
-            ship.EmitEvent += overlay.OnGameEvent;
-            ship.EmitEvent += notice.OnGameEvent;
-
-            AddEntity(ship);
-            AddEntity(overlay);
-            AddEntity(notice);
-            AddEntity(new Level(testLevel));
-
-            overlay.Show();
-            IsPaused = false;
+            PlayerLifes = testLevel.Lifes;
+           
+            var level = new Level();
+            level.OnEnter(testLevel);
+            AddEntity(level);
         }
 
         private static void ResetGame()
