@@ -61,13 +61,12 @@
                     FontSize = 12,
                     OnMouseLeftClick = e => new NextLevel { GuiEntity = e }
                 })
-            .OnGuiEvent((e,c) =>
+            .OnGuiEvent((e, c) =>
             {
-                if(e is NextLevel nl)
+                if (e is NextLevel nl)
                 {
-                    c.Hide();
+                    c.EmitEvent(e);
                     RemoveEntity(c);
-                    GetEntity<Level>().OnEnter(testLevel);
                 }
             });
 
@@ -119,7 +118,6 @@
                     {
                         c.Hide();
                         IsPaused = false;
-                        Game.OnGuiEvent(new GuiEvent());
                     }
                 });
         public static GuiContainer CreateScoreOverLay(int playerLifes)

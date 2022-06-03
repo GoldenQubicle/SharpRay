@@ -56,7 +56,7 @@
             RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.Notification));
-            AddEntity(Gui.CreateLevelWin());
+            AddEntity(Gui.CreateLevelWin(), Game.OnGuiEvent);
         }
 
         public override void Update(double deltaTime)

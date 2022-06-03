@@ -130,9 +130,12 @@ namespace Asteroids
             GetEntity<StarField>().Generate();
         }
 
-        internal static void OnGuiEvent(IGuiEvent guiEvent)
+        internal static void OnGuiEvent(IGuiEvent e)
         {
-
+            if (e is NextLevel nl)
+            {
+                GetEntity<Level>().OnEnter(testLevel);
+            }
         }
 
         public static void OnGameEvent(IGameEvent e)
