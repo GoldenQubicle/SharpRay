@@ -91,6 +91,7 @@ namespace Asteroids
                 new PickUp
                 {
                     Description = "Triple Shooter Weapon!",
+                    SpawnScore = 5,
                     OnPickUp = s => s.PrimaryWeapon = new WeaponTripleShooter()
                 }
             });
