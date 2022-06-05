@@ -69,8 +69,7 @@
                     RemoveEntity(c);
                 }
             });
-
-
+        
         public static GuiContainer CreateNotification() =>
             GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.Notification, renderLayer: RlGuiScoreOverlay).AddChildren(
                 new Label
@@ -120,6 +119,7 @@
                         IsPaused = false;
                     }
                 });
+
         public static GuiContainer CreateScoreOverLay(int playerLifes)
         {
             //create container 
@@ -186,16 +186,17 @@
         }
 
         public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
-                   Text = "Meteor Madness",
+                   Text = "Absurd Asteroids",
                    TextColor = Color.YELLOW,
                    FillColor = GuiShipBaseColor[ShipColor],
                    FontSize = 45,
                    Position = new Vector2((WindowWidth / 2), WindowHeight / 8),
                    Size = new Vector2(400, 100),
                    Margins = new Vector2(35, 30),
+                   Font = Assets.Font
                },
                new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
                {

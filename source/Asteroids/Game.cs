@@ -46,7 +46,7 @@ namespace Asteroids
         internal static readonly int MaxPlayerLifes = 3;
 
         public static bool IsPaused { get; set; }
-
+        
         static async Task Main(string[] args)
         {
             Initialize(new SharpRayConfig
@@ -59,13 +59,13 @@ namespace Asteroids
             });
 
             SetKeyBoardEventAction(OnKeyBoardEvent);
-            await Load();
+            Load();
 
-            File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
+            //File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
             AddEntity(Gui.CreateShipSelectionMenu());
-            StartGame();
+            //StartGame();
             Run();
         }
 

@@ -45,6 +45,11 @@
     difficulty progression comes from increasing bounciness, meteor spawn rate & size
     ship damage is sum of meteor hitpoint, e.g. meteor medium 3 hp, spawms 2 small 1 hp = 1 * 3 + 2 * 1 = 5 damage to ship
    
+    ✔ level win screen @created(02-06-2022 21:49) @done(03-06-2022 13:11)
+
+    ☐ audio @created(14-05-2022 19:51)  
+        go over kenny assets and pick files
+
     ☐ mouse control ship @created(31-05-2022 20:40)
         think it would play really nice if the mouse rotates the ship and left & right click fire primary & secondary weapon respectivly
 
@@ -63,10 +68,9 @@
         ☐ set the number of bounces it takes to reach said limit as an easing? @created(29-05-2022 12:17)
         
 
-    ☐ create some sort of 'splash' screen thing @created(28-05-2022 22:09)
-        to announce level start & end
+    ✔ create some sort of 'splash' screen thing @created(28-05-2022 22:09) @done(02-06-2022 21:49)
         ✔ to announce life lost @created(01-06-2022 19:45) @done(01-06-2022 19:45)
-        ✔ to show pickups..? @created(01-06-2022 19:29) @done(01-06-2022 19:29)
+        ✔ to show pickups @created(01-06-2022 19:29) @done(01-06-2022 19:29)
 
     ☐ pickups @created(29-05-2022 12:06)
         ☐ different weapons @created(26-05-2022 20:19)
@@ -94,23 +98,22 @@
     ☐ show shield & weapon slots on screen @created(28-05-2022 22:10)
         so player knows about what is available
 
-    ☐ audio @created(14-05-2022 19:51)  
-        go over kenny assets and pick files
-         
     ☐ game over menu screen @created(14-05-2022 15:15)
         audio controls 
         credits section 
         possible full screen toggle?!
 
-@bug when going over pickup the ship sometimes get stuck in acceleratiom
+☐ @bug audio playing when paused @created(02-06-2022 17:23)
 
-@bug edge case when meteor goes into corner. Could fix this by first calculating 
-the next position (pos + heading), then keep reflecting untill the next position returns the 
-meteor into screen bounds
+☐ @bug when going over pickup the ship sometimes get stuck in acceleration @created(02-06-2022 17:23)
 
+☐ @bug edge case when meteor goes into corner. @created(02-06-2022 17:23)
+    Could fix this by first calculating the next position (pos + heading), then keep reflecting untill the next position returns the 
+    meteor into screen bounds
 
-
-☐ refactor asset loading @created(07-05-2022 16:49)
+✘ refactor asset loading @created(07-05-2022 16:49) @cancelled(02-06-2022 21:51)
+    cancelled because will have to sort assets anyway when making a build, 
+    so will change it around anyway
     make a proper asset record to hold the dicitonaries
     single function to pass regex & mapping functions
 

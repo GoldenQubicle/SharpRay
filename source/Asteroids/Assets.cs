@@ -2,6 +2,9 @@
 {
     public static class Assets
     {
+        public static Font Font { get; private set; }
+        public static Font FontThin { get; private set; }
+
         //asteroid texture keys
         private const string tkBig = "big";
         private const string tkMedium = "med";
@@ -49,8 +52,11 @@
         private static int GetAsteroidVariation(Asteroid.Size size) =>
             GetAsteroidSizeKey(size).Equals(tkBig) ? GetRandomValue(1, 4) : GetRandomValue(1, 2);
 
-        public static async Task Load()
+        public static void Load()
         {
+            Font = LoadFont(Path.Combine(AssestsFolder, "kenvector_future.ttf"));
+            FontThin = LoadFont(Path.Combine(AssestsFolder, "kenvector_future_thin.ttf"));
+
             AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
             AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");
 
