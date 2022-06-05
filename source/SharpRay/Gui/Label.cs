@@ -7,31 +7,31 @@
     {
         public string Text { get; set; }
         public Font Font { get; init; } = GetFontDefault();
-        public Color TextColor { get; set; } = Color.WHITE;
-        public Color FillColor { get; set; } = Color.LIGHTGRAY;
+        public Color TextColor { get; set; } = WHITE;
+        public Color FillColor { get; set; } = LIGHTGRAY;
 
         public Raylib_cs.Rectangle Rectangle
         {
             get => new Raylib_cs.Rectangle
             {
-                x = Position.X - Size.X / 2 + Margins.X,
-                y = Position.Y - Size.Y / 2 + Margins.Y,
-                width = Size.X - Margins.X,
-                height = Size.Y - Margins.Y
+                x = Position.X - Size.X / 2 + TextOffSet.X,
+                y = Position.Y - Size.Y / 2 + TextOffSet.Y,
+                width = Size.X - TextOffSet.X,
+                height = Size.Y - TextOffSet.Y
             };
         }
         public float FontSize { get; init; } = 15f;
         public float Spacing { get; init; } = 1f;
         public bool WordWrap { get; init; } = false;
-        public Vector2 Margins { get; init; }
+        public Vector2 TextOffSet { get; init; }
         public bool HasOutlines { get; init; } = true;
         public override void Render()
         {
             var offset = Position - Size / 2;
             DrawRectangleV(offset, Size, FillColor);
-            if(HasOutlines)
+            if (HasOutlines)
                 DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
-            
+
             DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }

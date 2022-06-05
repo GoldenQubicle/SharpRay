@@ -36,6 +36,7 @@
             Unloads assets from memory when the SharpRay application is closed. 
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:SharpRay.Core.Application.RunDebugGui(System.Action)" -->
         <member name="M:SharpRay.Core.Application.AddSound(System.String,System.String)">
             <summary>
             Loads a <see cref="T:Raylib_cs.Sound"/> from file, and adds it the Sounds dictionary with the given key. 

@@ -43,7 +43,7 @@ namespace ShittySnake
                 {
                     Position = new Vector2(),
                     Size = new Vector2(320, WindowHeight),
-                    Margins = new Vector2(20, 60),
+                    TextOffSet = new Vector2(20, 60),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
                     FontSize = 90f,
@@ -53,7 +53,7 @@ namespace ShittySnake
                 {
                     Position = new Vector2(0, 120),
                     Size = new Vector2(320, WindowHeight / 6),
-                    Margins = new Vector2(60, 20),
+                    TextOffSet = new Vector2(60, 20),
                     FillColor = DARKPURPLE,
                     TextColor = YELLOW,
                     FontSize = 45,
@@ -62,7 +62,7 @@ namespace ShittySnake
                 {
                     Position = new Vector2(80, 0),
                     Size = new Vector2(80, 100),
-                    Margins = new Vector2(10, 3),
+                    TextOffSet = new Vector2(10, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = BLUE,
                     TextColor = ORANGE,
@@ -93,7 +93,7 @@ namespace ShittySnake
                 {
                     Position = new Vector2(),
                     Size = new Vector2(320, WindowHeight),
-                    Margins = new Vector2(18, 40),
+                    TextOffSet = new Vector2(18, 40),
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
                     FontSize = 110f,
@@ -103,7 +103,7 @@ namespace ShittySnake
                 {
                     Position = new Vector2(80, 160),
                     Size = new Vector2(120, 40),
-                    Margins = new Vector2(14, 3),
+                    TextOffSet = new Vector2(14, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = MAGENTA,
                     TextColor = ORANGE,

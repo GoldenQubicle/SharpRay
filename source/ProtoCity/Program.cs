@@ -28,7 +28,7 @@ namespace ProtoCity
                     {
                         Position = new Vector2(100, 35),
                         Size = new Vector2(175, 25),
-                        Margins = new Vector2(12, 5),
+                        TextOffSet = new Vector2(12, 5),
                         Text = "Transit Tool : Inactive",
                         OnMouseLeftClick = b => new TransitToolToggle { GuiEntity = b }
                     },
@@ -36,7 +36,7 @@ namespace ProtoCity
                     {
                         Position = new Vector2(300, 35),
                         Size = new Vector2(175, 25),
-                        Margins = new Vector2(12, 5),
+                        TextOffSet = new Vector2(12, 5),
                         Text = "Brush Tool : Inactive",
                         OnMouseLeftClick = b => new BrushToolToggle { GuiEntity = b }
                     },

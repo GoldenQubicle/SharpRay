@@ -44,23 +44,27 @@
             GuiContainerBuilder.CreateNew(isVisible: true).AddChildren(
                 new Label
                 {
-                    Size = new Vector2(200, 200),
-                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2),
+                    Size = new Vector2(256, 164),
                     FillColor = Color.LIME,
                     Text = "Level Won!",
                     TextColor = Color.GOLD,
-                    FontSize = 16,
+                    FontSize = 32,
+                    Font = Assets.Font,
+                    TextOffSet = new Vector2(16, 32)
                 },
                 new Button
                 {
-                    Size = new Vector2(75, 35),
-                    Position = new Vector2(WindowWidth / 2 - 50, WindowHeight / 2),
-                    FillColor = Color.BLANK,
+                    Size = new Vector2(150, 35),
+                    Position = new Vector2(0, 32),
+                    BaseColor = Color.DARKGREEN,
                     FocusColor = Color.GREEN,
                     Text = "Next Level",
-                    FontSize = 12,
+                    FontSize = 16,
+                    Font = Assets.FontThin,
+                    TextOffSet = new Vector2(24, 10),
                     OnMouseLeftClick = e => new NextLevel { GuiEntity = e }
                 })
+            .Translate(new Vector2(WindowWidth/2, WindowHeight/2))
             .OnGuiEvent((e, c) =>
             {
                 if (e is NextLevel nl)
@@ -75,24 +79,26 @@
                 new Label
                 {
                     Tag = Tags.Notification,
-                    Size = new Vector2(200, 75),
-                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2),
+                    Size = new Vector2(320, 128),
                     FillColor = Color.SKYBLUE,
                     TextColor = Color.RAYWHITE,
-                    FontSize = 16,
-                    Margins = new Vector2(8, 16)
+                    FontSize = 24,
+                    TextOffSet = new Vector2(0, 24),
+                    Font = Assets.Font
                 },
                 new Label
                 {
-                    Size = new Vector2(150, 30),
-                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2 + 35),
+                    Size = new Vector2(200, 30),
+                    Position = new Vector2(0, 64),
                     FillColor = Color.BLANK,
                     TextColor = Color.RAYWHITE,
                     FontSize = 10,
                     Text = "Press space bar to continue",
                     HasOutlines = false,
-                    Margins = new Vector2(5, 0)
+                    TextOffSet = new Vector2(15, 0),
+                    Font = Assets.FontThin
                 })
+                .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))
                 .OnGameEvent((e, c) =>
                 {
                     if (e is ShipHitAsteroid sha && sha.LifeLost)
@@ -130,24 +136,26 @@
                 new Label
                 {
                     Tag = Tags.Score,
-                    Position = new Vector2(WindowWidth - 200, 35),
-                    Size = new Vector2(200, 50),
+                    Position = new Vector2(WindowWidth - 200, 32),
+                    Size = new Vector2(230, 50),
                     Text = GetScoreString(Score),
                     TextColor = Color.RAYWHITE,
                     FillColor = Color.BLANK,
                     FontSize = 32,
-                    Margins = new Vector2(10, 10)
+                    TextOffSet = new Vector2(20, 10),
+                    Font = Assets.FontThin
                 },
                 new Label
                 {
                     Tag = Tags.Health,
-                    Position = new Vector2(WindowWidth - 500, 35),
-                    Size = new Vector2(170, 50),
+                    Position = new Vector2(WindowWidth - 500, 32),
+                    Size = new Vector2(230, 50),
                     Text = GetHealthString(MaxHealth),
                     TextColor = Color.RAYWHITE,
                     FillColor = Color.BLANK,
                     FontSize = 32,
-                    Margins = new Vector2(10, 10)
+                    TextOffSet = new Vector2(20, 10),
+                    Font = Assets.FontThin
                 })
                 .OnGameEvent((e, c) =>
                 {
@@ -174,7 +182,7 @@
 
             for (var i = 1; i <= playerLifes; i++)
             {
-                var pos = new Vector2(icon.width + (i * icon.width * 1.5f), 10);
+                var pos = new Vector2(icon.width + (i * icon.width * 1.5f), 20);
                 container.AddChildren(
                      new ImageTexture(icon, Color.WHITE)
                      {
@@ -194,8 +202,8 @@
                    FillColor = GuiShipBaseColor[ShipColor],
                    FontSize = 45,
                    Position = new Vector2((WindowWidth / 2), WindowHeight / 8),
-                   Size = new Vector2(400, 100),
-                   Margins = new Vector2(35, 30),
+                   Size = new Vector2(600, 100),
+                   TextOffSet = new Vector2(55, 30),
                    Font = Assets.Font
                },
                new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
@@ -206,7 +214,7 @@
                new Button
                {
                    Tag = Tags.ShipSelectLeft,
-                   Position = new Vector2(WindowWidth * .2f, WindowHeight / 2),
+                   Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
                    Size = new Vector2(20, 50),
                    BaseColor = GuiShipBaseColor[ShipColor],
                    FocusColor = GuiShipFocusColor[ShipColor],
@@ -219,7 +227,7 @@
                new Button
                {
                    Tag = Tags.ShipSelectRight,
-                   Position = new Vector2(WindowWidth * .8f, WindowHeight / 2),
+                   Position = new Vector2((WindowWidth * .8f) + 15f, WindowHeight / 2),
                    Size = new Vector2(20, 50),
                    BaseColor = GuiShipBaseColor[ShipColor],
                    FocusColor = GuiShipFocusColor[ShipColor],
@@ -283,7 +291,8 @@
                    Text = "Start",
                    TextColor = Color.YELLOW,
                    FontSize = 24,
-                   Margins = new Vector2(28, 15),
+                   Font = FontThin,
+                   TextOffSet = new Vector2(28, 15),
                    Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
                    Size = new Vector2(125, 50),
                    BaseColor = GuiShipBaseColor[ShipColor],

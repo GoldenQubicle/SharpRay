@@ -59,7 +59,6 @@ namespace SharpRay.Core
             //SetTargetFPS(60);
         }
 
-
         /// <summary>
         /// The main loop of the SharpRay application. 
         /// Handles rendering, collision, eventing, etc.
@@ -92,6 +91,26 @@ namespace SharpRay.Core
             CloseAudioDevice();
             CloseWindow();
         }
+
+        /// <summary>
+        /// Convenient method to take advantage of .NET hot reloading while designing GUI elements. 
+        /// Contineously adds & removes entities, DOES NOT support interactivity!
+        /// </summary>
+        /// <param name="action"></param>
+        public static void RunDebugGui(Action action)
+        {
+            while (!WindowShouldClose())
+            {
+                action();
+                DoEventActions();
+                DoRender();
+                Entities.Clear();
+                RenderLayers.Clear();
+            }
+            CloseAudioDevice();
+            CloseWindow();
+        }
+
 
 
         /// <summary>

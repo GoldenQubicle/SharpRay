@@ -46,7 +46,7 @@ namespace Asteroids
         internal static readonly int MaxPlayerLifes = 3;
 
         public static bool IsPaused { get; set; }
-        
+
         static async Task Main(string[] args)
         {
             Initialize(new SharpRayConfig
@@ -72,7 +72,7 @@ namespace Asteroids
         public static LevelData testLevel => new(
             Description: "Test Level",
             WinScore: 10,
-            ShipSpawnLocation: new Vector2(WindowWidth/2, WindowHeight/2),
+            ShipSpawnLocation: new Vector2(WindowWidth / 2, WindowHeight / 2),
             Lifes: 3,
             AsteroidSpawnStart: new()
             {
@@ -103,7 +103,7 @@ namespace Asteroids
         public static void StartGame()
         {
             PlayerLifes = testLevel.Lifes;
-           
+
             var level = new Level();
             level.OnEnter(testLevel);
             AddEntity(level);

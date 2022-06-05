@@ -103,6 +103,10 @@
         credits section 
         possible full screen toggle?!
 
+☐ rework Gui @created(05-06-2022 19:29)
+    make notification scale according to text size!
+    show pickup text as info message on 'hud' and disappearing after a while
+
 ☐ @bug audio playing when paused @created(02-06-2022 17:23)
 
 ☐ @bug when going over pickup the ship sometimes get stuck in acceleration @created(02-06-2022 17:23)
