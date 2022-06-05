@@ -37,6 +37,20 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:SharpRay.Core.Application.RunDebugGui(System.Action)" -->
+        <member name="M:SharpRay.Core.Application.GetFont(System.String)">
+            <summary>
+            Retrieves a <see cref="T:Raylib_cs.Font"/> from the Fonts dictionary. Will throw an exception if the given key is not present.
+            </summary>
+            <param name="key"></param>
+            <returns><see cref="T:Raylib_cs.Font"/></returns>
+        </member>
+        <member name="M:SharpRay.Core.Application.AddFont(System.String,System.String)">
+            <summary>
+            Loads a <see cref="T:Raylib_cs.Font"/> from file, and adds it the Fonts dictionary with the given key. 
+            </summary>
+            <param name="key"></param>
+            <param name="fontFileName"></param>
+        </member>
         <member name="M:SharpRay.Core.Application.AddSound(System.String,System.String)">
             <summary>
             Loads a <see cref="T:Raylib_cs.Sound"/> from file, and adds it the Sounds dictionary with the given key. 

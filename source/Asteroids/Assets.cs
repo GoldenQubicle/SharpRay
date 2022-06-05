@@ -2,8 +2,8 @@
 {
     public static class Assets
     {
-        public static Font Font { get; private set; }
-        public static Font FontThin { get; private set; }
+        public const string FontFuture = nameof(FontFuture);
+        public const string FontFutureThin = nameof(FontFutureThin);
 
         //asteroid texture keys
         private const string tkBig = "big";
@@ -13,8 +13,6 @@
 
         private const string Brown = nameof(Brown);
         private const string Grey = nameof(Grey);
-
-
 
         internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors; //[Color][Size][Variation] 
         internal static Dictionary<int, Dictionary<string, string>> ships; // [Type][Color]
@@ -54,8 +52,8 @@
 
         public static void Load()
         {
-            Font = LoadFont(Path.Combine(AssestsFolder, "kenvector_future.ttf"));
-            FontThin = LoadFont(Path.Combine(AssestsFolder, "kenvector_future_thin.ttf"));
+            AddFont(FontFuture, "kenvector_future.ttf");
+            AddFont(FontFutureThin, "kenvector_future_thin.ttf");
 
             AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
             AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");

@@ -28,6 +28,7 @@ namespace SharpRay.Core
         private static readonly Stack<IHasUndoRedo> UndoStack = new();
         private static readonly Stack<IHasUndoRedo> RedoStack = new();
         private static Dictionary<string, Texture2D> Textures = new();
+        private static Dictionary<string, Font> Fonts = new();
         private static SortedDictionary<int, List<IHasRender>> RenderLayers = new();
         public static string AssestsFolder = Path.Combine(AppContext.BaseDirectory, @"assets");
         private static long FrameCount;
@@ -88,6 +89,7 @@ namespace SharpRay.Core
 
             foreach (var t in Textures) UnloadTexture(t.Value);
             foreach (var a in Audio.Sounds) UnloadSound(a.Value);
+            foreach (var f in Fonts) UnloadFont(f.Value);
             CloseAudioDevice();
             CloseWindow();
         }
@@ -112,6 +114,22 @@ namespace SharpRay.Core
         }
 
 
+        /// <summary>
+        /// Retrieves a <see cref="Font"/> from the Fonts dictionary. Will throw an exception if the given key is not present.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns><see cref="Font"/></returns>
+        public static Font GetFont(string key) => Fonts[key];
+
+
+        /// <summary>
+        /// Loads a <see cref="Font"/> from file, and adds it the Fonts dictionary with the given key. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="fontFileName"></param>
+        public static void AddFont(string key, string fontFileName) =>
+            Fonts.Add(key, LoadFont(Path.Combine(AssestsFolder, fontFileName)));
+            
 
         /// <summary>
         /// Loads a <see cref="Sound"/> from file, and adds it the Sounds dictionary with the given key. 

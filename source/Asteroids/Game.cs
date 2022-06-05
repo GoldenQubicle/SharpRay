@@ -64,8 +64,8 @@ namespace Asteroids
             //File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
-            AddEntity(Gui.CreateShipSelectionMenu());
-            //StartGame();
+            //AddEntity(Gui.CreateShipSelectionMenu());
+            StartGame();
             Run();
         }
 

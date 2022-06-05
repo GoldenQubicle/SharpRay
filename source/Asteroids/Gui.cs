@@ -49,7 +49,7 @@
                     Text = "Level Won!",
                     TextColor = Color.GOLD,
                     FontSize = 32,
-                    Font = Assets.Font,
+                    Font = GetFont(FontFuture),
                     TextOffSet = new Vector2(16, 32)
                 },
                 new Button
@@ -60,7 +60,7 @@
                     FocusColor = Color.GREEN,
                     Text = "Next Level",
                     FontSize = 16,
-                    Font = Assets.FontThin,
+                    Font = GetFont(FontFutureThin),
                     TextOffSet = new Vector2(24, 10),
                     OnMouseLeftClick = e => new NextLevel { GuiEntity = e }
                 })
@@ -84,7 +84,7 @@
                     TextColor = Color.RAYWHITE,
                     FontSize = 24,
                     TextOffSet = new Vector2(0, 24),
-                    Font = Assets.Font
+                    Font = GetFont(FontFuture),
                 },
                 new Label
                 {
@@ -96,7 +96,7 @@
                     Text = "Press space bar to continue",
                     HasOutlines = false,
                     TextOffSet = new Vector2(15, 0),
-                    Font = Assets.FontThin
+                    Font = GetFont(FontFutureThin),
                 })
                 .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))
                 .OnGameEvent((e, c) =>
@@ -143,7 +143,7 @@
                     FillColor = Color.BLANK,
                     FontSize = 32,
                     TextOffSet = new Vector2(20, 10),
-                    Font = Assets.FontThin
+                    Font = GetFont(FontFutureThin),
                 },
                 new Label
                 {
@@ -155,7 +155,7 @@
                     FillColor = Color.BLANK,
                     FontSize = 32,
                     TextOffSet = new Vector2(20, 10),
-                    Font = Assets.FontThin
+                    Font = GetFont(FontFutureThin),
                 })
                 .OnGameEvent((e, c) =>
                 {
@@ -204,7 +204,7 @@
                    Position = new Vector2((WindowWidth / 2), WindowHeight / 8),
                    Size = new Vector2(600, 100),
                    TextOffSet = new Vector2(55, 30),
-                   Font = Assets.Font
+                   Font = GetFont(FontFuture),
                },
                new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
                {
@@ -291,7 +291,7 @@
                    Text = "Start",
                    TextColor = Color.YELLOW,
                    FontSize = 24,
-                   Font = FontThin,
+                   Font = GetFont(FontFutureThin),
                    TextOffSet = new Vector2(28, 15),
                    Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
                    Size = new Vector2(125, 50),
