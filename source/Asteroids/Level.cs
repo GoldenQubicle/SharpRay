@@ -3,7 +3,7 @@
     public record LevelData(
       string Description,
       int WinScore,
-      Vector2 ShipSpawnLocation,
+      Ship.Layout ShipLayout,
       int Lifes,
       List<Asteroid> AsteroidSpawnStart,
       List<(Asteroid.Size size, Asteroid.Type type)> AsteroidSpawnDuring,
@@ -23,7 +23,7 @@
         {
             Data = data;
 
-            var ship = new Ship(Data.ShipSpawnLocation, GetTexture2D(ships[ShipType][ShipColor]));
+            var ship = new Ship(Data.ShipLayout, GetTexture2D(ships[ShipType][ShipColor]));
             var overlay = Gui.CreateScoreOverLay(Data.Lifes);
             var notice = Gui.CreateNotification();
 

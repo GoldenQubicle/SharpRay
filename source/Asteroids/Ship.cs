@@ -2,6 +2,8 @@
 {
     public class Ship : GameEntity, IHasCollider, IHasCollision
     {
+        public record Layout(Vector2 Position, IPrimaryWeapon PrimaryWeapon, int Health);
+
         public ICollider Collider { get; }
         public IPrimaryWeapon PrimaryWeapon { get; set; }
         public Texture2D ShipTexture { get; set; }
@@ -41,9 +43,9 @@
         private readonly Vector2 offset; //used for render position textures
 
 
-        public Ship(Vector2 position, Texture2D texture)
+        public Ship(Layout layout, Texture2D texture)
         {
-            Position = position;
+            Position = layout.Position;
             Size = new Vector2(texture.width, texture.height);
             RenderLayer = RlShip;
             ShipTexture = texture;
@@ -57,7 +59,8 @@
                 HitPoints = 16
             };
 
-            PrimaryWeapon = new WeaponSingleShooter();
+            PrimaryWeapon = layout.PrimaryWeapon;
+            Health = layout.Health; 
 
             Motions = new Dictionary<string, Easing>
             {

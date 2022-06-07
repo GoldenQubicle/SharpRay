@@ -40,7 +40,6 @@ namespace Asteroids
         internal static string ShipColor = Gui.Green;
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         internal static int Score = 0;
-        //internal static int Health;
         internal static readonly int MaxHealth = 10;
         internal static int PlayerLifes;
         internal static readonly int MaxPlayerLifes = 3;
@@ -71,12 +70,15 @@ namespace Asteroids
 
         public static LevelData testLevel => new(
             Description: "Test Level",
-            WinScore: 10,
-            ShipSpawnLocation: new Vector2(WindowWidth / 2, WindowHeight / 2),
+            WinScore: 25,
+            ShipLayout: new(
+                Position: new (WindowWidth / 2, WindowHeight / 2),
+                PrimaryWeapon: new WeaponSingleShooter(),
+                Health: MaxHealth),
             Lifes: 3,
             AsteroidSpawnStart: new()
             {
-                new Asteroid(Asteroid.Size.Large, Asteroid.Type.Dirt, new Vector2(800, 100), new Vector2(0, 1.5f)),
+                new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (800, 100), new (0, 1.5f)),
             },
             AsteroidSpawnDuring: new()
             {
@@ -92,7 +94,7 @@ namespace Asteroids
             Easing: Easings.EaseSineInOut,
             PickUps: new()
             {
-                new PickUp
+                new ()
                 {
                     Description = "Triple Shooter Weapon!",
                     SpawnScore = 5,
