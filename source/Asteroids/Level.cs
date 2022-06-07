@@ -75,7 +75,7 @@
             {
                 if (Score >= pickUp.SpawnScore && !pickUp.HasSpawned)
                 {
-                    pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth-100), GetRandomValue(100, WindowWidth-100)));
+                    pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth-100), GetRandomValue(100, WindowHeight-100)));
                 }
             }
 

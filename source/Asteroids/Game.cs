@@ -73,7 +73,7 @@ namespace Asteroids
             WinScore: 50,
             ShipLayout: new(
                 Position: new (WindowWidth / 2, WindowHeight / 2),
-                PrimaryWeapon: new WeaponSingleShooter(),
+                //PrimaryWeapon: new WeaponSingleShooter(),
                 Health: MaxHealth),
             Lifes: 3,
             AsteroidSpawnStart: new()
@@ -98,13 +98,13 @@ namespace Asteroids
                 {
                     Description = "Triple Shooter Weapon!",
                     SpawnScore = 5,
-                    OnPickUp = s => s.PrimaryWeapon = new WeaponTripleShooter()
+                    OnPickUp = s => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                 },
                 new()
                 {
                     Description = "Bullets does 2x Damage!",
                     SpawnScore = 15,
-                    OnPickUp = s => s.PrimaryWeapon.BulletType = Bullet.Type.Medium
+                    OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy, 5)
                 }
 
             });
@@ -112,7 +112,7 @@ namespace Asteroids
         public static void StartGame()
         {
             PlayerLifes = testLevel.Lifes;
-
+            PrimaryWeapon.OnStartGame();
             var level = new Level();
             level.OnEnter(testLevel);
             AddEntity(level);
@@ -170,6 +170,9 @@ namespace Asteroids
                     ship.HasTakenDamage = false; // prevent damage texture from being visible
                     ship.Health = MaxHealth;
                     ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
+
+                    //TODO better method name & reset the pickup spawns
+                    PrimaryWeapon.OnStartGame();
 
                     ShipDamageTextureIdx = -1;
                     PlayerLifes--;

@@ -19,20 +19,20 @@
             Heavy
         }
 
-        public static Data GetData(Vector2 origin, float angle, float initialForce, Type type) => type switch
+        public static Data GetData(Vector2 origin, float angle, float initialForce, PrimaryWeapon.State state) => state.BulletType switch
         {
-            Type.Simple => new(Origin: origin, Angle: angle, InitialForce: initialForce,
-                Radius: 2f, Speed: 10f, LifeTime: 750d, Damage: 1, Render: (p, r) =>
+            Type.Simple => new(Origin: origin, Angle: angle, InitialForce: initialForce, Radius: 2f, 
+                Speed: state.BulletSpeed, LifeTime: state.BulletLifeTime, Damage: 1, Render: (p, r) =>
                 {
                     DrawCircleV(p, r, Color.YELLOW);
                 }),
-            Type.Medium => new(Origin: origin, Angle: angle, InitialForce: initialForce,
-                Radius: 3f, Speed: 10f, LifeTime: 750d, Damage: 2, Render: (p, r) =>
+            Type.Medium => new(Origin: origin, Angle: angle, InitialForce: initialForce, Radius: 3f, 
+                Speed: state.BulletSpeed, LifeTime: state.BulletLifeTime, Damage: 2, Render: (p, r) =>
                 {
                     DrawCircleV(p, r, Color.GOLD);
                 }),
-            Type.Heavy => new(Origin: origin, Angle: angle, InitialForce: initialForce,
-                Radius: 4f, Speed: 10f, LifeTime: 750d, Damage: 3, Render: (p, r) =>
+            Type.Heavy => new(Origin: origin, Angle: angle, InitialForce: initialForce, Radius: 4f, 
+                Speed: state.BulletSpeed, LifeTime: state.BulletLifeTime, Damage: 3, Render: (p, r) =>
                 {
                     DrawCircleV(p, r, Color.ORANGE);
                     DrawCircleV(p, r-1, Color.GOLD);

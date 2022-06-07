@@ -2,10 +2,10 @@
 {
     public class Ship : GameEntity, IHasCollider, IHasCollision
     {
-        public record Layout(Vector2 Position, IPrimaryWeapon PrimaryWeapon, int Health);
+        public record Layout(Vector2 Position, int Health);
 
         public ICollider Collider { get; }
-        public IPrimaryWeapon PrimaryWeapon { get; set; }
+        //public IPrimaryWeapon PrimaryWeapon { get; set; }
         public Texture2D ShipTexture { get; set; }
         public Texture2D DamgageTexture { get; set; }
         public bool HasTakenDamage { get; set; }
@@ -59,7 +59,7 @@
                 HitPoints = 16
             };
 
-            PrimaryWeapon = layout.PrimaryWeapon;
+            //PrimaryWeapon = layout.PrimaryWeapon;
             Health = layout.Health; 
 
             Motions = new Dictionary<string, Easing>
