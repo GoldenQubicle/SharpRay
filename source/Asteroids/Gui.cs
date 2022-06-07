@@ -194,7 +194,7 @@
         }
 
         public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Absurd Asteroids",
