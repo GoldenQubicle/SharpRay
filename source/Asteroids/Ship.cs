@@ -155,11 +155,6 @@
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            //if (IsPaused)
-            //{
-            //    return;
-            //}
-
             (hasRotation, direction) = e switch
             {
                 KeyLeftDown when !hasRotation => StartRotateIn(Left),

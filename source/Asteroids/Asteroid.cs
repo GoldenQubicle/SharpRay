@@ -79,7 +79,7 @@
             if (e is Bullet b)
             {
                 //depending on weapon type obviously
-                damage++;
+                damage+= b.Damage;
 
                 RemoveEntity(b);
 
