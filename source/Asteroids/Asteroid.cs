@@ -78,7 +78,6 @@
         {
             if (e is Bullet b)
             {
-                //depending on weapon type obviously
                 damage+= b.Damage;
 
                 RemoveEntity(b);
@@ -87,7 +86,6 @@
                     EmitEvent(new AsteroidDestroyed
                     {
                         Asteroid = this,
-                        Bullet = b
                     });
             }
         }

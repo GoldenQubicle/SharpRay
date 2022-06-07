@@ -70,7 +70,7 @@ namespace Asteroids
 
         public static LevelData testLevel => new(
             Description: "Test Level",
-            WinScore: 25,
+            WinScore: 50,
             ShipLayout: new(
                 Position: new (WindowWidth / 2, WindowHeight / 2),
                 PrimaryWeapon: new WeaponSingleShooter(),
@@ -99,7 +99,14 @@ namespace Asteroids
                     Description = "Triple Shooter Weapon!",
                     SpawnScore = 5,
                     OnPickUp = s => s.PrimaryWeapon = new WeaponTripleShooter()
+                },
+                new()
+                {
+                    Description = "Bullets does 2x Damage!",
+                    SpawnScore = 15,
+                    OnPickUp = s => s.PrimaryWeapon.BulletType = Bullet.Type.Medium
                 }
+
             });
 
         public static void StartGame()
@@ -199,7 +206,6 @@ namespace Asteroids
 
                 // remove the entities 
                 RemoveEntity(ad.Asteroid);
-                RemoveEntity(ad.Bullet);
             }
         }
 

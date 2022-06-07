@@ -35,8 +35,8 @@
                 Radius: 4f, Speed: 10f, LifeTime: 750d, Damage: 3, Render: (p, r) =>
                 {
                     DrawCircleV(p, r, Color.ORANGE);
-                    DrawCircleV(p, 3, Color.GOLD);
-                    DrawCircleV(p, 2, Color.RAYWHITE);
+                    DrawCircleV(p, r-1, Color.GOLD);
+                    DrawCircleV(p, r-2, Color.RAYWHITE);
                 }),
             _ => throw new NotImplementedException(),
         };

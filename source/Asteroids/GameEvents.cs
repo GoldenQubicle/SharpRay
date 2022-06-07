@@ -15,7 +15,6 @@
     public struct AsteroidDestroyed : IGameEvent
     {
         public Asteroid Asteroid { get; init; }
-        public Bullet Bullet { get; init; }
     }
 
     public struct ShipHitAsteroid : IGameEvent
