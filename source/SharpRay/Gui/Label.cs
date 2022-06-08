@@ -33,6 +33,7 @@
                 DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
 
             DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+
         }
     }
 }

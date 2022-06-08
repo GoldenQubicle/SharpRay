@@ -103,7 +103,6 @@ namespace Asteroids
                     SpawnScore = 30,
                     OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
                 }
-
             });
 
         public static void StartGame()
@@ -126,7 +125,6 @@ namespace Asteroids
             RemoveEntitiesOfType<Level>();
             RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
-            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.Notification));
 
             //reset game stats
             Score = 0;
@@ -163,7 +161,7 @@ namespace Asteroids
                 if (sha.LifeLost)
                 {
                     IsPaused = true;
-
+                    
                     //TODO better method name & reset the pickup spawns
                     PrimaryWeapon.OnStartGame();
                     var level = GetEntity<Level>();
@@ -178,6 +176,7 @@ namespace Asteroids
 
                     ShipDamageTextureIdx = -1;
                     PlayerLifes--;
+                    AddEntity(Gui.CreateShipLostNotification(PlayerLifes));
                 }
 
                 if (PlayerLifes == 0)
@@ -190,7 +189,6 @@ namespace Asteroids
 
             if (e is ShipPickUp spu)
             {
-                IsPaused = true;
                 PlaySound(Sounds[PickUp.PickupSound]);
                 RemoveEntity(spu.PickUp);
             }
