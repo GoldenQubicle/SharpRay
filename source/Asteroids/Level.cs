@@ -49,6 +49,8 @@
         {
             IsPaused = true;
             Score = 0;
+            currentTime = 0;
+            spawnIndex = 0;
             StopAllSounds();
             RemoveEntitiesOfType<Ship>();
             RemoveEntitiesOfType<Bullet>();
@@ -61,10 +63,7 @@
 
         public override void Update(double deltaTime)
         {
-            if (IsPaused)
-            {
-                return;
-            }
+            if (IsPaused) return;
 
             currentTime += deltaTime;
 

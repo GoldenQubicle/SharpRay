@@ -109,7 +109,7 @@
             var endPos = Position + new Vector2(base.Size.X / 2, base.Size.Y / 2);
             var a = MapRange(damage, GetHitPoints(Definition), 0, 0, 1);
             var l = Vector2.Lerp(startPos, endPos, a);
-            DrawLineEx(startPos, l, 5, Color.GREEN);
+            //DrawLineEx(startPos, l, 5, Color.GREEN);
 
             //DEBUG
             //Collider.Render();
