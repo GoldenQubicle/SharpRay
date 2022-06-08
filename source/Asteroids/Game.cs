@@ -14,6 +14,7 @@ global using SharpRay.Eventing;
 global using SharpRay.Entities;
 global using SharpRay.Interfaces;
 global using SharpRay.Gui;
+global using SharpRay.Listeners;
 global using static SharpRay.Core.Application;
 global using static SharpRay.Core.Audio;
 global using static Asteroids.GuiEvents;
@@ -73,7 +74,6 @@ namespace Asteroids
             WinScore: 50,
             ShipLayout: new(
                 Position: new (WindowWidth / 2, WindowHeight / 2),
-                //PrimaryWeapon: new WeaponSingleShooter(),
                 Health: MaxHealth),
             Lifes: 3,
             AsteroidSpawnStart: new()
@@ -85,13 +85,10 @@ namespace Asteroids
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
                 (Asteroid.Size.Tiny, Asteroid.Type.Dirt),
-                (Asteroid.Size.Large, Asteroid.Type.Dirt),
-                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                (Asteroid.Size.Small, Asteroid.Type.Dirt),
             },
             InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
-            SpawnTime: 20000f,
-            Easing: Easings.EaseSineInOut,
+            MaxSpawnTime: 500f * SharpRayConfig.TickMultiplier,
+            Easing: new(Easings.EaseSineInOut, 5000f, isRepeated: true),
             PickUps: new()
             {
                 new ()

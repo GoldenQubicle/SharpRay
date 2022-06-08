@@ -1,15 +1,16 @@
 ﻿namespace Asteroids
 {
-    public class Ship : GameEntity, IHasCollider, IHasCollision
+    public class Ship : Entity, IHasCollider, IHasCollision, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>, IKeyBoardListener
     {
         public record Layout(Vector2 Position, int Health);
 
+        public Action<IGameEvent> EmitEvent { get; set; }
         public ICollider Collider { get; }
-        //public IPrimaryWeapon PrimaryWeapon { get; set; }
         public Texture2D ShipTexture { get; set; }
         public Texture2D DamgageTexture { get; set; }
         public bool HasTakenDamage { get; set; }
         public int Health { get; set; } = MaxHealth;
+
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
         public const string HitSound = nameof(HitSound);

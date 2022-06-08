@@ -5,12 +5,12 @@
         public const string FontFuture = nameof(FontFuture);
         public const string FontFutureThin = nameof(FontFutureThin);
 
-        //asteroid texture keys
+        //asteroid texture size keys
         private const string tkBig = "big";
         private const string tkMedium = "med";
         private const string tkSmall = "small";
         private const string tkTiny = "tiny";
-
+        //asteroid texture color keys
         private const string Brown = nameof(Brown);
         private const string Grey = nameof(Grey);
 
@@ -33,6 +33,7 @@
             Asteroid.Type.Ruby => Grey,
             Asteroid.Type.Emerald => Brown,
             Asteroid.Type.Saphire => Grey,
+            _ => throw new ArgumentOutOfRangeException($"No color key found for asteroid type {type}")
         };
 
         private static string GetAsteroidSizeKey(Asteroid.Size size) => size switch

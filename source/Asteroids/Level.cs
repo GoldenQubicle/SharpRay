@@ -8,8 +8,8 @@
       List<Asteroid> AsteroidSpawnStart,
       List<(Asteroid.Size size, Asteroid.Type type)> AsteroidSpawnDuring,
       Vector2 InitialHeadingSpeed,
-      float SpawnTime,
-      Func<float, float, float, float, float> Easing,
+      double MaxSpawnTime,
+      Easing Easing,
       List<PickUp> PickUps);
 
     public class Level : Entity, IHasUpdate
@@ -38,9 +38,9 @@
             foreach (var asteroid in Data.AsteroidSpawnStart)
                 AddEntity(asteroid, Game.OnGameEvent);
 
-            timings = Enumerable.Range(1, Data.AsteroidSpawnDuring.Count)
-                .Select(n => Data.Easing(n, 0, Data.SpawnTime, Data.AsteroidSpawnDuring.Count) * SharpRayConfig.TickMultiplier)
-                .ToArray();
+            //timings = Enumerable.Range(1, Data.AsteroidSpawnDuring.Count)
+            //    .Select(n => Data.Easing(n, 0, Data.SpawnTime, Data.AsteroidSpawnDuring.Count) * SharpRayConfig.TickMultiplier)
+            //    .ToArray();
 
             IsPaused = false;
         }
@@ -66,6 +66,7 @@
             if (IsPaused) return;
 
             currentTime += deltaTime;
+            Data.Easing.Update(deltaTime);
 
             if (Score >= Data.WinScore)
                 OnExit();
@@ -78,22 +79,28 @@
                 }
             }
 
-            if (spawnIndex < timings.Length && currentTime > timings[spawnIndex])
+            if(currentTime > Data.MaxSpawnTime)
             {
-                var def = Data.AsteroidSpawnDuring[spawnIndex];
-                var theta = MathF.Tau / timings.Length;
+                currentTime = 0;
+                var chance = GetRandomValue(1, 100) / 100f;
+                
+                if (chance < Data.Easing.GetValue())
+                {
+                    var idx = GetRandomValue(0, Data.AsteroidSpawnDuring.Count - 1);
+                    var def = Data.AsteroidSpawnDuring[idx];
+                    var theta = GetRandomValue(0, 360) * DEG2RAD;
 
-                var x = MathF.Cos(spawnIndex + 1 * theta) * WindowHeight;
-                var y = MathF.Sin(spawnIndex + 1 * theta) * WindowHeight;
+                    var x = MathF.Cos(theta) * WindowHeight;
+                    var y = MathF.Sin(theta) * WindowHeight;
 
-                var pos = new Vector2(x, y) + new Vector2(WindowWidth / 2, WindowHeight / 2);
+                    var pos = new Vector2(x, y) + new Vector2(WindowWidth / 2, WindowHeight / 2);
 
-                var target = GetEntity<Ship>().Position;
-                var heading = Vector2.Normalize(target - pos);
-                heading *= Data.InitialHeadingSpeed;
+                    var target = GetEntity<Ship>().Position;
+                    var heading = Vector2.Normalize(target - pos);
+                    heading *= Data.InitialHeadingSpeed;
 
-                AddEntity(new Asteroid(def.size, def.type, pos, heading), Game.OnGameEvent);
-                spawnIndex++;
+                    AddEntity(new Asteroid(def.size, def.type, pos, heading), Game.OnGameEvent);
+                }
             }
         }
     }

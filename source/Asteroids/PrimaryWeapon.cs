@@ -4,8 +4,6 @@
     {
         public const string SingleSound = nameof(SingleSound);
         public const string TripleSound = nameof(TripleSound);
-
-
         public enum Mode
         {
             Single,
@@ -74,6 +72,5 @@
             },
             _ => throw new NotImplementedException()
         };
-
     }
 }

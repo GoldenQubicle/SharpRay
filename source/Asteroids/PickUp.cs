@@ -1,6 +1,6 @@
 ﻿namespace Asteroids
 {
-    public class PickUp : Entity, IHasCollider, IHasRender, IHasUpdate
+    public class PickUp : Entity, IHasCollider, IHasRender
     {
         public const string PickupSound = nameof(PickupSound);
         public const string SpawnSound = nameof(SpawnSound);

@@ -1,6 +1,6 @@
 ﻿namespace Asteroids
 {
-    public class StarField : GameEntity
+    public class StarField : Entity, IHasUpdate, IHasRender
     {
         private struct Star
         {
@@ -38,7 +38,7 @@
 
         public StarField()
         {
-            RenderLayer = Game.RlBackground;
+            RenderLayer = RlBackground;
             texture = GetTexture2D(starTexture);
             textureOffset = new Vector2(texture.width / 2, texture.height / 2);
             Generate();
