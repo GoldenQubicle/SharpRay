@@ -30,7 +30,7 @@
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
         private Texture2D Texture { get; }
-        
+
 
         private float RotationAngle;  //inital orientation
         private float RotationSpeed; // in radians per fixed update
@@ -80,8 +80,9 @@
                 PlaySound(Sounds[BounceSound]);
             }
 
-            HasSpawned = Position.X > 0 && Position.X < WindowWidth
-                      && Position.Y > 0 && Position.Y < WindowHeight;
+            if (!HasSpawned)
+                HasSpawned = Position.X > 0 && Position.X < WindowWidth
+                          && Position.Y > 0 && Position.Y < WindowHeight;
 
         }
 
@@ -89,7 +90,7 @@
         {
             if (e is Bullet b)
             {
-                damage+= b.Damage;
+                damage += b.Damage;
 
                 RemoveEntity(b);
 
