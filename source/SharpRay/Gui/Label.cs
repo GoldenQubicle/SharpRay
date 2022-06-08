@@ -25,6 +25,7 @@
         public bool WordWrap { get; init; } = false;
         public Vector2 TextOffSet { get; init; }
         public bool HasOutlines { get; init; } = true;
+        public Action<Label> RenderAction { get; init; }
         public override void Render()
         {
             var offset = Position - Size / 2;
@@ -32,8 +33,9 @@
             if (HasOutlines)
                 DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
 
-            DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+            RenderAction?.Invoke(this);
 
+            DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
         }
     }
 }
