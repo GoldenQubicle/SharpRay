@@ -71,9 +71,9 @@ namespace Asteroids
 
         public static LevelData testLevel => new(
             Description: "Test Level",
-            WinScore: 50,
+            WinScore: 100,
             ShipLayout: new(
-                Position: new (WindowWidth / 2, WindowHeight / 2),
+                Position: new(WindowWidth / 2, WindowHeight / 2),
                 Health: MaxHealth),
             Lifes: 3,
             AsteroidSpawnStart: new()
@@ -82,25 +82,25 @@ namespace Asteroids
             },
             AsteroidSpawnDuring: new()
             {
-                (Asteroid.Size.Large, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                (Asteroid.Size.Tiny, Asteroid.Type.Dirt),
+                (Asteroid.Size.Small, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
             },
             InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
-            MaxSpawnTime: 500f * SharpRayConfig.TickMultiplier,
+            MaxSpawnTime: 1500f * SharpRayConfig.TickMultiplier,
             Easing: new(Easings.EaseSineInOut, 5000f, isRepeated: true),
             PickUps: new()
             {
                 new ()
                 {
                     Description = "Triple Shooter Weapon!",
-                    SpawnScore = 5,
+                    SpawnScore = 15,
                     OnPickUp = s => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                 },
                 new()
                 {
                     Description = "Bullets does 2x Damage!",
-                    SpawnScore = 15,
+                    SpawnScore = 30,
                     OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
                 }
 
@@ -164,13 +164,17 @@ namespace Asteroids
                 {
                     IsPaused = true;
 
+                    //TODO better method name & reset the pickup spawns
+                    PrimaryWeapon.OnStartGame();
+                    var level = GetEntity<Level>();
+                    level.PickUpScore = 0;
+                    level.Data.PickUps.Where(p => p.HasSpawned && !GetEntities<PickUp>().Contains(p))
+                        .ToList().ForEach(p => p.HasSpawned = false);
+
                     var ship = GetEntity<Ship>();
                     ship.HasTakenDamage = false; // prevent damage texture from being visible
                     ship.Health = MaxHealth;
                     ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
-
-                    //TODO better method name & reset the pickup spawns
-                    PrimaryWeapon.OnStartGame();
 
                     ShipDamageTextureIdx = -1;
                     PlayerLifes--;
@@ -194,7 +198,9 @@ namespace Asteroids
             if (e is AsteroidDestroyed ad)
             {
                 //update gui
-                Score += Asteroid.GetHitPoints(ad.Asteroid.Definition);
+                var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
+                Score += hp;
+                GetEntity<Level>().PickUpScore += hp;
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
 
 

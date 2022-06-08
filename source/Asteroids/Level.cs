@@ -14,9 +14,8 @@
 
     public class Level : Entity, IHasUpdate
     {
-        private LevelData Data { get; set; }
-        private double[] timings;
-        private int spawnIndex = 0;
+        public int PickUpScore { get; set; }
+        public LevelData Data { get; set; }
         private double currentTime = 0d;
 
         public void OnEnter(LevelData data)
@@ -50,7 +49,7 @@
             IsPaused = true;
             Score = 0;
             currentTime = 0;
-            spawnIndex = 0;
+            PickUpScore = 0;
             StopAllSounds();
             RemoveEntitiesOfType<Ship>();
             RemoveEntitiesOfType<Bullet>();
@@ -73,7 +72,7 @@
 
             foreach (var pickUp in Data.PickUps)
             {
-                if (Score >= pickUp.SpawnScore && !pickUp.HasSpawned)
+                if (PickUpScore >= pickUp.SpawnScore && !pickUp.HasSpawned)
                 {
                     pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth-100), GetRandomValue(100, WindowHeight-100)));
                 }

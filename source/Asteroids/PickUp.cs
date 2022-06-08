@@ -8,7 +8,7 @@
         public Action<Ship> OnPickUp { get; init; }
         public string Description { get; init; }
         public int SpawnScore { get; init; }
-        public bool HasSpawned { get; private set; }
+        public bool HasSpawned { get; set; }
 
         public PickUp()
         {
