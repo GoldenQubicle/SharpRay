@@ -39,6 +39,35 @@
             { Orange, Color.ORANGE },
         };
 
+        public static Label CreatePickUpNotification(string description) => new Label
+        {
+            RenderLayer = RlGuiScoreOverlay,
+            Position = new(WindowWidth - 300, WindowHeight - (1 + GetEntities<Label>().Count()) * 35),
+            Size = new(0, 25),
+            Text = description,
+            TextColor = Color.RAYWHITE,
+            WordWrap = false,
+            HasOutlines = false,
+            TextOffSet = new(3, 5),
+            FillColor = Color.BLANK,
+            UpdateTimer = 2000d * SharpRayConfig.TickMultiplier,
+            UpdateAction = l =>
+            {
+                if (l.Size.X < 300)
+                {
+                    l.Size += new Vector2(5f, 0f);
+                    l.Position += new Vector2(2.5f, 0);
+                }
+
+                if (l.CurrentTime > l.UpdateTimer)
+                {
+                    var a = (float)MapRange(l.CurrentTime, l.UpdateTimer, 2750 * SharpRayConfig.TickMultiplier, 1, 0);
+                    l.TextColor = Fade(l.TextColor, a);
+                    if (a < 0) RemoveEntity(l);
+                }
+            }
+        };
+
         public static GuiContainer CreateLevelWin() =>
             GuiContainerBuilder.CreateNew(isVisible: true).AddChildren(
                 new Label

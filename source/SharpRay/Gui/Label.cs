@@ -25,7 +25,10 @@
         public bool WordWrap { get; init; } = false;
         public Vector2 TextOffSet { get; init; }
         public bool HasOutlines { get; init; } = true;
-        public Action<Label> RenderAction { get; init; }
+        public Action<Label> UpdateAction { get; init; }
+        public double UpdateTimer { get; init; }
+        public double CurrentTime { get; private set; }
+
         public override void Render()
         {
             var offset = Position - Size / 2;
@@ -33,9 +36,15 @@
             if (HasOutlines)
                 DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
 
-            RenderAction?.Invoke(this);
+            
 
             DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+        }
+
+        public override void Update(double deltaTime)
+        {
+            CurrentTime += deltaTime;
+            UpdateAction?.Invoke(this);
         }
     }
 }

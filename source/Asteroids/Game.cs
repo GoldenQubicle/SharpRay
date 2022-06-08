@@ -63,28 +63,9 @@ namespace Asteroids
 
             //File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
-            AddEntity(new Label
-            {
-                Position = new(WindowWidth / 2, WindowHeight / 2),
-                Size = new(0, 25),
-                Text = "A long string to see if this actually works",
-                WordWrap = false,
-                HasOutlines = false,
-                TextOffSet = new (3, 5),
-                FillColor = Color.BLANK,
-                RenderAction = l => 
-                    {
-                        if (l.Size.X < 300)
-                        {
-                            l.Size += new Vector2(.5f, 0);
-                            l.Position += new Vector2(.25f, 0);
-                        }
-                    }
-            }); ;
-
-            //AddEntity(new StarField());
-            //AddEntity(Gui.CreateShipSelectionMenu());
-            //StartGame();
+            AddEntity(new StarField());
+            AddEntity(Gui.CreateShipSelectionMenu());
+            StartGame();
             Run();
         }
 
@@ -180,7 +161,7 @@ namespace Asteroids
                 if (sha.LifeLost)
                 {
                     IsPaused = true;
-                    
+
                     //TODO better method name & reset the pickup spawns
                     PrimaryWeapon.OnStartGame();
                     var level = GetEntity<Level>();
@@ -208,6 +189,7 @@ namespace Asteroids
 
             if (e is ShipPickUp spu)
             {
+                AddEntity(Gui.CreatePickUpNotification(spu.PickUp.Description));
                 PlaySound(Sounds[PickUp.PickupSound]);
                 RemoveEntity(spu.PickUp);
             }
