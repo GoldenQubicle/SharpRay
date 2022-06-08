@@ -11,7 +11,6 @@
             public const string StartGame = nameof(StartGame);
             public const string ShipSelectRight = nameof(ShipSelectRight);
             public const string ShipSelectLeft = nameof(ShipSelectLeft);
-            public const string Notification = nameof(Notification);
         }
 
         public static string PlayerLifeIcon(int n) => $"PlayerLife{n}";
@@ -40,6 +39,35 @@
             { Orange, Color.ORANGE },
         };
 
+        public static Label CreatePickUpNotification(string description) => new Label
+        {
+            RenderLayer = RlGuiScoreOverlay,
+            Position = new(WindowWidth - 300, WindowHeight - (1 + GetEntities<Label>().Count()) * 35),
+            Size = new(0, 25),
+            Text = description,
+            TextColor = Color.RAYWHITE,
+            WordWrap = false,
+            HasOutlines = false,
+            TextOffSet = new(3, 5),
+            FillColor = Color.BLANK,
+            UpdateTimer = 2000d * SharpRayConfig.TickMultiplier,
+            UpdateAction = l =>
+            {
+                if (l.Size.X < 300)
+                {
+                    l.Size += new Vector2(5f, 0f);
+                    l.Position += new Vector2(2.5f, 0);
+                }
+
+                if (l.CurrentTime > l.UpdateTimer)
+                {
+                    var a = (float)MapRange(l.CurrentTime, l.UpdateTimer, 2750 * SharpRayConfig.TickMultiplier, 1, 0);
+                    l.TextColor = Fade(l.TextColor, a);
+                    if (a < 0) RemoveEntity(l);
+                }
+            }
+        };
+
         public static GuiContainer CreateLevelWin() =>
             GuiContainerBuilder.CreateNew(isVisible: true).AddChildren(
                 new Label
@@ -64,7 +92,7 @@
                     TextOffSet = new Vector2(24, 10),
                     OnMouseLeftClick = e => new NextLevel { GuiEntity = e }
                 })
-            .Translate(new Vector2(WindowWidth/2, WindowHeight/2))
+            .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))
             .OnGuiEvent((e, c) =>
             {
                 if (e is NextLevel nl)
@@ -73,18 +101,18 @@
                     RemoveEntity(c);
                 }
             });
-        
-        public static GuiContainer CreateNotification() =>
-            GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.Notification, renderLayer: RlGuiScoreOverlay).AddChildren(
+
+        public static GuiContainer CreateShipLostNotification(int lifesLeft) =>
+            GuiContainerBuilder.CreateNew(isVisible: true, renderLayer: RlGuiScoreOverlay).AddChildren(
                 new Label
                 {
-                    Tag = Tags.Notification,
                     Size = new Vector2(320, 128),
-                    FillColor = Color.SKYBLUE,
+                    FillColor = Color.MAROON,
                     TextColor = Color.RAYWHITE,
                     FontSize = 24,
                     TextOffSet = new Vector2(0, 24),
                     Font = GetFont(FontFuture),
+                    Text = $"      You lost a ship! \n     {lifesLeft} ships remaining",
                 },
                 new Label
                 {
@@ -99,29 +127,11 @@
                     Font = GetFont(FontFutureThin),
                 })
                 .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))
-                .OnGameEvent((e, c) =>
-                {
-                    if (e is ShipHitAsteroid sha && sha.LifeLost)
-                    {
-                        var label = c.GetEntityByTag<Label>(Tags.Notification);
-                        label.Text = $"      You lost a ship! \n     {PlayerLifes} ships remaining";
-                        label.FillColor = Color.MAROON;
-                        c.Show();
-                    }
-
-                    if (e is ShipPickUp spu)
-                    {
-                        var label = c.GetEntityByTag<Label>(Tags.Notification);
-                        label.Text = spu.PickUp.Description;
-                        label.FillColor = Color.SKYBLUE;
-                        c.Show();
-                    }
-                })
                 .OnKeyBoardEvent((e, c) =>
                 {
                     if (e is KeySpaceBarPressed && IsPaused)
                     {
-                        c.Hide();
+                        RemoveEntity(c);
                         IsPaused = false;
                     }
                 });

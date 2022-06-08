@@ -24,23 +24,17 @@
 
             var ship = new Ship(Data.ShipLayout, GetTexture2D(ships[ShipType][ShipColor]));
             var overlay = Gui.CreateScoreOverLay(Data.Lifes);
-            var notice = Gui.CreateNotification();
+            //var notice = Gui.CreateLifeLostNotification();
 
             ship.EmitEvent += Game.OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;
-            ship.EmitEvent += notice.OnGameEvent;
 
             AddEntity(ship);
             AddEntity(overlay);
-            AddEntity(notice);
 
             foreach (var asteroid in Data.AsteroidSpawnStart)
                 AddEntity(asteroid, Game.OnGameEvent);
-
-            //timings = Enumerable.Range(1, Data.AsteroidSpawnDuring.Count)
-            //    .Select(n => Data.Easing(n, 0, Data.SpawnTime, Data.AsteroidSpawnDuring.Count) * SharpRayConfig.TickMultiplier)
-            //    .ToArray();
-
+                  
             IsPaused = false;
         }
 
@@ -56,7 +50,6 @@
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
-            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.Notification));
             AddEntity(Gui.CreateLevelWin(), Game.OnGuiEvent);
         }
 

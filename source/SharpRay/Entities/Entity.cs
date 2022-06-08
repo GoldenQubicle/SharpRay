@@ -4,7 +4,7 @@
     {
         public string Tag { get; set; } = string.Empty;
 
-        public Vector2 Size { get; init; }
+        public Vector2 Size { get; set; }
 
         public Vector2 Position { get; set; }
 
