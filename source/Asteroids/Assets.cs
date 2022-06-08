@@ -55,8 +55,17 @@
             AddFont(FontFuture, "kenvector_future.ttf");
             AddFont(FontFutureThin, "kenvector_future_thin.ttf");
 
-            AddSound(Ship.EngineSound, "spaceEngineLow_001.ogg");
-            AddSound(Ship.ThrusterSound, "thrusterFire_001.ogg");
+            AddSound(Ship.EngineSound, "Audio\\spaceEngineLow_001.ogg");
+            AddSound(Ship.ThrusterSound, "Audio\\thrusterFire_001.ogg");
+            AddSound(Ship.HitSound, "Audio\\impactMetal_003.ogg");
+            AddSound(PrimaryWeapon.SingleSound, "Audio\\laserSmall_001.ogg");
+            AddSound(PrimaryWeapon.TripleSound, "Audio\\laserSmall_002.ogg");
+            AddSound(Asteroid.ExplosionSound, "Audio\\explosionCrunch_000.ogg");
+            AddSound(Asteroid.BounceSound, "Audio\\impactMetal_002.ogg");
+            SetSoundVolume(Sounds[Asteroid.BounceSound], 0.25f);
+            SetSoundVolume(Sounds[Asteroid.ExplosionSound], 0.25f);
+            AddSound(PickUp.PickupSound, "Audio\\sfx_shieldUp.ogg");
+            AddSound(PickUp.SpawnSound, "Audio\\sfx_twoTone.ogg");
 
             //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
             var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");

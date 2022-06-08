@@ -2,8 +2,9 @@
 {
     public class PickUp : Entity, IHasCollider, IHasRender, IHasUpdate
     {
+        public const string PickupSound = nameof(PickupSound);
+        public const string SpawnSound = nameof(SpawnSound);
         public ICollider Collider { get; }
-
         public Action<Ship> OnPickUp { get; init; }
         public string Description { get; init; }
         public int SpawnScore { get; init; }
@@ -25,6 +26,7 @@
             Position = pos;
             (Collider as RectCollider).Position = pos;
             AddEntity(this);
+            PlaySound(Sounds[SpawnSound]);
             HasSpawned = true;
         }
 

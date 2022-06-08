@@ -12,6 +12,7 @@
         public int Health { get; set; } = MaxHealth;
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
+        public const string HitSound = nameof(HitSound);
 
         private const string Accelerate = nameof(Accelerate);
         private const string Decelerate = nameof(Decelerate);
@@ -42,7 +43,6 @@
         private float scale = .75f;
         private readonly Vector2 offset; //used for render position textures
 
-
         public Ship(Layout layout, Texture2D texture)
         {
             Position = layout.Position;
@@ -59,7 +59,6 @@
                 HitPoints = 16
             };
 
-            //PrimaryWeapon = layout.PrimaryWeapon;
             Health = layout.Health; 
 
             Motions = new Dictionary<string, Easing>

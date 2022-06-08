@@ -2,6 +2,10 @@
 {
     public static class PrimaryWeapon
     {
+        public const string SingleSound = nameof(SingleSound);
+        public const string TripleSound = nameof(TripleSound);
+
+
         public enum Mode
         {
             Single,
@@ -27,8 +31,6 @@
         public static void ChangeBulletType(Bullet.Type type) =>
             OnChangeState(CurrentState with { BulletType = type });
 
-        public static void ChangeBulletType(Bullet.Type type, int ammo) =>
-            OnChangeState(CurrentState with { BulletType = type, AmmoCount = ammo });
 
         private static void OnChangeState(State state)
         {
@@ -43,16 +45,13 @@
                 AddEntity(b, Game.OnGameEvent);
             }
 
-            if (CurrentState.AmmoCount > 0)
+            var soundKey = CurrentState.Mode switch
             {
-                CurrentState = CurrentState with { AmmoCount = CurrentState.AmmoCount - 1 };
-            }
-            //NOTE this is not correct, as we cannot assume the previous state has the correct data
-            //instead we want to get back to previous bullet type in this use case
-            if (CurrentState.AmmoCount == 1)
-            {
-                CurrentState = _states.Pop() with { Mode = CurrentState.Mode };
-            }
+                Mode.Single => SingleSound,
+                Mode.TripleWide or Mode.TripleNarrow => TripleSound
+            };
+
+            PlaySound(Sounds[soundKey]);
         }
 
         private static List<Bullet> CreateBullets(ShipFiredBullet sfb) => CurrentState.Mode switch

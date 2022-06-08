@@ -104,7 +104,7 @@ namespace Asteroids
                 {
                     Description = "Bullets does 2x Damage!",
                     SpawnScore = 15,
-                    OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy, 5)
+                    OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
                 }
 
             });
@@ -152,6 +152,7 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
+                PlaySound(Sounds[Ship.HitSound]);
 
                 var idx = (int)MapRange(sha.ShipHealth, 0, MaxHealth, 3, 1);
 
@@ -189,6 +190,7 @@ namespace Asteroids
             if (e is ShipPickUp spu)
             {
                 IsPaused = true;
+                PlaySound(Sounds[PickUp.PickupSound]);
                 RemoveEntity(spu.PickUp);
             }
 
@@ -197,6 +199,10 @@ namespace Asteroids
                 //update gui
                 Score += Asteroid.GetHitPoints(ad.Asteroid.Definition);
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
+
+
+                SetSoundPitch(Sounds[Asteroid.ExplosionSound], GetRandomValue(50, 150) / 100f);
+                PlaySound(Sounds[Asteroid.ExplosionSound]);
 
                 //spawn new asteroids from the one destroyed
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);

@@ -1,7 +1,10 @@
 ﻿namespace Asteroids
 {
-    public class Asteroid : GameEntity, IHasCollider, IHasCollision
+    public class Asteroid : Entity, IHasCollider, IHasCollision, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>
     {
+        public const string ExplosionSound = nameof(ExplosionSound);
+        public const string BounceSound = nameof(BounceSound);
+
         public new enum Size
         {
             Tiny = 1,
@@ -20,12 +23,14 @@
             Saphire,
         }
 
+        public Action<IGameEvent> EmitEvent { get; set; }
         public ICollider Collider { get; }
         public Vector2 Heading { get; private set; }
         public (Size size, Type type) Definition { get; private set; }
         private Vector2 TextureOffset { get; }
         private Vector2 TexturePos { get; set; }
         private Texture2D Texture { get; }
+        
 
         private float RotationAngle;  //inital orientation
         private float RotationSpeed; // in radians per fixed update
@@ -62,12 +67,18 @@
             var bounciness = BouncyLimitReached() ? Vector2.One : new Vector2(1.05f, 1.05f);
             bool BouncyLimitReached() => Math.Abs(Heading.X) > 10 || Math.Abs(Heading.Y) > 10;
 
-            Heading = Position switch
+            (Heading, var hasBounced) = Position switch
             {
-                Vector2 { X: < 0 } or Vector2 { X: > WindowWidth } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitX) * bounciness,
-                Vector2 { Y: < 0 } or Vector2 { Y: > WindowHeight } when HasSpawned => Vector2.Reflect(Heading, Vector2.UnitY) * bounciness,
-                _ => Heading
+                Vector2 { X: < 0 } or Vector2 { X: > WindowWidth } when HasSpawned => (Vector2.Reflect(Heading, Vector2.UnitX) * bounciness, true),
+                Vector2 { Y: < 0 } or Vector2 { Y: > WindowHeight } when HasSpawned => (Vector2.Reflect(Heading, Vector2.UnitY) * bounciness, true),
+                _ => (Heading, false)
             };
+
+            if (hasBounced)
+            {
+                SetSoundPitch(Sounds[BounceSound], GetRandomValue(50, 150) / 100f);
+                PlaySound(Sounds[BounceSound]);
+            }
 
             HasSpawned = Position.X > 0 && Position.X < WindowWidth
                       && Position.Y > 0 && Position.Y < WindowHeight;
