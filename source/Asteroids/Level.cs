@@ -14,6 +14,8 @@
 
     public class Level : Entity, IHasUpdate
     {
+        public const string WinSound = nameof(WinSound);
+
         public int PickUpScore { get; set; }
         public LevelData Data { get; set; }
         private double currentTime = 0d;
@@ -51,6 +53,7 @@
             RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
             AddEntity(Gui.CreateLevelWin(), Game.OnGuiEvent);
+            PlaySound(Sounds[WinSound]);
         }
 
         public override void Update(double deltaTime)

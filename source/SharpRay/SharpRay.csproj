@@ -6,16 +6,17 @@
     <StartupObject />
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  <PropertyGroup>
     <OutputType>Library</OutputType>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputType>WinExe</OutputType>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <OutputType>Library</OutputType>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <SelfContained>true</SelfContained>
     <DebugType>Embedded</DebugType>
   </PropertyGroup>
   

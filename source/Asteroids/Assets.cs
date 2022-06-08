@@ -67,6 +67,11 @@
             SetSoundVolume(Sounds[Asteroid.ExplosionSound], 0.25f);
             AddSound(PickUp.PickupSound, "Audio\\sfx_shieldUp.ogg");
             AddSound(PickUp.SpawnSound, "Audio\\sfx_twoTone.ogg");
+            AddSound(Gui.SelectionSound, "Audio\\mixkit-game-level-music-689.wav");
+            SetSoundVolume(Sounds[Gui.SelectionSound], 0.25f);
+            AddSound(Level.WinSound, "Audio\\mixkit-winning-an-extra-bonus-2060.wav");
+            SetSoundVolume(Sounds[Level.WinSound], 0.35f);
+
 
             //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
             var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");

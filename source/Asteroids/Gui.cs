@@ -13,6 +13,7 @@
             public const string ShipSelectLeft = nameof(ShipSelectLeft);
         }
 
+        public const string SelectionSound = nameof(SelectionSound);
         public static string PlayerLifeIcon(int n) => $"PlayerLife{n}";
         public static string GetScoreString(int s) => $"Score : {s}";
         public static string GetHealthString(int h) => $"Health : {h}";
@@ -314,6 +315,7 @@
                if (e is GameStart gs)
                {
                    c.Hide();
+                   //StopSound(Sounds[SelectionSound]);
                    StartGame();
                }
 

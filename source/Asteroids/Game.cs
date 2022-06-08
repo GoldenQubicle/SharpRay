@@ -64,8 +64,16 @@ namespace Asteroids
             //File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
-            AddEntity(Gui.CreateShipSelectionMenu());
-            StartGame();
+            var selectionMenu = Gui.CreateShipSelectionMenu();
+            AddEntity(selectionMenu);
+            if (selectionMenu.IsVisible)
+            {
+                PlaySound(Sounds[Gui.SelectionSound]);
+            }
+            else
+            {
+                StartGame();
+            }
             Run();
         }
 
