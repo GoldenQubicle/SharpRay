@@ -101,7 +101,7 @@ namespace Asteroids
                 {
                     Description = "Bullets does 2x Damage!",
                     SpawnScore = 30,
-                    OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
+                    OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                 }
 
             });

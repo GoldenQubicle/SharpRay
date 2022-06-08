@@ -29,7 +29,8 @@
             Type.Medium => new(Origin: origin, Angle: angle, InitialForce: initialForce, Radius: 3f, 
                 Speed: state.BulletSpeed, LifeTime: state.BulletLifeTime, Damage: 2, Render: (p, r) =>
                 {
-                    DrawCircleV(p, r, Color.GOLD);
+                    DrawCircleV(p, r, Color.ORANGE);
+                    DrawCircleV(p, r - 1, Color.YELLOW);
                 }),
             Type.Heavy => new(Origin: origin, Angle: angle, InitialForce: initialForce, Radius: 4f, 
                 Speed: state.BulletSpeed, LifeTime: state.BulletLifeTime, Damage: 3, Render: (p, r) =>

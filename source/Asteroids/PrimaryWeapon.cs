@@ -48,7 +48,7 @@
                 Mode.Single => SingleSound,
                 Mode.TripleWide or Mode.TripleNarrow => TripleSound
             };
-
+            SetSoundPitch(Sounds[soundKey], GetRandomValue(92, 108) / 100f);
             PlaySound(Sounds[soundKey]);
         }
 
