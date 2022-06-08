@@ -44,7 +44,7 @@ namespace Asteroids
         internal static readonly int MaxHealth = 10;
         internal static int PlayerLifes;
         internal static readonly int MaxPlayerLifes = 3;
-
+        internal static readonly Color BackGroundColor = new Color(12, 24, 64, 0);
         public static bool IsPaused { get; set; }
 
         static async Task Main(string[] args)
@@ -53,7 +53,7 @@ namespace Asteroids
             {
                 WindowWidth = WindowWidth,
                 WindowHeight = WindowHeight,
-                BackGroundColor = new Color(12, 24, 64, 0),
+                BackGroundColor = BackGroundColor,
                 ShowFPS = true,
                 DoEventLogging = true
             });
@@ -99,7 +99,7 @@ namespace Asteroids
                 },
                 new()
                 {
-                    Description = "Bullets does 2x Damage!",
+                    Description = "Bullets do 2x Damage!",
                     SpawnScore = 30,
                     OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                 }

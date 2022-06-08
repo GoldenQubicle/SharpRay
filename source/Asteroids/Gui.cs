@@ -49,19 +49,19 @@
             WordWrap = false,
             HasOutlines = false,
             TextOffSet = new(3, 5),
-            FillColor = Color.BLANK,
-            UpdateTimer = 2000d * SharpRayConfig.TickMultiplier,
+            FillColor = BackGroundColor,
+            TriggerTime = 2000d * SharpRayConfig.TickMultiplier,
             UpdateAction = l =>
             {
-                if (l.Size.X < 300)
+                if (l.Size.X < 200)
                 {
                     l.Size += new Vector2(5f, 0f);
                     l.Position += new Vector2(2.5f, 0);
                 }
 
-                if (l.CurrentTime > l.UpdateTimer)
+                if (l.ELapsedTime > l.TriggerTime)
                 {
-                    var a = (float)MapRange(l.CurrentTime, l.UpdateTimer, 2750 * SharpRayConfig.TickMultiplier, 1, 0);
+                    var a = (float)MapRange(l.ELapsedTime, l.TriggerTime, 2750 * SharpRayConfig.TickMultiplier, 1, 0);
                     l.TextColor = Fade(l.TextColor, a);
                     if (a < 0) RemoveEntity(l);
                 }

@@ -26,8 +26,8 @@
         public Vector2 TextOffSet { get; init; }
         public bool HasOutlines { get; init; } = true;
         public Action<Label> UpdateAction { get; init; }
-        public double UpdateTimer { get; init; }
-        public double CurrentTime { get; private set; }
+        public double TriggerTime { get; init; }
+        public double ELapsedTime { get; private set; }
 
         public override void Render()
         {
@@ -43,7 +43,7 @@
 
         public override void Update(double deltaTime)
         {
-            CurrentTime += deltaTime;
+            ELapsedTime += deltaTime;
             UpdateAction?.Invoke(this);
         }
     }
