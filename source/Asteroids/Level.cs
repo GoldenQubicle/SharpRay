@@ -26,7 +26,6 @@
 
             var ship = new Ship(Data.ShipLayout, GetTexture2D(ships[ShipType][ShipColor]));
             var overlay = Gui.CreateScoreOverLay(Data.Lifes);
-            //var notice = Gui.CreateLifeLostNotification();
 
             ship.EmitEvent += Game.OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;
@@ -52,7 +51,7 @@
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
-            AddEntity(Gui.CreateLevelWin(), Game.OnGuiEvent);
+            AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
             PlaySound(Sounds[WinSound]);
         }
 

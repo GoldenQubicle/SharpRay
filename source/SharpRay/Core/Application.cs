@@ -129,7 +129,7 @@ namespace SharpRay.Core
         /// <param name="fontFileName"></param>
         public static void AddFont(string key, string fontFileName) =>
             Fonts.Add(key, LoadFont(Path.Combine(AssestsFolder, fontFileName)));
-            
+
 
         /// <summary>
         /// Loads a <see cref="Sound"/> from file, and adds it the Sounds dictionary with the given key. 
@@ -138,6 +138,12 @@ namespace SharpRay.Core
         /// <param name="soundFileName"></param>
         public static void AddSound(string key, string soundFileName) =>
             Audio.Sounds.Add(key, LoadSound(Path.Combine(AssestsFolder, soundFileName)));
+
+        /// <summary>
+        /// Plays the sound with the <see cref="Sound"/> from the Audio.Sounds dictionary with the given key.
+        /// </summary>
+        /// <param name="key"></param>
+        public static void PlaySound(string key) => Raylib.PlaySound(Audio.Sounds[key]);
 
 
         /// <summary>
@@ -278,6 +284,7 @@ namespace SharpRay.Core
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
 
+        
 
         #endregion
 

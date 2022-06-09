@@ -19,9 +19,12 @@
 
         public static void OnStartGame()
         {
-            _states.Push(new State(Mode.Single, Bullet.Type.Simple, 10f, 750f, -1));
+            _states.Push(new State(Mode.Single, Bullet.Type.Simple, 10f, 500f, -1));
             CurrentState = _states.Peek();
         }
+
+        public static void ChangeBulletLifeTime(float multiplier) =>
+               OnChangeState(CurrentState with { BulletLifeTime = CurrentState.BulletLifeTime * multiplier });
 
         public static void ChangeMode(Mode mode) =>
             OnChangeState(CurrentState with { Mode = mode });
@@ -49,7 +52,7 @@
                 Mode.TripleWide or Mode.TripleNarrow => TripleSound
             };
             SetSoundPitch(Sounds[soundKey], GetRandomValue(92, 108) / 100f);
-            PlaySound(Sounds[soundKey]);
+            PlaySound(soundKey);
         }
 
         private static List<Bullet> CreateBullets(ShipFiredBullet sfb) => CurrentState.Mode switch

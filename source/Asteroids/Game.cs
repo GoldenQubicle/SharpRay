@@ -46,7 +46,7 @@ namespace Asteroids
         internal static readonly int MaxPlayerLifes = 3;
         internal static readonly Color BackGroundColor = new(12, 24, 64, 0);
         public static bool IsPaused { get; set; }
-        public static Queue<LevelData> Levels = new();
+        private static int LevelIdx = 0;
 
         static async Task Main(string[] args)
         {
@@ -61,65 +61,97 @@ namespace Asteroids
 
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
-            InitializeLevels();
+
             //File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
 
             AddEntity(new StarField());
             var selectionMenu = Gui.CreateShipSelectionMenu();
             AddEntity(selectionMenu);
+
             if (selectionMenu.IsVisible)
-            {
-                PlaySound(Sounds[Gui.SelectionSound]);
-            }
+                PlaySound(Gui.SelectionSound);
             else
-            {
-                StartGame();
-            }
+                StartGame(1);
+
             Run();
         }
 
-        private static void InitializeLevels()
+        public static Vector2 GetRandomHeading(int min, int max)
         {
-            Levels.Enqueue(new(
-                Description: "Level 1",
-                WinScore: 150,
-                ShipLayout: new(
-                    Position: new(WindowWidth / 2, WindowHeight / 2),
-                    Health: MaxHealth),
-                Lifes: 3,
-                AsteroidSpawnStart: new()
-                {
-                    new (Asteroid.Size.Medium, Asteroid.Type.Dirt, new (257, 255), new (-1.5f, -1.5f)),
-                    //new (Asteroid.Size.Medium, Asteroid.Type.Dirt, new (WindowWidth-255, 257), new (1.5f, -1.5f)),
-                    //new (Asteroid.Size.Medium, Asteroid.Type.Dirt, new (255, WindowHeight-257), new (-1.5f, 1.5f)),
-                    new (Asteroid.Size.Medium, Asteroid.Type.Dirt, new (WindowWidth-257, WindowHeight-255), new (1.5f, 1.5f)),
-
-                },
-                AsteroidSpawnDuring: new()
-                {
-                    (Asteroid.Size.Large, Asteroid.Type.Dirt),
-                    //(Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                    //(Asteroid.Size.Large, Asteroid.Type.Dirt),
-                },
-                InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
-                MaxSpawnTime: 2500 * SharpRayConfig.TickMultiplier,
-                Easing: new(Easings.EaseSineInOut, 7500f, isRepeated: true),
-                PickUps: new()
-                {
-                    new ()
-                    {
-                        Description = "Triple Shooter Weapon!",
-                        SpawnScore = 15,
-                        OnPickUp = s => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
-                    },
-                    new()
-                    {
-                        Description = "Bullets do 2x Damage!",
-                        SpawnScore = 30,
-                        OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
-                    }
-                }));
+            return new(GetRandomValue(min, max) / 100f, GetRandomValue(min, max) / 100f);
         }
+
+        public static List<LevelData> Levels => new()
+        {
+           Level1, Level2, testLevel
+        };
+
+        public static LevelData Level1 => new(
+            Description: "Level 1",
+            WinScore: 50,
+            ShipLayout: new(
+                Position: new(WindowWidth / 2, WindowHeight / 2),
+                Health: MaxHealth),
+            Lifes: 3,
+            AsteroidSpawnStart: new()
+            {
+                new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (GetRandomValue(128, 256), GetRandomValue(128, 256)), GetRandomHeading(-50, 50)),
+            },
+            AsteroidSpawnDuring: new()
+            {
+                (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+            },
+            InitialHeadingSpeed: GetRandomHeading(50, 150),
+            MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
+            Easing: new(Easings.EaseSineInOut, 7500f, isRepeated: true),
+            PickUps: new()
+            {
+                new ()
+                {
+                    SpawnScore = 20,
+                    Description = "Bullets reach 1.5x as far!",
+                    OnPickUp = () => PrimaryWeapon.ChangeBulletLifeTime(1.5f)
+                },
+             });
+
+        public static LevelData Level2 => new(
+            Description: "Level 2",
+            WinScore: 125,
+            ShipLayout: new(
+                Position: new(WindowWidth / 2, WindowHeight / 2),
+                Health: MaxHealth),
+            Lifes: 3,
+            AsteroidSpawnStart: new()
+            {
+                   new (Asteroid.Size.Big, Asteroid.Type.Dirt, new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)), GetRandomHeading(-75, 75)),
+            },
+            AsteroidSpawnDuring: new()
+            {
+                   (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                   (Asteroid.Size.Medium, Asteroid.Type.Stone),
+                   (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                   (Asteroid.Size.Small, Asteroid.Type.Stone),
+            },
+            InitialHeadingSpeed: GetRandomHeading(100, 200),
+            MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
+            Easing: new(Easings.EaseBackInOut, 6000f, isRepeated: true),
+            PickUps: new()
+            {
+                   new ()
+                   {
+                       SpawnScore = 25,
+                       Description = "Bullets do 2x damage!",
+                       OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
+                   },
+                   new ()
+                   {
+                       SpawnScore = 45,
+                       Description = "Triple Shot Weapon!",
+                       OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
+                   },
+             });
 
         public static LevelData testLevel => new(
             Description: "Test Level",
@@ -147,22 +179,28 @@ namespace Asteroids
                 {
                     Description = "Triple Shooter Weapon!",
                     SpawnScore = 15,
-                    OnPickUp = s => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
+                    OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                 },
                 new()
                 {
                     Description = "Bullets do 2x Damage!",
                     SpawnScore = 30,
-                    OnPickUp = s => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
+                    OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                 }
             });
 
-        public static void StartGame()
+        public static void StartGame(int lvlIdx)
         {
-            PlayerLifes = testLevel.Lifes;
+            LevelIdx = lvlIdx;
             PrimaryWeapon.OnStartGame();
             var level = new Level();
-            level.OnEnter(Levels.Dequeue());
+            var lvlData = Levels[LevelIdx];
+            PlayerLifes = lvlData.Lifes;
+
+            if (LevelIdx > 0)
+                Levels[LevelIdx -1].PickUps.ForEach(p => p.OnPickUp());
+
+            level.OnEnter(lvlData);
             AddEntity(level);
         }
 
@@ -190,7 +228,7 @@ namespace Asteroids
         {
             if (e is NextLevel nl)
             {
-                GetEntity<Level>().OnEnter(testLevel);
+                GetEntity<Level>().OnEnter(Levels[++LevelIdx]);
             }
         }
 
@@ -199,7 +237,7 @@ namespace Asteroids
             if (e is ShipHitAsteroid sha)
             {
                 RemoveEntity(sha.Asteroid);
-                PlaySound(Sounds[Ship.HitSound]);
+                PlaySound(Ship.HitSound);
 
                 var idx = (int)MapRange(sha.ShipHealth, 0, MaxHealth, 3, 1);
 
@@ -242,7 +280,7 @@ namespace Asteroids
             if (e is ShipPickUp spu)
             {
                 AddEntity(Gui.CreatePickUpNotification(spu.PickUp.Description));
-                PlaySound(Sounds[PickUp.PickupSound]);
+                PlaySound(PickUp.PickupSound);
                 RemoveEntity(spu.PickUp);
             }
 
@@ -256,7 +294,7 @@ namespace Asteroids
 
 
                 SetSoundPitch(Sounds[Asteroid.ExplosionSound], GetRandomValue(50, 150) / 100f);
-                PlaySound(Sounds[Asteroid.ExplosionSound]);
+                PlaySound(Asteroid.ExplosionSound);
 
                 //spawn new asteroids from the one destroyed
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
@@ -280,7 +318,7 @@ namespace Asteroids
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)
                 {
                     ResetGame();
-                    StartGame();
+                    StartGame(LevelIdx);
                 }
 
                 if (kp.KeyboardKey == KeyboardKey.KEY_M)

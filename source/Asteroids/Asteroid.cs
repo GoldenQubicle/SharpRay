@@ -77,7 +77,7 @@
             if (hasBounced)
             {
                 SetSoundPitch(Sounds[BounceSound], GetRandomValue(50, 150) / 100f);
-                PlaySound(Sounds[BounceSound]);
+                PlaySound(BounceSound);
             }
 
             if (!HasSpawned)
@@ -153,11 +153,13 @@
             {
                 Size.Big => new()
                 {
-                    (Size.Medium, Type.Dirt),
+                    (Size.Small, Type.Dirt),
                     (Size.Large, Type.Dirt),
                     (Size.Medium, Type.Dirt),
+                    (Size.Small, Type.Dirt),
                     (Size.Large, Type.Dirt),
-                    (Size.Medium, Type.Dirt),
+                    (Size.Tiny, Type.Dirt),
+                    (Size.Small, Type.Dirt),
                 },
                 Size.Large => new()
                 {

@@ -107,8 +107,8 @@
             if (Position.Y > WindowHeight) Position = new Vector2(Position.X, 0);
 
             //update sounds
-            if (!IsSoundPlaying(Sounds[EngineSound])) PlaySound(Sounds[EngineSound]);
-            if (!IsSoundPlaying(Sounds[ThrusterSound])) PlaySound(Sounds[ThrusterSound]);
+            if (!IsSoundPlaying(Sounds[EngineSound])) PlaySound(EngineSound);
+            if (!IsSoundPlaying(Sounds[ThrusterSound])) PlaySound(ThrusterSound);
 
             //TODO: want to set overall sound fx from within game
             SetSoundVolume(Sounds[EngineSound], n_acceleration * .5f);
@@ -121,18 +121,18 @@
             {
                 HasTakenDamage = true;
                 Health -= Asteroid.GetDamageDone(a.Definition);
-                //EmitEvent(new ShipHitAsteroid
-                //{
-                //    LifeLost = Health <= 0,
-                //    LifeIconIdx = PlayerLifes,
-                //    ShipHealth = Health,
-                //    Asteroid = a,
-                //});
+                EmitEvent(new ShipHitAsteroid
+                {
+                    LifeLost = Health <= 0,
+                    LifeIconIdx = PlayerLifes,
+                    ShipHealth = Health,
+                    Asteroid = a,
+                });
             }
 
             if (e is PickUp p)
             {
-                p.OnPickUp(this);
+                p.OnPickUp();
                 EmitEvent(new ShipPickUp
                 {
                     PickUp = p

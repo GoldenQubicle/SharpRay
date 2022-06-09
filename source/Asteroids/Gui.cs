@@ -69,17 +69,17 @@
             }
         };
 
-        public static GuiContainer CreateLevelWin() =>
+        public static GuiContainer CreateLevelWin(string desc) =>
             GuiContainerBuilder.CreateNew(isVisible: true).AddChildren(
                 new Label
                 {
-                    Size = new Vector2(256, 164),
+                    Size = new Vector2(384, 164),
                     FillColor = Color.LIME,
-                    Text = "Level Won!",
+                    Text = $"{desc} Cleared!",
                     TextColor = Color.GOLD,
                     FontSize = 32,
                     Font = GetFont(FontFuture),
-                    TextOffSet = new Vector2(16, 32)
+                    TextOffSet = new Vector2(24, 32)
                 },
                 new Button
                 {
@@ -205,16 +205,16 @@
         }
 
         public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
-                   Text = "Absurd Asteroids",
+                   Text = "Meteor Madness",
                    TextColor = Color.YELLOW,
                    FillColor = GuiShipBaseColor[ShipColor],
                    FontSize = 45,
                    Position = new Vector2((WindowWidth / 2), WindowHeight / 8),
                    Size = new Vector2(600, 100),
-                   TextOffSet = new Vector2(55, 30),
+                   TextOffSet = new Vector2(72, 30),
                    Font = GetFont(FontFuture),
                },
                new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
@@ -315,8 +315,8 @@
                if (e is GameStart gs)
                {
                    c.Hide();
-                   //StopSound(Sounds[SelectionSound]);
-                   StartGame();
+                   StopSound(Sounds[SelectionSound]);
+                   StartGame(0);
                }
 
                if (e is ChangeShipType cst)

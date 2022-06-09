@@ -5,7 +5,7 @@
         public const string PickupSound = nameof(PickupSound);
         public const string SpawnSound = nameof(SpawnSound);
         public ICollider Collider { get; }
-        public Action<Ship> OnPickUp { get; init; }
+        public Action OnPickUp { get; init; }
         public string Description { get; init; }
         public int SpawnScore { get; init; }
         public bool HasSpawned { get; set; }
