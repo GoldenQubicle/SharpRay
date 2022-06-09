@@ -62,10 +62,8 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //File.WriteAllLines(Path.Combine(AssestsFolder, "stats.txt"), Asteroid.GetStats());
-
             AddEntity(new StarField());
-            var selectionMenu = Gui.CreateShipSelectionMenu();
+            var selectionMenu = Gui.CreateShipSelectionMenu(isVisible: true);
             AddEntity(selectionMenu);
 
             if (selectionMenu.IsVisible)
@@ -143,7 +141,7 @@ namespace Asteroids
                     //TODO better method name & reset the pickup spawns
                     PrimaryWeapon.OnStartGame();
                     var level = GetEntity<Level>();
-                    level.PickUpScore = 0;
+                    level.PickUpScore = 0; // tbh kinda unfair to reset if the player almost reaches a pickup score and just before loses a life!
                     level.Data.PickUps.Where(p => p.HasSpawned && !GetEntities<PickUp>().Contains(p))
                         .ToList().ForEach(p => p.HasSpawned = false);
 

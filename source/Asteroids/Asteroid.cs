@@ -155,11 +155,11 @@
                 {
                     (Size.Small, Type.Dirt),
                     (Size.Large, Type.Dirt),
-                    (Size.Medium, Type.Dirt),
+                    (Size.Medium, Type.Stone),
                     (Size.Small, Type.Dirt),
                     (Size.Large, Type.Dirt),
                     (Size.Tiny, Type.Dirt),
-                    (Size.Small, Type.Dirt),
+                    (Size.Small, Type.Stone),
                 },
                 Size.Large => new()
                 {

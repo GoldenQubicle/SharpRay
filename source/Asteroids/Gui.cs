@@ -191,12 +191,11 @@
                     if (e is ShipHitAsteroid sha)
                     {
                         var health = sha.LifeLost ? MaxHealth : sha.ShipHealth;
-                        var sb = c.GetEntityByTag<Label>(Tags.HealthBar);
 
+                        var sb = c.GetEntityByTag<Label>(Tags.HealthBar);
                         var s = MapRange(health, MaxHealth, 0, 0, 230);
                         sb.Size = new(s, 50);
                         sb.Position = new(WindowWidth - 615 + s / 2, 32);
-
 
                         c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
 
@@ -233,8 +232,8 @@
             return container;
         }
 
-        public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+        public static GuiContainer CreateShipSelectionMenu(bool isVisible) =>
+           GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",
