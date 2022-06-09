@@ -6,14 +6,17 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <OutputType>Exe</OutputType>
   </PropertyGroup>
-  
+
+  <!-- dotnet publish -p:PublishSingleFile=true -c Release  
+  as including the PublishSingleFile into csproj file prevents VS2022 from attachting a debugger when running in release -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputType>WinExe</OutputType>
-    <!-- <ApplicationIcon>favicon.ico</ApplicationIcon>
     <PublishTrimmed>true</PublishTrimmed>
-    <PublishSingleFile>true</PublishSingleFile>
+    <PublishReadyToRun>true</PublishReadyToRun>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <DebugType>Embedded</DebugType> -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>Embedded</DebugType>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
   </PropertyGroup>
   
   <ItemGroup>
