@@ -32,46 +32,49 @@
                 new ()
                 {
                     SpawnScore = 20,
+                    PickupType = PickUp.Type.Bullet,
                     Description = "Bullets reach 1.5x as far!",
                     OnPickUp = () => PrimaryWeapon.ChangeBulletLifeTime(1.5f)
                 },
              });
         public static LevelData Level2 => new(
-    Description: "Level 2",
-    WinScore: 125,
-    ShipLayout: new(
-        Position: new(WindowWidth / 2, WindowHeight / 2),
-        Health: MaxHealth),
-    Lifes: 3,
-    AsteroidSpawnStart: new()
-    {
-                   new (Asteroid.Size.Big, Asteroid.Type.Dirt, new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)), GetRandomHeading(-75, 75)),
-    },
-    AsteroidSpawnDuring: new()
-    {
-                   (Asteroid.Size.Large, Asteroid.Type.Dirt),
-                   (Asteroid.Size.Medium, Asteroid.Type.Stone),
-                   (Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                   (Asteroid.Size.Small, Asteroid.Type.Stone),
-    },
-    InitialHeadingSpeed: GetRandomHeading(100, 200),
-    MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
-    Easing: new(Easings.EaseBackInOut, 6000f, isRepeated: true),
-    PickUps: new()
-    {
+            Description: "Level 2",
+            WinScore: 125,
+            ShipLayout: new(
+                Position: new(WindowWidth / 2, WindowHeight / 2),
+                Health: MaxHealth),
+            Lifes: 3,
+            AsteroidSpawnStart: new()
+            {
+                new (Asteroid.Size.Big, Asteroid.Type.Dirt, new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)), GetRandomHeading(-75, 75)),
+            },
+            AsteroidSpawnDuring: new()
+            {
+                (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Stone),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Small, Asteroid.Type.Stone),
+            },
+            InitialHeadingSpeed: GetRandomHeading(100, 200),
+            MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
+            Easing: new(Easings.EaseBackInOut, 6000f, isRepeated: true),
+            PickUps: new()
+            {
                    new ()
                    {
                        SpawnScore = 25,
+                       PickupType = PickUp.Type.Bullet,
                        Description = "Bullets do 2x damage!",
                        OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                    },
                    new ()
                    {
                        SpawnScore = 45,
+                       PickupType = PickUp.Type.Weapon,
                        Description = "Triple Shot Weapon!",
                        OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                    },
-     });
+            });
 
         public static LevelData TestLevel => new(
             Description: "Test Level",
@@ -97,14 +100,16 @@
             {
                 new ()
                 {
-                    Description = "Triple Shooter Weapon!",
                     SpawnScore = 15,
+                    PickupType = PickUp.Type.Bullet,
+                    Description = "Triple Shooter Weapon!",
                     OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                 },
                 new()
                 {
-                    Description = "Bullets do 2x Damage!",
                     SpawnScore = 30,
+                    PickupType = PickUp.Type.Weapon,
+                    Description = "Bullets do 2x Damage!",
                     OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                 }
             });

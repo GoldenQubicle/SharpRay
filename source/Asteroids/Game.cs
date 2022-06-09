@@ -79,7 +79,6 @@ namespace Asteroids
             selectionMenu.Show();
             PlaySound(Gui.SelectionSound);
 #endif
-
             Run();
         }
 
