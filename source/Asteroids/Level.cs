@@ -51,8 +51,17 @@
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<PickUp>();
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
-            AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
-            PlaySound(Sounds[WinSound]);
+
+            if(LevelIdx == Levels.Data.Count - 1)
+            {
+                AddEntity(Gui.CreateLevelWin("All Levels"), Game.OnGuiEvent);
+                PlaySound(WinOverallSound);
+            } else
+            {
+                AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
+                PlaySound(WinSound);
+            }
+            
         }
 
         public override void Update(double deltaTime)

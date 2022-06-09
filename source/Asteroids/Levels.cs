@@ -79,7 +79,7 @@
             ShipLayout: new(
                 Position: new(WindowWidth / 2, WindowHeight / 2),
                 Health: MaxHealth),
-            Lifes: 3,
+            Lifes: 2,
             AsteroidSpawnStart: new()
             {
                 new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (800, 100), new (0, 1.5f)),

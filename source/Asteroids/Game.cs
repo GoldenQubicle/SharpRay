@@ -45,8 +45,13 @@ namespace Asteroids
         internal static int PlayerLifes;
         internal static readonly int MaxPlayerLifes = 3;
         internal static readonly Color BackGroundColor = new(12, 24, 64, 0);
-        public static bool IsPaused { get; set; }
-        private static int LevelIdx = 0;
+        internal static bool IsPaused { get; set; }
+        internal static int LevelIdx = 0;
+
+        internal const string LifeLostSound1 = nameof(LifeLostSound1);
+        internal const string LifeLostSound2 = nameof(LifeLostSound2);
+        internal const string StartSound = nameof(StartSound);
+        internal const string WinOverallSound = nameof(WinOverallSound);
 
         static async Task Main(string[] args)
         {
@@ -67,7 +72,7 @@ namespace Asteroids
             AddEntity(selectionMenu);
 
 #if DEBUG
-            StartGame(1);
+            StartGame(2);
 #endif
 
 #if RELEASE
@@ -87,13 +92,13 @@ namespace Asteroids
             PlayerLifes = lvlData.Lifes;
 
             if (LevelIdx > 0)
-                Levels.Data[LevelIdx -1].PickUps.ForEach(p => p.OnPickUp());
+                Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
 
             level.OnEnter(lvlData);
             AddEntity(level);
         }
 
-        private static void ResetGame()
+        public static void ResetGame()
         {
             StopAllSounds();
 
@@ -117,8 +122,14 @@ namespace Asteroids
         {
             if (e is NextLevel nl)
             {
-                if(LevelIdx < Levels.Data.Count-1)
+                if (LevelIdx < Levels.Data.Count - 1)
+                {
                     GetEntity<Level>().OnEnter(Levels.Data[++LevelIdx]);
+                    return;
+                }
+
+                GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
+                PlaySound(Gui.SelectionSound);
             }
         }
 
@@ -156,14 +167,13 @@ namespace Asteroids
 
                     ShipDamageTextureIdx = -1;
                     PlayerLifes--;
-                    AddEntity(Gui.CreateShipLostNotification(PlayerLifes));
-                }
 
-                if (PlayerLifes == 0)
-                {
-                    ResetGame();
-                    //StartGame();
-                    GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
+                    AddEntity(Gui.CreateShipLostNotification(PlayerLifes));
+                    PlaySound(LifeLostSound2);
+                    StopSound(Sounds[Ship.EngineSound]);
+                    StopSound(Sounds[Ship.ThrusterSound]);
+
+
                 }
             }
 

@@ -102,6 +102,7 @@
                 {
                     c.EmitEvent(e);
                     RemoveEntity(c);
+                    PlaySound(Game.StartSound);
                 }
             });
 
@@ -115,7 +116,9 @@
                     FontSize = 24,
                     TextOffSet = new Vector2(0, 24),
                     Font = GetFont(FontFuture),
-                    Text = $"      You lost a ship! \n     {lifesLeft} ships remaining",
+                    Text = lifesLeft == 0 
+                        ? $"              GAME OVER" 
+                        :  $"      You lost a ship! \n     {lifesLeft} ships remaining",
                 },
                 new Label
                 {
@@ -135,7 +138,17 @@
                     if (e is KeySpaceBarPressed && IsPaused)
                     {
                         RemoveEntity(c);
+                        
+                        if (lifesLeft == 0)
+                        {
+                            ResetGame();
+                            GetEntityByTag<GuiContainer>(Tags.ShipSelection).Show();
+                            PlaySound(SelectionSound);
+                            return;
+                        }
+
                         IsPaused = false;
+
                     }
                 });
 
@@ -344,6 +357,7 @@
                {
                    c.Hide();
                    StopSound(Sounds[SelectionSound]);
+                   PlaySound(Game.StartSound);
                    StartGame(0);
                }
 
