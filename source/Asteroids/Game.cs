@@ -63,13 +63,17 @@ namespace Asteroids
             Load();
 
             AddEntity(new StarField());
-            var selectionMenu = Gui.CreateShipSelectionMenu(isVisible: true);
+            var selectionMenu = Gui.CreateShipSelectionMenu();
             AddEntity(selectionMenu);
 
-            if (selectionMenu.IsVisible)
-                PlaySound(Gui.SelectionSound);
-            else
-                StartGame(1);
+#if DEBUG
+            StartGame(1);
+#endif
+
+#if RELEASE
+            selectionMenu.Show();
+            PlaySound(Gui.SelectionSound);
+#endif
 
             Run();
         }

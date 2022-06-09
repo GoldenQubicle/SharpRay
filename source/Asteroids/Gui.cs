@@ -232,8 +232,8 @@
             return container;
         }
 
-        public static GuiContainer CreateShipSelectionMenu(bool isVisible) =>
-           GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+        public static GuiContainer CreateShipSelectionMenu() =>
+           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",
