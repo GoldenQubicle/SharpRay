@@ -73,6 +73,7 @@
         ✔ to show pickups @created(01-06-2022 19:29) @done(01-06-2022 19:29)
 
     ☐ pickups @created(29-05-2022 12:06)
+        ☐ add some polish to visuals
         ☐ different weapons @created(26-05-2022 20:19)
             primary
                 ✔ 3 shooter @created(01-06-2022 19:28) @done(01-06-2022 19:28)
@@ -87,7 +88,7 @@
             strenght
 
         ☐ different ammo @created(29-05-2022 12:06)
-            play around w bullet lifetime as well! i.e. reach
+            ✔ play around w bullet lifetime as well! i.e. reach @done(22-06-09 15:04)
             fire bullet
             explosive bullet
             laser blast
@@ -105,7 +106,7 @@
 
 ☐ rework Gui @created(05-06-2022 19:29)
     make notification scale according to text size!
-    show pickup text as info message on 'hud' and disappearing after a while
+    ✔ show pickup text as info message on 'hud' and disappearing after a while @done(22-06-09 15:04)
 
 ☐ @bug audio playing when paused @created(02-06-2022 17:23)
 
