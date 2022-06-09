@@ -25,7 +25,7 @@
             Data = data;
 
             var ship = new Ship(Data.ShipLayout, GetTexture2D(ships[ShipType][ShipColor]));
-            var overlay = Gui.CreateScoreOverLay(Data.Lifes);
+            var overlay = Gui.CreateScoreOverLay(Data.Lifes, Data.WinScore);
 
             ship.EmitEvent += Game.OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;

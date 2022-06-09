@@ -7,7 +7,9 @@
             public const string ShipSelection = nameof(ShipSelection);
             public const string ScoreOverlay = nameof(ScoreOverlay);
             public const string Health = nameof(Health);
+            public const string HealthBar = nameof(HealthBar);
             public const string Score = nameof(Score);
+            public const string ScoreBar = nameof(ScoreBar);
             public const string StartGame = nameof(StartGame);
             public const string ShipSelectRight = nameof(ShipSelectRight);
             public const string ShipSelectLeft = nameof(ShipSelectLeft);
@@ -24,7 +26,7 @@
         public const string Green = "green";
         public const string Orange = "orange";
 
-        private static Dictionary<string, Color> GuiShipBaseColor = new()
+        private static readonly Dictionary<string, Color> GuiShipBaseColor = new()
         {
             { Blue, Color.DARKBLUE },
             { Red, Color.MAROON },
@@ -32,7 +34,7 @@
             { Orange, new Color(200, 100, 0, 255) },
         };
 
-        private static Dictionary<string, Color> GuiShipFocusColor = new()
+        private static readonly Dictionary<string, Color> GuiShipFocusColor = new()
         {
             { Blue, Color.BLUE },
             { Red, Color.RED },
@@ -137,13 +139,21 @@
                     }
                 });
 
-        public static GuiContainer CreateScoreOverLay(int playerLifes)
+        public static GuiContainer CreateScoreOverLay(int playerLifes, int lvlScore)
         {
             //create container 
             var container = GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ScoreOverlay, renderLayer: RlGuiScoreOverlay);
 
             //add score & health displays
             container.AddChildren(
+                new Label
+                {
+                    Tag = Tags.ScoreBar,
+                    Position = new Vector2(WindowWidth - 200, 32),
+                    Size = new Vector2(0, 50),
+                    HasOutlines = false,
+                    FillColor = Color.LIME,
+                },
                 new Label
                 {
                     Tag = Tags.Score,
@@ -155,6 +165,14 @@
                     FontSize = 32,
                     TextOffSet = new Vector2(20, 10),
                     Font = GetFont(FontFutureThin),
+                },
+                new Label
+                {
+                    Tag = Tags.HealthBar,
+                    Position = new Vector2(WindowWidth - 500, 32),
+                    Size = new Vector2(0, 50),
+                    HasOutlines = false,
+                    FillColor = Color.RED,
                 },
                 new Label
                 {
@@ -173,6 +191,12 @@
                     if (e is ShipHitAsteroid sha)
                     {
                         var health = sha.LifeLost ? MaxHealth : sha.ShipHealth;
+                        var sb = c.GetEntityByTag<Label>(Tags.HealthBar);
+
+                        var s = MapRange(health, MaxHealth, 0, 0, 230);
+                        sb.Size = new(s, 50);
+                        sb.Position = new(WindowWidth - 615 + s / 2, 32);
+
 
                         c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
 
@@ -184,6 +208,11 @@
 
                     if (e is AsteroidDestroyed ad)
                     {
+                        var sb = c.GetEntityByTag<Label>(Tags.ScoreBar);
+                        var s = MapRange(Score, 0, lvlScore, 0, 230);
+                        sb.Size = new(s, 50);
+                        sb.Position = new(WindowWidth - 315 + s / 2, 32);
+
                         c.GetEntityByTag<Label>(Tags.Score).Text = GetScoreString(Score);
                     }
                 });
@@ -205,7 +234,7 @@
         }
 
         public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",
