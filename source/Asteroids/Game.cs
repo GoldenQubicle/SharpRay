@@ -72,7 +72,7 @@ namespace Asteroids
             AddEntity(selectionMenu);
 
 #if DEBUG
-            StartGame(2);
+            StartGame(0);
 #endif
 
 #if RELEASE
@@ -127,7 +127,9 @@ namespace Asteroids
                     return;
                 }
 
+                //ResetGame();
                 GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
+                RemoveEntitiesOfType<Level>();
                 PlaySound(Gui.SelectionSound);
             }
         }
@@ -171,8 +173,6 @@ namespace Asteroids
                     PlaySound(LifeLostSound2);
                     StopSound(Sounds[Ship.EngineSound]);
                     StopSound(Sounds[Ship.ThrusterSound]);
-
-
                 }
             }
 

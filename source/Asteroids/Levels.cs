@@ -24,7 +24,7 @@
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
             },
-            InitialHeadingSpeed: GetRandomHeading(50, 150),
+            InitialHeadingSpeed: GetRandomHeading(50, 125),
             MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
             Easing: new(Easings.EaseSineInOut, 7500f, isRepeated: true),
             PickUps: new()
@@ -46,7 +46,9 @@
             Lifes: 3,
             AsteroidSpawnStart: new()
             {
-                new (Asteroid.Size.Big, Asteroid.Type.Dirt, new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)), GetRandomHeading(-75, 75)),
+                new (Asteroid.Size.Big, Asteroid.Type.Dirt, 
+                    new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)), 
+                    GetRandomHeading(-75, 75)),
             },
             AsteroidSpawnDuring: new()
             {
@@ -55,24 +57,24 @@
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
                 (Asteroid.Size.Small, Asteroid.Type.Stone),
             },
-            InitialHeadingSpeed: GetRandomHeading(100, 200),
+            InitialHeadingSpeed: GetRandomHeading(75, 150),
             MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
-            Easing: new(Easings.EaseBackInOut, 6000f, isRepeated: true),
+            Easing: new(Easings.EaseBackIn, 6000f, isRepeated: true),
             PickUps: new()
             {
-                   new ()
+                 new ()
                    {
                        SpawnScore = 25,
-                       PickupType = PickUp.Type.Bullet,
-                       Description = "Bullets do 2x damage!",
-                       OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
+                       PickupType = PickUp.Type.Weapon,
+                       Description = "Triple Shot Weapon!",
+                       OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                    },
                    new ()
                    {
                        SpawnScore = 45,
-                       PickupType = PickUp.Type.Weapon,
-                       Description = "Triple Shot Weapon!",
-                       OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
+                       PickupType = PickUp.Type.Bullet,
+                       Description = "Bullets do 2x damage!",
+                       OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                    },
             });
 
@@ -101,14 +103,14 @@
                 new ()
                 {
                     SpawnScore = 15,
-                    PickupType = PickUp.Type.Bullet,
+                    PickupType = PickUp.Type.Weapon,
                     Description = "Triple Shooter Weapon!",
                     OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
                 },
                 new()
                 {
                     SpawnScore = 30,
-                    PickupType = PickUp.Type.Weapon,
+                    PickupType = PickUp.Type.Bullet,
                     Description = "Bullets do 2x Damage!",
                     OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                 }
