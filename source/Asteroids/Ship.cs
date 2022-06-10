@@ -121,13 +121,13 @@
             {
                 HasTakenDamage = true;
                 Health -= Asteroid.GetDamageDone(a.Definition);
-                //EmitEvent(new ShipHitAsteroid
-                //{
-                //    LifeLost = Health <= 0,
-                //    LifeIconIdx = PlayerLifes,
-                //    ShipHealth = Health,
-                //    Asteroid = a,
-                //});
+                EmitEvent(new ShipHitAsteroid
+                {
+                    LifeLost = Health <= 0,
+                    LifeIconIdx = PlayerLifes,
+                    ShipHealth = Health,
+                    Asteroid = a,
+                });
             }
 
             if (e is PickUp p)

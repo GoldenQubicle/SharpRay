@@ -123,8 +123,8 @@
         private static Color GetColor(Type type) => type switch
         {
             Type.Dirt or Type.Stone => Color.WHITE,
-            Type.Ruby => Color.MAROON,
             Type.Emerald => Color.LIME,
+            Type.Ruby => Color.MAROON,
             Type.Saphire => Color.GOLD,
         };
 
@@ -236,9 +236,9 @@
                 },
                 Size.Large => new()
                 {
-                    (Size.Medium, Type.Dirt),
+                    (Size.Tiny, Type.Dirt),
                     (Size.Small, Type.Stone),
-                    (Size.Medium, Type.Stone),
+                    (Size.Tiny, Type.Stone),
                     //(Size.Small, Type.Dirt),
                     //(Size.Medium, Type.Stone),
                 },

@@ -2,10 +2,18 @@
 {
     internal class Levels
     {
+#if DEBUG
         public static List<LevelData> Data => new()
         {
            Level1, Level2, Level3, TestLevel
         };
+#endif
+#if RELEASE
+        public static List<LevelData> Data => new()
+        {
+           Level1, Level2, Level3
+        };
+#endif
 
         public static LevelData Level1 => new(
             Description: "Level 1",
@@ -47,8 +55,8 @@
             Lifes: 3,
             AsteroidSpawnStart: new()
             {
-                new (Asteroid.Size.Big, Asteroid.Type.Dirt, 
-                    new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)), 
+                new (Asteroid.Size.Big, Asteroid.Type.Dirt,
+                    new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)),
                     GetRandomHeading(-75, 75)),
             },
             AsteroidSpawnDuring: new()
@@ -81,7 +89,7 @@
 
         public static LevelData Level3 => new(
           Description: "Level 3",
-          WinScore: 200,
+          WinScore: 350,
           ShipLayout: new(
               Position: new(WindowWidth / 2, WindowHeight / 2),
               Health: MaxHealth),
@@ -97,27 +105,39 @@
                 (Asteroid.Size.Big, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Stone),
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
-                (Asteroid.Size.Small, Asteroid.Type.Stone),
+                (Asteroid.Size.Large, Asteroid.Type.Stone)
           },
           InitialHeadingSpeed: GetRandomHeading(150, 250),
-          MaxSpawnTime: 35000 * SharpRayConfig.TickMultiplier,
+          MaxSpawnTime: 1500 * SharpRayConfig.TickMultiplier,
           Easing: new(Easings.EaseCircIn, 5000, isRepeated: true),
           PickUps: new()
           {
-                 new ()
+            new ()
+            {
+                   PickupType = PickUp.Type.Health,
+                   AsteroidDef =  (Asteroid.Size.Large, Asteroid.Type.Emerald),
+                   Description = "Gained 10 extra Health!",
+                   OnPickUp = () =>
                    {
-                       SpawnScore = 10,
+                       MaxHealth += 10;
+                       var ship = GetEntity<Ship>();
+                       ship.Health += 10;
+                       Gui.UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay), ship.Health);
+                       UpdateShipDamageTexture(ship.Health);
+                   }
+                  },
+            new(){
+                       SpawnScore = 75,
                        PickupType = PickUp.Type.Weapon,
                        Description = "Quintuple Shot Weapon!",
                        OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Quintuple)
-                   },
-                   new ()
-                   {
-                       SpawnScore = 75,
+                  },
+            new(){
+                       SpawnScore = 175,
                        PickupType = PickUp.Type.Bullet,
                        Description = "Bullets do 3x damage!",
                        OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
-                   },
+                 },
           });
 
         public static LevelData TestLevel => new(

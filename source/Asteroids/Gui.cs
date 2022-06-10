@@ -205,12 +205,7 @@
                     {
                         var health = sha.LifeLost ? MaxHealth : sha.ShipHealth;
 
-                        var sb = c.GetEntityByTag<Label>(Tags.HealthBar);
-                        var s = MapRange(health, MaxHealth, 0, 0, 230);
-                        sb.Size = new(s, 50);
-                        sb.Position = new(WindowWidth - 615 + s / 2, 32);
-
-                        c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
+                        UpdateHealthOverlay(c, health);
 
                         if (sha.LifeLost)
                         {
@@ -243,6 +238,16 @@
                      });
             }
             return container;
+        }
+
+        public static void UpdateHealthOverlay(GuiContainer c, int health)
+        {
+            var sb = c.GetEntityByTag<Label>(Tags.HealthBar);
+            var s = MapRange(health, MaxHealth, 0, 0, 230);
+            sb.Size = new(s, 50);
+            sb.Position = new(WindowWidth - 615 + s / 2, 32);
+
+            c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
         }
 
         public static GuiContainer CreateShipSelectionMenu() =>

@@ -41,7 +41,7 @@ namespace Asteroids
         internal static string ShipColor = Gui.Green;
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         internal static int Score = 0;
-        internal static readonly int MaxHealth = 10;
+        internal static int MaxHealth = 10;
         internal static int PlayerLifes;
         internal static readonly int MaxPlayerLifes = 3;
         internal static readonly Color BackGroundColor = new(12, 24, 64, 0);
@@ -110,7 +110,7 @@ namespace Asteroids
             //reset game stats
             Score = 0;
             PlayerLifes = MaxPlayerLifes;
-
+            MaxHealth = 10;
             //generate new back ground
             GetEntity<StarField>().Generate();
         }
@@ -125,7 +125,7 @@ namespace Asteroids
                     return;
                 }
 
-                //ResetGame();
+                ResetGame();
                 GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
                 RemoveEntitiesOfType<Level>();
                 PlaySound(Gui.SelectionSound);
@@ -139,13 +139,7 @@ namespace Asteroids
                 RemoveEntity(sha.Asteroid);
                 PlaySound(Ship.HitSound);
 
-                var idx = (int)MapRange(sha.ShipHealth, 0, MaxHealth, 3, 1);
-
-                if (idx != ShipDamageTextureIdx && idx <= 3)
-                {
-                    ShipDamageTextureIdx = idx;
-                    GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[ShipType][ShipDamageTextureIdx]);
-                }
+                UpdateShipDamageTexture(sha.ShipHealth);
 
                 //player life lost
                 if (sha.LifeLost)
@@ -153,7 +147,11 @@ namespace Asteroids
                     IsPaused = true;
 
                     //TODO better method name & reset the pickup spawns
-                    PrimaryWeapon.OnStartGame();
+                    //PrimaryWeapon.OnStartGame();
+
+                    if (LevelIdx > 0)
+                        Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
+
                     var level = GetEntity<Level>();
                     level.PickUpScore = 0; // tbh kinda unfair to reset if the player almost reaches a pickup score and just before loses a life!
                     level.Data.PickUps.Where(p => p.HasSpawned && !GetEntities<PickUp>().Contains(p))
@@ -180,30 +178,16 @@ namespace Asteroids
                 PlaySound(PickUp.PickupSound);
                 RemoveEntity(spu.PickUp);
             }
+        }
 
-            if (e is AsteroidDestroyed ad)
+        public static void UpdateShipDamageTexture(int health)
+        {
+            var idx = (int)MapRange(health, 0, MaxHealth, 3, 1);
+
+            if (idx != ShipDamageTextureIdx && idx <= 3)
             {
-                //update gui
-                var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
-                Score += hp;
-                GetEntity<Level>().PickUpScore += hp;
-                GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
-
-
-                SetSoundPitch(Sounds[Asteroid.ExplosionSound], GetRandomValue(50, 150) / 100f);
-                PlaySound(Asteroid.ExplosionSound);
-
-                //spawn new asteroids from the one destroyed
-                var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
-                foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
-                {
-                    var angle = MathF.Tau / spawns.Count * i + (DEG2RAD * GetRandomValue(-10, 10));
-                    var heading = ad.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-                    AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
-                }
-
-                // remove the entities 
-                RemoveEntity(ad.Asteroid);
+                ShipDamageTextureIdx = idx;
+                GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[ShipType][ShipDamageTextureIdx]);
             }
         }
 

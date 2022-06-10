@@ -10,7 +10,12 @@
       Vector2 InitialHeadingSpeed,
       double MaxSpawnTime,
       Easing Easing,
-      List<PickUp> PickUps);
+      List<PickUp> PickUps)
+    {
+        public PickUp HasAsteroidSpawnPickUp((Asteroid.Size, Asteroid.Type) def) =>         
+          PickUps.FirstOrDefault(p => p.AsteroidDef == def);
+        
+    };
 
     public class Level : Entity, IHasUpdate
     {
@@ -18,6 +23,7 @@
 
         public int PickUpScore { get; set; }
         public LevelData Data { get; set; }
+
         private double currentTime = 0d;
 
         public void OnEnter(LevelData data)
@@ -35,7 +41,7 @@
             AddEntity(overlay);
 
             foreach (var asteroid in Data.AsteroidSpawnStart)
-                AddEntity(asteroid, Game.OnGameEvent);
+                AddEntity(asteroid, OnGameEvent);
                   
             IsPaused = false;
         }
@@ -51,7 +57,7 @@
             RemoveEntitiesOfType<Bullet>();
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<PickUp>();
-            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
+            
 
             if(LevelIdx == Levels.Data.Count - 1)
             {
@@ -59,11 +65,47 @@
                 PlaySound(WinOverallSound);
             } else
             {
+                RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
                 AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
                 PlaySound(WinSound);
             }
             
         }
+
+        public void OnGameEvent(IGameEvent e)
+        {
+            if (e is AsteroidDestroyed ad)
+            {
+                //play sound
+                SetSoundPitch(Sounds[Asteroid.ExplosionSound], GetRandomValue(50, 150) / 100f);
+                PlaySound(Asteroid.ExplosionSound);
+
+                //update gui
+                var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
+                Score += hp;
+                GetEntity<Level>().PickUpScore += hp;
+                GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
+
+                //check for asteroid pickup spawn
+                var pu = Data.HasAsteroidSpawnPickUp(ad.Asteroid.Definition);
+                if (pu != default)
+                    pu.OnSpawn(ad.Asteroid.Position);
+                
+
+                //spawn new asteroids from the one destroyed
+                var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
+                foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
+                {
+                    var angle = MathF.Tau / spawns.Count * i + (DEG2RAD * GetRandomValue(-10, 10));
+                    var heading = ad.Asteroid.Heading + new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+                    AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
+                }
+
+                // remove the entities 
+                RemoveEntity(ad.Asteroid);
+            }
+        }
+        
 
         public override void Update(double deltaTime)
         {
@@ -75,7 +117,7 @@
             if (Score >= Data.WinScore)
                 OnExit();
 
-            foreach (var pickUp in Data.PickUps)
+            foreach (var pickUp in Data.PickUps.Where(pu => pu.AsteroidDef == default))
             {
                 if (PickUpScore >= pickUp.SpawnScore && !pickUp.HasSpawned)
                 {
@@ -103,7 +145,7 @@
                     var heading = Vector2.Normalize(target - pos);
                     heading *= Data.InitialHeadingSpeed;
 
-                    AddEntity(new Asteroid(def.size, def.type, pos, heading), Game.OnGameEvent);
+                    AddEntity(new Asteroid(def.size, def.type, pos, heading), OnGameEvent);
                 }
             }
         }

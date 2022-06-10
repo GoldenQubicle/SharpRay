@@ -5,7 +5,8 @@
         public enum Type
         {
             Bullet,
-            Weapon
+            Weapon,
+            Health
         }
 
         public const string PickupSound = nameof(PickupSound);
@@ -16,6 +17,7 @@
         public int SpawnScore { get; init; }
         public bool HasSpawned { get; set; }
         public Type PickupType { get; init; }
+        public (Asteroid.Size, Asteroid.Type) AsteroidDef { get; init; }
 
         private Font Font = GetFont(FontFutureThin);
         private (string t, Color fill, Color outline, Color text, Vector2 offset) Data;
@@ -76,6 +78,7 @@
         {
             Type.Bullet => ("B", Color.YELLOW, Color.GOLD, Color.ORANGE, new Vector2(5, -2)),
             Type.Weapon => ("W", Color.PURPLE, Color.PINK, Color.DARKPURPLE, new Vector2(4, -2)),
+            Type.Health => ("H", Color.DARKGREEN, Color.LIME, Color.GREEN, new Vector2(5.25f, -2)),
         };
     }
 }
