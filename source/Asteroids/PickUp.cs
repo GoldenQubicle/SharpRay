@@ -38,23 +38,25 @@
         {
             Position = pos;
             (Collider as RectCollider).Position = pos;
-            AddEntity(this);
-            PlaySound(Sounds[SpawnSound]);
             Data = GetData();
             HasSpawned = true;
+            AddEntity(this);
+            PlaySound(SpawnSound);
         }
 
         public override void Render()
         {
-            //DrawRectangleV(Position, Size, Color.YELLOW);
             var r = (Collider as RectCollider).Rect;
             
             DrawRectangleRounded(r, .5f, 8, Data.fill);
             DrawRectangleRoundedLines(r, .5f, 8, 3, Data.outline);
             DrawTextEx(Font, Data.t, Position + Data.offset, 32, 0, Data.text);
+
             //Collider.Render();
         }
 
+        //TODO simple sway copies from Snake, wrap it as SimpleSine Easing
+        // or just replace with Easing...
         public override void Update(double deltaTime)
         {
             current += deltaTime;

@@ -4,7 +4,7 @@
     {
         public static List<LevelData> Data => new()
         {
-           Level1, Level2, TestLevel
+           Level1, Level2, Level3, TestLevel
         };
 
         public static LevelData Level1 => new(
@@ -37,6 +37,7 @@
                     OnPickUp = () => PrimaryWeapon.ChangeBulletLifeTime(1.5f)
                 },
              });
+
         public static LevelData Level2 => new(
             Description: "Level 2",
             WinScore: 125,
@@ -77,6 +78,47 @@
                        OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
                    },
             });
+
+        public static LevelData Level3 => new(
+          Description: "Level 3",
+          WinScore: 200,
+          ShipLayout: new(
+              Position: new(WindowWidth / 2, WindowHeight / 2),
+              Health: MaxHealth),
+          Lifes: 3,
+          AsteroidSpawnStart: new()
+          {
+                new (Asteroid.Size.Big, Asteroid.Type.Stone,
+                    new (GetRandomValue(WindowWidth/3, WindowWidth/4), GetRandomValue(WindowHeight/3, WindowHeight/4)),
+                    GetRandomHeading(15, 50)),
+          },
+          AsteroidSpawnDuring: new()
+          {
+                (Asteroid.Size.Big, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Stone),
+                (Asteroid.Size.Large, Asteroid.Type.Dirt),
+                (Asteroid.Size.Small, Asteroid.Type.Stone),
+          },
+          InitialHeadingSpeed: GetRandomHeading(150, 250),
+          MaxSpawnTime: 35000 * SharpRayConfig.TickMultiplier,
+          Easing: new(Easings.EaseCircIn, 5000, isRepeated: true),
+          PickUps: new()
+          {
+                 new ()
+                   {
+                       SpawnScore = 10,
+                       PickupType = PickUp.Type.Weapon,
+                       Description = "Quintuple Shot Weapon!",
+                       OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Quintuple)
+                   },
+                   new ()
+                   {
+                       SpawnScore = 75,
+                       PickupType = PickUp.Type.Bullet,
+                       Description = "Bullets do 3x damage!",
+                       OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
+                   },
+          });
 
         public static LevelData TestLevel => new(
             Description: "Test Level",

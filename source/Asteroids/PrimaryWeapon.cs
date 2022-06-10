@@ -9,6 +9,7 @@
             Single,
             TripleNarrow,
             TripleWide,
+            Quintuple,
         }
 
         public record State(Mode Mode, Bullet.Type BulletType, float BulletSpeed, float BulletLifeTime, int AmmoCount);
@@ -49,7 +50,7 @@
             var soundKey = CurrentState.Mode switch
             {
                 Mode.Single => SingleSound,
-                Mode.TripleWide or Mode.TripleNarrow => TripleSound
+                Mode.TripleWide or Mode.TripleNarrow or Mode.Quintuple => TripleSound
             };
             SetSoundPitch(Sounds[soundKey], GetRandomValue(92, 108) / 100f);
             PlaySound(soundKey);
@@ -72,6 +73,14 @@
                 new(Bullet.GetData(sfb.Origin, sfb.Angle, sfb.Force, CurrentState)),
                 new(Bullet.GetData(sfb.Origin, sfb.Angle - DEG2RAD * 25f, sfb.Force, CurrentState)),
                 new(Bullet.GetData(sfb.Origin, sfb.Angle + DEG2RAD * 25f, sfb.Force,  CurrentState)),
+            },
+            Mode.Quintuple => new()
+            {
+                new(Bullet.GetData(sfb.Origin, sfb.Angle, sfb.Force, CurrentState)),
+                new(Bullet.GetData(sfb.Origin, sfb.Angle - DEG2RAD * 15f, sfb.Force, CurrentState)),
+                new(Bullet.GetData(sfb.Origin, sfb.Angle + DEG2RAD * 15f, sfb.Force,  CurrentState)),
+                new(Bullet.GetData(sfb.Origin, sfb.Angle - DEG2RAD * 30f, sfb.Force, CurrentState)),
+                new(Bullet.GetData(sfb.Origin, sfb.Angle + DEG2RAD * 30f, sfb.Force,  CurrentState)),
             },
             _ => throw new NotImplementedException()
         };

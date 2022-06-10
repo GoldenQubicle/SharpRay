@@ -36,7 +36,7 @@
         private float RotationSpeed; // in radians per fixed update
         private bool HasSpawned;
         private int damage;
-
+        private bool isDestroyed;
         public Asteroid(Size size, Type type, Vector2 position, Vector2 heading)
         {
             Definition = (size, type);
@@ -94,11 +94,14 @@
 
                 RemoveEntity(b);
 
-                if (damage >= GetHitPoints(Definition))
+                if (damage >= GetHitPoints(Definition) && !isDestroyed)
+                {
+                    isDestroyed = true;
                     EmitEvent(new AsteroidDestroyed
                     {
                         Asteroid = this,
                     });
+                }
             }
         }
 
@@ -187,11 +190,14 @@
             {
                 Size.Big => new()
                 {
-                    (Size.Large, Type.Stone),
+                    (Size.Small, Type.Stone),
+                    //(Size.Large, Type.Stone),
+                    (Size.Large, Type.Emerald),
+                    (Size.Medium, Type.Dirt),
+                    
                     (Size.Medium, Type.Dirt),
                     (Size.Large, Type.Stone),
-                    (Size.Medium, Type.Dirt),
-                    (Size.Large, Type.Stone),
+                    (Size.Small, Type.Dirt),
                 },
                 Size.Large => new()
                 {
@@ -216,6 +222,41 @@
                 {
                     (Size.Tiny, Type.Dirt),
                     (Size.Tiny, Type.Dirt),
+                },
+            },
+            (_, Type.Emerald) => a.size switch
+            {
+                Size.Big => new()
+                {
+                    //(Size.Large, Type.Emerald),
+                    //(Size.Medium, Type.Dirt),
+                    //(Size.Large, Type.Emerald),
+                    //(Size.Medium, Type.Dirt),
+                    //(Size.Large, Type.Stone),
+                },
+                Size.Large => new()
+                {
+                    (Size.Medium, Type.Dirt),
+                    (Size.Small, Type.Stone),
+                    (Size.Medium, Type.Stone),
+                    //(Size.Small, Type.Dirt),
+                    //(Size.Medium, Type.Stone),
+                },
+                Size.Medium => new()
+                {
+                    //(Size.Small, Type.Stone),
+                    //(Size.Small, Type.Dirt),
+                    //(Size.Tiny, Type.Stone),
+                },
+                Size.Small => new()
+                {
+                    //(Size.Tiny, Type.Stone),
+                    //(Size.Tiny, Type.Dirt),
+                },
+                Size.Tiny => new()
+                {
+                    //(Size.Tiny, Type.Dirt),
+                    //(Size.Tiny, Type.Dirt),
                 },
             },
 
