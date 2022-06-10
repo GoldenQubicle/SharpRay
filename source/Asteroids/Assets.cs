@@ -67,17 +67,20 @@
             SetSoundVolume(Sounds[Asteroid.ExplosionSound], 0.25f);
             AddSound(PickUp.PickupSound, "Audio\\sfx_shieldUp.ogg");
             AddSound(PickUp.SpawnSound, "Audio\\sfx_twoTone.ogg");
+            AddSound(Gui.ButtonClickSound, "Audio\\doorOpen_002.ogg");
+            SetSoundPitch(Sounds[Gui.ButtonClickSound], 6f);
+            SetSoundVolume(Sounds[Gui.ButtonClickSound], 0.25f);
             AddSound(Gui.SelectionSound, "Audio\\mixkit-game-level-music-689.wav");
             SetSoundVolume(Sounds[Gui.SelectionSound], 0.25f);
             AddSound(Level.WinSound, "Audio\\mixkit-winning-an-extra-bonus-2060.wav");
-            SetSoundVolume(Sounds[Level.WinSound], 0.35f);
+            SetSoundVolume(Sounds[Level.WinSound], 0.25f);
             AddSound(Game.LifeLostSound1, "Audio\\lowFrequency_explosion_001.ogg");
             AddSound(Game.LifeLostSound2, "Audio\\mixkit-arcade-space-shooter-dead-notification-272.wav");
             SetSoundVolume(Sounds[Game.LifeLostSound2], 0.5f);
             AddSound(Game.StartSound, "Audio\\mixkit-extra-bonus-in-a-video-game-2045.wav");
             SetSoundVolume(Sounds[Game.StartSound], 0.5f);
             AddSound(Game.WinOverallSound, "Audio\\mixkit-game-bonus-reached-2065.wav");
-            SetSoundVolume(Sounds[Game.WinOverallSound], 0.5f);
+            SetSoundVolume(Sounds[Game.WinOverallSound], 0.35f);
 
             //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
             var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");

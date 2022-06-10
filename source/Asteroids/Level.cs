@@ -57,16 +57,15 @@
             RemoveEntitiesOfType<Bullet>();
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<PickUp>();
-            
 
-            if(LevelIdx == Levels.Data.Count - 1)
+            AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
+
+            if (LevelIdx == Levels.Data.Count - 1)
             {
-                AddEntity(Gui.CreateLevelWin("All Levels"), Game.OnGuiEvent);
                 PlaySound(WinOverallSound);
             } else
             {
                 RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
-                AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
                 PlaySound(WinSound);
             }
             

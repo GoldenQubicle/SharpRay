@@ -16,6 +16,7 @@
         }
 
         public const string SelectionSound = nameof(SelectionSound);
+        public const string ButtonClickSound = nameof(ButtonClickSound);
         public static string PlayerLifeIcon(int n) => $"PlayerLife{n}";
         public static string GetScoreString(int s) => $"Score : {s}";
         public static string GetHealthString(int h) => $"Health : {h}";
@@ -368,6 +369,7 @@
 
                if (e is ChangeShipType cst)
                {
+                   PlaySound(ButtonClickSound);
                    ShipType = cst.ShipType;
                    var texture = GetTexture2D(ships[ShipType][ShipColor]);
                    c.GetEntity<ImageTexture>().Texture2D = texture;
@@ -376,6 +378,7 @@
 
                if (e is ChangeShipColor csc)
                {
+                   PlaySound(ButtonClickSound);
                    ShipColor = csc.ShipColor;
                    c.GetEntity<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
                    c.GetEntity<Label>().FillColor = GuiShipBaseColor[ShipColor];
