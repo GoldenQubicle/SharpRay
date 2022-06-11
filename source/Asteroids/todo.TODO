@@ -47,7 +47,7 @@
    
     ✔ level win screen @created(02-06-2022 21:49) @done(03-06-2022 13:11)
 
-    ☐ audio @created(14-05-2022 19:51)  
+    ✔ audio @created(14-05-2022 19:51) @done(10-06-2022 20:22)
         go over kenny assets and pick files
 
     ☐ mouse control ship @created(31-05-2022 20:40)
@@ -73,11 +73,10 @@
         ✔ to show pickups @created(01-06-2022 19:29) @done(01-06-2022 19:29)
 
     ☐ pickups @created(29-05-2022 12:06)
-        ☐ add some polish to visuals
         ☐ different weapons @created(26-05-2022 20:19)
             primary
                 ✔ 3 shooter @created(01-06-2022 19:28) @done(01-06-2022 19:28)
-                5 shooter
+                ✔ 5 shooter @created(10-06-2022 20:23) @done(10-06-2022 20:23)
             secondary 
                 radius blast 
                 turrets..?
@@ -88,13 +87,13 @@
             strenght
 
         ☐ different ammo @created(29-05-2022 12:06)
-            ✔ play around w bullet lifetime as well! i.e. reach @done(22-06-09 15:04)
+            ✔ play around w bullet lifetime as well! i.e. reach @created(10-06-2022 20:22) @done(10-06-2022 20:22)
             fire bullet
             explosive bullet
             laser blast
             plasma blast
 
-        ☐ health restoration? @created(29-05-2022 12:08)
+        ✔ health restoration? @created(29-05-2022 12:08) @done(10-06-2022 20:23)
         
     ☐ show shield & weapon slots on screen @created(28-05-2022 22:10)
         so player knows about what is available
@@ -106,15 +105,33 @@
 
 ☐ rework Gui @created(05-06-2022 19:29)
     make notification scale according to text size!
-    ✔ show pickup text as info message on 'hud' and disappearing after a while @done(22-06-09 15:04)
+    ✔ show pickup text as info message on 'hud' and disappearing after a while @created(08-06-2022 23:16) @done(08-06-2022 23:16)
 
 ☐ @bug audio playing when paused @created(02-06-2022 17:23)
 
 ☐ @bug when going over pickup the ship sometimes get stuck in acceleration @created(02-06-2022 17:23)
+    also sometimes stays stuck in rotation
 
 ☐ @bug edge case when meteor goes into corner. @created(02-06-2022 17:23)
     Could fix this by first calculating the next position (pos + heading), then keep reflecting untill the next position returns the 
     meteor into screen bounds
+
+✔ @bug @created(10-06-2022 20:07) @started(10-06-2022 20:21) @done(10-06-2022 20:21) @lasted(6s)
+    op Cristina's laptop is er tot 2x toe dezelfde exception opgetreden 
+
+    Application: Asteroids.exe
+    CoreCLR Version: 6.0.522.21309
+    .NET Version: 6.0.5
+    Description: The process was terminated due to an unhandled exception.
+    Exception Info: System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')
+    at System.Collections.Generic.List`1.get_Item(Int32 )
+    at Asteroids.Game.OnGameEvent(IGameEvent e) in C:\Users\Erik\source\repos\SharpRayEngine\source\Asteroids\Game.cs:line 152
+    at Asteroids.Ship.OnCollision(IHasCollider e) in C:\Users\Erik\source\repos\SharpRayEngine\source\Asteroids\Ship.cs:line 141
+    at SharpRay.Core.Application.DoCollisions() in C:\Users\Erik\source\repos\SharpRayEngine\source\SharpRay\Core\Application.cs:line 406
+    at SharpRay.Core.Application.Run() in C:\Users\Erik\source\repos\SharpRayEngine\source\SharpRay\Core\Application.cs:line 82
+    at Asteroids.Game.Main(String[] args) in C:\Users\Erik\source\repos\SharpRayEngine\source\Asteroids\Game.cs:line 82
+    at Asteroids.Game.<Main>(String[] args)
+
 
 ✘ refactor asset loading @created(07-05-2022 16:49) @cancelled(02-06-2022 21:51)
     cancelled because will have to sort assets anyway when making a build, 

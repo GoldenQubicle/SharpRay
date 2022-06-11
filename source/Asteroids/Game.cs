@@ -72,7 +72,7 @@ namespace Asteroids
             AddEntity(selectionMenu);
 
 #if DEBUG
-            StartGame(2);
+            StartGame(3);
 #endif
 
 #if RELEASE
@@ -86,9 +86,11 @@ namespace Asteroids
         {
             LevelIdx = lvlIdx;
             PrimaryWeapon.OnStartGame();
-            
+            //TODO rework this whole pickup business
+#if RELEASE
             if (LevelIdx > 0)
                 Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
+#endif
             
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);

@@ -1,6 +1,6 @@
 ﻿namespace Asteroids
 {
-    public class Ship : Entity, IHasCollider, IHasCollision, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>, IKeyBoardListener
+    public class Ship : Entity, IHasCollider, IHasCollision, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>, IKeyBoardListener, IMouseListener
     {
         public record Layout(Vector2 Position, int Health);
 
@@ -60,7 +60,7 @@
                 HitPoints = 16
             };
 
-            Health = layout.Health; 
+            Health = layout.Health;
 
             Motions = new Dictionary<string, Easing>
             {
@@ -90,7 +90,7 @@
                 n_rotation = Motions[RotateOut].GetValue();
 
             //update rotation
-            var r = (n_rotation * maxRotation);
+            var r = n_rotation * maxRotation;
             rotation += direction == Left ? -1 * r : r;
 
             //update & apply acceleration to position
@@ -121,13 +121,13 @@
             {
                 HasTakenDamage = true;
                 Health -= Asteroid.GetDamageDone(a.Definition);
-                EmitEvent(new ShipHitAsteroid
-                {
-                    LifeLost = Health <= 0,
-                    LifeIconIdx = PlayerLifes,
-                    ShipHealth = Health,
-                    Asteroid = a,
-                });
+                //EmitEvent(new ShipHitAsteroid
+                //{
+                //    LifeLost = Health <= 0,
+                //    LifeIconIdx = PlayerLifes,
+                //    ShipHealth = Health,
+                //    Asteroid = a,
+                //});
             }
 
             if (e is PickUp p)
@@ -149,8 +149,53 @@
                 DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DARKGRAY);
 
             //Collider.Render();
-            //DrawCircleV(Position, 5, Color.PINK);
-            //DrawCircleV(tp, 5, Color.DARKPURPLE);
+            DrawCircleV(Position, 5, Color.PINK);
+            var start = Position + new Vector2(0, WindowWidth);
+            var end = Position + new Vector2(0, -WindowWidth);
+            var r = Matrix3x2.CreateRotation(180 * DEG2RAD + rotation, Position);
+            start = Vector2.Transform(start, r);
+            end = Vector2.Transform(end, r);
+            DrawLineV(start, end, Color.YELLOW);
+
+
+            var mp = GetMousePosition();
+            DrawLineV(Position, mp, Color.GREEN);
+            var a = AngleBetween(start, Position, mp);
+            DrawTextV($"{a * RAD2DEG}", Position + Vector2.One * 5, 24, Color.RED);
+
+            //DrawCircleV(texPos, 5, Color.DARKPURPLE);
+        }
+
+        public static double AngleBetween(Vector2 vector1, Vector2 vector2, Vector2 vector3)
+        {
+            var a = vector1 - vector2;
+            var b = vector3 - vector2;
+
+            return Math.Acos(Vector2.Dot(a, b) / (a.Length() * b.Length()));
+        }
+
+        public override void OnMouseEvent(IMouseEvent e)
+        {
+            if (e is MouseMovement mm)
+            {
+                var start = Position + new Vector2(0, WindowWidth);
+                var end = Position + new Vector2(0, -WindowWidth);
+                var r = Matrix3x2.CreateRotation(180 * DEG2RAD + rotation, Position);
+                start = Vector2.Transform(start, r);
+                end = Vector2.Transform(end, r);
+                var sign = ((end.X - start.X) * (mm.Position.Y - start.Y) -
+                    (end.Y - start.Y) * (mm.Position.X - start.X));
+
+                var a = AngleBetween(start, Position, GetMousePosition()) * RAD2DEG;
+
+                (hasRotation, direction) = sign switch
+                {
+                    > 0 when !hasRotation && a > 45 => StartRotateIn(Left),
+                    < 0 when !hasRotation && a > 45 => StartRotateIn(Right),
+                    //KeyLeftReleased or KeyRightReleased => StartRotateOut(),
+                    _ => StartRotateOut()
+                };
+            }
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
