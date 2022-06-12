@@ -124,7 +124,7 @@
                 }
             }
 
-            if(currentTime > Data.MaxSpawnTime && Data.AsteroidSpawnDuring.Any())
+            if(currentTime > Data.MaxSpawnTime)
             {
                 currentTime = 0;
                 var chance = GetRandomValue(1, 100) / 100f;

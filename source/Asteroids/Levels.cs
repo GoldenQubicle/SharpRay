@@ -153,9 +153,9 @@
             },
             AsteroidSpawnDuring: new()
             {
-                //(Asteroid.Size.Medium, Asteroid.Type.Dirt),
-                //(Asteroid.Size.Small, Asteroid.Type.Dirt),
-                //(Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Small, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
             },
             InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
             MaxSpawnTime: 1500f * SharpRayConfig.TickMultiplier,
