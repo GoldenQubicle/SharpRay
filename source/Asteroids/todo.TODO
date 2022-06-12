@@ -1,6 +1,6 @@
-    ✔ create menu screen @created(23-04-2022 16:46) @done(14-05-2022 20:56)
-    ✔ pick ship type & color @created(23-04-2022 16:46) @done(30-04-2022 19:35)
-        ✔ load shape ship textures @created(23-04-2022 17:10) @done(23-04-2022 19:23)
+✔ create menu screen @created(23-04-2022 16:46) @done(14-05-2022 20:56)
+✔ pick ship type & color @created(23-04-2022 16:46) @done(30-04-2022 19:35)
+    ✔ load shape ship textures @created(23-04-2022 17:10) @done(23-04-2022 19:23)
 
 ✔ show visible damage @created(23-04-2022 19:37) @done(30-04-2022 19:35)
     3 textures availables so after that it's game over, could consider weighing asteroid stage as multiplyer  @created(23-04-2022 19:37)
@@ -40,7 +40,7 @@
     can also consider breaking into more and more pieces as waves increase. atm it's hardcoded like 7 - 5 - 3
     also, atm drawing all asteroid at scale 1, can play with that to have more variety size wise 
     and in addition the 'reflection' speed bump is now 1.5, could also vary with size?!
-☐ MVP Game Design, going w different levels.  @created(28-05-2022 20:20)
+✔ MVP Game Design, going w different levels.  @created(28-05-2022 20:20) @done(12-06-2022 17:22)
     asteroids have fixed number of hitpoints & scatter ratio
     difficulty progression comes from increasing bounciness, meteor spawn rate & size
     ship damage is sum of meteor hitpoint, e.g. meteor medium 3 hp, spawms 2 small 1 hp = 1 * 3 + 2 * 1 = 5 damage to ship
@@ -49,11 +49,7 @@
 
     ✔ audio @created(14-05-2022 19:51) @done(10-06-2022 20:22)
         go over kenny assets and pick files
-
-    ☐ mouse control ship @created(31-05-2022 20:40)
-        think it would play really nice if the mouse rotates the ship and left & right click fire primary & secondary weapon respectivly
-
-    ☐ encapulate level data @created(28-05-2022 20:24)
+    ✔ encapulate level data @created(28-05-2022 20:24) @done(12-06-2022 17:22)
         ✔ meteor spawn total, rate, size @done(22-06-01 12:14)
         ✔ pickups available @created(01-06-2022 19:29) @done(01-06-2022 19:29)
         level of bounciness
@@ -63,7 +59,7 @@
         5 or 7 perhaps in terms of size by scaling texture
         and what about different 'materials' by texture coloring?
 
-    ☐ parameterize bounciness @created(28-05-2022 20:25)
+    ✔ parameterize bounciness @created(28-05-2022 20:25) @done(12-06-2022 17:22)
         ✔ create fixed upper limit bounciness @created(29-05-2022 12:16) @done(29-05-2022 12:16)
         ☐ set the number of bounces it takes to reach said limit as an easing? @created(29-05-2022 12:17)
         
@@ -72,7 +68,11 @@
         ✔ to announce life lost @created(01-06-2022 19:45) @done(01-06-2022 19:45)
         ✔ to show pickups @created(01-06-2022 19:29) @done(01-06-2022 19:29)
 
-    ☐ pickups @created(29-05-2022 12:06)
+    ☐ rework Gui @created(05-06-2022 19:29)
+        make notification scale according to text size!
+        ✔ show pickup text as info message on 'hud' and disappearing after a while @created(08-06-2022 23:16) @done(08-06-2022 23:16)
+
+    ✔ pickups @created(29-05-2022 12:06) @done(12-06-2022 17:22)
         ☐ different weapons @created(26-05-2022 20:19)
             primary
                 ✔ 3 shooter @created(01-06-2022 19:28) @done(01-06-2022 19:28)
@@ -95,17 +95,36 @@
 
         ✔ health restoration? @created(29-05-2022 12:08) @done(10-06-2022 20:23)
         
-    ☐ show shield & weapon slots on screen @created(28-05-2022 22:10)
-        so player knows about what is available
 
-    ☐ game over menu screen @created(14-05-2022 15:15)
-        audio controls 
-        credits section 
-        possible full screen toggle?!
+☐ Make release v1 @created(12-06-2022 17:22)
 
-☐ rework Gui @created(05-06-2022 19:29)
-    make notification scale according to text size!
-    ✔ show pickup text as info message on 'hud' and disappearing after a while @created(08-06-2022 23:16) @done(08-06-2022 23:16)
+☐ Release v2  @created(12-06-2022 17:22)
+    ☐ Features @created(12-06-2022 17:24)
+        ☐ mouse control ship @created(31-05-2022 20:40)
+            think it would play really nice if the mouse rotates the ship and left & right click fire primary & secondary weapon respectivly
+        ☐ secondary weapon @created(12-06-2022 17:23)
+            radius blast
+        ☐ shield @created(12-06-2022 17:23)
+
+    ☐ Game Play @created(12-06-2022 17:25)
+        ☐ 5 or more levels @created(12-06-2022 17:25)
+        ☐ better pickup system @created(12-06-2022 17:25)
+            cluster bullets
+            explosive bullets
+            laser blast
+            plasma blast
+
+    ☐ GUI polish @created(12-06-2022 17:26)
+        ☐ show shield & weapon slots on screen @created(28-05-2022 22:10)
+            so player knows about what is available and currently equiped
+        ☐ game over menu screen @created(14-05-2022 15:15)
+        ☐ credits section @created(12-06-2022 17:26)
+        ☐ reusable notifications @created(12-06-2022 17:27)
+
+    ☐ @SharpRay scale label width automatically to text dimensions @created(12-06-2022 17:28)
+    ☐ @SharpRay audio controls @created(12-06-2022 17:26)
+    ☐ @SharpRay possible full screen toggle?! @created(12-06-2022 17:26)
+
 
 ☐ @bug audio playing when paused @created(02-06-2022 17:23)
 
