@@ -72,10 +72,10 @@ namespace SharpRay.Core
 
             while (!WindowShouldClose())
             {
+                var frameTime = GetFrameTime(ref previous);
+                
                 if (DoEventLogging) FrameCount++;
                 if (ShowFPS) DrawFPS(0, 0);
-
-                var frameTime = GetFrameTime(ref previous);
 
                 Mouse.DoEvents();
                 KeyBoard.DoEvents();
