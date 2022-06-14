@@ -98,7 +98,7 @@
                 var rotateOutAmount = nextRotation * maxRotation;
                 while (nextRotation > 0)
                 {
-                    Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger..
+                    Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger.. since it's a sum of multiple render frame time
                     nextRotation = Motions[RotateOut].GetValue();
                     rotateOutAmount += nextRotation * maxRotation;
                 }
