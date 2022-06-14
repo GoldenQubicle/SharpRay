@@ -33,8 +33,8 @@
         private float acceleration = 0f;
         private bool hasAcceleration;
 
-        private readonly double rotateInTime = 300; // time it takes to reach max rotation angle
-        private readonly double rotateOutTime = 550; // time it takes from max rotation angle to come to a stand still
+        private const double rotateInTime = 300; // time it takes to reach max rotation angle
+        private const double rotateOutTime = 550; // time it takes from max rotation angle to come to a stand still
         private readonly float maxRotation = 3.5f * DEG2RAD; // in radians per frame, essentially
         private float n_rotation = 0f; //normalized 0-1
         private float rotation = 0f;
@@ -89,10 +89,32 @@
             else if (n_rotation > 0)
                 n_rotation = Motions[RotateOut].GetValue();
 
+            //update mousemovement stuffies
+            if(hasRotation)
+            {
+                deltaTheta -= (n_rotation * maxRotation);
+                Motions[RotateOut].SetElapsedTime(n_rotation);
+                var nextRotation = Motions[RotateOut].GetValue();
+                var rotateOutAmount = nextRotation * maxRotation;
+                while (nextRotation > 0)
+                {
+                    Motions[RotateOut].Update(deltaTime); // idealized to 60 fps.. plus some jitter wiggle room, was just better 
+                    nextRotation = Motions[RotateOut].GetValue();
+                    rotateOutAmount += nextRotation * maxRotation;
+                }
+
+                if (deltaTheta < rotateOutAmount)
+                {
+                    hasRotation = false;
+                    Motions[RotateOut].SetElapsedTime(n_rotation);
+                }
+            }
+            
+
             //update rotation
             var r = n_rotation * maxRotation;
             rotation += direction == Left ? -1 * r : r;
-
+            //Console.WriteLine($"ship rotation {rotation}");
             //update & apply acceleration to position
             acceleration = n_acceleration * maxAcceleration;
             Position += new Vector2(MathF.Cos(rotation - HalfPI) * acceleration, MathF.Sin(rotation - HalfPI) * acceleration);
@@ -160,8 +182,9 @@
 
             var mp = GetMousePosition();
             DrawLineV(Position, mp, Color.GREEN);
-            var a = AngleBetween(start, Position, mp);
-            DrawTextV($"{a * RAD2DEG}", Position + Vector2.One * 5, 24, Color.RED);
+            var a = AngleBetween(start, Position, Target);
+            
+            //DrawTextV($"{a * RAD2DEG}", Position + Vector2.One * 5, 24, Color.RED);
 
             //DrawCircleV(texPos, 5, Color.DARKPURPLE);
         }
@@ -174,27 +197,40 @@
             return Math.Acos(Vector2.Dot(a, b) / (a.Length() * b.Length()));
         }
 
+        private static Vector2 Target = new(WindowWidth - 100, WindowHeight - 100);
+        private double mouseTheta;
+        private double deltaTheta;
+
         public override void OnMouseEvent(IMouseEvent e)
         {
-            if (e is MouseMovement mm)
+            if (e is MouseLeftClick mm)
             {
                 var start = Position + new Vector2(0, WindowWidth);
                 var end = Position + new Vector2(0, -WindowWidth);
                 var r = Matrix3x2.CreateRotation(180 * DEG2RAD + rotation, Position);
                 start = Vector2.Transform(start, r);
                 end = Vector2.Transform(end, r);
+
                 var sign = ((end.X - start.X) * (mm.Position.Y - start.Y) -
                     (end.Y - start.Y) * (mm.Position.X - start.X));
 
-                var a = AngleBetween(start, Position, GetMousePosition()) * RAD2DEG;
+                direction = sign > 0 ? Left : Right;
 
-                (hasRotation, direction) = sign switch
-                {
-                    > 0 when !hasRotation && a > 45 => StartRotateIn(Left),
-                    < 0 when !hasRotation && a > 45 => StartRotateIn(Right),
-                    //KeyLeftReleased or KeyRightReleased => StartRotateOut(),
-                    _ => StartRotateOut()
-                };
+                mouseTheta = AngleBetween(start, Position, GetMousePosition());
+                deltaTheta = mouseTheta;
+                hasRotation = true;
+                Motions[RotateIn].SetElapsedTime(n_rotation);
+
+                //n_rotation = (float)MapRange(a, 0f, 180, 0, 1);
+                
+                
+                //(hasRotation, direction) = sign switch
+                //{
+                //    > 0 when !hasRotation && a > 45 => StartRotateIn(Left),
+                //    < 0 when !hasRotation && a > 45 => StartRotateIn(Right),
+                //    //KeyLeftReleased or KeyRightReleased => StartRotateOut(),
+                //    _ => StartRotateOut()
+                //};
             }
         }
 

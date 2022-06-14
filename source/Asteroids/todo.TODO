@@ -102,6 +102,20 @@
     ☐ Features @created(12-06-2022 17:24)
         ☐ mouse control ship @created(31-05-2022 20:40)
             think it would play really nice if the mouse rotates the ship and left & right click fire primary & secondary weapon respectivly
+            Right this is actually far trickier than anticipated, i.e. apart from hooking it into the existing key control scheme. 
+            Another factor I hadn't considered; even if the mouse is perfectly still the delta angle between ship & cursor is of course gonna change
+            so maybe i'll just first need to focus on orientating the ship according to cursor and then worry about easings etc 
+            essentially the problem is this; given the theta between ship heading and mouse position, 
+                how long do the rotate in & rotate out need to last, i.e. how long does hasRotation need to be true?!
+
+            OnMouseMovement
+                determine the total theta, and direction of rotation
+                start rotateIn as per usual, based on n_rotation
+                per update call, subtract the rotateIn amount from theta, leaving deltaTheta
+                given the current n_rotation what is the amount of rotation covered by rotateOut, i.e. untill ship has come to a standstill
+                if rotateOutAmount < deltaTheta, continue rotateIn
+                if rotateOutAmount <= deltaTheta, hasRotation is false, en set rotateOut based on n_rotation
+
         ☐ secondary weapon @created(12-06-2022 17:23)
             radius blast
         ☐ shield @created(12-06-2022 17:23)
