@@ -75,9 +75,6 @@
         {
             if (IsPaused) return;
 
-            //update motions
-            foreach (var m in Motions.Values) m.Update(deltaTime);
-
             //get normalized motion values if applicable
             if (hasAcceleration)
                 n_acceleration = Motions[Accelerate].GetValue();
@@ -89,8 +86,15 @@
             else if (n_rotation > 0)
                 n_rotation = Motions[RotateOut].GetValue();
 
-            //update mousemovement stuffies
-            if(hasRotation)
+            //update rotation
+            var r = n_rotation * maxRotation;
+            rotation += direction == Left ? -1 * r : r;
+
+            //update motions
+            foreach (var m in Motions.Values) m.Update(deltaTime);
+
+            //update mousemovement stuffies, specifcally determine when to start rotateOut
+            if (hasRotation)
             {
                 deltaTheta -= (n_rotation * maxRotation);
                 Motions[RotateOut].SetElapsedTime(n_rotation);
@@ -108,13 +112,12 @@
                     hasRotation = false;
                     Motions[RotateOut].SetElapsedTime(n_rotation);
                 }
+                //Console.WriteLine($"{deltaTheta} : {rotateOutAmount} : {n_rotation}");
             }
-            
 
-            //update rotation
-            var r = n_rotation * maxRotation;
-            rotation += direction == Left ? -1 * r : r;
-            //Console.WriteLine($"ship rotation {rotation}");
+            //Console.WriteLine($"{hasRotation} | n: {n_rotation} | in: {Motions[RotateIn].GetValue()} | out: {Motions[RotateOut].GetValue()} | r: {n_rotation * maxRotation * RAD2DEG}");
+
+
             //update & apply acceleration to position
             acceleration = n_acceleration * maxAcceleration;
             Position += new Vector2(MathF.Cos(rotation - HalfPI) * acceleration, MathF.Sin(rotation - HalfPI) * acceleration);
@@ -182,9 +185,9 @@
 
             var mp = GetMousePosition();
             DrawLineV(Position, mp, Color.GREEN);
-            var a = AngleBetween(start, Position, Target);
-            
-            //DrawTextV($"{a * RAD2DEG}", Position + Vector2.One * 5, 24, Color.RED);
+            var a = AngleBetween(start, Position, mp);
+
+            DrawTextV($"{a * RAD2DEG}", Position + Vector2.One * 5, 24, Color.RED);
 
             //DrawCircleV(texPos, 5, Color.DARKPURPLE);
         }
@@ -216,18 +219,18 @@
 
                 direction = sign > 0 ? Left : Right;
 
-                mouseTheta = AngleBetween(start, Position, GetMousePosition());
+                mouseTheta = AngleBetween(Vector2.Normalize(start), Vector2.Normalize(Position), Vector2.Normalize(GetMousePosition()));
                 deltaTheta = mouseTheta;
                 hasRotation = true;
                 Motions[RotateIn].SetElapsedTime(n_rotation);
 
                 //n_rotation = (float)MapRange(a, 0f, 180, 0, 1);
-                
-                
+
+
                 //(hasRotation, direction) = sign switch
                 //{
-                //    > 0 when !hasRotation && a > 45 => StartRotateIn(Left),
-                //    < 0 when !hasRotation && a > 45 => StartRotateIn(Right),
+                //    > 0 when !hasRotation => StartRotateIn(Left),
+                //    < 0 when !hasRotation => StartRotateIn(Right),
                 //    //KeyLeftReleased or KeyRightReleased => StartRotateOut(),
                 //    _ => StartRotateOut()
                 //};
