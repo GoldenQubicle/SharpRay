@@ -34,7 +34,7 @@
         private bool hasAcceleration;
 
         private const double rotateInTime = 300; // time it takes to reach max rotation angle
-        private const double rotateOutTime = 550; // time it takes from max rotation angle to come to a stand still
+        private const double rotateOutTime = 1; // time it takes from max rotation angle to come to a stand still
         private readonly float maxRotation = 3.5f * DEG2RAD; // in radians per frame, essentially
         private float n_rotation = 0f; //normalized 0-1
         private float rotation = 0f;
@@ -100,11 +100,14 @@
                 Motions[RotateOut].SetElapsedTime(n_rotation);
                 var nextRotation = Motions[RotateOut].GetValue();
                 var rotateOutAmount = nextRotation * maxRotation;
+                Console.WriteLine($"{GetFrameNumber()} \t|  nr : {nextRotation:G3} \t | t : {rotateOutAmount:G3}");
+
                 while (nextRotation > 0)
                 {
                     Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger.. since it's a sum of multiple render frame time
                     nextRotation = Motions[RotateOut].GetValue();
                     rotateOutAmount += nextRotation * maxRotation;
+                    Console.WriteLine($"{GetFrameNumber()} \t|  nr : {nextRotation:G3} \t | t : {rotateOutAmount:G3}");
                 }
 
                 if (deltaTheta < rotateOutAmount)
@@ -112,7 +115,9 @@
                     hasRotation = false;
                     Motions[RotateOut].SetElapsedTime(n_rotation);
                 }
-                //Console.WriteLine($"{deltaTheta} : {rotateOutAmount} : {n_rotation}");
+                //Console.WriteLine($"{hasRotation} \t| n: {n_rotation:G3} \t | in: {Motions[RotateIn].GetValue():G3} \t | out: {Motions[RotateOut].GetValue():G3} \t | r: {n_rotation * maxRotation * RAD2DEG:G3}");
+
+                //Console.WriteLine($"initial: {mouseTheta} | remaining: {deltaTheta} | rotate out total: {rotateOutAmount}");
             }
 
             //Console.WriteLine($"{hasRotation} | n: {n_rotation} | in: {Motions[RotateIn].GetValue()} | out: {Motions[RotateOut].GetValue()} | r: {n_rotation * maxRotation * RAD2DEG}");
@@ -226,7 +231,7 @@
 
                 //n_rotation = (float)MapRange(a, 0f, 180, 0, 1);
 
-
+                Console.WriteLine("C L I C K E D M O U S E ");
                 //(hasRotation, direction) = sign switch
                 //{
                 //    > 0 when !hasRotation => StartRotateIn(Left),

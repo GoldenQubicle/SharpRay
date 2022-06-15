@@ -113,6 +113,11 @@ namespace SharpRay.Core
             CloseWindow();
         }
 
+        /// <summary>
+        /// Return frame number for the current frame, counted since application start. 
+        /// </summary>
+        /// <returns></returns>
+        public static long GetFrameNumber() => FrameCount;
 
         /// <summary>
         /// Retrieves a <see cref="Font"/> from the Fonts dictionary. Will throw an exception if the given key is not present.
