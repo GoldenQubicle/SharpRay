@@ -15,6 +15,8 @@ global using SharpRay.Listeners;
 global using System.Numerics;
 global using Raylib_cs;
 global using SharpRay.Interfaces;
+using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace SharpRay.Core
 {
@@ -73,7 +75,7 @@ namespace SharpRay.Core
             while (!WindowShouldClose())
             {
                 var frameTime = GetFrameTime(ref previous);
-                
+
                 if (DoEventLogging) FrameCount++;
                 if (ShowFPS) DrawFPS(0, 0);
 
@@ -111,6 +113,35 @@ namespace SharpRay.Core
             }
             CloseAudioDevice();
             CloseWindow();
+        }
+
+        /// <summary>
+        /// Prints the argument to console. 
+        /// Automaticaly preprends the current frame number and class.method name indicating where the Print method is used. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arg"></param>
+        /// <param name="memberName"></param>
+        /// <param name="sourceFilePath"></param>
+        public static void Print<T>(T arg, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "") =>
+            Print(() => new[] { arg }, memberName, sourceFilePath);
+
+        /// <summary>
+        /// Prints the arguments returned from <paramref name="args"/> in tab seperated format to console.  
+        /// Automaticaly preprends the current frame number and class.method name indicating where the Print method is used. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <param name="memberName"></param>
+        /// <param name="sourceFilePath"></param>
+        public static void Print<T>(Func<T[]> args, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "")
+        {
+            var sb = new StringBuilder();
+            sb.Append($"FRAME: {FrameCount} \t");
+            sb.Append($"SOURCE: {Path.GetFileNameWithoutExtension(sourceFilePath)}.{memberName} \n");
+            foreach (var s in args()) sb.Append($"{s.ToString()} \t");
+            sb.AppendLine();
+            Console.WriteLine(sb.ToString());
         }
 
         /// <summary>
@@ -289,7 +320,7 @@ namespace SharpRay.Core
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
 
-        
+
 
         #endregion
 

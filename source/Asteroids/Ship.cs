@@ -92,36 +92,30 @@
 
             //update motions
             foreach (var m in Motions.Values) m.Update(deltaTime);
-
+            
             //update mousemovement stuffies, specifcally determine when to start rotateOut
-            if (hasRotation)
-            {
-                deltaTheta -= (n_rotation * maxRotation);
-                Motions[RotateOut].SetElapsedTime(n_rotation);
-                var nextRotation = Motions[RotateOut].GetValue();
-                var rotateOutAmount = nextRotation * maxRotation;
-                Console.WriteLine($"{GetFrameNumber()} \t|  nr : {nextRotation:G3} \t | t : {rotateOutAmount:G3}");
+            //if (hasRotation)
+            //{
+            //    deltaTheta -= (n_rotation * maxRotation);
+            //    Motions[RotateOut].SetElapsedTime(n_rotation);
+            //    var nextRotation = Motions[RotateOut].GetValue();
+            //    var rotateOutAmount = nextRotation * maxRotation;
 
-                while (nextRotation > 0)
-                {
-                    Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger.. since it's a sum of multiple render frame time
-                    nextRotation = Motions[RotateOut].GetValue();
-                    rotateOutAmount += nextRotation * maxRotation;
-                    Console.WriteLine($"{GetFrameNumber()} \t|  nr : {nextRotation:G3} \t | t : {rotateOutAmount:G3}");
-                }
+            //    while (nextRotation > 0)
+            //    {
+            //        Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger.. since it's a sum of multiple render frame time
+            //        nextRotation = Motions[RotateOut].GetValue();
+            //        rotateOutAmount += nextRotation * maxRotation;
+            //    }
 
-                if (deltaTheta < rotateOutAmount)
-                {
-                    hasRotation = false;
-                    Motions[RotateOut].SetElapsedTime(n_rotation);
-                }
-                //Console.WriteLine($"{hasRotation} \t| n: {n_rotation:G3} \t | in: {Motions[RotateIn].GetValue():G3} \t | out: {Motions[RotateOut].GetValue():G3} \t | r: {n_rotation * maxRotation * RAD2DEG:G3}");
+            //    if (deltaTheta < rotateOutAmount)
+            //    {
+            //        hasRotation = false;
+            //        Motions[RotateOut].SetElapsedTime(n_rotation);
+            //    }
+            //}
 
-                //Console.WriteLine($"initial: {mouseTheta} | remaining: {deltaTheta} | rotate out total: {rotateOutAmount}");
-            }
-
-            //Console.WriteLine($"{hasRotation} | n: {n_rotation} | in: {Motions[RotateIn].GetValue()} | out: {Motions[RotateOut].GetValue()} | r: {n_rotation * maxRotation * RAD2DEG}");
-
+            Print(() => new[] {"Example", "of", "Print"});
 
             //update & apply acceleration to position
             acceleration = n_acceleration * maxAcceleration;
@@ -201,7 +195,6 @@
         {
             var a = vector1 - vector2;
             var b = vector3 - vector2;
-
             return Math.Acos(Vector2.Dot(a, b) / (a.Length() * b.Length()));
         }
 
@@ -231,7 +224,6 @@
 
                 //n_rotation = (float)MapRange(a, 0f, 180, 0, 1);
 
-                Console.WriteLine("C L I C K E D M O U S E ");
                 //(hasRotation, direction) = sign switch
                 //{
                 //    > 0 when !hasRotation => StartRotateIn(Left),
