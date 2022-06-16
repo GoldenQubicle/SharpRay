@@ -92,30 +92,39 @@
 
             //update motions
             foreach (var m in Motions.Values) m.Update(deltaTime);
-            
+
             //update mousemovement stuffies, specifcally determine when to start rotateOut
-            //if (hasRotation)
-            //{
-            //    deltaTheta -= (n_rotation * maxRotation);
-            //    Motions[RotateOut].SetElapsedTime(n_rotation);
-            //    var nextRotation = Motions[RotateOut].GetValue();
-            //    var rotateOutAmount = nextRotation * maxRotation;
+            if (hasRotation)
+            {
 
-            //    while (nextRotation > 0)
-            //    {
-            //        Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger.. since it's a sum of multiple render frame time
-            //        nextRotation = Motions[RotateOut].GetValue();
-            //        rotateOutAmount += nextRotation * maxRotation;
-            //    }
+                deltaTheta -= (n_rotation * maxRotation);
+                Motions[RotateOut].SetElapsedTime(n_rotation);
+                var nextRotation = Motions[RotateOut].GetValue();
+                var rotateOutAmount = nextRotation * maxRotation;
+                
+                
+                while (nextRotation > 0)
+                {
+                    Motions[RotateOut].Update(deltaTime); //not sure, maybe idealize to 60 fps.. though deltatime typically tends to be a bit larger.. since it's a sum of multiple render frame time
+                    nextRotation = Motions[RotateOut].GetValue();
+                    rotateOutAmount += nextRotation * maxRotation;
+                }
 
-            //    if (deltaTheta < rotateOutAmount)
-            //    {
-            //        hasRotation = false;
-            //        Motions[RotateOut].SetElapsedTime(n_rotation);
-            //    }
-            //}
+                if (deltaTheta < rotateOutAmount)
+                {
+                    hasRotation = false;
+                    Motions[RotateOut].SetElapsedTime(n_rotation);
+                }
 
-            Print(() => new[] {"Example", "of", "Print"});
+                Print(() => new[]
+                {
+                    $"{nameof(deltaTheta)}:{deltaTheta*RAD2DEG:F3}",
+                    $"{nameof(rotateOutAmount)}:{rotateOutAmount:F3}",
+                    $"{nameof(n_rotation)}:{n_rotation:F3}"
+                });
+            }
+
+            //Print(() => new[] {"Example", "of", "Print"});
 
             //update & apply acceleration to position
             acceleration = n_acceleration * maxAcceleration;
@@ -204,7 +213,7 @@
 
         public override void OnMouseEvent(IMouseEvent e)
         {
-            if (e is MouseLeftClick mm)
+            if (e is MouseMovement mm)
             {
                 var start = Position + new Vector2(0, WindowWidth);
                 var end = Position + new Vector2(0, -WindowWidth);
@@ -217,10 +226,18 @@
 
                 direction = sign > 0 ? Left : Right;
 
-                mouseTheta = AngleBetween(Vector2.Normalize(start), Vector2.Normalize(Position), Vector2.Normalize(GetMousePosition()));
-                deltaTheta = mouseTheta;
-                hasRotation = true;
-                Motions[RotateIn].SetElapsedTime(n_rotation);
+                mouseTheta = AngleBetween(start, Position, GetMousePosition());
+                deltaTheta = Math.Abs(mouseTheta);
+                Print(() => new[] { 
+                    $"{nameof(mouseTheta)}:{mouseTheta:f3}",
+                    $"{nameof(deltaTheta)}:{deltaTheta:f3}"});
+
+                if (!hasRotation)
+                {
+                    hasRotation = true;
+                    Motions[RotateIn].SetElapsedTime(n_rotation);
+
+                }
 
                 //n_rotation = (float)MapRange(a, 0f, 180, 0, 1);
 
@@ -232,6 +249,14 @@
                 //    _ => StartRotateOut()
                 //};
             }
+
+            if (e is MouseLeftClick)
+                PrimaryWeapon.Fire(new ShipFiredBullet
+                {
+                    Origin = Position + new Vector2(MathF.Cos(rotation - HalfPI) * radius, MathF.Sin(rotation - HalfPI) * radius),
+                    Angle = rotation - HalfPI,
+                    Force = acceleration
+                });
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
