@@ -2,8 +2,8 @@ name: MeteorMadness
 on:
   push:
     branches: [ Builds ]
-    tags:
-    - '*'
+    # tags:
+    # - '*'
 
   workflow_dispatch:
 
@@ -21,10 +21,11 @@ jobs:
         with:        
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: dotnet publish source/Asteroids/Asteroids.csproj -c Release -r ${{matrix.versions}} -o out/ #-property:AssemblyName='Meteor Madness ${{matrix.versions}}'
+      - run: dotnet publish source/Asteroids/Asteroids.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o out/ #-property:AssemblyName='Meteor Madness ${{matrix.versions}}'
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
+          tag: MM_v1.0.0
           artifacts: "out/*"
           commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
