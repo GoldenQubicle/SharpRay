@@ -21,7 +21,7 @@ jobs:
         with:        
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: dotnet publish source/Asteroids/Asteroids.csproj -c Release -r ${{matrix.versions}} -o out/ -property:AssemblyName='Meteor Madness ${{matrix.versions}}'
+      - run: dotnet publish source/Asteroids/Asteroids.csproj -c Release -r ${{matrix.versions}} -o out/ #-property:AssemblyName='Meteor Madness ${{matrix.versions}}'
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
