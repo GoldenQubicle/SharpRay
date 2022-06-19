@@ -26,6 +26,6 @@ jobs:
         with:
           allowUpdates: true
           artifacts: "out/*"
-          commit: "Build"
+          commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
 
