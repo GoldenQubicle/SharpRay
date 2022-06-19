@@ -1,0 +1,31 @@
+name: MeteorMadness
+on:
+  push:
+    branches: [ Build ]
+    tags:
+    - '*'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+        matrix:
+          versions: [ 'win-x86'] #,'win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
+    
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:        
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+      - run: dotnet publish source/Asteroids/Asteroids.csproj -c Release -r ${{matrix.versions}} -o out/ -property:AssemblyName='Meteor Madness ${{matrix.versions}}'
+      - uses: ncipollo/release-action@v1.10.0
+        with:
+          allowUpdates: true
+          artifacts: "out/*"
+          commit: "SnakeGame"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
