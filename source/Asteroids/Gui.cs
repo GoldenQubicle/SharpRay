@@ -361,8 +361,8 @@
                  ).Translate(new Vector2(WindowWidth / 2, 0));
 
 
-        public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+        public static GuiContainer CreateShipSelectionMenu(bool isVisible = false) =>
+           GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",

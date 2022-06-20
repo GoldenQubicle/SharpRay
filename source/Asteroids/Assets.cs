@@ -119,14 +119,14 @@
                 AddTexture2D(s.Value, getShipPath(s.Value));
 
             var iconRegex = new Regex(@"(?<Type>1|2|3).(?<Color>blue|green|orange|red)");
-            shipsIcons = Directory.GetFiles(AssestsFolder, @"PNG\UI\icons")
+            shipsIcons = Directory.GetFiles(AssestsFolder, @"PNG\UI\icons\")
                 .Select(f => iconRegex.Match(f).Groups)
                 .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: "icon_" + g["0"].Value))
                 .GroupBy(t => t.type).ToDictionary(g => g.Key, g =>
                     g.ToDictionary(t => t.color, t => t.File));
 
             //actually load texture into memory
-            string getIconPath(string name) => @$"PNG\UI\playerLife{name[5..]}.png";
+            string getIconPath(string name) => @$"PNG\UI\icons\playerLife{name[5..]}.png";
             foreach (var s in shipsIcons.SelectMany(t => t.Value))
                 AddTexture2D(s.Value, getIconPath(s.Value));
 
