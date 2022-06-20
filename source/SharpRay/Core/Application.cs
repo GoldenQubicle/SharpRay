@@ -17,6 +17,7 @@ global using Raylib_cs;
 global using SharpRay.Interfaces;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace SharpRay.Core
 {
@@ -89,6 +90,7 @@ namespace SharpRay.Core
                     DoEventActions();
             }
 
+            Audio.StopAllSounds();
             foreach (var t in Textures) UnloadTexture(t.Value);
             foreach (var a in Audio.Sounds) UnloadSound(a.Value);
             foreach (var f in Fonts) UnloadFont(f.Value);
@@ -167,19 +169,6 @@ namespace SharpRay.Core
             Fonts.Add(key, LoadFont(Path.Combine(AssestsFolder, fontFileName)));
 
 
-        /// <summary>
-        /// Loads a <see cref="Sound"/> from file, and adds it the Sounds dictionary with the given key. 
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="soundFileName"></param>
-        public static void AddSound(string key, string soundFileName) =>
-            Audio.Sounds.Add(key, LoadSound(Path.Combine(AssestsFolder, soundFileName)));
-
-        /// <summary>
-        /// Plays the sound with the <see cref="Sound"/> from the Audio.Sounds dictionary with the given key.
-        /// </summary>
-        /// <param name="key"></param>
-        public static void PlaySound(string key) => Raylib.PlaySound(Audio.Sounds[key]);
 
 
         /// <summary>

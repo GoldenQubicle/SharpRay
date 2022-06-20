@@ -379,11 +379,11 @@
                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
                    new Vector2(GetTexture2D(ships[ShipType][ShipColor]).width / 2, GetTexture2D(ships[ShipType][ShipColor]).height / 2) // rather stupid tbh
                },
-               new ImageTexture(GetTexture2D(Tags.ShipSelectLeft), GuiShipBaseColor[ShipColor])
-               {
-                   Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
-                   Size = new Vector2(0, 10),
-               },
+               //new ImageTexture(GetTexture2D(Tags.ShipSelectLeft), GuiShipBaseColor[ShipColor])
+               //{
+               //    Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
+               //    Size = new Vector2(0, 10),
+               //},
                new Button
                {
                    Tag = Tags.ShipSelectLeft,

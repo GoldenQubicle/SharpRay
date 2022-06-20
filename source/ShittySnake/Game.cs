@@ -1,14 +1,16 @@
-﻿using System.Numerics;
-using SharpRay.Core;
-using SharpRay.Gui;
-using SharpRay.Eventing;
-using SharpRay.Entities;
-using SnakeEvents;
-using SnakeEntities;
-using static SharpRay.Core.Application;
-using static Raylib_cs.Raylib;
-using static Raylib_cs.Color;
-using static ShittySnake.Settings;
+﻿global using System.Numerics;
+global using SharpRay.Core;
+global using static SharpRay.Core.Audio;
+global using SharpRay.Gui;
+global using SharpRay.Eventing;
+global using SharpRay.Entities;
+global using SnakeEvents;
+global using SnakeEntities;
+global using static SharpRay.Core.Application;
+global using static Raylib_cs.Raylib;
+global using static Raylib_cs.Color;
+global using static ShittySnake.Settings;
+
 
 namespace ShittySnake
 {

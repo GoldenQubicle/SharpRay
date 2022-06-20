@@ -1,8 +1,14 @@
-﻿namespace SharpRay.Core
+﻿using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace SharpRay.Core
 {
     public static class Audio
     {
-        public static Dictionary<string, Sound> Sounds = new();
+        public static readonly Dictionary<string, Sound> Sounds = new();
+        private static readonly Dictionary<string, Task> RepeatedSounds = new();
+        private static readonly Dictionary<string, CancellationTokenSource> CancellationSources = new();
 
         public static void Initialize()
         {
@@ -14,13 +20,51 @@
         private static void TryPlaySound(string name)
         {
             if (string.IsNullOrEmpty(name)) return;
-            if (Sounds.ContainsKey(name)) PlaySound(Sounds[name]);
+            if (Sounds.TryGetValue(name, out var s)) Raylib.PlaySound(s);
         }
 
         /// <summary>
         /// Stop all sounds from playing. 
         /// </summary>
-        public static void StopAllSounds() => Sounds.Values.Where(s => IsSoundPlaying(s)).ToList().ForEach(s => StopSound(s));
-        
+        public static void StopAllSounds()
+        {
+            Sounds.Values.Where(IsSoundPlaying).ToList().ForEach(StopSound);
+            RepeatedSounds.Keys.ToList().ForEach(key => CancellationSources[key].Cancel());
+        }
+
+        /// <summary>
+        /// Loads a <see cref="Sound"/> from file, and adds it the Sounds dictionary with the given key. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="soundFileName"></param>
+        public static void AddSound(string key, string soundFileName) =>
+            Sounds.TryAdd(key, LoadSound(Path.Combine(Application.AssestsFolder, soundFileName)));
+
+        /// <summary>
+        /// Plays the sound with the <see cref="Sound"/> from the Audio.Sounds dictionary with the given key.
+        /// Defaults to one shot play. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="isRepeated"></param>
+        public static void PlaySound(string key, bool isRepeated = false)
+        {
+            if (!isRepeated)
+            {
+                Raylib.PlaySound(Sounds[key]);
+                return;
+            }
+
+            var cts = new CancellationTokenSource();
+            CancellationSources.Add(key, cts);
+            RepeatedSounds.Add(key, PlaySoundOnRepeat(key, cts.Token));
+        }
+
+        private static Task PlaySoundOnRepeat(string key, CancellationToken ct) =>  
+            Task.Run(() =>
+                {
+                    while (!ct.IsCancellationRequested)
+                        if(!IsSoundPlaying(Sounds[key]))
+                            Raylib.PlaySound(Sounds[key]);
+                }, CancellationToken.None);
     }
 }

@@ -79,7 +79,7 @@ namespace Asteroids
 
 #if RELEASE
             selectionMenu.Show();
-            PlaySound(Gui.SelectionSound);
+            PlaySound(Gui.SelectionSound, isRepeated: true);
 #endif
             Run();
         }
@@ -95,6 +95,8 @@ namespace Asteroids
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);
             AddEntity(level);
+
+            PlaySound(Level.WinSound, true);
         }
 
         public static void ResetGame()
