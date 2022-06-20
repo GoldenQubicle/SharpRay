@@ -82,6 +82,13 @@
             AddSound(Game.WinOverallSound, "Audio\\mixkit-game-bonus-reached-2065.wav");
             SetSoundVolume(Sounds[Game.WinOverallSound], 0.35f);
 
+            AddTexture2D(Gui.Tags.ShipSelectLeft,  $@"PNG\UI\left.png");
+            AddTexture2D(Gui.Tags.ShipSelectRight, $@"PNG\UI\forward.png");
+            AddTexture2D(nameof(KeyLeftDown), $@"PNG\UI\arrowLeft.png");
+            AddTexture2D(nameof(KeyRightDown), $@"PNG\UI\arrowRight.png");
+            AddTexture2D(nameof(KeyUpDown), $@"PNG\UI\arrowUp.png");
+
+
             //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
             var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");
             meteors = Directory.GetFiles(AssestsFolder, @"PNG\Meteors\")
@@ -112,7 +119,7 @@
                 AddTexture2D(s.Value, getShipPath(s.Value));
 
             var iconRegex = new Regex(@"(?<Type>1|2|3).(?<Color>blue|green|orange|red)");
-            shipsIcons = Directory.GetFiles(AssestsFolder, @"PNG\UI\")
+            shipsIcons = Directory.GetFiles(AssestsFolder, @"PNG\UI\icons")
                 .Select(f => iconRegex.Match(f).Groups)
                 .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: "icon_" + g["0"].Value))
                 .GroupBy(t => t.type).ToDictionary(g => g.Key, g =>

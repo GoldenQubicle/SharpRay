@@ -117,9 +117,9 @@
                     FontSize = 24,
                     TextOffSet = new Vector2(0, 24),
                     Font = GetFont(FontFuture),
-                    Text = lifesLeft == 0 
-                        ? $"              GAME OVER" 
-                        :  $"      You lost a ship! \n     {lifesLeft} ships remaining",
+                    Text = lifesLeft == 0
+                        ? $"              GAME OVER"
+                        : $"      You lost a ship! \n     {lifesLeft} ships remaining",
                 },
                 new Label
                 {
@@ -139,7 +139,7 @@
                     if (e is KeySpaceBarPressed && IsPaused)
                     {
                         RemoveEntity(c);
-                        
+
                         if (lifesLeft == 0)
                         {
                             ResetGame();
@@ -251,8 +251,118 @@
             c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
         }
 
+        public static GuiContainer CreateMainMenu() =>
+           GuiContainerBuilder.CreateNew().AddChildren(
+                 new Label
+                 {
+                     Text = "Meteor Madness",
+                     TextColor = Color.YELLOW,
+                     FillColor = Color.DARKPURPLE,
+                     FontSize = 45,
+                     Position = new Vector2(0, WindowHeight * .1f),
+                     Size = new Vector2(600, 100),
+                     TextOffSet = new Vector2(72, 30),
+                     Font = GetFont(FontFuture),
+                 },
+                 new Button
+                 {
+                     Tag = Tags.StartGame,
+                     Text = "Start Game",
+                     TextColor = Color.YELLOW,
+                     FontSize = 24,
+                     Font = GetFont(FontFutureThin),
+                     TextOffSet = new Vector2(28, 15),
+                     Position = new Vector2(0, WindowHeight * .25f),
+                     Size = new Vector2(200, 50),
+                     BaseColor = GuiShipBaseColor[ShipColor],
+                     FocusColor = GuiShipFocusColor[ShipColor],
+                     OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                 },
+                  new Button
+                  {
+                      Tag = Tags.StartGame,
+                      Text = "Select Ship",
+                      TextColor = Color.YELLOW,
+                      FontSize = 24,
+                      Font = GetFont(FontFutureThin),
+                      TextOffSet = new Vector2(28, 15),
+                      Position = new Vector2(0, WindowHeight * .35f),
+                      Size = new Vector2(200, 50),
+                      BaseColor = GuiShipBaseColor[ShipColor],
+                      FocusColor = GuiShipFocusColor[ShipColor],
+                      OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                  },
+                   new Button
+                   {
+                       Text = "Credits",
+                       TextColor = Color.YELLOW,
+                       FontSize = 24,
+                       Font = GetFont(FontFutureThin),
+                       TextOffSet = new Vector2(28, 15),
+                       Position = new Vector2(0, WindowHeight * .45f),
+                       Size = new Vector2(200, 50),
+                       BaseColor = GuiShipBaseColor[ShipColor],
+                       FocusColor = GuiShipFocusColor[ShipColor],
+                       OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                   },
+                   GuiContainerBuilder.CreateNew().AddChildren(
+                        new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
+                        {
+                            Position = new Vector2(-50, 50),
+                            HasOutline = true,
+                        },
+                        new ImageTexture(GetTexture2D(nameof(KeyRightDown)), Color.WHITE)
+                        {
+                            Position = new Vector2(50, 50),
+                            HasOutline = true,
+                        },
+                        new ImageTexture(GetTexture2D(nameof(KeyUpDown)), Color.WHITE)
+                        {
+                            Position = new Vector2(0, 0),
+                            HasOutline = true,
+                        },
+                        new Label
+                        {
+                            Position = new Vector2(25, 135),
+                            Size = new Vector2(150, 50),
+                            Text = "spacebar",
+                            TextOffSet = new Vector2(8, 12),
+                            Font = GetFont(FontFutureThin),
+                            FontSize = 26,
+                            FillColor = Color.BLANK,
+                            TextColor = Color.WHITE,
+                            HasOutlines = true,
+                        },
+                        new Label
+                        {
+                            Position = new Vector2(-200, 135),
+                            Size = new Vector2(300, 50),
+                            Text = "fire weapon :",
+                            TextOffSet = new Vector2(20, 10),
+                            FillColor = Color.BLANK,
+                            HasOutlines = false,
+                            Font = GetFont(FontFuture),
+                            FontSize = 32
+                        },
+                        new Label
+                        {
+                            Position = new Vector2(-200, 55),
+                            Size = new Vector2(300, 50),
+                            Text = "ship control :",
+                            TextOffSet = new Vector2(5, 10),
+                            FillColor = Color.BLANK,
+                            HasOutlines = false,
+                            Font = GetFont(FontFuture),
+                            FontSize = 32
+                        })
+
+                    .Translate(new Vector2(-25, WindowHeight * .65f))
+
+                 ).Translate(new Vector2(WindowWidth / 2, 0));
+
+
         public static GuiContainer CreateShipSelectionMenu() =>
-           GuiContainerBuilder.CreateNew(isVisible: false, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(isVisible: true, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                new Label
                {
                    Text = "Meteor Madness",
@@ -268,6 +378,11 @@
                {
                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
                    new Vector2(GetTexture2D(ships[ShipType][ShipColor]).width / 2, GetTexture2D(ships[ShipType][ShipColor]).height / 2) // rather stupid tbh
+               },
+               new ImageTexture(GetTexture2D(Tags.ShipSelectLeft), GuiShipBaseColor[ShipColor])
+               {
+                   Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
+                   Size = new Vector2(0, 10),
                },
                new Button
                {

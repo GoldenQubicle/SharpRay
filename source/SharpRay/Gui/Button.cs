@@ -4,8 +4,8 @@ namespace SharpRay.Gui
 {
     public sealed class Button : Label
     {
-        public Color FocusColor { get; set; } = Color.GRAY;
-        public Color BaseColor { get; set; } = Color.DARKGRAY;
+        public Color FocusColor { get; set; } = GRAY;
+        public Color BaseColor { get; set; } = DARKGRAY;
         
         public override void Render()
         {

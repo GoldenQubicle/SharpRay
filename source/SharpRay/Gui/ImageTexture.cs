@@ -4,7 +4,7 @@
     {
         public Texture2D Texture2D { get; set; }
         public Color Color { get; set; }
-
+        public bool HasOutline { get; set; }
         public ImageTexture(Image image, Color color)
         {
             Color = color;
@@ -20,6 +20,8 @@
 
         public override void Render()
         {
+            if(HasOutline)
+                DrawRectangleLines((int)Position.X, (int)Position.Y, Texture2D.width, Texture2D.height, Color);
             DrawTexture(Texture2D, (int)Position.X, (int)Position.Y, Color);
         }
     }

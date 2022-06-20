@@ -35,7 +35,14 @@
 
         public void TranslateEntities(Vector2 translate)
         {
-            foreach (var e in Children) e.Position += translate;
+            foreach (var e in Children)
+            {
+                //TODO obviously want all childeren to just have a translate method
+                e.Position += translate;
+
+                if (e is GuiContainer gc)
+                    gc.TranslateEntities(translate); 
+            }
         }
 
         public void Show() => IsVisible = true;
