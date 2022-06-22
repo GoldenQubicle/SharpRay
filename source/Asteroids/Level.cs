@@ -10,12 +10,8 @@
       Vector2 InitialHeadingSpeed,
       double MaxSpawnTime,
       Easing Easing,
-      List<PickUp> PickUps)
-    {
-        public PickUp HasAsteroidSpawnPickUp((Asteroid.Size, Asteroid.Type) def) =>         
-          PickUps.FirstOrDefault(p => p.AsteroidDef == def);
-        
-    };
+      List<PickUp> PickUps);
+
 
     public class Level : Entity, IHasUpdate
     {
@@ -42,7 +38,7 @@
 
             foreach (var asteroid in Data.AsteroidSpawnStart)
                 AddEntity(asteroid, OnGameEvent);
-                  
+
             IsPaused = false;
         }
 
@@ -64,12 +60,13 @@
             if (LevelIdx == Levels.Data.Count - 1)
             {
                 PlaySound(WinOverallSound);
-            } else
+            }
+            else
             {
                 RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
                 PlaySound(WinSound);
             }
-            
+
         }
 
         public void OnGameEvent(IGameEvent e)
@@ -83,14 +80,9 @@
                 //update gui
                 var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
                 Score += hp;
-                GetEntity<Level>().PickUpScore += hp;
+                PickUpScore += hp;
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
 
-                //check for asteroid pickup spawn
-                var pu = Data.HasAsteroidSpawnPickUp(ad.Asteroid.Definition);
-                if (pu != default)
-                    pu.OnSpawn(ad.Asteroid.Position);
-                
 
                 //spawn new asteroids from the one destroyed
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
@@ -101,11 +93,35 @@
                     AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
                 }
 
+                if (ad.Asteroid.Definition.type == Asteroid.Type.Emerald)
+                {
+                    var h = (int)ad.Asteroid.Definition.size;
+                    var s = GetRandomValue(1, 50) / h;
+                    var c = GetRandomValue(1, 35);
+                    if (s > c)
+                    {
+                        var pu = new PickUp
+                        {
+                            PickupType = PickUp.Type.Health,
+                            Description = $"Restored {h} health!",
+                            OnPickUp = () =>
+                            {
+                                var ship = GetEntity<Ship>();
+                                ship.Health += h;
+                                MaxHealth = ship.Health > MaxHealth ? ship.Health : MaxHealth;
+                                Gui.UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay), ship.Health);
+                                UpdateShipDamageTexture(ship.Health);
+                            }
+                        };
+                        pu.OnSpawn(ad.Asteroid.Position);
+                    }
+                }
+
                 // remove the entities 
                 RemoveEntity(ad.Asteroid);
             }
         }
-        
+
 
         public override void Update(double deltaTime)
         {
@@ -117,19 +133,19 @@
             if (Score >= Data.WinScore)
                 OnExit();
 
-            foreach (var pickUp in Data.PickUps.Where(pu => pu.AsteroidDef == default))
+            foreach (var pickUp in Data.PickUps)
             {
                 if (PickUpScore >= pickUp.SpawnScore && !pickUp.HasSpawned)
                 {
-                    pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth-100), GetRandomValue(100, WindowHeight-100)));
+                    pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth - 100), GetRandomValue(100, WindowHeight - 100)));
                 }
             }
 
-            if(currentTime > Data.MaxSpawnTime)
+            if (currentTime > Data.MaxSpawnTime)
             {
                 currentTime = 0;
                 var chance = GetRandomValue(1, 100) / 100f;
-                
+
                 if (chance < Data.Easing.GetValue())
                 {
                     var idx = GetRandomValue(0, Data.AsteroidSpawnDuring.Count - 1);

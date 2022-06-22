@@ -190,7 +190,7 @@ namespace Asteroids
         {
             var idx = (int)MapRange(health, 0, MaxHealth, 3, 1);
 
-            if (idx != ShipDamageTextureIdx && idx <= 3)
+            if (idx != ShipDamageTextureIdx && (idx <= 3 && idx != 0))
             {
                 ShipDamageTextureIdx = idx;
                 GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[ShipType][ShipDamageTextureIdx]);

@@ -17,7 +17,6 @@
         public int SpawnScore { get; init; }
         public bool HasSpawned { get; set; }
         public Type PickupType { get; init; }
-        public (Asteroid.Size, Asteroid.Type) AsteroidDef { get; init; }
 
         private Font Font = GetFont(FontFutureThin);
         private (string t, Color fill, Color outline, Color text, Vector2 offset) Data;
