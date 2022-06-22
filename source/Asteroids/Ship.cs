@@ -2,14 +2,11 @@
 {
     public class Ship : Entity, IHasCollider, IHasCollision, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>, IKeyBoardListener
     {
-        public record Layout(Vector2 Position, int Health);
-
         public Action<IGameEvent> EmitEvent { get; set; }
         public ICollider Collider { get; }
         public Texture2D ShipTexture { get; set; }
         public Texture2D DamgageTexture { get; set; }
         public bool HasTakenDamage { get; set; }
-        public int Health { get; set; } = MaxHealth;
 
         public const string EngineSound = nameof(EngineSound);
         public const string ThrusterSound = nameof(ThrusterSound);
@@ -43,10 +40,12 @@
 
         private float scale = .75f;
         private readonly Vector2 offset; //used for render position textures
+        private double resetInterval = 500 * SharpRayConfig.TickMultiplier;
+        private double resetTimer;
 
-        public Ship(Layout layout, Texture2D texture)
+        public Ship(Vector2 position, int health, Texture2D texture)
         {
-            Position = layout.Position;
+            Position = position;
             Size = new Vector2(texture.width, texture.height);
             RenderLayer = RlShip;
             ShipTexture = texture;
@@ -60,8 +59,6 @@
                 HitPoints = 16
             };
 
-            Health = layout.Health;
-
             Motions = new Dictionary<string, Easing>
             {
                 { Accelerate, new Easing(Easings.EaseQuadOut, accelerateTime) },
@@ -71,9 +68,22 @@
             };
         }
 
+        public void Reset()
+        {
+            HasTakenDamage = false; // prevent damage texture from being visible
+            CurrentHealth = MaxHealth;
+            Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
+            rotation = 0;
+            n_rotation = 0;
+            acceleration = 0;
+            n_acceleration = 0;
+            resetTimer = 0;
+        }
+
         public override void Update(double deltaTime)
         {
             if (IsPaused) return;
+            resetTimer += deltaTime;
 
             //update motions
             foreach (var m in Motions.Values) m.Update(deltaTime);
@@ -117,21 +127,22 @@
 
         public void OnCollision(IHasCollider e)
         {
+            if (resetTimer < resetInterval) return;
+
             if (e is Asteroid a)
             {
                 HasTakenDamage = true;
-                Health -= Asteroid.GetDamageDone(a.Definition);
+                CurrentHealth -= Asteroid.GetDamageDone(a.Definition);
                 EmitEvent(new ShipHitAsteroid
                 {
-                    ShipHealth = Health,
                     Asteroid = a,
                 });
 
-                if (Health <= 0)
+                if (CurrentHealth <= 0)
                 {
                     EmitEvent(new ShipLifeLost
                     {
-                        LifeIconIdx = PlayerLifes,
+                        LifeIconIdx = CurrentLifes,
                     });
                 }
             }

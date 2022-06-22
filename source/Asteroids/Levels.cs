@@ -18,10 +18,6 @@
         public static LevelData Level1 => new(
             Description: "Level 1",
             WinScore: 50,
-            ShipLayout: new(
-                Position: new(WindowWidth / 2, WindowHeight / 2),
-                Health: MaxHealth),
-            Lifes: 3,
             AsteroidSpawnStart: new()
             {
                 new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (GetRandomValue(128, 256), GetRandomValue(128, 256)), GetRandomHeading(-50, 50)),
@@ -49,15 +45,10 @@
         public static LevelData Level2 => new(
             Description: "Level 2",
             WinScore: 125,
-            ShipLayout: new(
-                Position: new(WindowWidth / 2, WindowHeight / 2),
-                Health: MaxHealth),
-            Lifes: 3,
             AsteroidSpawnStart: new()
             {
                 new (Asteroid.Size.Big, Asteroid.Type.Dirt,
-                    new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)),
-                    GetRandomHeading(-75, 75)),
+                    new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)),GetRandomHeading(-75, 75)),
             },
             AsteroidSpawnDuring: new()
             {
@@ -90,10 +81,6 @@
         public static LevelData Level3 => new(
           Description: "Level 3",
           WinScore: 350,
-          ShipLayout: new(
-              Position: new(WindowWidth / 2, WindowHeight / 2),
-              Health: MaxHealth),
-          Lifes: 3,
           AsteroidSpawnStart: new()
           {
                 new (Asteroid.Size.Big, Asteroid.Type.Stone,
@@ -129,19 +116,15 @@
         public static LevelData TestLevel => new(
             Description: "Test Level",
             WinScore: 500,
-            ShipLayout: new(
-                Position: new(WindowWidth / 2, WindowHeight / 2),
-                Health: MaxHealth),
-            Lifes: 2,
             AsteroidSpawnStart: new()
             {
-                new (Asteroid.Size.Large, Asteroid.Type.Emerald, new (800, 100), new (0, 1.5f)),
+                new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (800, 100), new (0, 1.5f)),
             },
             AsteroidSpawnDuring: new()
             {
-                (Asteroid.Size.Medium, Asteroid.Type.Emerald),
-                (Asteroid.Size.Small, Asteroid.Type.Emerald),
-                (Asteroid.Size.Medium, Asteroid.Type.Emerald),
+                (Asteroid.Size.Medium, Asteroid.Type.Dirt),
+                (Asteroid.Size.Small, Asteroid.Type.Dirt),
+                (Asteroid.Size.Medium, Asteroid.Type.Stone),
             },
             InitialHeadingSpeed: new Vector2(1.5f, 1.5f),
             MaxSpawnTime: 1500f * SharpRayConfig.TickMultiplier,

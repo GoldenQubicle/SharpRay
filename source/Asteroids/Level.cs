@@ -3,8 +3,6 @@
     public record LevelData(
       string Description,
       int WinScore,
-      Ship.Layout ShipLayout,
-      int Lifes,
       List<Asteroid> AsteroidSpawnStart,
       List<(Asteroid.Size size, Asteroid.Type type)> AsteroidSpawnDuring,
       Vector2 InitialHeadingSpeed,
@@ -16,8 +14,6 @@
     public class Level : Entity, IHasUpdate
     {
         public const string WinSound = nameof(WinSound);
-
-        public int PickUpScore { get; set; }
         public LevelData Data { get; set; }
 
         private double currentTime = 0d;
@@ -25,10 +21,12 @@
         public void OnEnter(LevelData data)
         {
             Data = data;
+            CurrentLifes = MaxLifes;
 
-            var ship = new Ship(Data.ShipLayout, GetTexture2D(ships[ShipType][ShipColor]));
-            var overlay = Gui.CreateScoreOverLay(Data.Lifes, Data.WinScore);
-            PlayerLifes = Data.Lifes;
+            PrimaryWeapon.OnStartLevel();
+
+            var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), MaxHealth, GetTexture2D(ships[ShipType][ShipColor]));
+            var overlay = Gui.CreateScoreOverLay(MaxLifes, Data.WinScore);
 
             ship.EmitEvent += Game.OnGameEvent;
             ship.EmitEvent += overlay.OnGameEvent;
@@ -37,7 +35,9 @@
             AddEntity(overlay);
 
             foreach (var asteroid in Data.AsteroidSpawnStart)
+            {
                 AddEntity(asteroid, OnGameEvent);
+            }
 
             IsPaused = false;
         }
@@ -48,7 +48,6 @@
             IsPaused = true;
             Score = 0;
             currentTime = 0;
-            PickUpScore = 0;
             StopAllSounds();
             RemoveEntitiesOfType<Ship>();
             RemoveEntitiesOfType<Bullet>();
@@ -66,7 +65,6 @@
                 RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
                 PlaySound(WinSound);
             }
-
         }
 
         public void OnGameEvent(IGameEvent e)
@@ -77,12 +75,11 @@
                 SetSoundPitch(Sounds[Asteroid.ExplosionSound], GetRandomValue(50, 150) / 100f);
                 PlaySound(Asteroid.ExplosionSound);
 
-                //update gui
+                //update score
                 var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
                 Score += hp;
-                PickUpScore += hp;
+                Data.PickUps.ForEach(pu => pu.UpdateScore(hp));
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
-
 
                 //spawn new asteroids from the one destroyed
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
@@ -93,31 +90,32 @@
                     AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
                 }
 
+                //determine random chance for a health pickup spawn
                 if (ad.Asteroid.Definition.type == Asteroid.Type.Emerald)
                 {
                     var h = (int)ad.Asteroid.Definition.size;
                     var s = GetRandomValue(1, 50) / h;
-                    var c = GetRandomValue(1, 35);
+                    var c = GetRandomValue(1, 25);
                     if (s > c)
                     {
                         var pu = new PickUp
                         {
                             PickupType = PickUp.Type.Health,
-                            Description = $"Restored {h} health!",
+                            Description = $"Gained {h} health!",
                             OnPickUp = () =>
                             {
                                 var ship = GetEntity<Ship>();
-                                ship.Health += h;
-                                MaxHealth = ship.Health > MaxHealth ? ship.Health : MaxHealth;
-                                Gui.UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay), ship.Health);
-                                UpdateShipDamageTexture(ship.Health);
+                                CurrentHealth += h;
+                                MaxHealth = CurrentHealth > MaxHealth ? CurrentHealth : MaxHealth;
+                                Gui.UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay), CurrentHealth);
+                                UpdateShipDamageTexture(CurrentHealth);
                             }
                         };
                         pu.OnSpawn(ad.Asteroid.Position);
                     }
                 }
 
-                // remove the entities 
+                // remove the asteroid 
                 RemoveEntity(ad.Asteroid);
             }
         }
@@ -133,14 +131,12 @@
             if (Score >= Data.WinScore)
                 OnExit();
 
-            foreach (var pickUp in Data.PickUps)
+            foreach (var pickUp in Data.PickUps.Where(p => p.CanSpawn))
             {
-                if (PickUpScore >= pickUp.SpawnScore && !pickUp.HasSpawned)
-                {
-                    pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth - 100), GetRandomValue(100, WindowHeight - 100)));
-                }
+                pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth - 100), GetRandomValue(100, WindowHeight - 100)));
             }
 
+            //spawn new asteroids 
             if (currentTime > Data.MaxSpawnTime)
             {
                 currentTime = 0;

@@ -41,9 +41,10 @@ namespace Asteroids
         internal static string ShipColor = Gui.Green;
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         internal static int Score = 0;
+        internal static int CurrentHealth;
         internal static int MaxHealth = 10;
-        internal static int PlayerLifes;
-        internal static readonly int MaxPlayerLifes = 3;
+        internal static int CurrentLifes;
+        internal static readonly int MaxLifes = 3;
         internal static readonly Color BackGroundColor = new(12, 24, 64, 0);
         internal static bool IsPaused { get; set; }
         internal static int LevelIdx = 0;
@@ -88,11 +89,7 @@ namespace Asteroids
         {
             HideCursor();
             LevelIdx = lvlIdx;
-            PrimaryWeapon.OnStartGame();
-            
-            //if (LevelIdx > 0)
-            //    Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
-            
+            PrimaryWeapon.OnGameStart();
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);
             AddEntity(level);
@@ -113,7 +110,7 @@ namespace Asteroids
 
             //reset game stats
             Score = 0;
-            PlayerLifes = MaxPlayerLifes;
+            CurrentLifes = MaxLifes;
             MaxHealth = 10;
             //generate new back ground
             GetEntity<StarField>().Generate();
@@ -143,39 +140,30 @@ namespace Asteroids
             {
                 RemoveEntity(sha.Asteroid);
                 PlaySound(Ship.HitSound);
-
-                UpdateShipDamageTexture(sha.ShipHealth);
+                UpdateShipDamageTexture(CurrentHealth);
             }
 
-            if(e is ShipLifeLost sll)
+            if (e is ShipLifeLost sll)
             {
+                //game state stuff
                 IsPaused = true;
-
-                //TODO better method name & reset the pickup spawns
-                //PrimaryWeapon.OnStartGame();
-
-                //if (LevelIdx > 0)
-                //    Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
-
-                //var level = GetEntity<Level>();
-                //level.PickUpScore = 0; // tbh kinda unfair to reset if the player almost reaches a pickup score and just before loses a life!
-                //level.Data.PickUps.Where(p => p.HasSpawned && !GetEntities<PickUp>().Contains(p))
-                //    .ToList().ForEach(p => p.HasSpawned = false);
-
-                var ship = GetEntity<Ship>();
-                ship.HasTakenDamage = false; // prevent damage texture from being visible
-                ship.Health = MaxHealth;
-                ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
-                
-
-                ShipDamageTextureIdx = -1;
-                PlayerLifes--;
-
-                AddEntity(Gui.CreateShipLostNotification(PlayerLifes));
+                CurrentLifes--;
+                AddEntity(Gui.CreateShipLostNotification(CurrentLifes));
                 PlaySound(LifeLostSound2);
                 StopSound(Sounds[Ship.EngineSound]);
                 StopSound(Sounds[Ship.ThrusterSound]);
                 ShowCursor();
+
+                //reset weapons & pickups 
+                GetEntity<Level>().Data
+                    .PickUps.Except(GetEntities<PickUp>()).ToList()
+                    .ForEach(pu => pu.Reset());
+
+                PrimaryWeapon.OnLifeLost();
+
+                //reset ship position, health & texture
+                GetEntity<Ship>().Reset();
+                ShipDamageTextureIdx = -1;
             }
 
             if (e is ShipPickUp spu)

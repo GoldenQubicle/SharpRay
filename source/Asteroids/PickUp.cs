@@ -15,15 +15,15 @@
         public Action OnPickUp { get; init; }
         public string Description { get; init; }
         public int SpawnScore { get; init; }
-        public bool HasSpawned { get; set; }
         public Type PickupType { get; init; }
+        public bool CanSpawn { get; private set; }
 
         private Font Font = GetFont(FontFutureThin);
         private (string t, Color fill, Color outline, Color text, Vector2 offset) Data;
         private float prevDistance;
         private double current;
         private double interval = 2000d * SharpRayConfig.TickMultiplier;
-
+        private int trigger;
         public PickUp()
         {
             Size = new Vector2(25, 25);
@@ -40,15 +40,35 @@
             Position = pos;
             (Collider as RectCollider).Position = pos;
             Data = GetData();
-            HasSpawned = true;
             AddEntity(this);
             PlaySound(SpawnSound);
+            CanSpawn = false;
+        }
+
+        public void UpdateScore(int score)
+        {
+            if (trigger >= SpawnScore) return;
+
+            trigger += score;
+
+            if (trigger >= SpawnScore)
+            {
+                CanSpawn = true;
+            }
+        }
+
+        public void Reset()
+        {
+            if (trigger >= SpawnScore)
+            {
+                trigger = 0;
+            }
         }
 
         public override void Render()
         {
             var r = (Collider as RectCollider).Rect;
-            
+
             DrawRectangleRounded(r, .5f, 8, Data.fill);
             DrawRectangleRoundedLines(r, .5f, 8, 3, Data.outline);
             DrawTextEx(Font, Data.t, Position + Data.offset, 32, 0, Data.text);

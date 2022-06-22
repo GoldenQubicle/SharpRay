@@ -13,19 +13,21 @@
         }
 
         public record State(Mode Mode, Bullet.Type BulletType, float BulletSpeed, float BulletLifeTime, int AmmoCount);
-
+        
+        private static State BeginState = new State(Mode.Single, Bullet.Type.Simple, 10f, 500f, -1);
         private static State CurrentState { get; set; }
 
         private static Stack<State> _states = new();
 
-        public static void OnStartGame()
+        public static void OnStartLevel()
         {
-            _states.Push(new State(Mode.Single, Bullet.Type.Simple, 10f, 500f, -1));
+            _states.Clear();
+            _states.Push(CurrentState);
             CurrentState = _states.Peek();
         }
 
         public static void ChangeBulletLifeTime(float multiplier) =>
-               OnChangeState(CurrentState with { BulletLifeTime = CurrentState.BulletLifeTime * multiplier });
+            OnChangeState(CurrentState with { BulletLifeTime = CurrentState.BulletLifeTime * multiplier });
 
         public static void ChangeMode(Mode mode) =>
             OnChangeState(CurrentState with { Mode = mode });
@@ -33,6 +35,17 @@
         public static void ChangeBulletType(Bullet.Type type) =>
             OnChangeState(CurrentState with { BulletType = type });
 
+        public static void OnLifeLost()
+        {
+            var count = _states.Count - 1;
+            for (var i = 0; i < count; i++)
+            {
+                _states.Pop();
+                CurrentState = _states.Peek();
+            }
+        }
+
+        public static void OnGameStart() => CurrentState = BeginState;
 
         private static void OnChangeState(State state)
         {

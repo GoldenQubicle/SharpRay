@@ -24,7 +24,6 @@
 
     public struct ShipHitAsteroid : IGameEvent
     {
-        public int ShipHealth { get; init; }
         public Asteroid Asteroid { get; init; }
     }
 

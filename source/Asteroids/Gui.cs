@@ -208,7 +208,7 @@
                 {
                     if (e is ShipHitAsteroid sha)
                     {
-                        UpdateHealthOverlay(c, sha.ShipHealth);
+                        UpdateHealthOverlay(c, CurrentHealth);
                     }
 
                     if (e is ShipLifeLost sll)
