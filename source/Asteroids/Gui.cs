@@ -101,9 +101,10 @@
             {
                 if (e is NextLevel nl)
                 {
-                    c.EmitEvent(e);
                     RemoveEntity(c);
                     PlaySound(Game.StartSound);
+                    HideCursor();
+                    c.EmitEvent(e);
                 }
             });
 
@@ -121,37 +122,40 @@
                         ? $"              GAME OVER"
                         : $"      You lost a ship! \n     {lifesLeft} ships remaining",
                 },
-                new Label
+                new Button
                 {
-                    Size = new Vector2(200, 30),
-                    Position = new Vector2(0, 64),
-                    FillColor = Color.BLANK,
+                    Position = new Vector2(0, 42),
+                    Size = new Vector2(100, 20),
+                    Text = "Continue",
+                    TextOffSet = new Vector2(11, 2),
                     TextColor = Color.RAYWHITE,
-                    FontSize = 10,
-                    Text = "Press space bar to continue",
-                    HasOutlines = false,
-                    TextOffSet = new Vector2(15, 0),
                     Font = GetFont(FontFutureThin),
+                    FontSize = 16,
+                    FocusColor = Color.LIGHTGRAY,
+                    OnMouseLeftClick = b => new ContinueWithLevel { GuiEntity = b }
                 })
                 .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))
-                .OnKeyBoardEvent((e, c) =>
+                .OnGuiEvent((e, c) => //TODO may want to have an onEnter key press which handles the notification as well?
                 {
-                    if (e is KeySpaceBarPressed && IsPaused)
+                    if (e is ContinueWithLevel && IsPaused)
                     {
                         RemoveEntity(c);
+                        UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Tags.ScoreOverlay), MaxHealth);
+                        PlaySound(ButtonClickSound);
+                        HideCursor();
 
                         if (lifesLeft == 0)
                         {
                             ResetGame();
                             GetEntityByTag<GuiContainer>(Tags.ShipSelection).Show();
                             PlaySound(SelectionSound);
+                            ShowCursor();
                             return;
                         }
-
                         IsPaused = false;
-
                     }
                 });
+                
 
         public static GuiContainer CreateScoreOverLay(int playerLifes, int lvlScore)
         {
@@ -204,14 +208,13 @@
                 {
                     if (e is ShipHitAsteroid sha)
                     {
-                        var health = sha.LifeLost ? MaxHealth : sha.ShipHealth;
+                        UpdateHealthOverlay(c, sha.ShipHealth);
+                    }
 
-                        UpdateHealthOverlay(c, health);
-
-                        if (sha.LifeLost)
-                        {
-                            c.GetEntityByTag<ImageTexture>(PlayerLifeIcon(sha.LifeIconIdx)).Color = Color.DARKGRAY;
-                        }
+                    if (e is ShipLifeLost sll)
+                    {
+                        c.GetEntityByTag<ImageTexture>(PlayerLifeIcon(sll.LifeIconIdx)).Color = Color.DARKGRAY;
+                        
                     }
 
                     if (e is AsteroidDestroyed ad)
@@ -244,7 +247,7 @@
         public static void UpdateHealthOverlay(GuiContainer c, int health)
         {
             var sb = c.GetEntityByTag<Label>(Tags.HealthBar);
-            var s = MapRange(health, MaxHealth, 0, 0, 230);
+            var s = MapRange(health < 0 ? 0 : health, MaxHealth, 0, 0, 230);
             sb.Size = new(s, 50);
             sb.Position = new(WindowWidth - 615 + s / 2, 32);
 
@@ -477,7 +480,7 @@
                if (e is GameStart gs)
                {
                    c.Hide();
-                   StopSound(Sounds[SelectionSound]);
+                   StopSound(SelectionSound);
                    PlaySound(Game.StartSound);
                    StartGame(0);
                }

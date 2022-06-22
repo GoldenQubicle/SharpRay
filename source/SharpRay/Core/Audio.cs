@@ -24,12 +24,28 @@ namespace SharpRay.Core
         }
 
         /// <summary>
+        /// Stops a single sound from playing. If the sound was repeating it will no longer do so next time it is played. 
+        /// </summary>
+        /// <param name="key"></param>
+        public static void StopSound(string key)
+        {
+            if (RepeatedSounds.ContainsKey(key))
+                CancellationSources[key].Cancel();
+
+            if (IsSoundPlaying(Sounds[key]))
+                Raylib.StopSound(Sounds[key]);
+
+            CancellationSources.Remove(key);
+            RepeatedSounds.Remove(key);   
+        }
+
+        /// <summary>
         /// Stop all sounds from playing. 
         /// </summary>
         public static void StopAllSounds()
         {
-            Sounds.Values.Where(IsSoundPlaying).ToList().ForEach(StopSound);
             RepeatedSounds.Keys.ToList().ForEach(key => CancellationSources[key].Cancel());
+            Sounds.Values.Where(IsSoundPlaying).ToList().ForEach(Raylib.StopSound);
         }
 
         /// <summary>
@@ -39,6 +55,7 @@ namespace SharpRay.Core
         /// <param name="soundFileName"></param>
         public static void AddSound(string key, string soundFileName) =>
             Sounds.TryAdd(key, LoadSound(Path.Combine(Application.AssestsFolder, soundFileName)));
+
 
         /// <summary>
         /// Plays the sound with the <see cref="Sound"/> from the Audio.Sounds dictionary with the given key.

@@ -48,6 +48,7 @@
 
         public void OnExit()
         {
+            ShowCursor();
             IsPaused = true;
             Score = 0;
             currentTime = 0;

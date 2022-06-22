@@ -60,7 +60,7 @@
                 HitPoints = 16
             };
 
-            Health = layout.Health; 
+            Health = layout.Health;
 
             Motions = new Dictionary<string, Easing>
             {
@@ -121,13 +121,19 @@
             {
                 HasTakenDamage = true;
                 Health -= Asteroid.GetDamageDone(a.Definition);
-                //EmitEvent(new ShipHitAsteroid
-                //{
-                //    LifeLost = Health <= 0,
-                //    LifeIconIdx = PlayerLifes,
-                //    ShipHealth = Health,
-                //    Asteroid = a,
-                //});
+                EmitEvent(new ShipHitAsteroid
+                {
+                    ShipHealth = Health,
+                    Asteroid = a,
+                });
+
+                if (Health <= 0)
+                {
+                    EmitEvent(new ShipLifeLost
+                    {
+                        LifeIconIdx = PlayerLifes,
+                    });
+                }
             }
 
             if (e is PickUp p)

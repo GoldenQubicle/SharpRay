@@ -17,10 +17,13 @@
         public Asteroid Asteroid { get; init; }
     }
 
+    public struct ShipLifeLost : IGameEvent
+    {
+        public int LifeIconIdx { get; init; }
+    }
+
     public struct ShipHitAsteroid : IGameEvent
     {
-        public bool LifeLost { get; init; }
-        public int LifeIconIdx { get; init; }
         public int ShipHealth { get; init; }
         public Asteroid Asteroid { get; init; }
     }

@@ -67,14 +67,14 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //RunDebugGui(() => AddEntity(Gui.CreateMainMenu()));
+            //RunDebugGui(() => AddEntity(Gui.CreateShipLostNotification(2)));
 
             AddEntity(new StarField());
             var selectionMenu = Gui.CreateShipSelectionMenu();
             AddEntity(selectionMenu);
 
 #if DEBUG
-            StartGame(2);
+            StartGame(3);
 #endif
 
 #if RELEASE
@@ -86,17 +86,17 @@ namespace Asteroids
 
         public static void StartGame(int lvlIdx)
         {
+            HideCursor();
             LevelIdx = lvlIdx;
             PrimaryWeapon.OnStartGame();
             
-            if (LevelIdx > 0)
-                Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
+            //if (LevelIdx > 0)
+            //    Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
             
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);
             AddEntity(level);
 
-            PlaySound(Level.WinSound, true);
         }
 
         public static void ResetGame()
@@ -130,9 +130,10 @@ namespace Asteroids
                 }
 
                 ResetGame();
+                ShowCursor();
                 GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
                 RemoveEntitiesOfType<Level>();
-                PlaySound(Gui.SelectionSound);
+                PlaySound(Gui.SelectionSound, true);
             }
         }
 
@@ -144,36 +145,37 @@ namespace Asteroids
                 PlaySound(Ship.HitSound);
 
                 UpdateShipDamageTexture(sha.ShipHealth);
+            }
 
-                //player life lost
-                if (sha.LifeLost)
-                {
-                    IsPaused = true;
+            if(e is ShipLifeLost sll)
+            {
+                IsPaused = true;
 
-                    //TODO better method name & reset the pickup spawns
-                    //PrimaryWeapon.OnStartGame();
+                //TODO better method name & reset the pickup spawns
+                //PrimaryWeapon.OnStartGame();
 
-                    if (LevelIdx > 0)
-                        Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
+                //if (LevelIdx > 0)
+                //    Levels.Data[LevelIdx - 1].PickUps.ForEach(p => p.OnPickUp());
 
-                    var level = GetEntity<Level>();
-                    level.PickUpScore = 0; // tbh kinda unfair to reset if the player almost reaches a pickup score and just before loses a life!
-                    level.Data.PickUps.Where(p => p.HasSpawned && !GetEntities<PickUp>().Contains(p))
-                        .ToList().ForEach(p => p.HasSpawned = false);
+                //var level = GetEntity<Level>();
+                //level.PickUpScore = 0; // tbh kinda unfair to reset if the player almost reaches a pickup score and just before loses a life!
+                //level.Data.PickUps.Where(p => p.HasSpawned && !GetEntities<PickUp>().Contains(p))
+                //    .ToList().ForEach(p => p.HasSpawned = false);
 
-                    var ship = GetEntity<Ship>();
-                    ship.HasTakenDamage = false; // prevent damage texture from being visible
-                    ship.Health = MaxHealth;
-                    ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
+                var ship = GetEntity<Ship>();
+                ship.HasTakenDamage = false; // prevent damage texture from being visible
+                ship.Health = MaxHealth;
+                ship.Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
+                
 
-                    ShipDamageTextureIdx = -1;
-                    PlayerLifes--;
+                ShipDamageTextureIdx = -1;
+                PlayerLifes--;
 
-                    AddEntity(Gui.CreateShipLostNotification(PlayerLifes));
-                    PlaySound(LifeLostSound2);
-                    StopSound(Sounds[Ship.EngineSound]);
-                    StopSound(Sounds[Ship.ThrusterSound]);
-                }
+                AddEntity(Gui.CreateShipLostNotification(PlayerLifes));
+                PlaySound(LifeLostSound2);
+                StopSound(Sounds[Ship.EngineSound]);
+                StopSound(Sounds[Ship.ThrusterSound]);
+                ShowCursor();
             }
 
             if (e is ShipPickUp spu)

@@ -23,5 +23,10 @@
         {
             public GuiEntity GuiEntity { get ; init; }
         }
+
+        public struct ContinueWithLevel : IGuiEvent
+        {
+            public GuiEntity GuiEntity { get; init; }
+        }
     }
 }

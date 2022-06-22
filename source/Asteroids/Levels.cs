@@ -11,7 +11,7 @@
 #if RELEASE
         public static List<LevelData> Data => new()
         {
-           Level1, Level2, Level3
+           Level1, //Level2, Level3
         };
 #endif
 
@@ -121,6 +121,7 @@
                    {
                        MaxHealth += 10;
                        var ship = GetEntity<Ship>();
+                       if(ship == null) return;
                        ship.Health += 10;
                        Gui.UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay), ship.Health);
                        UpdateShipDamageTexture(ship.Health);
