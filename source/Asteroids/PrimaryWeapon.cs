@@ -19,6 +19,8 @@
 
         private static Stack<State> _states = new();
 
+        public static int GetStatesCount() => _states.Count;
+
         public static void OnStartLevel()
         {
             _states.Clear();

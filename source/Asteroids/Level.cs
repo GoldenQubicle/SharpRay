@@ -1,4 +1,6 @@
-﻿namespace Asteroids
+﻿using System.Diagnostics;
+
+namespace Asteroids
 {
     public record LevelData(
       string Description,
@@ -21,7 +23,6 @@
         public void OnEnter(LevelData data)
         {
             Data = data;
-            
 
             PrimaryWeapon.OnStartLevel();
 
@@ -38,6 +39,11 @@
             {
                 AddEntity(asteroid, OnGameEvent);
             }
+
+            Debug.Assert(CurrentLifes == MaxLifes);
+            Debug.Assert(CurrentHealth == MaxHealth);
+            Debug.Assert(CurrentScore == 0);
+            Debug.Assert(PrimaryWeapon.GetStatesCount() == 1);
 
             IsPaused = false;
         }
