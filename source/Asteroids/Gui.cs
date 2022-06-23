@@ -4,6 +4,7 @@
     {
         public static class Tags
         {
+            public const string MainMenu = nameof(MainMenu);
             public const string ShipSelection = nameof(ShipSelection);
             public const string ScoreOverlay = nameof(ScoreOverlay);
             public const string Health = nameof(Health);
@@ -57,12 +58,14 @@
             TriggerTime = 2000d * SharpRayConfig.TickMultiplier,
             UpdateAction = l =>
             {
+                //scroll text inwards, i.e. from fixed x position
                 if (l.Size.X < 200)
                 {
                     l.Size += new Vector2(5f, 0f);
                     l.Position += new Vector2(2.5f, 0);
                 }
 
+                //fade out text
                 if (l.ELapsedTime > l.TriggerTime)
                 {
                     var a = (float)MapRange(l.ELapsedTime, l.TriggerTime, 2750 * SharpRayConfig.TickMultiplier, 1, 0);
@@ -101,14 +104,14 @@
             {
                 if (e is NextLevel nl)
                 {
+                    PlaySound(StartSound);
                     RemoveEntity(c);
-                    PlaySound(Game.StartSound);
                     HideCursor();
                     c.EmitEvent(e);
                 }
             });
 
-        public static GuiContainer CreateShipLostNotification(int lifesLeft) =>
+        public static GuiContainer CreateShipLostNotification() =>
             GuiContainerBuilder.CreateNew(isVisible: true, renderLayer: RlGuiScoreOverlay).AddChildren(
                 new Label
                 {
@@ -118,9 +121,9 @@
                     FontSize = 24,
                     TextOffSet = new Vector2(0, 24),
                     Font = GetFont(FontFuture),
-                    Text = lifesLeft == 0
+                    Text = CurrentLifes == 0
                         ? $"              GAME OVER"
-                        : $"      You lost a ship! \n     {lifesLeft} ships remaining",
+                        : $"      You lost a ship! \n     {CurrentLifes} ships remaining",
                 },
                 new Button
                 {
@@ -139,23 +142,26 @@
                 {
                     if (e is ContinueWithLevel && IsPaused)
                     {
-                        RemoveEntity(c);
-                        UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Tags.ScoreOverlay), MaxHealth);
                         PlaySound(ButtonClickSound);
-                        HideCursor();
+                        RemoveEntity(c);
 
-                        if (lifesLeft == 0)
+                        if (CurrentLifes == 0)
                         {
                             ResetGame();
-                            GetEntityByTag<GuiContainer>(Tags.ShipSelection).Show();
-                            PlaySound(SelectionSound);
+                            RemoveEntity(GetEntityByTag<GuiContainer>(Tags.ScoreOverlay));
+                            GetEntityByTag<GuiContainer>(Tags.MainMenu).Show();
+                            PlaySound(SelectionSound, isRepeated: true);
                             ShowCursor();
                             return;
                         }
+
+                        
+                        
+                        HideCursor();
                         IsPaused = false;
                     }
                 });
-                
+
 
         public static GuiContainer CreateScoreOverLay(int playerLifes, int lvlScore)
         {
@@ -214,7 +220,7 @@
                     if (e is ShipLifeLost sll)
                     {
                         c.GetEntityByTag<ImageTexture>(PlayerLifeIcon(sll.LifeIconIdx)).Color = Color.DARKGRAY;
-                        
+
                     }
 
                     if (e is AsteroidDestroyed ad)
@@ -255,7 +261,7 @@
         }
 
         public static GuiContainer CreateMainMenu() =>
-           GuiContainerBuilder.CreateNew().AddChildren(
+           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: false, renderLayer: RlGuiShipSelection).AddChildren(
                  new Label
                  {
                      Text = "Meteor Madness",
@@ -275,8 +281,8 @@
                      FontSize = 24,
                      Font = GetFont(FontFutureThin),
                      TextOffSet = new Vector2(28, 15),
-                     Position = new Vector2(0, WindowHeight * .25f),
-                     Size = new Vector2(200, 50),
+                     Position = new Vector2(0, WindowHeight * .275f),
+                     Size = new Vector2(250, 50),
                      BaseColor = GuiShipBaseColor[ShipColor],
                      FocusColor = GuiShipFocusColor[ShipColor],
                      OnMouseLeftClick = e => new GameStart { GuiEntity = e }
@@ -289,11 +295,11 @@
                       FontSize = 24,
                       Font = GetFont(FontFutureThin),
                       TextOffSet = new Vector2(28, 15),
-                      Position = new Vector2(0, WindowHeight * .35f),
-                      Size = new Vector2(200, 50),
+                      Position = new Vector2(0, WindowHeight * .40f),
+                      Size = new Vector2(250, 50),
                       BaseColor = GuiShipBaseColor[ShipColor],
                       FocusColor = GuiShipFocusColor[ShipColor],
-                      OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                      OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
                   },
                    new Button
                    {
@@ -302,11 +308,11 @@
                        FontSize = 24,
                        Font = GetFont(FontFutureThin),
                        TextOffSet = new Vector2(28, 15),
-                       Position = new Vector2(0, WindowHeight * .45f),
-                       Size = new Vector2(200, 50),
+                       Position = new Vector2(0, WindowHeight * .525f),
+                       Size = new Vector2(250, 50),
                        BaseColor = GuiShipBaseColor[ShipColor],
                        FocusColor = GuiShipFocusColor[ShipColor],
-                       OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                       OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
                    },
                    GuiContainerBuilder.CreateNew().AddChildren(
                         new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
@@ -360,8 +366,24 @@
                         })
 
                     .Translate(new Vector2(-25, WindowHeight * .65f))
+               ).Translate(new Vector2(WindowWidth / 2, 0))
+            .OnGuiEvent((e, c) =>
+            {
+                if (e is SelectShip ss)
+                {
+                    PlaySound(ButtonClickSound);
+                    c.Hide();
+                    GetEntityByTag<GuiContainer>(Tags.ShipSelection).Show();
+                }
 
-                 ).Translate(new Vector2(WindowWidth / 2, 0));
+                if (e is GameStart gs)
+                {
+                    c.Hide();
+                    StopSound(SelectionSound);
+                    PlaySound(StartSound);
+                    StartGame(0);
+                }
+            });
 
 
         public static GuiContainer CreateShipSelectionMenu(bool isVisible = false) =>
@@ -372,7 +394,7 @@
                    TextColor = Color.YELLOW,
                    FillColor = GuiShipBaseColor[ShipColor],
                    FontSize = 45,
-                   Position = new Vector2((WindowWidth / 2), WindowHeight / 8),
+                   Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
                    Size = new Vector2(600, 100),
                    TextOffSet = new Vector2(72, 30),
                    Font = GetFont(FontFuture),
@@ -382,11 +404,6 @@
                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
                    new Vector2(GetTexture2D(ships[ShipType][ShipColor]).width / 2, GetTexture2D(ships[ShipType][ShipColor]).height / 2) // rather stupid tbh
                },
-               //new ImageTexture(GetTexture2D(Tags.ShipSelectLeft), GuiShipBaseColor[ShipColor])
-               //{
-               //    Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
-               //    Size = new Vector2(0, 10),
-               //},
                new Button
                {
                    Tag = Tags.ShipSelectLeft,
@@ -481,7 +498,7 @@
                {
                    c.Hide();
                    StopSound(SelectionSound);
-                   PlaySound(Game.StartSound);
+                   PlaySound(StartSound);
                    StartGame(0);
                }
 

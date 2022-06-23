@@ -48,7 +48,7 @@ namespace Asteroids
         internal static readonly Color BackGroundColor = new(12, 24, 64, 0);
         internal static bool IsPaused { get; set; }
         internal static int LevelIdx = 0;
-
+        //sound keys
         internal const string LifeLostSound1 = nameof(LifeLostSound1);
         internal const string LifeLostSound2 = nameof(LifeLostSound2);
         internal const string StartSound = nameof(StartSound);
@@ -68,18 +68,18 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //RunDebugGui(() => AddEntity(Gui.CreateShipLostNotification(2)));
-
+            //RunDebugGui(() => AddEntity(Gui.CreateMainMenu()));
             AddEntity(new StarField());
-            var selectionMenu = Gui.CreateShipSelectionMenu();
-            AddEntity(selectionMenu);
+            var mainmenu = Gui.CreateMainMenu();
+            AddEntity(mainmenu);
+            AddEntity(Gui.CreateShipSelectionMenu());
 
 #if DEBUG
             StartGame(3);
 #endif
 
 #if RELEASE
-            selectionMenu.Show();
+            mainmenu.Show();
             PlaySound(Gui.SelectionSound, isRepeated: true);
 #endif
             Run();
@@ -95,12 +95,11 @@ namespace Asteroids
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);
             AddEntity(level);
-
         }
 
         public static void ResetGame()
         {
-            StopAllSounds();
+            //StopAllSounds();
 
             //remove entities
             RemoveEntitiesOfType<Ship>();
@@ -108,12 +107,13 @@ namespace Asteroids
             RemoveEntitiesOfType<Asteroid>();
             RemoveEntitiesOfType<Level>();
             RemoveEntitiesOfType<PickUp>();
-            RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
 
             //reset game stats
             CurrentScore = 0;
             CurrentLifes = MaxLifes;
             MaxHealth = 10;
+            CurrentHealth = MaxHealth;
+
             //generate new back ground
             GetEntity<StarField>().Generate();
         }
@@ -127,11 +127,11 @@ namespace Asteroids
                     GetEntity<Level>().OnEnter(Levels.Data[++LevelIdx]);
                     return;
                 }
-
-                ResetGame();
+                
                 ShowCursor();
-                GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
+                GetEntityByTag<GuiContainer>(Gui.Tags.MainMenu).Show();
                 RemoveEntitiesOfType<Level>();
+                ResetGame();
                 PlaySound(Gui.SelectionSound, true);
             }
         }
@@ -150,7 +150,8 @@ namespace Asteroids
                 //game state stuff
                 IsPaused = true;
                 CurrentLifes--;
-                AddEntity(Gui.CreateShipLostNotification(CurrentLifes));
+                Gui.UpdateHealthOverlay(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay), MaxHealth);
+                AddEntity(Gui.CreateShipLostNotification());
                 PlaySound(LifeLostSound2);
                 StopSound(Sounds[Ship.EngineSound]);
                 StopSound(Sounds[Ship.ThrusterSound]);
@@ -189,7 +190,7 @@ namespace Asteroids
 
         public static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-
+#if DEBUG
             if (e is KeyPressed kp)
             {
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)
@@ -205,6 +206,7 @@ namespace Asteroids
                     GetEntityByTag<GuiContainer>(Gui.Tags.ShipSelection).Show();
                 }
             }
+#endif
         }
     }
 }

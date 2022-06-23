@@ -28,5 +28,15 @@
         {
             public GuiEntity GuiEntity { get; init; }
         }
+
+        public struct SelectShip : IGuiEvent
+        {
+            public GuiEntity GuiEntity { get; init; }
+        }
+
+        public struct ShowCredits : IGuiEvent
+        {
+            public GuiEntity GuiEntity { get; init; }
+        }
     }
 }
