@@ -47,6 +47,7 @@
             ShowCursor();
             IsPaused = true;
             CurrentScore = 0;
+            CurrentLifes = MaxLifes;
             currentTime = 0;
             StopAllSounds();
             RemoveEntitiesOfType<Ship>();
