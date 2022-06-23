@@ -21,7 +21,7 @@
         public void OnEnter(LevelData data)
         {
             Data = data;
-            CurrentLifes = MaxLifes;
+            
 
             PrimaryWeapon.OnStartLevel();
 
@@ -46,7 +46,7 @@
         {
             ShowCursor();
             IsPaused = true;
-            Score = 0;
+            CurrentScore = 0;
             currentTime = 0;
             StopAllSounds();
             RemoveEntitiesOfType<Ship>();
@@ -77,7 +77,7 @@
 
                 //update score
                 var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
-                Score += hp;
+                CurrentScore += hp;
                 Data.PickUps.ForEach(pu => pu.UpdateScore(hp));
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
 
@@ -128,7 +128,7 @@
             currentTime += deltaTime;
             Data.Easing.Update(deltaTime);
 
-            if (Score >= Data.WinScore)
+            if (CurrentScore >= Data.WinScore)
                 OnExit();
 
             foreach (var pickUp in Data.PickUps.Where(p => p.CanSpawn))

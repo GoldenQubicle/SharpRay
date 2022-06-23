@@ -177,7 +177,7 @@
                     Tag = Tags.Score,
                     Position = new Vector2(WindowWidth - 200, 32),
                     Size = new Vector2(230, 50),
-                    Text = GetScoreString(Score),
+                    Text = GetScoreString(CurrentScore),
                     TextColor = Color.RAYWHITE,
                     FillColor = Color.BLANK,
                     FontSize = 32,
@@ -220,11 +220,11 @@
                     if (e is AsteroidDestroyed ad)
                     {
                         var sb = c.GetEntityByTag<Label>(Tags.ScoreBar);
-                        var s = MapRange(Score, 0, lvlScore, 0, 230);
+                        var s = MapRange(CurrentScore, 0, lvlScore, 0, 230);
                         sb.Size = new(s, 50);
                         sb.Position = new(WindowWidth - 315 + s / 2, 32);
 
-                        c.GetEntityByTag<Label>(Tags.Score).Text = GetScoreString(Score);
+                        c.GetEntityByTag<Label>(Tags.Score).Text = GetScoreString(CurrentScore);
                     }
                 });
 

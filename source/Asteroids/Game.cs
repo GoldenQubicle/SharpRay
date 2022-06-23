@@ -40,7 +40,7 @@ namespace Asteroids
         internal static int ShipType = 3; // 1 | 2 | 3
         internal static string ShipColor = Gui.Green;
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
-        internal static int Score = 0;
+        internal static int CurrentScore = 0;
         internal static int CurrentHealth;
         internal static int MaxHealth = 10;
         internal static int CurrentLifes;
@@ -89,6 +89,8 @@ namespace Asteroids
         {
             HideCursor();
             LevelIdx = lvlIdx;
+            CurrentHealth = MaxHealth;
+            CurrentLifes = MaxLifes;
             PrimaryWeapon.OnGameStart();
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);
@@ -109,7 +111,7 @@ namespace Asteroids
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
 
             //reset game stats
-            Score = 0;
+            CurrentScore = 0;
             CurrentLifes = MaxLifes;
             MaxHealth = 10;
             //generate new back ground

@@ -211,16 +211,18 @@
                 {
                     (Size.Small, Type.Stone),
                     (Size.Small, Type.Dirt),
-                    (Size.Tiny, Type.Stone),
+                    (Size.Small, Type.Emerald),
                 },
                 Size.Small => new()
                 {
                     (Size.Tiny, Type.Stone),
                     (Size.Tiny, Type.Dirt),
+                    (Size.Tiny, Type.Emerald),
+
                 },
                 Size.Tiny => new()
                 {
-                    (Size.Tiny, Type.Dirt),
+                    (Size.Tiny, Type.Emerald),
                     (Size.Tiny, Type.Dirt),
                 },
             },

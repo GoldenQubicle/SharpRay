@@ -62,20 +62,20 @@
             Easing: new(Easings.EaseBackIn, 6000f, isRepeated: true),
             PickUps: new()
             {
-                 new ()
-                   {
-                       SpawnScore = 25,
-                       PickupType = PickUp.Type.Weapon,
-                       Description = "Triple Shot Weapon!",
-                       OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
-                   },
-                   new ()
-                   {
-                       SpawnScore = 45,
-                       PickupType = PickUp.Type.Bullet,
-                       Description = "Bullets do 2x damage!",
-                       OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
-                   },
+                new ()
+                {
+                    SpawnScore = 25,
+                    PickupType = PickUp.Type.Weapon,
+                    Description = "Triple Shot Weapon!",
+                    OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.TripleNarrow)
+                },
+                new ()
+                {
+                    SpawnScore = 45,
+                    PickupType = PickUp.Type.Bullet,
+                    Description = "Bullets do 2x damage!",
+                    OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
+                },
             });
 
         public static LevelData Level3 => new(
@@ -99,18 +99,20 @@
           Easing: new(Easings.EaseCircIn, 5000, isRepeated: true),
           PickUps: new()
           {
-                new(){
-                           SpawnScore = 75,
-                           PickupType = PickUp.Type.Weapon,
-                           Description = "Quintuple Shot Weapon!",
-                           OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Quintuple)
-                      },
-                new(){
-                           SpawnScore = 175,
-                           PickupType = PickUp.Type.Bullet,
-                           Description = "Bullets do 3x damage!",
-                           OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
-                     },
+                new()
+                {
+                    SpawnScore = 75,
+                    PickupType = PickUp.Type.Weapon,
+                    Description = "Quintuple Shot Weapon!",
+                    OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Quintuple)
+                },
+                new()
+                {
+                    SpawnScore = 175,
+                    PickupType = PickUp.Type.Bullet,
+                    Description = "Bullets do 3x damage!",
+                    OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Heavy)
+                },
           });
 
         public static LevelData TestLevel => new(
