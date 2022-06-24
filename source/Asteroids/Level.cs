@@ -53,6 +53,7 @@ namespace Asteroids
             IsPaused = true;
             CurrentScore = 0;
             CurrentLifes = MaxLifes;
+            CurrentHealth = MaxHealth;
             currentTime = 0;
             StopAllSounds();
             RemoveEntitiesOfType<Ship>();

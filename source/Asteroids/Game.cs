@@ -68,7 +68,7 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //RunDebugGui(() => AddEntity(Gui.CreateCredits()));
+            //RunDebugGui(() => AddEntity(Gui.CreateMainMenu()));
 
             AddEntity(new StarField());
             var mainmenu = Gui.CreateMainMenu();
@@ -77,7 +77,7 @@ namespace Asteroids
             //AddEntity(Gui.CreateCredits());
 
 #if DEBUG
-            StartGame(2);
+            StartGame(0);
 #endif
 
 #if RELEASE

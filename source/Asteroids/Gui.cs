@@ -271,7 +271,7 @@
         }
 
         public static GuiContainer CreateMainMenu() =>
-           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: false, renderLayer: RlGuiShipSelection).AddChildren(
+           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: true, renderLayer: RlGuiShipSelection).AddChildren(
                  GetTitleBanner(),
                  new Button
                  {
@@ -283,8 +283,8 @@
                      TextOffSet = new Vector2(28, 15),
                      Position = new Vector2(0, WindowHeight * .275f),
                      Size = new Vector2(250, 50),
-                     BaseColor = GuiShipBaseColor[SelectedShipColor],
-                     FocusColor = GuiShipFocusColor[SelectedShipColor],
+                     BaseColor = Color.DARKGREEN,
+                     FocusColor = Color.LIME,
                      OnMouseLeftClick = e => new GameStart { GuiEntity = e }
                  },
                   new Button
@@ -297,8 +297,8 @@
                       TextOffSet = new Vector2(28, 15),
                       Position = new Vector2(0, WindowHeight * .40f),
                       Size = new Vector2(250, 50),
-                      BaseColor = GuiShipBaseColor[SelectedShipColor],
-                      FocusColor = GuiShipFocusColor[SelectedShipColor],
+                      BaseColor = Color.DARKGREEN,
+                      FocusColor = Color.LIME,
                       OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
                   },
                    new Button
@@ -310,8 +310,8 @@
                        TextOffSet = new Vector2(28, 15),
                        Position = new Vector2(0, WindowHeight * .525f),
                        Size = new Vector2(250, 50),
-                       BaseColor = GuiShipBaseColor[SelectedShipColor],
-                       FocusColor = GuiShipFocusColor[SelectedShipColor],
+                       BaseColor = Color.DARKGREEN,
+                       FocusColor = Color.LIME,
                        OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
                    },
                    GuiContainerBuilder.CreateNew().AddChildren(

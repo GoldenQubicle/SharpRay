@@ -17,7 +17,7 @@
 
         public static LevelData Level1 => new(
             Description: "Level 1",
-            WinScore: 50,
+            WinScore: 100,
             AsteroidSpawnStart: new()
             {
                 new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (GetRandomValue(128, 256), GetRandomValue(128, 256)), GetRandomHeading(-50, 50)),
@@ -35,16 +35,23 @@
             {
                 new ()
                 {
-                    SpawnScore = 20,
+                    SpawnScore = 25,
                     PickupType = PickUp.Type.Bullet,
                     Description = "Bullets reach 1.5x as far!",
                     OnPickUp = () => PrimaryWeapon.ChangeBulletLifeTime(1.5f)
                 },
+                new()
+                {
+                    SpawnScore = 40,
+                    PickupType = PickUp.Type.Bullet,
+                    Description = "Bullets travel 1.5x as fast!",
+                    OnPickUp = () => PrimaryWeapon.ChangeBulletSpeed(1.5f)
+                }
              });
 
         public static LevelData Level2 => new(
             Description: "Level 2",
-            WinScore: 125,
+            WinScore: 250,
             AsteroidSpawnStart: new()
             {
                 new (Asteroid.Size.Big, Asteroid.Type.Dirt,
@@ -64,14 +71,18 @@
             {
                 new ()
                 {
-                    SpawnScore = 25,
+                    SpawnScore = 45,
                     PickupType = PickUp.Type.Weapon,
                     Description = "Triple Shot Weapon!",
-                    OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Triple)
+                    OnPickUp = () =>
+                    {
+                        PrimaryWeapon.ChangeBulletSpeed(.66667f);
+                        PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Triple);
+                    }
                 },
                 new ()
                 {
-                    SpawnScore = 45,
+                    SpawnScore = 90,
                     PickupType = PickUp.Type.Bullet,
                     Description = "Bullets do 2x damage!",
                     OnPickUp = () => PrimaryWeapon.ChangeBulletType(Bullet.Type.Medium)
@@ -95,8 +106,8 @@
                 (Asteroid.Size.Large, Asteroid.Type.Stone)
           },
           InitialHeadingSpeed: GetRandomHeading(150, 250),
-          MaxSpawnTime: 1500 * SharpRayConfig.TickMultiplier,
-          Easing: new(Easings.EaseCircIn, 5000, isRepeated: true),
+          MaxSpawnTime: 2000 * SharpRayConfig.TickMultiplier,
+          Easing: new(Easings.EaseCircIn, 5500, isRepeated: true),
           PickUps: new()
           {
                 new()

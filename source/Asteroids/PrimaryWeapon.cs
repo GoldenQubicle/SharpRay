@@ -12,9 +12,9 @@
             Quintuple,
         }
 
-        public record State(Mode Mode, Bullet.Type BulletType, float BulletSpeed, float BulletLifeTime, int AmmoCount);
+        public record State(Mode Mode, Bullet.Type BulletType, float BulletSpeed, float BulletLifeTime);
         
-        private static State BeginState = new State(Mode.Single, Bullet.Type.Simple, 10f, 500f, -1);
+        private static State BeginState = new State(Mode.Single, Bullet.Type.Simple, 10f, 500f);
         private static State CurrentState { get; set; }
 
         private static Stack<State> _states = new();
@@ -27,6 +27,9 @@
             _states.Push(CurrentState);
             CurrentState = _states.Peek();
         }
+
+        public static void ChangeBulletSpeed(float multiplier) =>
+            OnChangeState(CurrentState with { BulletSpeed = CurrentState.BulletSpeed * multiplier });
 
         public static void ChangeBulletLifeTime(float multiplier) =>
             OnChangeState(CurrentState with { BulletLifeTime = CurrentState.BulletLifeTime * multiplier });
