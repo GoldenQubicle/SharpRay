@@ -44,6 +44,15 @@
             { Orange, Color.ORANGE },
         };
 
+        //credits
+        private static readonly Dictionary<string, string> Credits = new()
+        {
+            { "Space Shooter Redux by Kenny.nl", "https://kenney.nl/assets/space-shooter-redux"},
+            { "SciFi SoundFx by Kenney.nl", "https://kenney.nl/assets/sci-fi-sounds" },
+            { "Additional SoundFx by MixKit","https://mixkit.co/free-sound-effects/video-game/" },
+            { "Made with RayLib!",  "https://www.raylib.com" }
+        };
+
         public static Label CreatePickUpNotification(string description) => new Label
         {
             RenderLayer = RlGuiScoreOverlay,
@@ -155,13 +164,12 @@
                             return;
                         }
 
-                        
-                        
+
+
                         HideCursor();
                         IsPaused = false;
                     }
                 });
-
 
         public static GuiContainer CreateScoreOverLay(int playerLifes, int lvlScore)
         {
@@ -261,18 +269,8 @@
         }
 
         public static GuiContainer CreateMainMenu() =>
-           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: false, renderLayer: RlGuiShipSelection).AddChildren(
-                 new Label
-                 {
-                     Text = "Meteor Madness",
-                     TextColor = Color.YELLOW,
-                     FillColor = Color.DARKPURPLE,
-                     FontSize = 45,
-                     Position = new Vector2(0, WindowHeight * .1f),
-                     Size = new Vector2(600, 100),
-                     TextOffSet = new Vector2(72, 30),
-                     Font = GetFont(FontFuture),
-                 },
+           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: true, renderLayer: RlGuiShipSelection).AddChildren(
+                 GetTitleBanner(),
                  new Button
                  {
                      Tag = Tags.StartGame,
@@ -373,7 +371,7 @@
                 {
                     PlaySound(ButtonClickSound);
                     c.Hide();
-                    GetEntityByTag<GuiContainer>(Tags.ShipSelection).Show();
+                    AddEntity(CreateShipSelectionMenu(true));
                 }
 
                 if (e is GameStart gs)
@@ -383,148 +381,235 @@
                     PlaySound(StartSound);
                     StartGame(0);
                 }
+
+                if (e is ShowCredits sc)
+                {
+                    PlaySound(ButtonClickSound);
+                    c.Hide();
+                    AddEntity(CreateCredits());
+                }
             });
+
+        private static Label GetTitleBanner() => new Label
+        {
+            Text = "Meteor Madness",
+            TextColor = Color.YELLOW,
+            FillColor = Color.DARKPURPLE,
+            FontSize = 45,
+            Position = new Vector2(0, WindowHeight * .1f),
+            Size = new Vector2(600, 100),
+            TextOffSet = new Vector2(72, 30),
+            Font = GetFont(FontFuture),
+        };
+
+        public static GuiContainer CreateCredits()
+        {
+            var c = GuiContainerBuilder.CreateNew().AddChildren(
+                GetTitleBanner(),
+                  new Label
+                  {
+                      Position = new Vector2(0f, WindowHeight * .50f),
+                      Size = new Vector2(600, 400),
+                      FillColor = Color.DARKGREEN,
+                      TextColor = Color.YELLOW
+                  },
+                   new Button
+                   {
+                       Position = new Vector2(0f, WindowHeight * .9f),
+                       Size = new Vector2(250, 50),
+                       Text = "Back to Menu",
+                       TextOffSet = new Vector2(28f, 12f),
+                       Font = GetFont(FontFutureThin),
+                       FontSize = 28,
+                       OnMouseLeftClick = e => new NextLevel { GuiEntity = e },
+                   });
+
+            var links = GuiContainerBuilder.CreateNew();
+            foreach (var t in Credits.Select((kvp, i) => (text: kvp.Key, uri: kvp.Value, idx: i)))
+            {
+                links.AddChildren(new Button
+                {
+                    Position = new Vector2(0f, t.idx * 85),
+                    Size = new Vector2(500, 60),
+                    Text = t.text,
+                    OnMouseLeftClick = e => new OpenLink
+                    {
+                        GuiEntity = e,
+                        URL = t.uri
+                    },
+                    Font = GetFont(FontFuture),
+                    FontSize = 24,
+                    TextOffSet = new Vector2(16, 18),
+                    BaseColor = Color.DARKBLUE,
+                    TextColor = Color.RAYWHITE,
+                    FocusColor= Color.SKYBLUE
+                });
+            }
+            links.Translate(new Vector2(0, WindowHeight * .32f))
+                .OnGuiEvent((e, c) =>
+                {
+                    if (e is OpenLink ol)
+                    {
+                        OpenURL(ol.URL);
+                    }
+                });
+            
+            c.AddChildren(links)
+                .Translate(new Vector2(WindowWidth / 2, 0))
+                .OnGuiEvent((e, c) =>
+                {
+                    if (e is NextLevel nl)
+                    {
+                        PlaySound(ButtonClickSound);
+                        RemoveEntity(c);
+                        GetEntityByTag<GuiContainer>(Tags.MainMenu).Show();
+                    }
+                });
+
+            return c;
+        }
+
 
 
         public static GuiContainer CreateShipSelectionMenu(bool isVisible = false) =>
-           GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
-               new Label
-               {
-                   Text = "Meteor Madness",
-                   TextColor = Color.YELLOW,
-                   FillColor = GuiShipBaseColor[ShipColor],
-                   FontSize = 45,
-                   Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
-                   Size = new Vector2(600, 100),
-                   TextOffSet = new Vector2(72, 30),
-                   Font = GetFont(FontFuture),
-               },
-               new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
-               {
-                   Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
-                   new Vector2(GetTexture2D(ships[ShipType][ShipColor]).width / 2, GetTexture2D(ships[ShipType][ShipColor]).height / 2) // rather stupid tbh
-               },
-               new Button
-               {
-                   Tag = Tags.ShipSelectLeft,
-                   Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
-                   Size = new Vector2(20, 50),
-                   BaseColor = GuiShipBaseColor[ShipColor],
-                   FocusColor = GuiShipFocusColor[ShipColor],
-                   OnMouseLeftClick = e => new ChangeShipType
-                   {
-                       GuiEntity = e,
-                       ShipType = ShipType == 1 ? 3 : ShipType - 1
-                   }
-               },
-               new Button
-               {
-                   Tag = Tags.ShipSelectRight,
-                   Position = new Vector2((WindowWidth * .8f) + 15f, WindowHeight / 2),
-                   Size = new Vector2(20, 50),
-                   BaseColor = GuiShipBaseColor[ShipColor],
-                   FocusColor = GuiShipFocusColor[ShipColor],
-                   OnMouseLeftClick = e => new ChangeShipType
-                   {
-                       GuiEntity = e,
-                       ShipType = ShipType == 3 ? 1 : ShipType + 1
-                   }
-               },
-               new Button
-               {
-                   Position = new Vector2(WindowWidth * .2f, WindowHeight * .75f),
-                   Size = new Vector2(50, 20),
-                   BaseColor = GuiShipBaseColor[Blue],
-                   FocusColor = GuiShipFocusColor[Blue],
-                   OnMouseLeftClick = e => new ChangeShipColor
-                   {
-                       GuiEntity = e,
-                       ShipColor = Blue
-                   }
-               },
-               new Button
-               {
-                   Position = new Vector2(WindowWidth * .4f, WindowHeight * .75f),
-                   Size = new Vector2(50, 20),
-                   BaseColor = GuiShipBaseColor[Green],
-                   FocusColor = GuiShipFocusColor[Green],
-                   OnMouseLeftClick = e => new ChangeShipColor
-                   {
-                       GuiEntity = e,
-                       ShipColor = Green
-                   }
-               },
-               new Button
-               {
-                   Position = new Vector2(WindowWidth * .6f, WindowHeight * .75f),
-                   Size = new Vector2(50, 20),
-                   BaseColor = GuiShipBaseColor[Red],
-                   FocusColor = GuiShipFocusColor[Red],
-                   OnMouseLeftClick = e => new ChangeShipColor
-                   {
-                       GuiEntity = e,
-                       ShipColor = Red
-                   }
-               },
-               new Button
-               {
-                   Position = new Vector2(WindowWidth * .8f, WindowHeight * .75f),
-                   Size = new Vector2(50, 20),
-                   BaseColor = GuiShipBaseColor[Orange],
-                   FocusColor = GuiShipFocusColor[Orange],
-                   OnMouseLeftClick = e => new ChangeShipColor
-                   {
-                       GuiEntity = e,
-                       ShipColor = Orange
-                   }
-               },
-               new Button
-               {
-                   Tag = Tags.StartGame,
-                   Text = "Start",
-                   TextColor = Color.YELLOW,
-                   FontSize = 24,
-                   Font = GetFont(FontFutureThin),
-                   TextOffSet = new Vector2(28, 15),
-                   Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
-                   Size = new Vector2(125, 50),
-                   BaseColor = GuiShipBaseColor[ShipColor],
-                   FocusColor = GuiShipFocusColor[ShipColor],
-                   OnMouseLeftClick = e => new GameStart { GuiEntity = e }
-               })
-           .OnGuiEvent((e, c) =>
-           {
-               if (e is GameStart gs)
-               {
-                   c.Hide();
-                   StopSound(SelectionSound);
-                   PlaySound(StartSound);
-                   StartGame(0);
-               }
+            GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
+                new Label
+                {
+                    Text = "Meteor Madness",
+                    TextColor = Color.YELLOW,
+                    FillColor = GuiShipBaseColor[ShipColor],
+                    FontSize = 45,
+                    Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
+                    Size = new Vector2(600, 100),
+                    TextOffSet = new Vector2(72, 30),
+                    Font = GetFont(FontFuture),
+                },
+                new ImageTexture(GetTexture2D(ships[ShipType][ShipColor]), Color.WHITE)
+                {
+                    Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
+                    new Vector2(GetTexture2D(ships[ShipType][ShipColor]).width / 2, GetTexture2D(ships[ShipType][ShipColor]).height / 2) // rather stupid tbh
+                },
+                new Button
+                {
+                    Tag = Tags.ShipSelectLeft,
+                    Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
+                    Size = new Vector2(20, 50),
+                    BaseColor = GuiShipBaseColor[ShipColor],
+                    FocusColor = GuiShipFocusColor[ShipColor],
+                    OnMouseLeftClick = e => new ChangeShipType
+                    {
+                        GuiEntity = e,
+                        ShipType = ShipType == 1 ? 3 : ShipType - 1
+                    }
+                },
+                new Button
+                {
+                    Tag = Tags.ShipSelectRight,
+                    Position = new Vector2((WindowWidth * .8f) + 15f, WindowHeight / 2),
+                    Size = new Vector2(20, 50),
+                    BaseColor = GuiShipBaseColor[ShipColor],
+                    FocusColor = GuiShipFocusColor[ShipColor],
+                    OnMouseLeftClick = e => new ChangeShipType
+                    {
+                        GuiEntity = e,
+                        ShipType = ShipType == 3 ? 1 : ShipType + 1
+                    }
+                },
+                new Button
+                {
+                    Position = new Vector2(WindowWidth * .2f, WindowHeight * .75f),
+                    Size = new Vector2(50, 20),
+                    BaseColor = GuiShipBaseColor[Blue],
+                    FocusColor = GuiShipFocusColor[Blue],
+                    OnMouseLeftClick = e => new ChangeShipColor
+                    {
+                        GuiEntity = e,
+                        ShipColor = Blue
+                    }
+                },
+                new Button
+                {
+                    Position = new Vector2(WindowWidth * .4f, WindowHeight * .75f),
+                    Size = new Vector2(50, 20),
+                    BaseColor = GuiShipBaseColor[Green],
+                    FocusColor = GuiShipFocusColor[Green],
+                    OnMouseLeftClick = e => new ChangeShipColor
+                    {
+                        GuiEntity = e,
+                        ShipColor = Green
+                    }
+                },
+                new Button
+                {
+                    Position = new Vector2(WindowWidth * .6f, WindowHeight * .75f),
+                    Size = new Vector2(50, 20),
+                    BaseColor = GuiShipBaseColor[Red],
+                    FocusColor = GuiShipFocusColor[Red],
+                    OnMouseLeftClick = e => new ChangeShipColor
+                    {
+                        GuiEntity = e,
+                        ShipColor = Red
+                    }
+                },
+                new Button
+                {
+                    Position = new Vector2(WindowWidth * .8f, WindowHeight * .75f),
+                    Size = new Vector2(50, 20),
+                    BaseColor = GuiShipBaseColor[Orange],
+                    FocusColor = GuiShipFocusColor[Orange],
+                    OnMouseLeftClick = e => new ChangeShipColor
+                    {
+                        GuiEntity = e,
+                        ShipColor = Orange
+                    }
+                },
+                new Button
+                {
+                    Tag = Tags.StartGame,
+                    Text = "Start",
+                    TextColor = Color.YELLOW,
+                    FontSize = 24,
+                    Font = GetFont(FontFutureThin),
+                    TextOffSet = new Vector2(28, 15),
+                    Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
+                    Size = new Vector2(125, 50),
+                    BaseColor = GuiShipBaseColor[ShipColor],
+                    FocusColor = GuiShipFocusColor[ShipColor],
+                    OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                })
+            .OnGuiEvent((e, c) =>
+            {
+                if (e is GameStart gs)
+                {
+                    RemoveEntity(c);
+                    StopSound(SelectionSound);
+                    PlaySound(StartSound);
+                    StartGame(0);
+                }
 
-               if (e is ChangeShipType cst)
-               {
-                   PlaySound(ButtonClickSound);
-                   ShipType = cst.ShipType;
-                   var texture = GetTexture2D(ships[ShipType][ShipColor]);
-                   c.GetEntity<ImageTexture>().Texture2D = texture;
-                   c.GetEntity<ImageTexture>().Position = new Vector2(WindowWidth / 2, WindowHeight / 2) - new Vector2(texture.width / 2, texture.height / 2);
-               }
+                if (e is ChangeShipType cst)
+                {
+                    PlaySound(ButtonClickSound);
+                    ShipType = cst.ShipType;
+                    var texture = GetTexture2D(ships[ShipType][ShipColor]);
+                    c.GetEntity<ImageTexture>().Texture2D = texture;
+                    c.GetEntity<ImageTexture>().Position = new Vector2(WindowWidth / 2, WindowHeight / 2) - new Vector2(texture.width / 2, texture.height / 2);
+                }
 
-               if (e is ChangeShipColor csc)
-               {
-                   PlaySound(ButtonClickSound);
-                   ShipColor = csc.ShipColor;
-                   c.GetEntity<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
-                   c.GetEntity<Label>().FillColor = GuiShipBaseColor[ShipColor];
-                   c.GetEntities<Button>()
-                        .Where(b => b.Tag.Equals(Tags.ShipSelectLeft) || b.Tag.Equals(Tags.ShipSelectRight) || b.Tag.Equals(Tags.StartGame)).ToList()
-                        .ForEach(b =>
-                        {
-                            b.BaseColor = GuiShipBaseColor[ShipColor];
-                            b.FocusColor = GuiShipFocusColor[ShipColor];
-                        });
-               }
-           });
+                if (e is ChangeShipColor csc)
+                {
+                    PlaySound(ButtonClickSound);
+                    ShipColor = csc.ShipColor;
+                    c.GetEntity<ImageTexture>().Texture2D = GetTexture2D(ships[ShipType][ShipColor]);
+                    c.GetEntity<Label>().FillColor = GuiShipBaseColor[ShipColor];
+                    c.GetEntities<Button>()
+                         .Where(b => b.Tag.Equals(Tags.ShipSelectLeft) || b.Tag.Equals(Tags.ShipSelectRight) || b.Tag.Equals(Tags.StartGame)).ToList()
+                         .ForEach(b =>
+                         {
+                             b.BaseColor = GuiShipBaseColor[ShipColor];
+                             b.FocusColor = GuiShipFocusColor[ShipColor];
+                         });
+                }
+            });
     }
 }

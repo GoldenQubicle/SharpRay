@@ -38,5 +38,11 @@
         {
             public GuiEntity GuiEntity { get; init; }
         }
+
+        public struct OpenLink : IGuiEvent
+        {
+            public string URL { get; init; }
+            public GuiEntity GuiEntity { get; init; }
+        }
     }
 }

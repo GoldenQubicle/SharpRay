@@ -68,14 +68,16 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //RunDebugGui(() => AddEntity(Gui.CreateMainMenu()));
+            //RunDebugGui(() => AddEntity(Gui.CreateCredits()));
+
             AddEntity(new StarField());
             var mainmenu = Gui.CreateMainMenu();
             AddEntity(mainmenu);
-            AddEntity(Gui.CreateShipSelectionMenu());
+            //AddEntity(Gui.CreateShipSelectionMenu());
+            //AddEntity(Gui.CreateCredits());
 
 #if DEBUG
-            StartGame(3);
+            //StartGame(3);
 #endif
 
 #if RELEASE
