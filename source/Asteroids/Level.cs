@@ -23,10 +23,9 @@ namespace Asteroids
         public void OnEnter(LevelData data)
         {
             Data = data;
-            GetEntity<StarField>().Generate();
             PrimaryWeapon.OnStartLevel();
 
-            var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), MaxHealth, GetTexture2D(ships[ShipType][ShipColor]));
+            var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), MaxHealth, GetTexture2D(ships[SelectedShipType][SelectedShipColor]));
             var overlay = Gui.CreateScoreOverLay(MaxLifes, Data.WinScore);
 
             ship.EmitEvent += Game.OnGameEvent;
@@ -63,6 +62,7 @@ namespace Asteroids
             RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
 
             AddEntity(Gui.CreateLevelWin(Data.Description), Game.OnGuiEvent);
+            GetEntity<StarField>().Generate();
 
             if (LevelIdx == Levels.Data.Count - 1)
             {

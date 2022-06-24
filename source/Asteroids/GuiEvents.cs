@@ -11,7 +11,7 @@
         public struct ChangeShipColor : IGuiEvent
         {
             public GuiEntity GuiEntity { get; init; }
-            public string ShipColor { get; init; }
+            public Gui.ShipColor ShipColor { get; init; }
         }
 
         public struct GameStart : IGuiEvent

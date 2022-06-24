@@ -4,11 +4,11 @@
     {
         public const string SingleSound = nameof(SingleSound);
         public const string TripleSound = nameof(TripleSound);
+        public const string QuintupleSound = nameof(QuintupleSound);
         public enum Mode
         {
             Single,
-            TripleNarrow,
-            TripleWide,
+            Triple,
             Quintuple,
         }
 
@@ -47,7 +47,8 @@
             }
         }
 
-        public static void OnGameStart() => CurrentState = BeginState;
+        public static void OnGameStart(Mode mode = Mode.Single, Bullet.Type type = Bullet.Type.Simple) =>
+            CurrentState = BeginState with {Mode = mode, BulletType = type };
 
         private static void OnChangeState(State state)
         {
@@ -65,7 +66,8 @@
             var soundKey = CurrentState.Mode switch
             {
                 Mode.Single => SingleSound,
-                Mode.TripleWide or Mode.TripleNarrow or Mode.Quintuple => TripleSound
+                Mode.Triple  => TripleSound,
+                Mode.Quintuple => QuintupleSound
             };
             SetSoundPitch(Sounds[soundKey], GetRandomValue(92, 108) / 100f);
             PlaySound(soundKey);
@@ -77,17 +79,11 @@
             {
                 new(Bullet.GetData(sfb.Origin, sfb.Angle, sfb.Force, CurrentState))
             },
-            Mode.TripleNarrow => new()
+            Mode.Triple => new()
             {
                 new(Bullet.GetData(sfb.Origin, sfb.Angle, sfb.Force, CurrentState)),
                 new(Bullet.GetData(sfb.Origin, sfb.Angle - DEG2RAD * 10f, sfb.Force, CurrentState)),
                 new(Bullet.GetData(sfb.Origin, sfb.Angle + DEG2RAD * 10f, sfb.Force,  CurrentState)),
-            },
-            Mode.TripleWide => new()
-            {
-                new(Bullet.GetData(sfb.Origin, sfb.Angle, sfb.Force, CurrentState)),
-                new(Bullet.GetData(sfb.Origin, sfb.Angle - DEG2RAD * 25f, sfb.Force, CurrentState)),
-                new(Bullet.GetData(sfb.Origin, sfb.Angle + DEG2RAD * 25f, sfb.Force,  CurrentState)),
             },
             Mode.Quintuple => new()
             {

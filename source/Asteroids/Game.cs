@@ -37,8 +37,8 @@ namespace Asteroids
         internal const int RlGuiScoreOverlay = 5;
 
         //Game state & stats
-        internal static int ShipType = 3; // 1 | 2 | 3
-        internal static string ShipColor = Gui.Green;
+        internal static int SelectedShipType = Random.Shared.Next(1, 3);
+        internal static Gui.ShipColor SelectedShipColor = Enum.GetValues<Gui.ShipColor>()[Random.Shared.Next(0,4)];
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         internal static int CurrentScore = 0;
         internal static int CurrentHealth;
@@ -77,7 +77,7 @@ namespace Asteroids
             //AddEntity(Gui.CreateCredits());
 
 #if DEBUG
-            //StartGame(3);
+            StartGame(2);
 #endif
 
 #if RELEASE
@@ -186,7 +186,7 @@ namespace Asteroids
             if (idx != ShipDamageTextureIdx && (idx <= 3 && idx != 0))
             {
                 ShipDamageTextureIdx = idx;
-                GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[ShipType][ShipDamageTextureIdx]);
+                GetEntity<Ship>().DamgageTexture = GetTexture2D(shipDamage[SelectedShipType][ShipDamageTextureIdx]);
             }
         }
 
@@ -198,6 +198,7 @@ namespace Asteroids
                 if (kp.KeyboardKey == KeyboardKey.KEY_E)
                 {
                     ResetGame();
+                    RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
                     StartGame(LevelIdx);
                 }
 

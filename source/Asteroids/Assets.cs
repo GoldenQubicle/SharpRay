@@ -15,7 +15,7 @@
         private const string Grey = nameof(Grey);
 
         internal static Dictionary<string, Dictionary<string, Dictionary<int, string>>> meteors; //[Color][Size][Variation] 
-        internal static Dictionary<int, Dictionary<string, string>> ships; // [Type][Color]
+        internal static Dictionary<int, Dictionary<Gui.ShipColor, string>> ships; // [Type][Color]
         internal static Dictionary<int, Dictionary<string, string>> shipsIcons; // [Type][Color]
         internal static Dictionary<int, Dictionary<int, string>> shipDamage; // [Type][Stage]
 
@@ -59,8 +59,9 @@
             AddSound(Ship.EngineSound, "Audio\\spaceEngineLow_001.ogg");
             AddSound(Ship.ThrusterSound, "Audio\\thrusterFire_001.ogg");
             AddSound(Ship.HitSound, "Audio\\impactMetal_003.ogg");
-            AddSound(PrimaryWeapon.SingleSound, "Audio\\laserSmall_001.ogg");
-            AddSound(PrimaryWeapon.TripleSound, "Audio\\laserSmall_002.ogg");
+            AddSound(PrimaryWeapon.SingleSound, "Audio\\laserSmall_000.ogg");
+            AddSound(PrimaryWeapon.TripleSound, "Audio\\laserSmall_001.ogg");
+            AddSound(PrimaryWeapon.QuintupleSound, "Audio\\laserSmall_002.ogg");
             AddSound(Asteroid.ExplosionSound, "Audio\\explosionCrunch_000.ogg");
             AddSound(Asteroid.BounceSound, "Audio\\impactMetal_002.ogg");
             SetSoundVolume(Sounds[Asteroid.BounceSound], 0.25f);
@@ -74,13 +75,13 @@
             SetSoundVolume(Sounds[Gui.SelectionSound], 0.25f);
             AddSound(Level.WinSound, "Audio\\mixkit-winning-an-extra-bonus-2060.wav");
             SetSoundVolume(Sounds[Level.WinSound], 0.25f);
-            AddSound(Game.LifeLostSound1, "Audio\\lowFrequency_explosion_001.ogg");
-            AddSound(Game.LifeLostSound2, "Audio\\mixkit-arcade-space-shooter-dead-notification-272.wav");
-            SetSoundVolume(Sounds[Game.LifeLostSound2], 0.5f);
-            AddSound(Game.StartSound, "Audio\\mixkit-extra-bonus-in-a-video-game-2045.wav");
-            SetSoundVolume(Sounds[Game.StartSound], 0.5f);
-            AddSound(Game.WinOverallSound, "Audio\\mixkit-game-bonus-reached-2065.wav");
-            SetSoundVolume(Sounds[Game.WinOverallSound], 0.35f);
+            AddSound(LifeLostSound1, "Audio\\lowFrequency_explosion_001.ogg");
+            AddSound(LifeLostSound2, "Audio\\mixkit-arcade-space-shooter-dead-notification-272.wav");
+            SetSoundVolume(Sounds[LifeLostSound2], 0.5f);
+            AddSound(StartSound, "Audio\\mixkit-extra-bonus-in-a-video-game-2045.wav");
+            SetSoundVolume(Sounds[StartSound], 0.5f);
+            AddSound(WinOverallSound, "Audio\\mixkit-game-bonus-reached-2065.wav");
+            SetSoundVolume(Sounds[WinOverallSound], 0.35f);
 
             AddTexture2D(Gui.Tags.ShipSelectLeft,  $@"PNG\UI\left.png");
             AddTexture2D(Gui.Tags.ShipSelectRight, $@"PNG\UI\forward.png");
@@ -111,7 +112,7 @@
                 .Select(f => shipRegex.Match(f).Groups)
                 .Select(g => (type: int.Parse(g["Type"].Value), color: g["Color"].Value, File: g["0"].Value))
                 .GroupBy(t => t.type).ToDictionary(g => g.Key, g =>
-                    g.ToDictionary(t => t.color, t => t.File));
+                    g.ToDictionary(t => Enum.Parse<Gui.ShipColor>(t.color), t => t.File));
 
             //actually load texture into memory
             string getShipPath(string name) => @$"PNG\Ships\playerShip{name}.png";
