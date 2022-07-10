@@ -6,6 +6,8 @@
         public ICollider Collider { get; }
         public Texture2D ShipTexture { get; set; }
         public Texture2D DamgageTexture { get; set; }
+        public Texture2D EngineConeTexture { get; set; }
+        public Texture2D EngineExhaustTexture { get; set; }
         public bool HasTakenDamage { get; set; }
 
         public const string EngineSound = nameof(EngineSound);
@@ -36,7 +38,7 @@
         private float n_rotation = 0f; //normalized 0-1
         private float rotation = 0f;
         private bool hasRotation;
-        private string direction;
+        private string direction = string.Empty;
 
         private float scale = .75f;
         private readonly Vector2 offset; //used for render position textures
@@ -49,6 +51,8 @@
             Size = new Vector2(texture.width, texture.height);
             RenderLayer = RlShip;
             ShipTexture = texture;
+            EngineConeTexture = GetTexture2D("fire04");
+            EngineExhaustTexture = GetTexture2D("fire09");
             offset = new Vector2(texture.width / 2, texture.height / 2) * scale;
             radius = (Size.X / 2) * scale;
 
@@ -131,20 +135,20 @@
 
             if (e is Asteroid a)
             {
-                HasTakenDamage = true;
-                CurrentHealth -= Asteroid.GetDamageDone(a.Definition);
-                EmitEvent(new ShipHitAsteroid
-                {
-                    Asteroid = a,
-                });
+                //HasTakenDamage = true;
+                //CurrentHealth -= Asteroid.GetDamageDone(a.Definition);
+                //EmitEvent(new ShipHitAsteroid
+                //{
+                //    Asteroid = a,
+                //});
 
-                if (CurrentHealth <= 0)
-                {
-                    EmitEvent(new ShipLifeLost
-                    {
-                        LifeIconIdx = CurrentLifes,
-                    });
-                }
+                //if (CurrentHealth <= 0)
+                //{
+                //    EmitEvent(new ShipLifeLost
+                //    {
+                //        LifeIconIdx = CurrentLifes,
+                //    });
+                //}
             }
 
             if (e is PickUp p)
@@ -164,6 +168,17 @@
 
             if (HasTakenDamage)
                 DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DARKGRAY);
+
+            var conePos = Vector2.Transform(Position + new Vector2(-EngineConeTexture.width / 2, offset.Y + 10), Matrix3x2.CreateRotation(rotation, Position));
+            var exhaustPos = Vector2.Transform(Position + new Vector2(-EngineExhaustTexture.width / 2, offset.Y + 10), Matrix3x2.CreateRotation(rotation, Position));
+
+            var exhaustColor = ColorAlpha(Color.GOLD, n_acceleration > 0 ? n_acceleration : n_rotation);
+            var coneColor = ColorAlpha(Color.SKYBLUE, n_acceleration > 0 ? n_acceleration : n_rotation);
+
+            var angle = direction.Equals(Left) ? MapRange(n_rotation, 0, 1, 0, 25) : MapRange(n_rotation, 0, 1, 0, -25);
+
+            DrawTextureEx(EngineExhaustTexture, exhaustPos, RAD2DEG * rotation + angle, 1f, exhaustColor);
+            DrawTextureEx(EngineConeTexture, conePos, RAD2DEG * rotation + angle, 1f, coneColor);
 
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);

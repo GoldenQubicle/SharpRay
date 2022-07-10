@@ -18,6 +18,7 @@
         internal static Dictionary<int, Dictionary<Gui.ShipColor, string>> ships; // [Type][Color]
         internal static Dictionary<int, Dictionary<string, string>> shipsIcons; // [Type][Color]
         internal static Dictionary<int, Dictionary<int, string>> shipDamage; // [Type][Stage]
+        internal static List<string> fireEffects;
 
         public const string starTexture = nameof(starTexture);
         public static Texture2D GetAsteroidTexture((Asteroid.Size size, Asteroid.Type type) a) =>
@@ -56,39 +57,22 @@
             AddFont(FontFuture, "kenvector_future.ttf");
             AddFont(FontFutureThin, "kenvector_future_thin.ttf");
 
-            AddSound(Ship.EngineSound, "Audio\\spaceEngineLow_001.ogg");
-            AddSound(Ship.ThrusterSound, "Audio\\thrusterFire_001.ogg");
-            AddSound(Ship.HitSound, "Audio\\impactMetal_003.ogg");
-            AddSound(PrimaryWeapon.SingleSound, "Audio\\laserSmall_000.ogg");
-            AddSound(PrimaryWeapon.TripleSound, "Audio\\laserSmall_001.ogg");
-            AddSound(PrimaryWeapon.QuintupleSound, "Audio\\laserSmall_002.ogg");
-            AddSound(Asteroid.ExplosionSound, "Audio\\explosionCrunch_000.ogg");
-            AddSound(Asteroid.BounceSound, "Audio\\impactMetal_002.ogg");
-            SetSoundVolume(Sounds[Asteroid.BounceSound], 0.25f);
-            SetSoundVolume(Sounds[Asteroid.ExplosionSound], 0.25f);
-            AddSound(PickUp.PickupSound, "Audio\\sfx_shieldUp.ogg");
-            AddSound(PickUp.SpawnSound, "Audio\\sfx_twoTone.ogg");
-            AddSound(Gui.ButtonClickSound, "Audio\\doorOpen_002.ogg");
-            SetSoundPitch(Sounds[Gui.ButtonClickSound], 6f);
-            SetSoundVolume(Sounds[Gui.ButtonClickSound], 0.25f);
-            AddSound(Gui.SelectionSound, "Audio\\mixkit-game-level-music-689.wav");
-            SetSoundVolume(Sounds[Gui.SelectionSound], 0.25f);
-            AddSound(Level.WinSound, "Audio\\mixkit-winning-an-extra-bonus-2060.wav");
-            SetSoundVolume(Sounds[Level.WinSound], 0.25f);
-            AddSound(LifeLostSound1, "Audio\\lowFrequency_explosion_001.ogg");
-            AddSound(LifeLostSound2, "Audio\\mixkit-arcade-space-shooter-dead-notification-272.wav");
-            SetSoundVolume(Sounds[LifeLostSound2], 0.5f);
-            AddSound(StartSound, "Audio\\mixkit-extra-bonus-in-a-video-game-2045.wav");
-            SetSoundVolume(Sounds[StartSound], 0.5f);
-            AddSound(WinOverallSound, "Audio\\mixkit-game-bonus-reached-2065.wav");
-            SetSoundVolume(Sounds[WinOverallSound], 0.35f);
+            LoadSounds();
 
-            AddTexture2D(Gui.Tags.ShipSelectLeft,  $@"PNG\UI\left.png");
+            AddTexture2D(Gui.Tags.ShipSelectLeft, $@"PNG\UI\left.png");
             AddTexture2D(Gui.Tags.ShipSelectRight, $@"PNG\UI\forward.png");
             AddTexture2D(nameof(KeyLeftDown), $@"PNG\UI\arrowLeft.png");
             AddTexture2D(nameof(KeyRightDown), $@"PNG\UI\arrowRight.png");
             AddTexture2D(nameof(KeyUpDown), $@"PNG\UI\arrowUp.png");
 
+            var fireRegex = new Regex(@"(?<fire>fire)(?<no>\d+)");
+            fireEffects = Directory.GetFiles(AssestsFolder, @"PNG\Effects\")
+                .Select(f => fireRegex.Matches(f).Where(m => m.Success))
+                .SelectMany(mc => mc.Select(m => m.Groups["0"].Value)).ToList();
+
+            string getFireEffectPath(string name) => @$"PNG\Effects\{name}.png";
+            foreach (var effect in fireEffects)
+                AddTexture2D(effect, getFireEffectPath(effect));
 
             //fill meteor dictionary by [Color][Size][Variation] => name with which to retrieve it with GetTexture2D
             var meteorRegex = new Regex(@"(?<Color>Brown|Grey).(?<Size>big|med|small|tiny)*(?<Variation>1|2|3|4)");
@@ -147,6 +131,36 @@
 
 
             AddTexture2D(starTexture, $@"PNG\star_extra_small.png");
+        }
+
+        private static void LoadSounds()
+        {
+            AddSound(Ship.EngineSound, "Audio\\spaceEngineLow_001.ogg");
+            AddSound(Ship.ThrusterSound, "Audio\\thrusterFire_001.ogg");
+            AddSound(Ship.HitSound, "Audio\\impactMetal_003.ogg");
+            AddSound(PrimaryWeapon.SingleSound, "Audio\\laserSmall_000.ogg");
+            AddSound(PrimaryWeapon.TripleSound, "Audio\\laserSmall_001.ogg");
+            AddSound(PrimaryWeapon.QuintupleSound, "Audio\\laserSmall_002.ogg");
+            AddSound(Asteroid.ExplosionSound, "Audio\\explosionCrunch_000.ogg");
+            AddSound(Asteroid.BounceSound, "Audio\\impactMetal_002.ogg");
+            SetSoundVolume(Sounds[Asteroid.BounceSound], 0.25f);
+            SetSoundVolume(Sounds[Asteroid.ExplosionSound], 0.25f);
+            AddSound(PickUp.PickupSound, "Audio\\sfx_shieldUp.ogg");
+            AddSound(PickUp.SpawnSound, "Audio\\sfx_twoTone.ogg");
+            AddSound(Gui.ButtonClickSound, "Audio\\doorOpen_002.ogg");
+            SetSoundPitch(Sounds[Gui.ButtonClickSound], 6f);
+            SetSoundVolume(Sounds[Gui.ButtonClickSound], 0.25f);
+            AddSound(Gui.SelectionSound, "Audio\\mixkit-game-level-music-689.wav");
+            SetSoundVolume(Sounds[Gui.SelectionSound], 0.25f);
+            AddSound(Level.WinSound, "Audio\\mixkit-winning-an-extra-bonus-2060.wav");
+            SetSoundVolume(Sounds[Level.WinSound], 0.25f);
+            AddSound(LifeLostSound1, "Audio\\lowFrequency_explosion_001.ogg");
+            AddSound(LifeLostSound2, "Audio\\mixkit-arcade-space-shooter-dead-notification-272.wav");
+            SetSoundVolume(Sounds[LifeLostSound2], 0.5f);
+            AddSound(StartSound, "Audio\\mixkit-extra-bonus-in-a-video-game-2045.wav");
+            SetSoundVolume(Sounds[StartSound], 0.5f);
+            AddSound(WinOverallSound, "Audio\\mixkit-game-bonus-reached-2065.wav");
+            SetSoundVolume(Sounds[WinOverallSound], 0.35f);
         }
     }
 }

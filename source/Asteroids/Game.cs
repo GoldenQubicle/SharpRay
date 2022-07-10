@@ -89,7 +89,9 @@ namespace Asteroids
 
         public static void StartGame(int lvlIdx)
         {
+#if RELEASE
             HideCursor();
+#endif
             LevelIdx = lvlIdx;
             CurrentHealth = MaxHealth;
             CurrentLifes = MaxLifes;

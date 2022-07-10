@@ -270,8 +270,8 @@
             c.GetEntityByTag<Label>(Tags.Health).Text = GetHealthString(health);
         }
 
-        public static GuiContainer CreateMainMenu() =>
-           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: true, renderLayer: RlGuiShipSelection).AddChildren(
+        public static GuiContainer CreateMainMenu(bool isVisible = false) =>
+           GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: isVisible, renderLayer: RlGuiShipSelection).AddChildren(
                  GetTitleBanner(),
                  new Button
                  {
