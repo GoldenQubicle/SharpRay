@@ -135,20 +135,20 @@
 
             if (e is Asteroid a)
             {
-                //HasTakenDamage = true;
-                //CurrentHealth -= Asteroid.GetDamageDone(a.Definition);
-                //EmitEvent(new ShipHitAsteroid
-                //{
-                //    Asteroid = a,
-                //});
+                HasTakenDamage = true;
+                CurrentHealth -= Asteroid.GetDamageDone(a.Definition);
+                EmitEvent(new ShipHitAsteroid
+                {
+                    Asteroid = a,
+                });
 
-                //if (CurrentHealth <= 0)
-                //{
-                //    EmitEvent(new ShipLifeLost
-                //    {
-                //        LifeIconIdx = CurrentLifes,
-                //    });
-                //}
+                if (CurrentHealth <= 0)
+                {
+                    EmitEvent(new ShipLifeLost
+                    {
+                        LifeIconIdx = CurrentLifes,
+                    });
+                }
             }
 
             if (e is PickUp p)

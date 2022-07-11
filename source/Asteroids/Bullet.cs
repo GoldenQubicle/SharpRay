@@ -82,7 +82,10 @@
             elapsed += deltaTime;
 
             if (elapsed > lifeTime)
+            {
                 RemoveEntity(this);
+                //if Cluster ammo, spawn new bullets
+            }
 
             Position += acceleration;
 

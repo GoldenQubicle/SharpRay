@@ -281,7 +281,7 @@
                      FontSize = 24,
                      Font = GetFont(FontFutureThin),
                      TextOffSet = new Vector2(28, 15),
-                     Position = new Vector2(0, WindowHeight * .275f),
+                     Position = new Vector2(-175, WindowHeight * .275f),
                      Size = new Vector2(250, 50),
                      BaseColor = Color.DARKGREEN,
                      FocusColor = Color.LIME,
@@ -295,7 +295,7 @@
                       FontSize = 24,
                       Font = GetFont(FontFutureThin),
                       TextOffSet = new Vector2(28, 15),
-                      Position = new Vector2(0, WindowHeight * .40f),
+                      Position = new Vector2(-175, WindowHeight * .40f),
                       Size = new Vector2(250, 50),
                       BaseColor = Color.DARKGREEN,
                       FocusColor = Color.LIME,
@@ -308,13 +308,17 @@
                        FontSize = 24,
                        Font = GetFont(FontFutureThin),
                        TextOffSet = new Vector2(28, 15),
-                       Position = new Vector2(0, WindowHeight * .525f),
+                       Position = new Vector2(-175, WindowHeight * .525f),
                        Size = new Vector2(250, 50),
                        BaseColor = Color.DARKGREEN,
                        FocusColor = Color.LIME,
                        OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
                    },
                    GuiContainerBuilder.CreateNew().AddChildren(
+                        new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
+                        {
+                            Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width/2 - 25), -128)
+                        },
                         new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
                         {
                             Position = new Vector2(-50, 50),
@@ -365,7 +369,7 @@
                             FontSize = 32
                         })
 
-                    .Translate(new Vector2(-25, WindowHeight * .65f))
+                    .Translate(new Vector2(200, WindowHeight * .65f))
                ).Translate(new Vector2(WindowWidth / 2, 0))
             .OnGuiEvent((e, c) =>
             {
@@ -392,15 +396,15 @@
                 }
             });
 
-        private static Label GetTitleBanner() => new Label
+        private static Label GetTitleBanner() => new() 
         {
-            Text = "Meteor Madness",
+            Text = "Meteor Mayhem",
             TextColor = Color.YELLOW,
             FillColor = Color.DARKPURPLE,
-            FontSize = 45,
+            FontSize = 58,
             Position = new Vector2(0, WindowHeight * .1f),
             Size = new Vector2(600, 100),
-            TextOffSet = new Vector2(72, 30),
+            TextOffSet = new Vector2(30, 24),
             Font = GetFont(FontFuture),
         };
 
@@ -477,13 +481,13 @@
             GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                 new Label
                 {
-                    Text = "Meteor Madness",
+                    Text = "Meteor Mayhem",
                     TextColor = Color.YELLOW,
                     FillColor = GuiShipBaseColor[SelectedShipColor],
-                    FontSize = 45,
+                    FontSize = 58,
                     Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
                     Size = new Vector2(600, 100),
-                    TextOffSet = new Vector2(72, 30),
+                    TextOffSet = new Vector2(30, 24),
                     Font = GetFont(FontFuture),
                 },
                 new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
