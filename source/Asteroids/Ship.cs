@@ -163,22 +163,25 @@
 
         public override void Render()
         {
+            var thrustPos = Vector2.Transform(Position + new Vector2(-EngineExhaustTexture.width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
+            var conePos = Vector2.Transform(Position + new Vector2(-EngineConeTexture.width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
+            var center = Vector2.Transform(Position + new Vector2(0, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
+
+            var exhaustColor = ColorAlpha(Color.GOLD, n_acceleration > n_rotation ? n_acceleration * .75f : n_rotation * .75f);
+            var coneColor = ColorAlpha(Color.SKYBLUE, n_acceleration > n_rotation ? n_acceleration : n_rotation);
+
+            var angle = direction.Equals(Left) ? MapRange(n_rotation, 0, 1, 0, 25) : MapRange(n_rotation, 0, 1, 0, -25);
+            thrustPos = Vector2.Transform(thrustPos, Matrix3x2.CreateRotation(angle * DEG2RAD, center));
+            conePos = Vector2.Transform(conePos, Matrix3x2.CreateRotation(angle * DEG2RAD, center));
+
+            DrawTextureEx(EngineExhaustTexture, thrustPos, RAD2DEG * rotation + angle, 1f, exhaustColor);
+            DrawTextureEx(EngineConeTexture, conePos, RAD2DEG * rotation + angle, 1f, coneColor);
+
             var texPos = Vector2.Transform(Position - offset, Matrix3x2.CreateRotation(rotation, Position));
             DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, scale, Color.WHITE);
 
             if (HasTakenDamage)
                 DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DARKGRAY);
-
-            var conePos = Vector2.Transform(Position + new Vector2(-EngineConeTexture.width / 2, offset.Y + 10), Matrix3x2.CreateRotation(rotation, Position));
-            var exhaustPos = Vector2.Transform(Position + new Vector2(-EngineExhaustTexture.width / 2, offset.Y + 10), Matrix3x2.CreateRotation(rotation, Position));
-
-            var exhaustColor = ColorAlpha(Color.GOLD, n_acceleration > 0 ? n_acceleration : n_rotation);
-            var coneColor = ColorAlpha(Color.SKYBLUE, n_acceleration > 0 ? n_acceleration : n_rotation);
-
-            var angle = direction.Equals(Left) ? MapRange(n_rotation, 0, 1, 0, 25) : MapRange(n_rotation, 0, 1, 0, -25);
-
-            DrawTextureEx(EngineExhaustTexture, exhaustPos, RAD2DEG * rotation + angle, 1f, exhaustColor);
-            DrawTextureEx(EngineConeTexture, conePos, RAD2DEG * rotation + angle, 1f, coneColor);
 
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);
