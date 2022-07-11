@@ -272,105 +272,102 @@
 
         public static GuiContainer CreateMainMenu(bool isVisible = false) =>
            GuiContainerBuilder.CreateNew(tag: Tags.MainMenu, isVisible: isVisible, renderLayer: RlGuiShipSelection).AddChildren(
-                 GetTitleBanner(),
-                 new Button
+           GetTitleBanner(),
+               new Button
+               {
+                   Tag = Tags.StartGame,
+                   Text = "Start Game",
+                   TextColor = Color.YELLOW,
+                   FontSize = 32,
+                   Font = GetFont(FontFutureThin),
+                   DoCenterText = true,
+                   Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .3f),
+                   Size = new Vector2(300, 50),
+                   BaseColor = Color.DARKGREEN,
+                   FocusColor = Color.LIME,
+                   OnMouseLeftClick = e => new GameStart { GuiEntity = e },
+               },
+               new Button
+                {
+                    Tag = Tags.StartGame,
+                    Text = "Select Ship",
+                    TextColor = Color.YELLOW,
+                    FontSize = 32,
+                    Font = GetFont(FontFutureThin),
+                    DoCenterText = true,
+                    Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .45f),
+                    Size = new Vector2(300, 50),
+                    BaseColor = Color.DARKGREEN,
+                    FocusColor = Color.LIME,
+                    OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
+                },
+               new Button
                  {
-                     Tag = Tags.StartGame,
-                     Text = "Start Game",
+                     Text = "Credits",
                      TextColor = Color.YELLOW,
-                     FontSize = 24,
+                     FontSize = 32,
                      Font = GetFont(FontFutureThin),
-                     TextOffSet = new Vector2(28, 15),
-                     Position = new Vector2(-175, WindowHeight * .275f),
-                     Size = new Vector2(250, 50),
+                     DoCenterText = true,
+                     Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .6f),
+                     Size = new Vector2(300, 50),
                      BaseColor = Color.DARKGREEN,
                      FocusColor = Color.LIME,
-                     OnMouseLeftClick = e => new GameStart { GuiEntity = e }
+                     OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
                  },
-                  new Button
+             GuiContainerBuilder.CreateNew().AddChildren(
+                  new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
                   {
-                      Tag = Tags.StartGame,
-                      Text = "Select Ship",
-                      TextColor = Color.YELLOW,
-                      FontSize = 24,
-                      Font = GetFont(FontFutureThin),
-                      TextOffSet = new Vector2(28, 15),
-                      Position = new Vector2(-175, WindowHeight * .40f),
-                      Size = new Vector2(250, 50),
-                      BaseColor = Color.DARKGREEN,
-                      FocusColor = Color.LIME,
-                      OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
+                      Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2  - WindowWidth * .318f - 25), -216),
                   },
-                   new Button
-                   {
-                       Text = "Credits",
-                       TextColor = Color.YELLOW,
-                       FontSize = 24,
-                       Font = GetFont(FontFutureThin),
-                       TextOffSet = new Vector2(28, 15),
-                       Position = new Vector2(-175, WindowHeight * .525f),
-                       Size = new Vector2(250, 50),
-                       BaseColor = Color.DARKGREEN,
-                       FocusColor = Color.LIME,
-                       OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
-                   },
-                   GuiContainerBuilder.CreateNew().AddChildren(
-                        new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
-                        {
-                            Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width/2 - 25), -128)
-                        },
-                        new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
-                        {
-                            Position = new Vector2(-50, 50),
-                            HasOutline = true,
-                        },
-                        new ImageTexture(GetTexture2D(nameof(KeyRightDown)), Color.WHITE)
-                        {
-                            Position = new Vector2(50, 50),
-                            HasOutline = true,
-                        },
-                        new ImageTexture(GetTexture2D(nameof(KeyUpDown)), Color.WHITE)
-                        {
-                            Position = new Vector2(0, 0),
-                            HasOutline = true,
-                        },
-                        new Label
-                        {
-                            Position = new Vector2(25, 135),
-                            Size = new Vector2(150, 50),
-                            Text = "spacebar",
-                            TextOffSet = new Vector2(8, 12),
-                            Font = GetFont(FontFutureThin),
-                            FontSize = 26,
-                            FillColor = Color.BLANK,
-                            TextColor = Color.WHITE,
-                            HasOutlines = true,
-                        },
-                        new Label
-                        {
-                            Position = new Vector2(-200, 135),
-                            Size = new Vector2(300, 50),
-                            Text = "fire weapon :",
-                            TextOffSet = new Vector2(20, 10),
-                            FillColor = Color.BLANK,
-                            HasOutlines = false,
-                            Font = GetFont(FontFuture),
-                            FontSize = 32
-                        },
-                        new Label
-                        {
-                            Position = new Vector2(-200, 55),
-                            Size = new Vector2(300, 50),
-                            Text = "ship control :",
-                            TextOffSet = new Vector2(5, 10),
-                            FillColor = Color.BLANK,
-                            HasOutlines = false,
-                            Font = GetFont(FontFuture),
-                            FontSize = 32
-                        })
-
-                    .Translate(new Vector2(200, WindowHeight * .65f))
-               ).Translate(new Vector2(WindowWidth / 2, 0))
+                  new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
+                  {
+                      Position = new Vector2(WindowWidth * .318f - 50, 25),
+                      HasOutline = true,
+                  },
+                  new ImageTexture(GetTexture2D(nameof(KeyRightDown)), Color.WHITE)
+                  {
+                      Position = new Vector2(WindowWidth * .318f + 50, 25),
+                      HasOutline = true,
+                  },
+                  new ImageTexture(GetTexture2D(nameof(KeyUpDown)), Color.WHITE)
+                  {
+                      Position = new Vector2(WindowWidth * .318f, -25),
+                      HasOutline = true,
+                  },
+                  new Label
+                  {
+                      Position = new Vector2(WindowWidth * .318f + 25, 135),
+                      Size = new Vector2(150, 50),
+                      Text = "spacebar",
+                      Font = GetFont(FontFutureThin),
+                      FontSize = 24,
+                      DoCenterText = true,
+                      FillColor = Color.BLANK,
+                      TextColor = Color.WHITE,
+                      HasOutlines = true,
+                  },
+                  new Label
+                  {
+                      Position = new Vector2(0, 135),
+                      Size = new Vector2(300, 50),
+                      Text = "fire weapon",
+                      FillColor = Color.BLANK,
+                      HasOutlines = true,
+                      Font = GetFont(FontFuture),
+                      FontSize = 30,
+                      DoCenterText = true,
+                  },
+                  new Label
+                  {
+                      Position = new Vector2(0, 50),
+                      Size = new Vector2(300, 50),
+                      Text = "ship control",
+                      FillColor = Color.BLANK,
+                      HasOutlines = true,
+                      Font = GetFont(FontFuture),
+                      FontSize = 30,
+                      DoCenterText = true,
+                  }).Translate(new(WindowWidth * .361f, WindowHeight * .7f)))
             .OnGuiEvent((e, c) =>
             {
                 if (e is SelectShip ss)
@@ -401,11 +398,11 @@
             Text = "Meteor Mayhem",
             TextColor = Color.YELLOW,
             FillColor = Color.DARKPURPLE,
-            FontSize = 58,
-            Position = new Vector2(0, WindowHeight * .1f),
-            Size = new Vector2(600, 100),
-            TextOffSet = new Vector2(30, 24),
+            FontSize = 72,
+            Position = new Vector2(WindowWidth/2, WindowHeight * .1f),
+            Size = new Vector2(780, 100),
             Font = GetFont(FontFuture),
+            DoCenterText = true
         };
 
         public static GuiContainer CreateCredits()
@@ -414,20 +411,20 @@
                 GetTitleBanner(),
                   new Label
                   {
-                      Position = new Vector2(0f, WindowHeight * .50f),
+                      Position = new Vector2(WindowWidth * .5f, WindowHeight * .50f),
                       Size = new Vector2(600, 400),
                       FillColor = Color.DARKGREEN,
                       TextColor = Color.YELLOW
                   },
                    new Button
                    {
-                       Position = new Vector2(0f, WindowHeight * .9f),
+                       Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
                        Size = new Vector2(250, 50),
                        Text = "Back to Menu",
-                       TextOffSet = new Vector2(28f, 12f),
                        Font = GetFont(FontFutureThin),
                        FontSize = 28,
                        OnMouseLeftClick = e => new NextLevel { GuiEntity = e },
+                       DoCenterText= true
                    });
 
             var links = GuiContainerBuilder.CreateNew();
@@ -444,14 +441,15 @@
                         URL = t.uri
                     },
                     Font = GetFont(FontFuture),
-                    FontSize = 24,
+                    FontSize = 22,
                     TextOffSet = new Vector2(16, 18),
                     BaseColor = Color.DARKBLUE,
                     TextColor = Color.RAYWHITE,
-                    FocusColor= Color.SKYBLUE
+                    FocusColor= Color.SKYBLUE,
+                    DoCenterText = true,
                 });
             }
-            links.Translate(new Vector2(0, WindowHeight * .32f))
+            links.Translate(new Vector2(WindowWidth * .5f, WindowHeight * .32f))
                 .OnGuiEvent((e, c) =>
                 {
                     if (e is OpenLink ol)
@@ -461,7 +459,7 @@
                 });
             
             c.AddChildren(links)
-                .Translate(new Vector2(WindowWidth / 2, 0))
+                .Translate(new Vector2(0, 0))
                 .OnGuiEvent((e, c) =>
                 {
                     if (e is NextLevel nl)
@@ -475,8 +473,6 @@
             return c;
         }
 
-
-
         public static GuiContainer CreateShipSelectionMenu(bool isVisible = false) =>
             GuiContainerBuilder.CreateNew(isVisible: isVisible, tag: Tags.ShipSelection, renderLayer: RlGuiShipSelection).AddChildren(
                 new Label
@@ -484,11 +480,11 @@
                     Text = "Meteor Mayhem",
                     TextColor = Color.YELLOW,
                     FillColor = GuiShipBaseColor[SelectedShipColor],
-                    FontSize = 58,
+                    FontSize = 72,
                     Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
-                    Size = new Vector2(600, 100),
-                    TextOffSet = new Vector2(30, 24),
+                    Size = new Vector2(780, 100),
                     Font = GetFont(FontFuture),
+                    DoCenterText = true
                 },
                 new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
                 {

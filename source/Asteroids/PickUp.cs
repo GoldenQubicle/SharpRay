@@ -39,7 +39,7 @@
         {
             Position = pos;
             (Collider as RectCollider).Position = pos;
-            Data = GetData();
+            Data = GetData(PickupType);
             AddEntity(this);
             PlaySound(SpawnSound);
             CanSpawn = false;
@@ -93,7 +93,7 @@
             (Collider as RectCollider).Position = Position;
         }
 
-        private (string t, Color fill, Color outline, Color text, Vector2 offset) GetData() => PickupType switch
+        private (string t, Color fill, Color outline, Color text, Vector2 offset) GetData(Type pickupType) => pickupType switch
         {
             Type.Bullet => ("B", Color.YELLOW, Color.GOLD, Color.ORANGE, new Vector2(5, -2)),
             Type.Weapon => ("W", Color.PURPLE, Color.PINK, Color.DARKPURPLE, new Vector2(4, -2)),

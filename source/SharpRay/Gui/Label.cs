@@ -9,6 +9,7 @@
         public Font Font { get; init; } = GetFontDefault();
         public Color TextColor { get; set; } = WHITE;
         public Color FillColor { get; set; } = LIGHTGRAY;
+        public bool DoCenterText { get; set; } 
 
         public Raylib_cs.Rectangle Rectangle
         {
@@ -23,7 +24,7 @@
         public float FontSize { get; init; } = 15f;
         public float Spacing { get; init; } = 1f;
         public bool WordWrap { get; init; } = false;
-        public Vector2 TextOffSet { get; init; }
+        public Vector2 TextOffSet { get; set; }
         public bool HasOutlines { get; init; } = true;
         public Action<Label> UpdateAction { get; init; }
         public double TriggerTime { get; init; }
@@ -36,7 +37,14 @@
             if (HasOutlines)
                 DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
 
+            if (DoCenterText)
+            {
+                var textSize = MeasureTextEx(Font, Text, FontSize, Spacing);
+                TextOffSet = (Size - textSize) / 2;
+            }
+            
             DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+            
         }
 
         public override void Update(double deltaTime)
