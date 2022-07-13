@@ -57,11 +57,11 @@
             }
         }
 
-        public void Reset()
+        public void Reset(float resetRatio)
         {
             if (trigger >= SpawnScore)
             {
-                trigger = 0;
+                trigger = (int)(SpawnScore * resetRatio);
             }
         }
 

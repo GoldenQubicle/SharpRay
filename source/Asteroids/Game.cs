@@ -38,7 +38,7 @@ namespace Asteroids
 
         //Game state & stats
         internal static int SelectedShipType = Random.Shared.Next(1, 3);
-        internal static Gui.ShipColor SelectedShipColor = Enum.GetValues<Gui.ShipColor>()[Random.Shared.Next(0,4)];
+        internal static Gui.ShipColor SelectedShipColor = Enum.GetValues<Gui.ShipColor>()[Random.Shared.Next(0, 4)];
         internal static int ShipDamageTextureIdx = -1; // 1 | 2 | 3, initialized at -1 because reasons..
         internal static int CurrentScore = 0;
         internal static int CurrentHealth;
@@ -131,7 +131,7 @@ namespace Asteroids
                     GetEntity<Level>().OnEnter(Levels.Data[++LevelIdx]);
                     return;
                 }
-                
+
                 ShowCursor();
                 AddEntity(Gui.CreateMainMenu(true));
                 RemoveEntitiesOfType<Level>();
@@ -161,10 +161,10 @@ namespace Asteroids
                 StopSound(Sounds[Ship.ThrusterSound]);
                 ShowCursor();
 
-                //reset weapons & pickups 
-                GetEntity<Level>().Data
-                    .PickUps.Except(GetEntities<PickUp>()).ToList()
-                    .ForEach(pu => pu.Reset());
+                //reset pickups 
+                var levelData = GetEntity<Level>().Data;
+                levelData.PickUps.Except(GetEntities<PickUp>()).ToList()
+                    .ForEach(pu => pu.Reset((float)CurrentScore / (float)levelData.WinScore));
 
                 PrimaryWeapon.OnLifeLost();
 
