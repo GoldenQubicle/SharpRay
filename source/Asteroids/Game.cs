@@ -68,7 +68,7 @@ namespace Asteroids
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //RunDebugGui(() => AddEntity(Gui.CreateMainMenu(true)));
+            //RunDebugGui(() => AddEntity(Gui.CreateShipSelectionMenu(true)));
 
             AddEntity(new StarField());
             var mainmenu = Gui.CreateMainMenu();
@@ -133,7 +133,7 @@ namespace Asteroids
                 }
                 
                 ShowCursor();
-                GetEntityByTag<GuiContainer>(Gui.Tags.MainMenu).Show();
+                AddEntity(Gui.CreateMainMenu(true));
                 RemoveEntitiesOfType<Level>();
                 ResetGame();
                 PlaySound(Gui.SelectionSound, true);

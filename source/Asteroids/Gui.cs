@@ -14,6 +14,7 @@
             public const string StartGame = nameof(StartGame);
             public const string ShipSelectRight = nameof(ShipSelectRight);
             public const string ShipSelectLeft = nameof(ShipSelectLeft);
+            public const string ShipTypeLabel = nameof(ShipTypeLabel);
         }
 
         public const string SelectionSound = nameof(SelectionSound);
@@ -160,7 +161,7 @@
                         {
                             ResetGame();
                             RemoveEntity(GetEntityByTag<GuiContainer>(Tags.ScoreOverlay));
-                            GetEntityByTag<GuiContainer>(Tags.MainMenu).Show();
+                            AddEntity(CreateMainMenu(true));
                             PlaySound(SelectionSound, isRepeated: true);
                             ShowCursor();
                             return;
@@ -288,36 +289,36 @@
                    OnMouseLeftClick = e => new GameStart { GuiEntity = e },
                },
                new Button
-                {
-                    Tag = Tags.StartGame,
-                    Text = "Select Ship",
-                    TextColor = Color.YELLOW,
-                    FontSize = 32,
-                    Font = GetFont(FontFutureThin),
-                    DoCenterText = true,
-                    Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .45f),
-                    Size = new Vector2(300, 50),
-                    BaseColor = Color.DARKGREEN,
-                    FocusColor = Color.LIME,
-                    OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
-                },
+               {
+                   Tag = Tags.StartGame,
+                   Text = "Select Ship",
+                   TextColor = Color.YELLOW,
+                   FontSize = 32,
+                   Font = GetFont(FontFutureThin),
+                   DoCenterText = true,
+                   Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .45f),
+                   Size = new Vector2(300, 50),
+                   BaseColor = Color.DARKGREEN,
+                   FocusColor = Color.LIME,
+                   OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
+               },
                new Button
-                 {
-                     Text = "Credits",
-                     TextColor = Color.YELLOW,
-                     FontSize = 32,
-                     Font = GetFont(FontFutureThin),
-                     DoCenterText = true,
-                     Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .6f),
-                     Size = new Vector2(300, 50),
-                     BaseColor = Color.DARKGREEN,
-                     FocusColor = Color.LIME,
-                     OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
-                 },
+               {
+                   Text = "Credits",
+                   TextColor = Color.YELLOW,
+                   FontSize = 32,
+                   Font = GetFont(FontFutureThin),
+                   DoCenterText = true,
+                   Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .6f),
+                   Size = new Vector2(300, 50),
+                   BaseColor = Color.DARKGREEN,
+                   FocusColor = Color.LIME,
+                   OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
+               },
              GuiContainerBuilder.CreateNew().AddChildren(
                   new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
                   {
-                      Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2  - WindowWidth * .318f - 25), -216),
+                      Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2 - WindowWidth * .318f - 25), -216),
                   },
                   new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
                   {
@@ -379,7 +380,7 @@
 
                 if (e is GameStart gs)
                 {
-                    c.Hide();
+                    RemoveEntity(c);
                     StopSound(SelectionSound);
                     PlaySound(StartSound);
                     StartGame(0);
@@ -393,13 +394,13 @@
                 }
             });
 
-        private static Label GetTitleBanner() => new() 
+        private static Label GetTitleBanner() => new()
         {
             Text = "Meteor Mayhem",
             TextColor = Color.YELLOW,
             FillColor = Color.DARKPURPLE,
             FontSize = 72,
-            Position = new Vector2(WindowWidth/2, WindowHeight * .1f),
+            Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
             Size = new Vector2(780, 100),
             Font = GetFont(FontFuture),
             DoCenterText = true
@@ -424,7 +425,7 @@
                        Font = GetFont(FontFutureThin),
                        FontSize = 28,
                        OnMouseLeftClick = e => new NextLevel { GuiEntity = e },
-                       DoCenterText= true
+                       DoCenterText = true
                    });
 
             var links = GuiContainerBuilder.CreateNew();
@@ -445,7 +446,7 @@
                     TextOffSet = new Vector2(16, 18),
                     BaseColor = Color.DARKBLUE,
                     TextColor = Color.RAYWHITE,
-                    FocusColor= Color.SKYBLUE,
+                    FocusColor = Color.SKYBLUE,
                     DoCenterText = true,
                 });
             }
@@ -457,7 +458,7 @@
                         OpenURL(ol.URL);
                     }
                 });
-            
+
             c.AddChildren(links)
                 .Translate(new Vector2(0, 0))
                 .OnGuiEvent((e, c) =>
@@ -489,14 +490,28 @@
                 new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
                 {
                     Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
-                    new Vector2(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2, 
+                    new Vector2(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2,
                             GetTexture2D(ships[SelectedShipType][SelectedShipColor]).height / 2) // rather stupid tbh
+                },
+                new Label
+                {
+                    Tag = Tags.ShipTypeLabel,
+                    Position = new Vector2(WindowWidth * .5f, WindowHeight * .30f),
+                    Size = new Vector2(200, 50),
+                    Text = $"Type {SelectedShipType}",
+                    DoCenterText = true,
+                    FillColor = Color.BLANK,
+                    HasOutlines = false,
+                    Font = GetFont(FontFutureThin),
+                    FontSize = 39,
+                    TextColor = GuiShipBaseColor[SelectedShipColor]
                 },
                 new Button
                 {
                     Tag = Tags.ShipSelectLeft,
-                    Position = new Vector2((WindowWidth * .2f) - 15f, WindowHeight / 2),
-                    Size = new Vector2(20, 50),
+                    Position = new Vector2((WindowWidth * .2f), WindowHeight * .49f),
+                    Texture2D = GetTexture2D(nameof(KeyLeftDown)),
+                    Size = new Vector2(GetTexture2D(nameof(KeyLeftDown)).width, GetTexture2D(nameof(KeyLeftDown)).height), // also kinda stupid tbh
                     BaseColor = GuiShipBaseColor[SelectedShipColor],
                     FocusColor = GuiShipFocusColor[SelectedShipColor],
                     OnMouseLeftClick = e => new ChangeShipType
@@ -508,8 +523,9 @@
                 new Button
                 {
                     Tag = Tags.ShipSelectRight,
-                    Position = new Vector2((WindowWidth * .8f) + 15f, WindowHeight / 2),
-                    Size = new Vector2(20, 50),
+                    Position = new Vector2((WindowWidth * .8f), WindowHeight * .49f),
+                    Texture2D = GetTexture2D(nameof(KeyRightDown)),
+                    Size = new Vector2(GetTexture2D(nameof(KeyRightDown)).width, GetTexture2D(nameof(KeyRightDown)).height), // also kinda stupid tbh
                     BaseColor = GuiShipBaseColor[SelectedShipColor],
                     FocusColor = GuiShipFocusColor[SelectedShipColor],
                     OnMouseLeftClick = e => new ChangeShipType
@@ -521,9 +537,10 @@
                 new Button
                 {
                     Position = new Vector2(WindowWidth * .2f, WindowHeight * .75f),
-                    Size = new Vector2(50, 20),
+                    Size = new Vector2(50, 25),
                     BaseColor = GuiShipBaseColor[ShipColor.blue],
                     FocusColor = GuiShipFocusColor[ShipColor.blue],
+                    HasOutlines = false,
                     OnMouseLeftClick = e => new ChangeShipColor
                     {
                         GuiEntity = e,
@@ -533,9 +550,10 @@
                 new Button
                 {
                     Position = new Vector2(WindowWidth * .4f, WindowHeight * .75f),
-                    Size = new Vector2(50, 20),
+                    Size = new Vector2(50, 25),
                     BaseColor = GuiShipBaseColor[ShipColor.green],
                     FocusColor = GuiShipFocusColor[ShipColor.green],
+                    HasOutlines = false,
                     OnMouseLeftClick = e => new ChangeShipColor
                     {
                         GuiEntity = e,
@@ -545,9 +563,10 @@
                 new Button
                 {
                     Position = new Vector2(WindowWidth * .6f, WindowHeight * .75f),
-                    Size = new Vector2(50, 20),
+                    Size = new Vector2(50, 25),
                     BaseColor = GuiShipBaseColor[ShipColor.red],
                     FocusColor = GuiShipFocusColor[ShipColor.red],
+                    HasOutlines = false,
                     OnMouseLeftClick = e => new ChangeShipColor
                     {
                         GuiEntity = e,
@@ -557,9 +576,10 @@
                 new Button
                 {
                     Position = new Vector2(WindowWidth * .8f, WindowHeight * .75f),
-                    Size = new Vector2(50, 20),
+                    Size = new Vector2(50, 25),
                     BaseColor = GuiShipBaseColor[ShipColor.orange],
                     FocusColor = GuiShipFocusColor[ShipColor.orange],
+                    HasOutlines = false,
                     OnMouseLeftClick = e => new ChangeShipColor
                     {
                         GuiEntity = e,
@@ -573,7 +593,7 @@
                     TextColor = Color.YELLOW,
                     FontSize = 24,
                     Font = GetFont(FontFutureThin),
-                    TextOffSet = new Vector2(28, 15),
+                    DoCenterText = true,
                     Position = new Vector2(WindowWidth * .5f, WindowHeight * .9f),
                     Size = new Vector2(125, 50),
                     BaseColor = GuiShipBaseColor[SelectedShipColor],
@@ -597,6 +617,7 @@
                     var texture = GetTexture2D(ships[SelectedShipType][SelectedShipColor]);
                     c.GetEntity<ImageTexture>().Texture2D = texture;
                     c.GetEntity<ImageTexture>().Position = new Vector2(WindowWidth / 2, WindowHeight / 2) - new Vector2(texture.width / 2, texture.height / 2);
+                    c.GetEntityByTag<Label>(Tags.ShipTypeLabel).Text = $"Type {SelectedShipType}";
                 }
 
                 if (e is ChangeShipColor csc)
@@ -605,6 +626,7 @@
                     SelectedShipColor = csc.ShipColor;
                     c.GetEntity<ImageTexture>().Texture2D = GetTexture2D(ships[SelectedShipType][SelectedShipColor]);
                     c.GetEntity<Label>().FillColor = GuiShipBaseColor[SelectedShipColor];
+                    c.GetEntityByTag<Label>(Tags.ShipTypeLabel).TextColor = GuiShipBaseColor[SelectedShipColor];
                     c.GetEntities<Button>()
                          .Where(b => b.Tag.Equals(Tags.ShipSelectLeft) || b.Tag.Equals(Tags.ShipSelectRight) || b.Tag.Equals(Tags.StartGame)).ToList()
                          .ForEach(b =>

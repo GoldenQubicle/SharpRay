@@ -6,11 +6,16 @@ namespace SharpRay.Gui
     {
         public Color FocusColor { get; set; } = GRAY;
         public Color BaseColor { get; set; } = DARKGRAY;
-        
+        public Texture2D? Texture2D { get; set; }
+
         public override void Render()
         {
             FillColor = HasMouseFocus ? FocusColor : BaseColor;
-            base.Render();
+            
+            if (Texture2D is null)
+                base.Render();
+            else
+                DrawTextureV(Texture2D.Value, Position - Size/2, FillColor);
         }
 
         public override bool ContainsPoint(Vector2 point) =>
