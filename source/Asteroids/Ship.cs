@@ -42,7 +42,7 @@
 
         private float scale = .75f;
         private readonly Vector2 offset; //used for render position textures
-        private double resetInterval = 500 * SharpRayConfig.TickMultiplier;
+        private double resetInterval = 750 * SharpRayConfig.TickMultiplier;
         private double resetTimer;
 
         public Ship(Vector2 position, int health, Texture2D texture)

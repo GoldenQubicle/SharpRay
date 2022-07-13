@@ -80,17 +80,17 @@ namespace Asteroids
         {
             if (e is AsteroidDestroyed ad)
             {
-                //play sound
+                // Play sound.
                 SetSoundPitch(Sounds[Asteroid.ExplosionSound], GetRandomValue(50, 150) / 100f);
                 PlaySound(Asteroid.ExplosionSound);
 
-                //update score
+                // Update score.
                 var hp = Asteroid.GetHitPoints(ad.Asteroid.Definition);
                 CurrentScore += hp;
                 Data.PickUps.ForEach(pu => pu.UpdateScore(hp));
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
 
-                //spawn new asteroids from the one destroyed
+                // Wpawn new asteroids from the one destroyed.
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
                 foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
                 {
@@ -99,7 +99,7 @@ namespace Asteroids
                     AddEntity(new Asteroid(s.Size, s.Type, ad.Asteroid.Position, heading), OnGameEvent);
                 }
 
-                //determine random chance for a health pickup spawn
+                // Determine random chance for a health pickup spawn.
                 if (ad.Asteroid.Definition.type == Asteroid.Type.Emerald)
                 {
                     var h = (int)ad.Asteroid.Definition.size;
@@ -124,7 +124,7 @@ namespace Asteroids
                     }
                 }
 
-                // remove the asteroid 
+                // Remove the asteroid.
                 RemoveEntity(ad.Asteroid);
             }
         }
@@ -145,7 +145,7 @@ namespace Asteroids
                 pickUp.OnSpawn(new Vector2(GetRandomValue(100, WindowWidth - 100), GetRandomValue(100, WindowHeight - 100)));
             }
 
-            //spawn new asteroids 
+            // Spawn new asteroids from outside screen bounds.
             if (currentTime > Data.MaxSpawnTime)
             {
                 currentTime = 0;

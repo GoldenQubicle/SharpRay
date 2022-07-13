@@ -34,7 +34,7 @@
         private static readonly Dictionary<ShipColor, Color> GuiShipBaseColor = new()
         {
             { ShipColor.blue, Color.DARKBLUE },
-            { ShipColor.red, Color.MAROON },
+            { ShipColor.red, new Color(175, 25, 40, 255) },
             { ShipColor.green, Color.LIME },
             { ShipColor.orange, new Color(200, 100, 0, 255) },
         };
@@ -47,13 +47,12 @@
             { ShipColor.orange, Color.ORANGE },
         };
 
-        //credits
         private static readonly Dictionary<string, string> Credits = new()
         {
-            { "Space Shooter Redux by Kenny.nl", "https://kenney.nl/assets/space-shooter-redux"},
+            { "Space Shooter Redux by Kenney.nl", "https://kenney.nl/assets/space-shooter-redux"},
             { "SciFi SoundFx by Kenney.nl", "https://kenney.nl/assets/sci-fi-sounds" },
             { "Additional SoundFx by MixKit","https://mixkit.co/free-sound-effects/video-game/" },
-            { "Made with RayLib!",  "https://www.raylib.com" }
+            { "Made with RayLib",  "https://www.raylib.com" }
         };
 
         public static Label CreatePickUpNotification(string description) => new Label
@@ -66,7 +65,7 @@
             WordWrap = false,
             HasOutlines = false,
             TextOffSet = new(3, 5),
-            FillColor = BackGroundColor,
+            FillColor = Color.BLANK,
             TriggerTime = 2000d * SharpRayConfig.TickMultiplier,
             UpdateAction = l =>
             {
@@ -92,8 +91,8 @@
                 new Label
                 {
                     Size = new Vector2(384, 164),
-                    FillColor = Color.LIME,
-                    Text = $"{desc} Cleared!",
+                    FillColor = Color.DARKPURPLE,
+                    Text = desc.Contains(Levels.Data.Count.ToString()) ? $"All Levels clear" :  $"{desc} Cleared",
                     TextColor = Color.GOLD,
                     FontSize = 32,
                     Font = GetFont(FontFuture),
@@ -105,10 +104,10 @@
                     Position = new Vector2(0, 32),
                     BaseColor = Color.DARKGREEN,
                     FocusColor = Color.GREEN,
-                    Text = "Next Level",
+                    Text = desc.Contains(Levels.Data.Count.ToString()) ? "To Main Menu" :"Next Level",
                     FontSize = 16,
                     Font = GetFont(FontFutureThin),
-                    TextOffSet = new Vector2(24, 10),
+                    DoCenterText = true,
                     OnMouseLeftClick = e => new NextLevel { GuiEntity = e }
                 })
             .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))

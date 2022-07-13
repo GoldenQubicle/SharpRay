@@ -45,7 +45,7 @@ namespace Asteroids
         internal static int MaxHealth = 10;
         internal static int CurrentLifes;
         internal static readonly int MaxLifes = 3;
-        internal static readonly Color BackGroundColor = new(12, 24, 64, 0);
+        internal static readonly Color BackGroundColor = new(12, 24, 64, 255);
         internal static bool IsPaused { get; set; }
         internal static int LevelIdx = 0;
         //sound keys
@@ -56,6 +56,7 @@ namespace Asteroids
 
         static async Task Main(string[] args)
         {
+#if DEBUG
             Initialize(new SharpRayConfig
             {
                 WindowWidth = WindowWidth,
@@ -64,11 +65,22 @@ namespace Asteroids
                 ShowFPS = true,
                 DoEventLogging = true
             });
+#endif
+#if RELEASE
+            Initialize(new SharpRayConfig
+            {
+                WindowWidth = WindowWidth,
+                WindowHeight = WindowHeight,
+                BackGroundColor = BackGroundColor,
+                ShowFPS = false,
+                DoEventLogging = false
+            });
+#endif
 
             SetKeyBoardEventAction(OnKeyBoardEvent);
             Load();
 
-            //RunDebugGui(() => AddEntity(Gui.CreateShipSelectionMenu(true)));
+            //RunDebugGui(() => AddEntity(Gui.CreateMainMenu(true)));
 
             AddEntity(new StarField());
             var mainmenu = Gui.CreateMainMenu();
@@ -161,12 +173,14 @@ namespace Asteroids
                 StopSound(Sounds[Ship.ThrusterSound]);
                 ShowCursor();
 
-                //reset pickups 
+                //reset pickups, weapon & bullets 
                 var levelData = GetEntity<Level>().Data;
                 levelData.PickUps.Except(GetEntities<PickUp>()).ToList()
-                    .ForEach(pu => pu.Reset((float)CurrentScore / (float)levelData.WinScore));
+                    .ForEach(pu => pu.Reset(CurrentScore / (float)levelData.WinScore));
 
                 PrimaryWeapon.OnLifeLost();
+
+                RemoveEntitiesOfType<Bullet>();
 
                 //reset ship position, health & texture
                 GetEntity<Ship>().Reset();
