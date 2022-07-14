@@ -89,7 +89,7 @@ namespace Asteroids
             //AddEntity(Gui.CreateCredits());
 
 #if DEBUG
-            StartGame(0);
+            StartGame(1);
 #endif
 
 #if RELEASE
@@ -108,6 +108,11 @@ namespace Asteroids
             CurrentHealth = MaxHealth;
             CurrentLifes = MaxLifes;
             PrimaryWeapon.OnGameStart();
+#if DEBUG
+            if (LevelIdx > 0)
+                for(int i = LevelIdx-1; i >= 0; i--)
+                    Levels.Data[i].PickUps.ForEach(p => p.OnPickUp.Invoke());
+#endif
             var level = new Level();
             level.OnEnter(Levels.Data[LevelIdx]);
             AddEntity(level);

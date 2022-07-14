@@ -47,6 +47,7 @@
 
         public void Generate()
         {
+            UnloadTexture(backGroundTexture);
             // Create the background image
             var c1 = GenImageCellular(WindowWidth, WindowHeight, WindowWidth / 3);
             var c2 = GenImageCellular(WindowWidth, WindowHeight, WindowWidth / 6);
