@@ -18,16 +18,15 @@
         public static LevelData Level1 => new(
             Description: "Level 1",
             WinScore: 100,
-            AsteroidSpawnStart: new()
-            {
-                new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (GetRandomValue(128, 256), GetRandomValue(128, 256)), GetRandomHeading(-50, 50)),
-            },
+            OnEnterSpawn: 2,
+            OnEnterSpawnRadius: WindowWidth,
             AsteroidSpawnDuring: new()
             {
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),
             },
+            
             InitialHeadingSpeed: GetRandomHeading(50, 125),
             MaxSpawnTime: 2250 * SharpRayConfig.TickMultiplier,
             Easing: new(Easings.EaseSineInOut, 7500f, isRepeated: true),
@@ -52,11 +51,8 @@
         public static LevelData Level2 => new(
             Description: "Level 2",
             WinScore: 250,
-            AsteroidSpawnStart: new()
-            {
-                new (Asteroid.Size.Big, Asteroid.Type.Dirt,
-                    new (GetRandomValue(WindowWidth-256, WindowWidth-128), GetRandomValue(WindowHeight-256, WindowHeight-128)),GetRandomHeading(-75, 75)),
-            },
+            OnEnterSpawn: 2,
+            OnEnterSpawnRadius: WindowWidth,
             AsteroidSpawnDuring: new()
             {
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
@@ -92,12 +88,8 @@
         public static LevelData Level3 => new(
           Description: "Level 3",
           WinScore: 350,
-          AsteroidSpawnStart: new()
-          {
-                new (Asteroid.Size.Big, Asteroid.Type.Stone,
-                    new (GetRandomValue(WindowWidth/3, WindowWidth/4), GetRandomValue(WindowHeight/3, WindowHeight/4)),
-                    GetRandomHeading(15, 50)),
-          },
+          OnEnterSpawn: 2,
+          OnEnterSpawnRadius: WindowWidth,
           AsteroidSpawnDuring: new()
           {
                 (Asteroid.Size.Big, Asteroid.Type.Dirt),
@@ -129,10 +121,8 @@
         public static LevelData TestLevel => new(
             Description: "Test Level",
             WinScore: 500,
-            AsteroidSpawnStart: new()
-            {
-                new (Asteroid.Size.Large, Asteroid.Type.Dirt, new (800, 100), new (0, 1.5f)),
-            },
+            OnEnterSpawn: 10,
+            OnEnterSpawnRadius: 200,
             AsteroidSpawnDuring: new()
             {
                 (Asteroid.Size.Medium, Asteroid.Type.Dirt),

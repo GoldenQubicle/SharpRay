@@ -5,7 +5,8 @@ namespace Asteroids
     public record LevelData(
       string Description,
       int WinScore,
-      List<Asteroid> AsteroidSpawnStart,
+      int OnEnterSpawn,
+      int OnEnterSpawnRadius,
       List<(Asteroid.Size size, Asteroid.Type type)> AsteroidSpawnDuring,
       Vector2 InitialHeadingSpeed,
       double MaxSpawnTime,
@@ -34,9 +35,12 @@ namespace Asteroids
             AddEntity(ship);
             AddEntity(overlay);
 
-            foreach (var asteroid in Data.AsteroidSpawnStart)
+            var theta = GetRandomValue(0, 360) * DEG2RAD; 
+
+            for (var i = 1; i <= Data.OnEnterSpawn; i++)
             {
-                AddEntity(asteroid, OnGameEvent);
+                var phi = theta + (MathF.Tau / Data.OnEnterSpawn) * i;
+                SpawnNewAsteroid(PickRandomAsteroid(), phi, 250, new Vector2(WindowWidth/2, WindowHeight/2));
             }
 
             Debug.Assert(CurrentLifes == MaxLifes);
@@ -73,7 +77,7 @@ namespace Asteroids
             {
                 PlaySound(WinSound);
             }
-            
+
         }
 
         public void OnGameEvent(IGameEvent e)
@@ -90,7 +94,7 @@ namespace Asteroids
                 Data.PickUps.ForEach(pu => pu.UpdateScore(hp));
                 GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay).OnGameEvent(e);
 
-                // Wpawn new asteroids from the one destroyed.
+                // Spawn new asteroids from the one destroyed.
                 var spawns = Asteroid.GetSpawns(ad.Asteroid.Definition);
                 foreach (var (s, i) in spawns.Select((s, i) => (s, i)))
                 {
@@ -129,7 +133,6 @@ namespace Asteroids
             }
         }
 
-
         public override void Update(double deltaTime)
         {
             if (IsPaused) return;
@@ -153,22 +156,22 @@ namespace Asteroids
 
                 if (chance < Data.Easing.GetValue())
                 {
-                    var idx = GetRandomValue(0, Data.AsteroidSpawnDuring.Count - 1);
-                    var def = Data.AsteroidSpawnDuring[idx];
                     var theta = GetRandomValue(0, 360) * DEG2RAD;
-
-                    var x = MathF.Cos(theta) * WindowHeight;
-                    var y = MathF.Sin(theta) * WindowHeight;
-
-                    var pos = new Vector2(x, y) + new Vector2(WindowWidth / 2, WindowHeight / 2);
-
                     var target = GetEntity<Ship>().Position;
-                    var heading = Vector2.Normalize(target - pos);
-                    heading *= Data.InitialHeadingSpeed;
-
-                    AddEntity(new Asteroid(def.size, def.type, pos, heading), OnGameEvent);
+                    SpawnNewAsteroid(PickRandomAsteroid(), theta, WindowHeight, target);
                 }
             }
+        }
+
+        private (Asteroid.Size size, Asteroid.Type type) PickRandomAsteroid() =>
+            Data.AsteroidSpawnDuring[GetRandomValue(0, Data.AsteroidSpawnDuring.Count - 1)];
+
+        private void SpawnNewAsteroid((Asteroid.Size size, Asteroid.Type type) def, float theta, int radius, Vector2 target)
+        {
+            var pos = new Vector2(MathF.Cos(theta) * radius, MathF.Sin(theta) * radius) + new Vector2(WindowWidth/ 2, WindowHeight/ 2);
+            var heading = Vector2.Normalize(target - pos);
+            heading *= Data.InitialHeadingSpeed;
+            AddEntity(new Asteroid(def.size, def.type, pos, heading), OnGameEvent);
         }
     }
 }
