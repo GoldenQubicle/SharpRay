@@ -89,7 +89,7 @@ namespace Asteroids
             //AddEntity(Gui.CreateCredits());
 
 #if DEBUG
-            StartGame(3);
+            StartGame(0);
 #endif
 
 #if RELEASE

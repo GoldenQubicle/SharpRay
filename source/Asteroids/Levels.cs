@@ -19,7 +19,7 @@
             Description: "Level 1",
             WinScore: 100,
             OnEnterSpawn: 2,
-            OnEnterSpawnRadius: WindowWidth,
+            OnEnterSpawnRadius: WindowWidth / 4,
             AsteroidSpawnDuring: new()
             {
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
@@ -52,7 +52,7 @@
             Description: "Level 2",
             WinScore: 250,
             OnEnterSpawn: 2,
-            OnEnterSpawnRadius: WindowWidth,
+            OnEnterSpawnRadius: WindowWidth / 4,
             AsteroidSpawnDuring: new()
             {
                 (Asteroid.Size.Large, Asteroid.Type.Dirt),
@@ -89,7 +89,7 @@
           Description: "Level 3",
           WinScore: 350,
           OnEnterSpawn: 2,
-          OnEnterSpawnRadius: WindowWidth,
+          OnEnterSpawnRadius: WindowWidth / 4,
           AsteroidSpawnDuring: new()
           {
                 (Asteroid.Size.Big, Asteroid.Type.Dirt),
