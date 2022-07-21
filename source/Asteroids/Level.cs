@@ -39,8 +39,8 @@ namespace Asteroids
 
             for (var i = 1; i <= Data.OnEnterSpawn; i++)
             {
-                var phi = theta + (MathF.Tau / Data.OnEnterSpawn) * i + (GetRandomValue(-128, 128) * DEG2RAD);
-                SpawnNewAsteroid(PickRandomAsteroid(), phi, Data.OnEnterSpawnRadius + GetRandomValue(-20, 20), new Vector2(WindowWidth/2, WindowHeight/2));
+                var phi = theta + (MathF.Tau / Data.OnEnterSpawn) * i + (GetRandomValue(-20, 20) * DEG2RAD);
+                SpawnNewAsteroid(PickRandomAsteroid(), phi, Data.OnEnterSpawnRadius + GetRandomValue(-128, 128), new Vector2(WindowWidth/2, WindowHeight/2));
             }
 
             Debug.Assert(CurrentLifes == MaxLifes);

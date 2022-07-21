@@ -132,7 +132,7 @@
         public void OnCollision(IHasCollider e)
         {
             if (resetTimer < resetInterval) return;
-
+#if DEBUG
             if (e is Asteroid a)
             {
                 HasTakenDamage = true;
@@ -150,7 +150,7 @@
                     });
                 }
             }
-
+#endif
             if (e is PickUp p)
             {
                 p.OnPickUp();

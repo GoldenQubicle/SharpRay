@@ -190,39 +190,36 @@
             {
                 Size.Big => new()
                 {
-                    (Size.Small, Type.Stone),
-                    //(Size.Large, Type.Stone),
-                    (Size.Large, Type.Emerald),
                     (Size.Medium, Type.Dirt),
-                    
+                    (Size.Small, Type.Stone),
+                    (Size.Large, Type.Emerald),
+                    (Size.Medium, Type.Stone),
+                    (Size.Small, Type.Dirt),
                     (Size.Medium, Type.Dirt),
                     (Size.Large, Type.Stone),
-                    (Size.Small, Type.Dirt),
                 },
                 Size.Large => new()
                 {
-                    (Size.Medium, Type.Stone),
-                    (Size.Small, Type.Dirt),
+                    (Size.Medium, Type.Dirt),
+                    (Size.Small, Type.Stone),
                     (Size.Medium, Type.Stone),
                     (Size.Small, Type.Dirt),
                     (Size.Medium, Type.Stone),
                 },
                 Size.Medium => new()
                 {
-                    (Size.Small, Type.Stone),
+                    (Size.Tiny, Type.Stone),
                     (Size.Small, Type.Dirt),
                     (Size.Small, Type.Emerald),
                 },
                 Size.Small => new()
                 {
-                    (Size.Tiny, Type.Stone),
-                    (Size.Tiny, Type.Dirt),
                     (Size.Tiny, Type.Emerald),
-
+                    (Size.Tiny, Type.Dirt),
                 },
                 Size.Tiny => new()
                 {
-                    (Size.Tiny, Type.Emerald),
+                    (Size.Tiny, Type.Dirt),
                     (Size.Tiny, Type.Dirt),
                 },
             },
@@ -238,27 +235,27 @@
                 },
                 Size.Large => new()
                 {
-                    (Size.Tiny, Type.Dirt),
+                    (Size.Small, Type.Dirt),
+                    (Size.Medium, Type.Stone),
                     (Size.Small, Type.Stone),
-                    (Size.Tiny, Type.Stone),
-                    //(Size.Small, Type.Dirt),
-                    //(Size.Medium, Type.Stone),
+                    (Size.Medium, Type.Dirt),
+                    (Size.Tiny, Type.Emerald),
+
                 },
                 Size.Medium => new()
                 {
-                    //(Size.Small, Type.Stone),
-                    //(Size.Small, Type.Dirt),
-                    //(Size.Tiny, Type.Stone),
+                    (Size.Small, Type.Stone),
+                    (Size.Small, Type.Dirt),
+                    (Size.Tiny, Type.Stone),
                 },
                 Size.Small => new()
                 {
-                    //(Size.Tiny, Type.Stone),
-                    //(Size.Tiny, Type.Dirt),
+                    (Size.Tiny, Type.Stone),
+                    (Size.Tiny, Type.Dirt),
                 },
                 Size.Tiny => new()
                 {
-                    //(Size.Tiny, Type.Dirt),
-                    //(Size.Tiny, Type.Dirt),
+                    
                 },
             },
 
