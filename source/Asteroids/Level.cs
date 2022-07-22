@@ -26,7 +26,7 @@ namespace Asteroids
             Data = data;
             PrimaryWeapon.OnStartLevel();
 
-            var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), MaxHealth, GetTexture2D(ships[SelectedShipType][SelectedShipColor]));
+            var ship = new Ship(new Vector2(WindowWidth / 2, WindowHeight / 2), GetTexture2D(ships[SelectedShipType][SelectedShipColor]));
             var overlay = Gui.CreateScoreOverLay(MaxLifes, Data.WinScore);
 
             ship.EmitEvent += Game.OnGameEvent;
