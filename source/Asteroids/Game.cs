@@ -72,7 +72,7 @@ namespace Asteroids
                 WindowWidth = WindowWidth,
                 WindowHeight = WindowHeight,
                 BackGroundColor = BackGroundColor,
-                ShowFPS = false,
+                ShowFPS = true,
                 DoEventLogging = false
             });
 #endif
