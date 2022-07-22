@@ -2,8 +2,8 @@ name: MeteorMadness
 on:
   push:
     branches: [ Builds ]
-    # tags:
-    # - '*'
+    tags:
+      - '*'
 
   workflow_dispatch:
 
@@ -11,7 +11,7 @@ jobs:
   build:
     strategy:
         matrix:
-          versions: [ 'win-x86'] #,'win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
+          versions: [ 'win-x64'] #,'win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
     
     runs-on: windows-latest
 
@@ -25,7 +25,7 @@ jobs:
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
-          tag: MM_v1.0.0
+          # tag: MM_v1.0.0
           artifacts: "out/*"
           commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
