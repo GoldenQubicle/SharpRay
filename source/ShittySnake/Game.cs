@@ -77,6 +77,7 @@ namespace ShittySnake
             {
                 if (e is SnakeGameStart)
                 {
+                    PlaySound(nameof(SnakeGameStart));
                     c.Hide();
                     StartGame(e);
                 }
@@ -118,6 +119,7 @@ namespace ShittySnake
             {
                 if (e is SnakeGameStart)
                 {
+                    PlaySound(nameof(SnakeGameStart));
                     c.Hide();
                     StartGame(e);
                 }
