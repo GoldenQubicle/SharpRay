@@ -4,8 +4,8 @@ on:
     branches: [ Builds ]
 
   workflow_dispatch:
-    inputs:
-      Asteroids: Meteor Mayhem
+    # inputs:
+    #   Asteroids: Meteor Mayhem
 
 jobs:
   build:
