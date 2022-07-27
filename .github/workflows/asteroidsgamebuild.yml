@@ -2,8 +2,8 @@ name: MeteorMayhem
 on:
   push:
     branches: [ Builds ]
-    tags:
-      - '*'
+    # tags:
+    #   - '*'
 
   workflow_dispatch:
 
@@ -25,8 +25,8 @@ jobs:
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
-          # tag: MM_v1.0.0
-          artifacts: "out/*/"
+          tag: Builds
+          artifacts: "out/Meteor Mayhem ${{matrix.versions}}/"
           commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
 
