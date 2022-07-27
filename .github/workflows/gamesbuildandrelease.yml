@@ -4,18 +4,20 @@ on:
     branches: [ Builds ]
 
   workflow_dispatch:
+    inputs:
+      Asteroids: Meteor Mayhem
 
 jobs:
   build:
     strategy:
         matrix:
           versions: [ win-x64 ] #,'win-x86','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
-          projects: [Asteroids, ShittySnake]
-          include:
-            - projects: Asteroids
-              outputName: Meteor Mayhem  # assembly name as defined in .csproj
-            - projects: ShittySnake
-              outputName: Shitty Snake # assembly name as defined in .csproj
+          projects: [Asteroids]
+          # include:
+          #   - projects: Asteroids
+          #     outputName: Meteor Mayhem  # assembly name as defined in .csproj
+          #   - projects: ShittySnake
+          #     outputName: Shitty Snake # assembly name as defined in .csproj
               
           
     runs-on: windows-latest
@@ -26,13 +28,13 @@ jobs:
         with:        
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/${{matrix.outputName}} ${{matrix.versions}}'
-      - run: Get-ChildItem '.\out\${{matrix.outputName} ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace ${{matrix.outputName}}, '${{matrix.outputName}}-${{matrix.versions}}'} 
+      - run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/inputs[${{matrix.projects}}] ${{matrix.versions}}'
+      - run: Get-ChildItem '.\out\inputs[${{matrix.projects}}] ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace inputs[${{matrix.projects}}], 'inputs[${{matrix.projects}}]}-${{matrix.versions}}'} 
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
           tag: Games
-          artifacts: "out/${{matrix.outputName}} ${{matrix.versions}}/*"
+          artifacts: "out/inputs[${{matrix.projects}}] ${{matrix.versions}}/*"
           commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
 
