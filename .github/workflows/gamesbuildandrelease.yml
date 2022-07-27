@@ -28,13 +28,13 @@ jobs:
         with:        
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/inputs[${{matrix.projects}}] ${{matrix.versions}}'
-      - run: Get-ChildItem '.\out\inputs[${{matrix.projects}}] ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace inputs[${{matrix.projects}}], 'inputs[${{matrix.projects}}]}-${{matrix.versions}}'} 
+      - run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/{{ $inputs[${{matrix.projects}}]}} ${{matrix.versions}}'
+      - run: Get-ChildItem '.\out\{{ $inputs[${{matrix.projects}}]}} ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace {{ $inputs[${{matrix.projects}}]}}, '{{ $inputs[${{matrix.projects}}]}}-${{matrix.versions}}'} 
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
           tag: Games
-          artifacts: "out/inputs[${{matrix.projects}}] ${{matrix.versions}}/*"
+          artifacts: "out/{{ $inputs[${{matrix.projects}}]}} ${{matrix.versions}}/*"
           commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
 
