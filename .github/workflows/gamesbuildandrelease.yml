@@ -12,10 +12,11 @@ jobs:
           versions: [ win-x64 ] #,'win-x86','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
           projects: [Asteroids, ShittySnake]
           include:
-            - outputName: Meteor Mayhem  # assembly name as defined in .csproj
-              projects: Asteroids
-            - outputName: Shitty Snake # assembly name as defined in .csproj
-              projects: ShittySnake
+            - projects: Asteroids
+              outputName: Meteor Mayhem  # assembly name as defined in .csproj
+            - projects: ShittySnake
+              outputName: Shitty Snake # assembly name as defined in .csproj
+              
           
     runs-on: windows-latest
 
