@@ -1,20 +1,8 @@
-﻿using Raylib_cs;
-using SharpRay.Entities;
-using System;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using static ShittySnake.Settings;
-using static SharpRay.Core.SharpRayConfig;
-using static SharpRay.Core.Application;
-using SharpRay.Collision;
-using SnakeEvents;
-using SharpRay.Interfaces;
-
-namespace SnakeEntities
+﻿namespace SnakeEntities
 {
     public enum Direction { Up, Right, Down, Left }
 
-    public class Segment : GameEntity, IHasCollider
+    public class Segment : Entity, IHasUpdate, IHasRender, IHasCollider, IEventEmitter<IGameEvent>
     {
         public Vector2 Bounds { get; init; }
         public Direction Direction { get; set; }
@@ -30,6 +18,8 @@ namespace SnakeEntities
         private double current = 0d;
         private double prevDistance = 0f;
         protected bool IsDigesting { get; private set; }
+        public Action<IGameEvent> EmitEvent { get; set; }
+
         private bool goNext = false;
         
 

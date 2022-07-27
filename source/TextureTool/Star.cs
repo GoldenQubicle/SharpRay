@@ -5,7 +5,7 @@ using Raylib_cs;
 
 namespace TextureTool
 {
-    public class Star : GameEntity
+    public class Star : Entity
     {
         private Vector2 LeftUp = Vector2.Zero;
         private Vector2 CenterUp;

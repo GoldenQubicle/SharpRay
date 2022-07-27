@@ -10,6 +10,13 @@ global using static SharpRay.Core.Application;
 global using static Raylib_cs.Raylib;
 global using static Raylib_cs.Color;
 global using static ShittySnake.Settings;
+global using Raylib_cs;
+global using System;
+global using static SharpRay.Core.SharpRayConfig;
+global using SharpRay.Collision;
+global using SharpRay.Interfaces;
+global using SharpRay.Listeners;
+global using System.Collections.Generic;
 
 
 namespace ShittySnake
@@ -142,7 +149,13 @@ namespace ShittySnake
             }
 
             if (e is SnakeGameOver go)
-                RemoveEntitiesOfType<GameEntity>();
+            {
+                RemoveEntitiesOfType<Snake>();
+                RemoveEntitiesOfType<Segment>();
+                RemoveEntitiesOfType<ParticleFood>();
+                RemoveEntitiesOfType<ParticlePoop>();
+                RemoveEntitiesOfType<FoodParticleSpawner>();
+            }
 
             if (e is FoodParticleSpawn fs)
                 AddEntity(new ParticleFood(fs.Position, FoodSize) { RenderLayer = 1 });
@@ -180,7 +193,7 @@ namespace ShittySnake
             };
 
             AddEntity(spawner);
-            spawner.EmitEvent += OnGameEvent; // binding since AddEntity executes as an EventAction at the end of drawing loop thus EmitEvent, called in spawner constructor, will be null when initialising.
+            spawner.EmitEvent += OnGameEvent; // binding since AddEntity executes as an EventAction at the end of drawing loop thus EmitEvent will be null when initialising.
             spawner.Initialize(FoodParticleStart); //set 1st random interval and food particles to start with 
         }
     }

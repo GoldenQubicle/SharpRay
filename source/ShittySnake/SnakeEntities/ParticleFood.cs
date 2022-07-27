@@ -1,17 +1,6 @@
-﻿using Raylib_cs;
-using SharpRay.Entities;
-using System;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using static ShittySnake.Settings;
-using static SharpRay.Core.SharpRayConfig;
-using static SharpRay.Core.Application;
-using SharpRay.Collision;
-using SharpRay.Interfaces;
-
-namespace SnakeEntities
+﻿namespace SnakeEntities
 {
-    public class ParticleFood : GameEntity, IHasCollider
+    public class ParticleFood : Entity, IHasUpdate, IHasRender, IHasCollider
     {
         private float prevDistance;
         private double current;

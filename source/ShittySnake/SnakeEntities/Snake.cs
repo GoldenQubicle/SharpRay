@@ -1,15 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Collision;
-using SharpRay.Core;
-using SharpRay.Eventing;
-using SharpRay.Interfaces;
-using SnakeEvents;
-using System;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using static ShittySnake.Settings;
-
-namespace SnakeEntities
+﻿namespace SnakeEntities
 {
     public class Snake : Segment, IHasCollision
     {
@@ -91,9 +80,9 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            HeadColor = IsDigesting ? Color.PINK : Color.MAGENTA; 
+            HeadColor = IsDigesting ? PINK : MAGENTA; 
             DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 10, HeadColor);
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 10, 1, Color.PURPLE);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 10, 1, PURPLE);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e) =>

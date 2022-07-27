@@ -1,22 +1,12 @@
-﻿using Raylib_cs;
-using static Raylib_cs.Raylib;
-using static ShittySnake.Settings;
-using static SharpRay.Core.SharpRayConfig;
-using static SharpRay.Core.Application;
-using SharpRay.Entities;
-using SharpRay.Collision;
-using SnakeEvents;
-using System.Numerics;
-using SharpRay.Interfaces;
-
-namespace SnakeEntities
+﻿namespace SnakeEntities
 {
-    public class ParticlePoop : GameEntity, IHasCollider
+    public class ParticlePoop : Entity, IHasUpdate, IHasRender, IHasCollider, IEventEmitter<IGameEvent>
     {
         private float alpha;
         private double current;
         private readonly double interval = PoopDespawnInterval * TickMultiplier;
         public ICollider Collider { get; set; }
+        public Action<IGameEvent> EmitEvent { get; set; }
 
         public ParticlePoop(Vector2 position, int poopSize)
         {

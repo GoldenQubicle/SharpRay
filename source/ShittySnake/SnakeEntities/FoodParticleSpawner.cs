@@ -1,18 +1,6 @@
-﻿using SharpRay.Entities;
-using SharpRay.Eventing;
-using SharpRay.Listeners;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using static ShittySnake.Settings;
-using static SharpRay.Core.SharpRayConfig;
-using static SharpRay.Core.Application;
-using SnakeEvents;
-
-namespace SnakeEntities
+﻿namespace SnakeEntities
 {
-    public class FoodParticleSpawner : GameEntity, IEventEmitter<IGameEvent>, IGameEventListener<FoodParticleSpawner>
+    public class FoodParticleSpawner : Entity, IHasUpdate, IEventEmitter<IGameEvent>, IGameEventListener<FoodParticleSpawner>
     {
         private double rndInterval;
         private double current;
@@ -56,6 +44,7 @@ namespace SnakeEntities
         }
 
         public Action<IGameEvent, FoodParticleSpawner> OnGameEventAction { get; set; }
+        public Action<IGameEvent> EmitEvent { get ; set; }
 
         public void OnGameEvent(IGameEvent e)
         {
