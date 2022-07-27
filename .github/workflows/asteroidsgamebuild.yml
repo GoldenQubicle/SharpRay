@@ -2,8 +2,6 @@ name: MeteorMayhem
 on:
   push:
     branches: [ Builds ]
-    # tags:
-    #   - '*'
 
   workflow_dispatch:
 
@@ -11,7 +9,7 @@ jobs:
   build:
     strategy:
         matrix:
-          versions: [ 'win-x64'] #,'win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
+          versions: [ 'win-x86','win-x64','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
     
     runs-on: windows-latest
 
@@ -22,11 +20,11 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: true
       - run: dotnet publish source/Asteroids/Asteroids.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/Meteor Mayhem ${{matrix.versions}}'
-      - run: Rename-Item '.\out\Meteor Mayhem ${{matrix.versions}}\Meteor Mayhem.exe' 'MeteorMayhem${{matrix.versions}}.exe'  
+      - run: Rename-Item '.\out\Meteor Mayhem ${{matrix.versions}}\Meteor Mayhem.exe' 'Meteor Mayhem ${{matrix.versions}}.exe'  
       - uses: ncipollo/release-action@v1.10.0
         with:
           allowUpdates: true
-          tag: Rename
+          tag: Meteor Mayhem v1.0.0
           artifacts: "out/Meteor Mayhem ${{matrix.versions}}/*"
           commit: "Builds"
           token: ${{ secrets.GITHUB_TOKEN }}
