@@ -76,7 +76,7 @@
         ☐ different weapons @created(26-05-2022 20:19)
             primary
                 ✔ 3 shooter @created(01-06-2022 19:28) @done(01-06-2022 19:28)
-                5 shooter
+                ✔ 5 shooter @done(22-07-26 08:51)
             secondary 
                 radius blast 
                 turrets..?
@@ -96,7 +96,7 @@
         ☐ health restoration? @created(29-05-2022 12:08)
         
 
-☐ Make release v1 @created(12-06-2022 17:22)
+✔ Make release v1 @created(12-06-2022 17:22) @done(22-07-26 08:51)
 
 ☐ Release v2  @created(12-06-2022 17:22)
     ☐ Features @created(12-06-2022 17:24)
@@ -118,7 +118,7 @@
         ☐ show shield & weapon slots on screen @created(28-05-2022 22:10)
             so player knows about what is available and currently equiped
         ☐ game over menu screen @created(14-05-2022 15:15)
-        ☐ credits section @created(12-06-2022 17:26)
+        ✔ credits section @created(12-06-2022 17:26) @done(22-07-26 08:52)
         ☐ reusable notifications @created(12-06-2022 17:27)
 
     ☐ @SharpRay scale label width automatically to text dimensions @created(12-06-2022 17:28)
