@@ -29,13 +29,13 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: true
       - if: ${{ matrix.outputName }}
-      - run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/${{matrix.outputName}} ${{matrix.versions}}'
-      - run: Get-ChildItem '.\out\${{matrix.outputName} ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace ${{matrix.outputName}}, '${{matrix.outputName}}-${{matrix.versions}}'} 
-      - uses: ncipollo/release-action@v1.10.0
-        with:
-          allowUpdates: true
-          tag: Games
-          artifacts: "out/${{matrix.outputName}} ${{matrix.versions}}/*"
-          commit: "Builds"
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/${{matrix.outputName}} ${{matrix.versions}}'
+        run: Get-ChildItem '.\out\${{matrix.outputName} ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace ${{matrix.outputName}}, '${{matrix.outputName}}-${{matrix.versions}}'} 
+      # - uses: ncipollo/release-action@v1.10.0
+      #   with:
+      #     allowUpdates: true
+      #     tag: Games
+      #     artifacts: "out/${{matrix.outputName}} ${{matrix.versions}}/*"
+      #     commit: "Builds"
+      #     token: ${{ secrets.GITHUB_TOKEN }}
 
