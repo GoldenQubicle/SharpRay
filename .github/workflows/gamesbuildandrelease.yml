@@ -1,0 +1,37 @@
+name: GamesBuildAndRelease
+on:
+  push:
+    branches: [ Builds ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+        matrix:
+          versions: [ win-x64 ] #,'win-x86','win-arm','win-arm64', 'linux-x64', 'linux-musl-x64', 'linux-arm', 'linux-arm64', 'osx-x64']
+          projects: [Asteroids, ShittySnake]
+          include:
+            - outputName: Meteor Mayhem  # assembly name as defined in .csproj
+              projects: Asteroids
+            - outputName: Shitty Snake # assembly name as defined in .csproj
+              projects: ShittySnake
+          
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:        
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+      - run: dotnet publish source/${{matrix.projects}}/${{matrix.projects}}.csproj -p:PublishSingleFile=true -c Release -r ${{matrix.versions}} -o 'out/${{matrix.outputName}} ${{matrix.versions}}'
+      - run: Get-ChildItem '.\out\${{matrix.outputName} ${{matrix.versions}}\' | Rename-Item -NewName { $_.Name -replace ${{matrix.outputName}}, '${{matrix.outputName}}-${{matrix.versions}}'} 
+      - uses: ncipollo/release-action@v1.10.0
+        with:
+          allowUpdates: true
+          tag: Games
+          artifacts: "out/${{matrix.outputName}} ${{matrix.versions}}/*"
+          commit: "Builds"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
