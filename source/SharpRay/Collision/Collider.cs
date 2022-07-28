@@ -40,7 +40,7 @@
         {
             foreach(var hp in cc.GetHitPoints())
                 foreach (var (p1, p2, p3) in rpc.GetTriangles())
-                    if (CheckCollisionPointTriangle(hp, p1, p2, p3))
+                    if (CheckCollisionPointTriangle(hp.v, p1, p2, p3))
                         return true;
 
             return false;
