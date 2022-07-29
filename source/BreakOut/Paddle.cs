@@ -41,13 +41,16 @@
 
         public override void OnMouseEvent(IMouseEvent e)
         {
-
+            if(e is MouseMovement mm)
+            {
+                Position = new Vector2(mm.Position.X, Position.Y);
+            }
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyRightDown && (Position.X + Size.X / 2) < WindowWidth) Position += Speed;
-            if (e is KeyLeftDown && (Position.X - Size.X / 2 > 0)) Position -= Speed;
+            if (e is KeyRightDown && Position.X  < WindowWidth) Position += Speed;
+            if (e is KeyLeftDown && Position.X > 0) Position -= Speed;
         }
 
 
