@@ -16,7 +16,7 @@
 
 
             if (isDragging) 
-                EmitEvent?.Invoke(new MouseMovement { Position = Cursor });
+                EmitEvent?.Invoke(new MouseMovement { Position = Cursor, PreviousPosition = PreviousMousePostion });
 
             //click events - TODO proper click & double click
             if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))

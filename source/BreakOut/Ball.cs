@@ -32,7 +32,7 @@
                 if (isAbove || isBelow) Heading = Vector2.Reflect(Heading, Vector2.UnitY);
                 else Heading = Vector2.Reflect(Heading, Vector2.UnitX);
 
-                // Make sure the ball is no longer colliding next frame'.
+                // Make sure the ball is no longer colliding next frame.
                 // Otherwise the heading is flipped again and the ball will 'stick and wiggle' along the edge of the paddle. 
                 while (p.Collider.Overlaps(Collider))
                 {
@@ -45,8 +45,14 @@
                  *  Otherwise if the paddle direction is the same as the ball heading,
                  *  the ball will be inside of the paddle next frame, flip its heading again and travel outwards all in one frame. 
                  *  Giving the illusion of a teleporting ball going through the paddle. 
-                 *  
                  */
+
+                Print(p.State.IsMoving);
+
+                if (p.State.IsMoving)
+                {
+                    
+                }
             }
         }
 

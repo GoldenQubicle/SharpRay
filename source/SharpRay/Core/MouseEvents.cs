@@ -78,6 +78,7 @@
 
     public class MouseMovement : IMouseEvent
     {
+        public Vector2 PreviousPosition { get; init; }
         public Vector2 Position { get; init; }
         public bool IsHandled { get; set; }
 

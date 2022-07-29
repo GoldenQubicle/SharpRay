@@ -33,6 +33,7 @@ namespace BreakOut
                 WindowWidth = WindowWidth,
                 WindowHeight = WindowHeight,
                 ShowFPS = true,
+                DoEventLogging = true,
             });
 
             AddEntity(new Paddle());
