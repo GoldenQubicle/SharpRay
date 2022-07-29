@@ -47,12 +47,7 @@
                  *  Giving the illusion of a teleporting ball going through the paddle. 
                  */
 
-                Print(p.State.IsMoving);
-
-                if (p.State.IsMoving)
-                {
-                    
-                }
+                
             }
         }
 
