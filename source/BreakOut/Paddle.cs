@@ -5,12 +5,12 @@
         public ICollider Collider { get; set; }
         private float roundness = 0f;
         private float speed = .25f;
-        private float acc;
+        public float Momentum { get; private set; }
 
         public Paddle()
         {
             Position = new Vector2(WindowWidth / 2, WindowHeight / 2);
-            Size = new Vector2(100, 100);
+            Size = new Vector2(100, 20);
             Collider = new RectCollider
             {
                 Position = Position - Size / 2,
@@ -33,15 +33,15 @@
             DrawCircleV(Position, 2, Color.BLACK);
 
             (Collider as RectCollider).Position = Position - Size / 2;
-            Collider.Render();
+            //Collider.Render();
 
         }
         public override void Update(double deltaTime)
         {
-            if (acc > 0 || acc < 0)
+            if (Momentum > 0 || Momentum < 0)
             {
-                Position += new Vector2(acc, 0);
-                acc = 0;
+                Position += new Vector2(Momentum, 0);
+                Momentum = 0;
             }
         }
 
@@ -49,7 +49,7 @@
         {
             if (e is MouseMovement mm)
             {
-                acc += mm.Position.X - mm.PreviousPosition.X;
+                Momentum += mm.Position.X - mm.PreviousPosition.X;
             }
         }
 
@@ -57,12 +57,12 @@
         {
             if (e is KeyRightDown && Position.X < WindowWidth)
             {
-                acc += speed;
+                Momentum += speed;
             }
 
             if (e is KeyLeftDown && Position.X > 0)
             {
-                acc -= speed;
+                Momentum -= speed;
             }
         }
     }

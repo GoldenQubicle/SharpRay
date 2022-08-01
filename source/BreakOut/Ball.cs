@@ -3,8 +3,8 @@
     public class Ball : Entity, IHasRender, IHasUpdate, IHasCollider, IHasCollision
     {
         public ICollider Collider { get; private set; }
-        private Vector2 Heading { get; set; } = new Vector2(4, 4);
-        private const float Radius = 15f;
+        private Vector2 Heading { get; set; } = new Vector2(6, 4);
+        private const float Radius = 8f;
         private bool hasColided;
 
         public Ball()
@@ -20,25 +20,16 @@
 
         public void OnCollision(IHasCollider e)
         {
+            if(e is Brick b)
+            {
+                DoBounce(b);
+
+
+            }
+
             if (e is Paddle p && !hasColided)
             {
-                hasColided = true;
-
-                var isInXRange = Position.X > (p.Position - p.Size / 2).X && Position.X < (p.Position + p.Size / 2).X;
-                var isAbove = isInXRange && Position.Y < p.Position.Y;
-                var isBelow = isInXRange && Position.Y > p.Position.Y;
-
-                Print($"Bal is above : {isAbove} Bal is below : {isBelow}");
-                if (isAbove || isBelow) Heading = Vector2.Reflect(Heading, Vector2.UnitY);
-                else Heading = Vector2.Reflect(Heading, Vector2.UnitX);
-
-                // Make sure the ball is no longer colliding next frame.
-                // Otherwise the heading is flipped again and the ball will 'stick and wiggle' along the edge of the paddle. 
-                while (p.Collider.Overlaps(Collider))
-                {
-                    Position += Heading;
-                    (Collider as CircleCollider).Center = Position;
-                }
+                DoBounce(p);
 
                 /* 
                  *  TODO take the paddle movement into consideration.
@@ -47,14 +38,36 @@
                  *  Giving the illusion of a teleporting ball going through the paddle. 
                  */
 
-                
+            }
+        }
+
+        private void DoBounce(IHasCollider p)
+        {
+            hasColided = true;
+
+            var isInXRange = Position.X > (p.Position - p.Size / 2).X && Position.X < (p.Position + p.Size / 2).X;
+            var isAbove = isInXRange && Position.Y < p.Position.Y;
+            var isBelow = isInXRange && Position.Y > p.Position.Y;
+            var isLeft = Position.X < p.Position.X;
+            var isRight = Position.X > p.Position.X;
+
+            Print($"Bal is above : {isAbove} Bal is below : {isBelow}");
+            if (isAbove || isBelow) Heading = Vector2.Reflect(Heading, Vector2.UnitY);
+            else Heading = Vector2.Reflect(Heading, Vector2.UnitX);
+
+            // Make sure the ball is no longer colliding next frame.
+            // Otherwise the heading is flipped again and the ball will 'stick and wiggle' along the edge of the paddle. 
+            while (p.Collider.Overlaps(Collider))
+            {
+                Position += Heading;
+                (Collider as CircleCollider).Center = Position;
             }
         }
 
         public override void Render()
         {
             DrawCircleV(Position, Radius, Color.RAYWHITE);
-            Collider.Render();
+            //Collider.Render();
         }
 
         public override void Update(double deltaTime)
