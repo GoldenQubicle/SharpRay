@@ -1,4 +1,6 @@
-﻿namespace SnakeEntities
+﻿using SharpRay.Components;
+
+namespace SnakeEntities
 {
     public enum Direction { Up, Right, Down, Left }
 

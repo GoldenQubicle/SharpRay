@@ -45,7 +45,7 @@ namespace SharpRay.Core
         public static void StopAllSounds()
         {
             RepeatedSounds.Keys.ToList().ForEach(key => CancellationSources[key].Cancel());
-            Sounds.Values.Where(IsSoundPlaying).ToList().ForEach(Raylib.StopSound);
+            Sounds.Values.Where(s => IsSoundPlaying(s) == 1 ).ToList().ForEach(Raylib.StopSound);
         }
 
         /// <summary>

@@ -9,7 +9,7 @@
         public Font Font { get; init; } = GetFontDefault();
         public Color TextColor { get; set; } = WHITE;
         public Color FillColor { get; set; } = LIGHTGRAY;
-        public bool DoCenterText { get; set; } 
+        public bool DoCenterText { get; set; }
 
         public Raylib_cs.Rectangle Rectangle
         {
@@ -34,6 +34,7 @@
         {
             var offset = Position - Size / 2;
             DrawRectangleV(offset, Size, FillColor);
+
             if (HasOutlines)
                 DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
 
@@ -43,8 +44,11 @@
                 TextOffSet = (Size - textSize) / 2;
             }
             
-            DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
-            
+            var textPos = new Vector2(Position.X - Size.X / 2 + TextOffSet.X, Position.Y - Size.Y / 2 + TextOffSet.Y);
+            DrawTextEx(Font, Text, textPos, FontSize, Spacing, TextColor);
+            //DrawTextPr(Text, (int)Rectangle.x, (int)Rectangle.y, (int) FontSize, TextColor);
+            //DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+
         }
 
         public override void Update(double deltaTime)

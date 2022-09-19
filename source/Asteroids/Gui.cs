@@ -1,4 +1,6 @@
-﻿namespace Asteroids
+﻿using System.Runtime.InteropServices;
+
+namespace Asteroids
 {
     public static class Gui
     {
@@ -454,7 +456,12 @@
                 {
                     if (e is OpenLink ol)
                     {
-                        OpenURL(ol.URL);
+                        var ptr = Marshal.StringToHGlobalAnsi(ol.URL);
+                        unsafe
+                        {
+                            OpenURL((sbyte*)ptr);
+                        }
+                        
                     }
                 });
 

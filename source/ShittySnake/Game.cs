@@ -18,7 +18,6 @@ global using SharpRay.Interfaces;
 global using SharpRay.Listeners;
 global using System.Collections.Generic;
 
-
 namespace ShittySnake
 {
     public static class Game

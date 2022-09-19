@@ -65,6 +65,8 @@ namespace Asteroids
                 HitPoints = 16
             };
 
+            
+
             Motions = new Dictionary<string, Easing>
             {
                 { Accelerate, new Easing(Easings.EaseQuadOut, accelerateTime) },

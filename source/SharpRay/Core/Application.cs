@@ -165,8 +165,12 @@ namespace SharpRay.Core
         /// </summary>
         /// <param name="key"></param>
         /// <param name="fontFileName"></param>
-        public static void AddFont(string key, string fontFileName) =>
-            Fonts.Add(key, LoadFont(Path.Combine(AssestsFolder, fontFileName)));
+        public static void AddFont(string key, string fontFileName)
+        {
+            var font = LoadFont(Path.Combine(AssestsFolder, fontFileName));
+            Fonts.Add(key, font);
+        }
+
 
 
 

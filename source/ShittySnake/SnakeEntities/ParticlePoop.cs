@@ -1,4 +1,6 @@
-﻿namespace SnakeEntities
+﻿using SharpRay.Components;
+
+namespace SnakeEntities
 {
     public class ParticlePoop : Entity, IHasUpdate, IHasRender, IHasCollider, IEventEmitter<IGameEvent>
     {
