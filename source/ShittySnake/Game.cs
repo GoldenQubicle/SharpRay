@@ -107,6 +107,7 @@ namespace ShittySnake
                     TextColor = GOLD,
                     FontSize = 110f,
                     Text = "Shitty Snake",
+                    WordWrap = true
                 },
                 new Button
                 {

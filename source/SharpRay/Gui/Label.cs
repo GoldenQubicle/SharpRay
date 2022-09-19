@@ -43,9 +43,26 @@
                 var textSize = MeasureTextEx(Font, Text, FontSize, Spacing);
                 TextOffSet = (Size - textSize) / 2;
             }
-            
+
             var textPos = new Vector2(Position.X - Size.X / 2 + TextOffSet.X, Position.Y - Size.Y / 2 + TextOffSet.Y);
+
+            if (WordWrap)
+            {
+                var fitted = Text;
+                var remaining = new List<char>();
+                var size = MeasureTextEx(Font, fitted, FontSize, Spacing);
+                while (size.X > Rectangle.width)
+                {
+                    remaining.Add(fitted.TakeLast(1).First());
+                    fitted = fitted[0..(fitted.Length-1)];
+                    size = MeasureTextEx(Font, fitted, FontSize, Spacing);
+                }
+                remaining.Reverse();
+                var toBeFitted = new string(remaining.ToArray());
+            }
+
             DrawTextEx(Font, Text, textPos, FontSize, Spacing, TextColor);
+
             //DrawTextPr(Text, (int)Rectangle.x, (int)Rectangle.y, (int) FontSize, TextColor);
             //DrawTextRec(Font, Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
 
