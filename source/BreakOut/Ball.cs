@@ -2,13 +2,21 @@
 {
     public class Ball : Entity, IHasRender, IHasUpdate, IHasCollider, IHasCollision
     {
+        public enum Type
+        {
+            Simple
+        }
+        public Type BallType { get; }
+
         public ICollider Collider { get; private set; }
         private Vector2 Heading { get; set; } = new Vector2(6, 4);
         private const float Radius = 8f;
         private bool hasColided;
 
+
         public Ball()
         {
+            BallType = Type.Simple;
             Position = new Vector2(20, 20);
             Collider = new CircleCollider
             {
@@ -23,8 +31,7 @@
             if(e is Brick b)
             {
                 DoBounce(b);
-
-
+                b.OnBounce(this);
             }
 
             if (e is Paddle p && !hasColided)
@@ -84,5 +91,11 @@
 
             if (hasColided) hasColided = false;
         }
+
+        public int GetHitPoints() => BallType switch
+        {
+            Type.Simple => 1,
+            _ => -1
+        };
     }
 }
