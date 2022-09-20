@@ -1,11 +1,12 @@
-﻿using SharpRay.Core;
-using SharpRay.Gui;
-using static SharpRay.Core.Application;
-using static Raylib_cs.Raylib;
-using Raylib_cs;
-using SharpRay.Eventing;
-using System.Numerics;
-using System;
+﻿global using SharpRay.Core;
+global using SharpRay.Gui;
+global using static SharpRay.Core.Application;
+global using static Raylib_cs.Raylib;
+global using Raylib_cs;
+global using SharpRay.Eventing;
+global using System.Numerics;
+global using SharpRay.Entities;
+global using System.Collections.Generic;
 
 namespace ProtoCity
 {

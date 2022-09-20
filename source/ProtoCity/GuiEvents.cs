@@ -1,7 +1,4 @@
-﻿using SharpRay.Eventing;
-using SharpRay.Entities;
-
-namespace ProtoCity
+﻿namespace ProtoCity
 {
     public class TransitToolToggle : IGuiEvent
     {

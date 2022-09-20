@@ -1,15 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Core;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using System.Collections.Generic;
-using System.Numerics;
-using static SharpRay.Core.Application;
-using static Raylib_cs.Raylib;
-using System;
-using System.Diagnostics;
-
-namespace ProtoCity
+﻿namespace ProtoCity
 {
     public class GridHandler : Entity
     {
@@ -64,7 +53,8 @@ namespace ProtoCity
 
         internal void Clear() => GridCells.Clear();
 
-        internal static GridCell GetSelected() => new(SelectedCellIndex, SelectedCellOccupant, SelectedCellCenter);
+        internal static GridCell GetSelected() => 
+            new(SelectedCellIndex, SelectedCellOccupant, SelectedCellCenter);
 
         internal static Vector2 GetSelectedCenter() => SelectedCellCenter;
 

@@ -1,13 +1,4 @@
-﻿using SharpRay.Entities;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using Raylib_cs;
-using static SharpRay.Core.Application;
-using SharpRay.Gui;
-using SharpRay.Eventing;
-using SharpRay.Core;
-
-namespace ProtoCity
+﻿namespace ProtoCity
 {
     public class Edge : Entity
     {

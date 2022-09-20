@@ -1,13 +1,4 @@
-﻿using Raylib_cs;
-using SharpRay.Core;
-using SharpRay.Entities;
-using SharpRay.Eventing;
-using System;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-using static SharpRay.Core.Application;
-
-namespace ProtoCity
+﻿namespace ProtoCity
 {
     public class BrushTool : GuiEntity
     {
