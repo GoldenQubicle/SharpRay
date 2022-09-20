@@ -30,7 +30,8 @@ namespace TextureTool
         {
             if (ke is KeyPressed kp && kp.KeyboardKey is KeyboardKey.KEY_S)
             {
-                var image = GetScreenData();
+                
+                var image = LoadImageFromScreen();
                 //ImageAlphaClear(ref image, Color.WHITE, .5f);
                 ExportImage(image, $"{ExportFolder}\\star_extra_small.png");
             }

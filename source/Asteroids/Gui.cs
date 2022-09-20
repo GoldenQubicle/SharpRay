@@ -64,7 +64,6 @@ namespace Asteroids
             Size = new(0, 25),
             Text = description,
             TextColor = Color.RAYWHITE,
-            WordWrap = false,
             HasOutlines = false,
             TextOffSet = new(3, 5),
             FillColor = Color.BLANK,

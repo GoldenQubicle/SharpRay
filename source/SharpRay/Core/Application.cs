@@ -159,21 +159,13 @@ namespace SharpRay.Core
         /// <returns><see cref="Font"/></returns>
         public static Font GetFont(string key) => Fonts[key];
 
-
         /// <summary>
         /// Loads a <see cref="Font"/> from file, and adds it the Fonts dictionary with the given key. 
         /// </summary>
         /// <param name="key"></param>
         /// <param name="fontFileName"></param>
-        public static void AddFont(string key, string fontFileName)
-        {
-            var font = LoadFont(Path.Combine(AssestsFolder, fontFileName));
-            Fonts.Add(key, font);
-        }
-
-
-
-
+        public static void AddFont(string key, string fontFileName) =>
+            Fonts.Add(key, LoadFont(Path.Combine(AssestsFolder, fontFileName)));
 
         /// <summary>
         /// Retrieves a <see cref="Texture2D"/> from the Textures dictionary. Will throw an exception if the given key is not present.
@@ -182,21 +174,21 @@ namespace SharpRay.Core
         /// <returns><see cref="Texture2D"/></returns>
         public static Texture2D GetTexture2D(string key) => Textures[key];
 
-
         /// <summary>
         /// Loads a <see cref="Texture2D"/> from file, and adds it to the Textures dictionary with the given key.
         /// </summary>
         /// <param name="key">The key used in texture dictionary</param>
         /// <param name="filePath">relative to asset folder</param>
-        public static void AddTexture2D(string key, string filePath) => Textures.Add(key, LoadTexture(Path.Combine(AssestsFolder, filePath)));
-
+        public static void AddTexture2D(string key, string filePath) =>
+            Textures.Add(key, LoadTexture(Path.Combine(AssestsFolder, filePath)));
 
         /// <summary>
         /// Gets the first <typeparamref name="TEntity"/> from the Entity list.
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <returns></returns>
-        public static TEntity GetEntity<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>().FirstOrDefault();
+        public static TEntity GetEntity<TEntity>() where TEntity : Entity =>
+            Entities.OfType<TEntity>().FirstOrDefault();
 
         /// <summary>
         /// Gets an entity by tag, assumes every entity has an unique tag!
@@ -207,14 +199,13 @@ namespace SharpRay.Core
         public static TEntity GetEntityByTag<TEntity>(string tag) where TEntity : Entity =>
             Entities.OfType<TEntity>().FirstOrDefault(e => e.Tag.Equals(tag));
 
-
         /// <summary>
         /// Gets all <typeparamref name="TEntity"/> from the Entity list. 
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <returns></returns>
-        public static IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : Entity => Entities.OfType<TEntity>();
-
+        public static IEnumerable<TEntity> GetEntities<TEntity>() where TEntity : Entity =>
+            Entities.OfType<TEntity>();
 
         /// <summary>
         /// Removes all <typeparamref name="TEntity"/> from the Entity list, and unsubscribes them from events. 
@@ -224,7 +215,6 @@ namespace SharpRay.Core
         {
             foreach (var e in Entities.OfType<TEntity>()) RemoveEntity(e);
         }
-
 
         /// <summary>
         /// Remove the given Enity from the Enity list,and unsubscribe from events. 
@@ -243,43 +233,41 @@ namespace SharpRay.Core
             });
         }
 
-
         /// <summary>
         /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
         /// </summary>
         /// <param name="e"></param>
         public static void AddEntity(Entity e) => AddEntity(e, null, null);
 
-
         /// <summary>
         /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
         /// </summary>
         /// <param name="e"></param>
         /// <param name="onGuiEvent">The method to call when the entity emits an IGuiEvent</param>
-        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) => AddEntity(e, new[] { Audio.OnGuiEvent, onGuiEvent }, null);
-
+        public static void AddEntity(Entity e, Action<IGuiEvent> onGuiEvent) =>
+            AddEntity(e, new[] { Audio.OnGuiEvent, onGuiEvent }, null);
 
         /// <summary>
         /// /// Add an Entity to the Entity list. Binds it to KeyBoard and Mouse events by default. 
         /// </summary>
         /// <param name="e"></param>
         /// <param name="onGameEvent">The method to call when the entity emits an IGameEvent</param>
-        public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) => AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
-
+        public static void AddEntity(Entity e, Action<IGameEvent> onGameEvent) =>
+            AddEntity(e, null, new[] { Audio.OnGameEvent, onGameEvent });
 
         /// <summary>
         /// Binds KeyBoard events to the given method. Note GameEntities receive KeyBoard events by default. 
         /// </summary>
         /// <param name="action">The method to call when an KeyBoard event is emitted</param>
-        public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) => SetEmitEventActions(KeyBoard, action);
-
+        public static void SetKeyBoardEventAction(Action<IKeyBoardEvent> action) =>
+            SetEmitEventActions(KeyBoard, action);
 
         /// <summary>
         /// Binds Mouse events to the given method. Note GameEntities receive Mouse events by default. 
         /// </summary>
         /// <param name="action">The method to call when a Mouse event is emitted</param>
-        public static void SetMouseEventAction(Action<IMouseEvent> action) => SetEmitEventActions(Mouse, action);
-
+        public static void SetMouseEventAction(Action<IMouseEvent> action) =>
+            SetEmitEventActions(Mouse, action);
 
         /// <summary>
         /// Maps a given source value to a target range value.
@@ -292,7 +280,6 @@ namespace SharpRay.Core
         /// <returns></returns>
         public static double MapRange(double source, double sourceMin, double sourceMax, double targetMin, double targetMax) =>
             targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
-
 
         /// <summary>
         /// Maps a given source value to a target range value.
@@ -312,8 +299,6 @@ namespace SharpRay.Core
             DrawCircleLines((int)position.X, (int)position.Y, radius, color);
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
-
-
 
         #endregion
 

@@ -55,7 +55,7 @@ namespace ShittySnake
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
                     FontSize = 90f,
-                    Text = "Game Over",
+                    Text = "Game O\nver",
                 },
                 new Label
                 {
@@ -70,12 +70,12 @@ namespace ShittySnake
                 {
                     Position = new Vector2(80, 0),
                     Size = new Vector2(80, 100),
-                    TextOffSet = new Vector2(10, 3),
+                    TextOffSet = new Vector2(5, 3),
                     BaseColor = DARKBLUE,
                     FocusColor = BLUE,
                     TextColor = ORANGE,
                     OnMouseLeftClick = e => new SnakeGameStart { GuiEntity = e },
-                    Text = "AGAIN!",
+                    Text = "AGA\nIN!",
                     FontSize = 37,
                 })
             .Translate(new Vector2(WindowWidth / 2 , WindowHeight /2))
@@ -106,8 +106,7 @@ namespace ShittySnake
                     FillColor = DARKBROWN,
                     TextColor = GOLD,
                     FontSize = 110f,
-                    Text = "Shitty Snake",
-                    WordWrap = true
+                    Text = "Shitty\n Snak\ne",
                 },
                 new Button
                 {

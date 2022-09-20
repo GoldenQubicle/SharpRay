@@ -1,5 +1,6 @@
 ﻿namespace SharpRay.Components
 {
+    //Copied from Raylib-cs Nuget 3.7
     public static class Easings
     {
         public static float EaseLinearNone(float t, float b, float c, float d)
