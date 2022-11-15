@@ -1,0 +1,15 @@
+☐ groundKeeper @created(15-11-2022 18:39)
+    - draws the current hand and all the plants at defined slot positions?
+    ☐ keep track of turn number @created(15-11-2022 18:41)
+    ✔ onTurnStart @created(15-11-2022 18:39) @done(15-11-2022 19:17)
+        - generate card hand with N cards
+    ☐ onTurnEnd @created(15-11-2022 18:39)
+        - generate environment data, based on turn number
+        - call plants with selected card(s) & environment data
+        - generate adversities 
+        - call plants with adversities
+    
+
+
+
+

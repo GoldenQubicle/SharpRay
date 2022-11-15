@@ -4,24 +4,31 @@ namespace GardenOfCards
 {
     internal class Card : DragEditShape
     {
-        private Rectangle _rectangle;
+        internal const int Width = 128;
+        internal const int Height = 192;
+
+        public Rectangle Rectangle { get; private set; }
+
+        public Card(Vector2 position)
+        {
+            Size = new(Width, Height);
+            Position = position;
+            Rectangle = new(Position.X, Position.Y, Size.X, Size.Y);
+        }
+
+        public override bool ContainsPoint(Vector2 point) => CheckCollisionPointRec(point, Rectangle);
 
 
-        public override bool ContainsPoint(Vector2 point) => CheckCollisionPointRec(point, _rectangle);
-        
 
         public override void Update(double deltaTime)
         {
-            _rectangle = new Rectangle(Position.X, Position.Y, Size.X, Size.Y);
+            Rectangle = new(Position.X, Position.Y, Size.X, Size.Y);
         }
 
         public override void Render()
         {
             base.Render();
-            DrawRectangleRounded(_rectangle, .25f, 8, ColorRender);
+            DrawRectangleRounded(Rectangle, .25f, 8, ColorRender);
         }
-
-
-
     }
 }

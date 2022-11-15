@@ -5,9 +5,10 @@
         internal const int WindowWidth = 1080;
         internal const int WindowHeight = 720;
 
+
         static async Task Main(string[] args)
         {
-            Initialize(new SharpRayConfig
+            Initialize(new()
             {
                 WindowWidth = WindowWidth,
                 WindowHeight = WindowHeight,
@@ -16,16 +17,9 @@
                 DoEventLogging = false
             });
 
-            AddEntity(new Card
-            {
-                Size = new (128, 256),
-                Position = new (WindowWidth/2, WindowHeight/2),
-                Scale = 1,
-                CanScale = false,
-                ColorDefault = Color.WHITE,
-                ColorFocused = Color.RED,
-                
-            });
+            var gk = new GroundKeeper();
+            gk.OnTurnStart();
+            AddEntity(gk);
 
             Run();
         }
