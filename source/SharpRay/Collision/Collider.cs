@@ -1,29 +1,23 @@
-﻿using Raylib_cs;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-
-namespace SharpRay.Collision
+﻿namespace SharpRay.Collision
 {
-    public abstract class Collider
+    public abstract class Collider : ICollider, IHasRender
     {
         protected static Color Color => Color.BLUE;
-        public abstract void Render();
-
         public bool ContainsPoint(Vector2 point) => this switch
         {
             CircleCollider cc => CheckCollisionPointCircle(point, cc.Center, cc.Radius),
-            RectCollider rc => CheckCollisionPointRec(point, rc.Collider),
+            RectCollider rc => CheckCollisionPointRec(point, rc.Rect),
             RectProCollider rpc => false,
             _ => false
         };
 
-        public bool Overlaps(Collider collider) => (this, collider) switch
+        public bool Overlaps(ICollider collider) => (this, collider) switch
         {
             (CircleCollider cc, CircleCollider cco) => CheckCollisionCircles(cc.Center, cc.Radius, cco.Center, cco.Radius),
-            (CircleCollider cc, RectCollider rc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Collider),
+            (CircleCollider cc, RectCollider rc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Rect),
             (CircleCollider cc, RectProCollider rpc) => CheckCollisionRectProCircle(rpc, cc),
-            (RectCollider rc, RectCollider rco) => CheckCollisionRecs(rc.Collider, rco.Collider),
-            (RectCollider rc, CircleCollider cc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Collider),
+            (RectCollider rc, RectCollider rco) => CheckCollisionRecs(rc.Rect, rco.Rect),
+            (RectCollider rc, CircleCollider cc) => CheckCollisionCircleRec(cc.Center, cc.Radius, rc.Rect),
             (RectCollider rc, RectProCollider rpc) => false,
             (RectProCollider rpc, RectProCollider rpco) => CheckCollisionRectProColliders(rpc, rpco),
             (RectProCollider rpc, CircleCollider cc) => CheckCollisionRectProCircle(rpc, cc),
@@ -51,5 +45,9 @@ namespace SharpRay.Collision
 
             return false;
         }
+
+        public int RenderLayer { get; set; }
+
+        public abstract void Render();
     }
 }

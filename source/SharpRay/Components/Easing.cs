@@ -1,5 +1,4 @@
 ﻿using static SharpRay.Core.Application;
-using System;
 
 namespace SharpRay.Components
 {
@@ -7,14 +6,16 @@ namespace SharpRay.Components
     {
         private readonly Func<float, float, float, float, float> EasingFunction;
         private readonly double IntervalTime;
-        private readonly bool IsReversed;
+        private bool IsReversed;
+        private readonly bool IsRepeated;
         private double ElapsedTime;
 
-        public Easing(Func<float, float, float, float, float> easingFunction, double intervalTime, bool isReversed = false)
+        public Easing(Func<float, float, float, float, float> easingFunction, double intervalTime, bool isReversed = false, bool isRepeated = false)
         {
             EasingFunction = easingFunction;
-            IntervalTime = intervalTime;
+            IntervalTime = intervalTime * TickMultiplier;
             IsReversed = isReversed;
+            IsRepeated = isRepeated;
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace SharpRay.Components
         /// <summary>
         /// Get normalized value 0-1 based on the elapsed time
         /// </summary>
-        /// </param>
+        /// <param></param>
         /// <returns>float</returns>
         public float GetValue()
         {
@@ -39,6 +40,16 @@ namespace SharpRay.Components
             return IsReversed ? 1 - e : e;
         }
 
-        public override void Update(double deltaTime) => ElapsedTime += deltaTime;
+        public override void Update(double deltaTime)
+        {
+            ElapsedTime += deltaTime;
+
+            if (IsRepeated)
+                if (ElapsedTime > IntervalTime)
+                {
+                    ElapsedTime = 0;
+                    IsReversed = !IsReversed;
+                }
+        }
     }
 }

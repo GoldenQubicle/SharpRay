@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace SharpRay.Eventing
+﻿namespace SharpRay.Eventing
 {
-    public interface IEventEmitter<TEvent> where TEvent : IEvent { Action<TEvent> EmitEvent { get; set; } }
-
+    public interface IEventEmitter<TEvent> where TEvent : IEvent
+    {
+        Action<TEvent> EmitEvent { get; set; }
+    }
 }

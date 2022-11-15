@@ -1,6 +1,4 @@
-﻿using SharpRay.Eventing;
-
-namespace SharpRay.Listeners
+﻿namespace SharpRay.Listeners
 {
     public interface IKeyBoardListener
     {

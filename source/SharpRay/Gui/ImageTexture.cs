@@ -1,14 +1,10 @@
-﻿using Raylib_cs;
-using static Raylib_cs.Raylib;
-using SharpRay.Entities;
-
-namespace SharpRay.Gui
+﻿namespace SharpRay.Gui
 {
     public sealed class ImageTexture : GuiEntity
     {
-        public Texture2D Texture2D { get; private set; }
-        public Color Color { get; init; }
-
+        public Texture2D Texture2D { get; set; }
+        public Color Color { get; set; }
+        public bool HasOutline { get; set; }
         public ImageTexture(Image image, Color color)
         {
             Color = color;
@@ -16,8 +12,16 @@ namespace SharpRay.Gui
             UnloadImage(image);
         }
 
+        public ImageTexture(Texture2D texture, Color color)
+        {
+            Color = color;
+            Texture2D = texture;
+        }
+
         public override void Render()
         {
+            if(HasOutline)
+                DrawRectangleLines((int)Position.X, (int)Position.Y, Texture2D.width, Texture2D.height, Color);
             DrawTexture(Texture2D, (int)Position.X, (int)Position.Y, Color);
         }
     }

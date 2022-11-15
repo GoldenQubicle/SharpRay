@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-using static Raylib_cs.Raylib;
-
-namespace SharpRay.Collision
+﻿namespace SharpRay.Collision
 {
     public class RectProCollider : Collider
     {

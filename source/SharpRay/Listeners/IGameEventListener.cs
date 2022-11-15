@@ -1,8 +1,4 @@
-﻿using SharpRay.Entities;
-using SharpRay.Eventing;
-using System;
-
-namespace SharpRay.Listeners
+﻿namespace SharpRay.Listeners
 {
     public interface IGameEventListener<TEntity> where TEntity : Entity
     {

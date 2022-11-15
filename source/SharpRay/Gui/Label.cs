@@ -1,37 +1,56 @@
-﻿using Raylib_cs;
-using static Raylib_cs.Raylib;
-using SharpRay.Entities;
-using System.Numerics;
-
-namespace SharpRay.Gui
+﻿namespace SharpRay.Gui
 {
+    /// <summary>
+    /// A simple text label. Postion is the center from which the label is drawn. 
+    /// </summary>
     public class Label : GuiEntity
     {
-        public Label() { }
         public string Text { get; set; }
-        public Font Font { get; init; }
-        public Color TextColor { get; init; }
-        public Color FillColor { get; set; }
+        public Font Font { get; init; } = GetFontDefault();
+        public Color TextColor { get; set; } = WHITE;
+        public Color FillColor { get; set; } = LIGHTGRAY;
+        public bool DoCenterText { get; set; }
+
         public Raylib_cs.Rectangle Rectangle
         {
             get => new Raylib_cs.Rectangle
             {
-                x = Position.X + Margins.X,
-                y = Position.Y + Margins.Y,
-                width = Size.X - Margins.X,
-                height = Size.Y - Margins.Y
+                x = Position.X - Size.X / 2 + TextOffSet.X,
+                y = Position.Y - Size.Y / 2 + TextOffSet.Y,
+                width = Size.X - TextOffSet.X,
+                height = Size.Y - TextOffSet.Y
             };
         }
         public float FontSize { get; init; } = 15f;
         public float Spacing { get; init; } = 1f;
-        public bool WordWrap { get; init; } = false;
-        public Vector2 Margins { get; init; }
+        public Vector2 TextOffSet { get; set; }
+        public bool HasOutlines { get; init; } = true;
+        public Action<Label> UpdateAction { get; init; }
+        public double TriggerTime { get; init; }
+        public double ELapsedTime { get; private set; }
 
         public override void Render()
         {
-            DrawRectangleV(Position, Size, FillColor);
-            DrawRectangleLines((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y, TextColor);
-            DrawTextRec(GetFontDefault(), Text, Rectangle, FontSize, Spacing, WordWrap, TextColor);
+            var offset = Position - Size / 2;
+            DrawRectangleV(offset, Size, FillColor);
+
+            if (HasOutlines)
+                DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
+
+            if (DoCenterText)
+            {
+                var textSize = MeasureTextEx(Font, Text, FontSize, Spacing);
+                TextOffSet = (Size - textSize) / 2;
+            }
+
+            var textPos = new Vector2(Position.X - Size.X / 2 + TextOffSet.X, Position.Y - Size.Y / 2 + TextOffSet.Y);
+            DrawTextEx(Font, Text, textPos, FontSize, Spacing, TextColor);
+        }
+
+        public override void Update(double deltaTime)
+        {
+            ELapsedTime += deltaTime;
+            UpdateAction?.Invoke(this);
         }
     }
 }

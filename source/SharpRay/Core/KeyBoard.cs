@@ -1,9 +1,4 @@
-﻿using Raylib_cs;
-using System;
-using SharpRay.Eventing;
-using static Raylib_cs.Raylib;
-
-namespace SharpRay.Core
+﻿namespace SharpRay.Core
 {
     internal class KeyBoard : IEventEmitter<IKeyBoardEvent>
     {
