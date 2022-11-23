@@ -7,8 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+<ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\SharpRay\SharpRay.csproj" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <Content Include="assets\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="false" /> 
   </ItemGroup>
+
 
 </Project>

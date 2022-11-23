@@ -1,20 +1,35 @@
 ﻿namespace GardenOfCards
 {
-    internal class Plant : Entity, IHasRender, IHasUpdate, IHasCollider, IHasCollision
+    internal class Plant : Entity, IHasRender, IHasUpdate, IHasCollision
     {
-        public ICollider Collider { get; }
-        public Plant()
+        private int total = 1;
+        private Texture2D texture;
+        public Plant(Vector2 position)
         {
-            Collider = new RectCollider
+            Position = position;
+            texture = GetTexture2D("PlantPot");
+
+            for (var i = 0; i < total; i++)
             {
-                Position = new(Card.Margin, Card.Margin), 
-                Size = new(Card.Width, Card.Height)
-            };
+                var pos = Game.GetCardPosition(i, total) + new Vector2(28, 0); // + new Vector2(texture.width*.2f, texture.height*.35f);
+                var cardSlot = new CardSlot(pos);
+                AddEntity(cardSlot);
+            }
+
+            RenderLayer = 0;
         }
 
         public override void Render()
         {
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .25f, 8, 2f, Color.DARKBROWN);
+            //DrawTextureV(texture, Position, Color.WHITE);
+
+            var w = Card.Width * 1.63f;
+            var h = Card.Height * 1.1f;
+            var s = 22;
+            DrawLineEx(Vector2.Zero, new (s, h), 5f, Color.BROWN);
+            
+            DrawLineEx(new(w, 0 ), new (w - s, h), 5f, Color.BROWN);
+            DrawLineEx(new(s, h), new(w - s, h), 5f, Color.BROWN);
         }
 
         public override void Update(double deltaTime)

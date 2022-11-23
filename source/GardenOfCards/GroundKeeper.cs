@@ -4,24 +4,22 @@
     {
         public static void OnTurnStart(TurnData turnData)
         {
+            var offset = (Game.WindowWidth - Game.GetWidthForNCards(turnData.HandSize)) / 2;
+
             for (var i = 0; i < turnData.HandSize; i++)
             {
-                var card = new Card(GetCardPosition(i, turnData.HandSize));
+                var pos = Game.GetCardPosition(i, turnData.HandSize) + new Vector2((int)offset, Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth);
+                var card = new Card(pos);
                 var cardSlot = new CardSlot(card);
                 var cardSlotEmpty = new CardSlot(cardSlot.Position + new Vector2(0, -256));
                 AddEntity(card);
                 AddEntity(cardSlot);
-                AddEntity(cardSlotEmpty);
+                //AddEntity(cardSlotEmpty);
             }
 
         }
 
-        private static Vector2 GetCardPosition(int idx, int handSize)
-        {
-            var totalWidth = handSize * Card.Width + handSize * Card.Margin + Card.Margin;
-            var relativeXPos = idx * Card.Width + idx * Card.Margin + Card.Margin;
-            return new(relativeXPos + (Game.WindowWidth - totalWidth) /2, Game.WindowHeight / 2);
-        }
+
 
         public static void OnTurnEnd()
         {

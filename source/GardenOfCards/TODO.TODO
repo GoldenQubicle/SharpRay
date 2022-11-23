@@ -12,10 +12,10 @@
 ✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
     can be either the hand slot, or the plant slot in case it hoovers over AND is unoccupied
 ✔ stop multiple cards from receiving mouse focus @created(23-11-2022 15:00) @done(23-11-2022 15:42)
-☐ place card in plant slot @created(23-11-2022 15:42)
+✔ place card in plant slot @created(23-11-2022 15:42) @done(23-11-2022 17:15)
     ✔ create plant slot @created(23-11-2022 15:43) @done(23-11-2022 15:56)
-    ☐ detect overlap @created(23-11-2022 15:43)
-    ☐ ease card to other slot @created(23-11-2022 15:43)
+    ✔ detect overlap @created(23-11-2022 15:43) @done(23-11-2022 17:15)
+    ✔ ease card to other slot @created(23-11-2022 15:43) @done(23-11-2022 17:15)
 
     ok so little more involved than I anticipated because obviously a plant can and will have 
     multiple card slots. It's probably a good idea to treat a card slot as a collidable entity, 
@@ -24,5 +24,6 @@
     This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
 
 
-
+☐ create actual plant entity @created(23-11-2022 17:15)
+    should have multiple card slots from the get go
 

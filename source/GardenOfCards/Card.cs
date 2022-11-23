@@ -2,15 +2,17 @@
 {
     internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
-        internal const int Width = 128;
-        internal const int Height = 192;
-        internal const int Margin = 27;
+        internal const int Width = 96;
+        internal const int Height = 144;
+        internal const int Margin = 30;
+        internal const float Roundness = .25f;
         public ICollider Collider { get; }
         public Vector2 EasingTarget { get; set; }
+        private float _easingDistance = int.MaxValue;
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
 
-        private readonly Easing _easing = new(Easings.EaseCubicInOut, 350);
+        private readonly Easing _easing = new(Easings.EaseCubicInOut, 200);
 
         public Card(Vector2 position)
         {
@@ -23,13 +25,13 @@
             ColorDefault = Color.WHITE;
             ColorFocused = Color.RED;
 
-            RenderLayer = 1;
+            RenderLayer = 2;
         }
 
         public override void Render()
         {
             base.Render();
-            DrawRectangleRounded((Collider as RectCollider).Rect, .25f, 8, ColorRender);
+            DrawRectangleRounded((Collider as RectCollider).Rect, Roundness, 8, ColorRender);
 
             //Collider.Render();
         }
@@ -79,6 +81,7 @@
             {
                 EasingTarget = cs.Position;
                 cs.SetCurrentCard(this);
+                cs.IsTargeted = true;
             }
         }
     }
