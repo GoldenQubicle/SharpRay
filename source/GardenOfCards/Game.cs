@@ -17,9 +17,8 @@
                 DoEventLogging = false
             });
 
-            var gk = new GroundKeeper();
-            gk.OnTurnStart();
-            AddEntity(gk);
+            //AddEntity(new Plant());
+            GroundKeeper.OnTurnStart(new(4));
 
             Run();
         }

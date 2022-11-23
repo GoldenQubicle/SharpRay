@@ -1,15 +1,12 @@
-﻿using Rectangle = Raylib_cs.Rectangle;
-
-namespace GardenOfCards
+﻿namespace GardenOfCards
 {
-    internal class Card : DragEditShape
+    internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
         internal const int Width = 128;
         internal const int Height = 192;
-
-        public Rectangle Rectangle { get; private set; }
-        private Rectangle RectangleSlot { get; set; }
-
+        internal const int Margin = 27;
+        public ICollider Collider { get; }
+        public Vector2 EasingTarget { get; set; }
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
 
@@ -19,21 +16,27 @@ namespace GardenOfCards
         {
             Size = new(Width, Height);
             Position = position;
-            Rectangle = new(Position.X, Position.Y, Size.X, Size.Y);
-            RectangleSlot = new(Position.X, Position.Y, Size.X, Size.Y);
+            EasingTarget = Position;
+
+            Collider = new RectCollider { Position = Position, Size = Size };
+
+            ColorDefault = Color.WHITE;
+            ColorFocused = Color.RED;
+
+            RenderLayer = 1;
         }
 
         public override void Render()
         {
             base.Render();
-            DrawRectangleRounded(Rectangle, .25f, 8, ColorRender);
-            DrawRectangleRoundedLines(RectangleSlot, .25f, 8, 2f, Color.DARKBROWN);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .25f, 8, ColorRender);
+
+            //Collider.Render();
         }
 
         public override void Update(double deltaTime)
         {
-            Rectangle = new(Position.X, Position.Y, Size.X, Size.Y);
-
+            (Collider as RectCollider).Position = Position;
             DoEasing(deltaTime);
         }
 
@@ -49,7 +52,7 @@ namespace GardenOfCards
         private void StartEasing()
         {
             _easing.Reset();
-            _easingData = (new(Position.X, Position.Y), new(RectangleSlot.x, RectangleSlot.y));
+            _easingData = (new(Position.X, Position.Y), EasingTarget);
             _doEasing = true;
             HasMouseFocus = false;
         }
@@ -64,10 +67,19 @@ namespace GardenOfCards
             if (_easing.IsDone())
             {
                 _doEasing = false;
-                Position = new(RectangleSlot.x, RectangleSlot.y);
+                Position = _easingData.end;
             }
         }
 
-        public override bool ContainsPoint(Vector2 point) => CheckCollisionPointRec(point, Rectangle);
+        public override bool ContainsPoint(Vector2 point) => Collider.ContainsPoint(point);
+
+        public void OnCollision(IHasCollider e)
+        {
+            if (e is CardSlot { IsOccupied: false } cs)
+            {
+                EasingTarget = cs.Position;
+                cs.SetCurrentCard(this);
+            }
+        }
     }
 }

@@ -9,6 +9,19 @@
         - generate adversities 
         - call plants with adversities
     
+✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
+    can be either the hand slot, or the plant slot in case it hoovers over AND is unoccupied
+✔ stop multiple cards from receiving mouse focus @created(23-11-2022 15:00) @done(23-11-2022 15:42)
+☐ place card in plant slot @created(23-11-2022 15:42)
+    ✔ create plant slot @created(23-11-2022 15:43) @done(23-11-2022 15:56)
+    ☐ detect overlap @created(23-11-2022 15:43)
+    ☐ ease card to other slot @created(23-11-2022 15:43)
+
+    ok so little more involved than I anticipated because obviously a plant can and will have 
+    multiple card slots. It's probably a good idea to treat a card slot as a collidable entity, 
+    which will need to be tagged in order to find out which plant they belong to. However, 
+    that way I can reuse the SharpRay collisions, with the cards being the actual colliding things.
+    This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
 
 
 

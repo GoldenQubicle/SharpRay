@@ -1,51 +1,31 @@
-﻿using Rectangle = Raylib_cs.Rectangle;
-
-namespace GardenOfCards
+﻿namespace GardenOfCards
 {
-    internal class GroundKeeper : Entity, IHasRender 
+    internal static class GroundKeeper
     {
-        public int HandSize { get; set; } = 4;
-
-        private const int CardMargin = 15;
-
-        private List<Card> _currentHand = new();
-        private List<Plant> _plants = new();
-
-        public void OnTurnStart()
+        public static void OnTurnStart(TurnData turnData)
         {
-            _currentHand = Enumerable.Range(0, HandSize)
-                .Select(n => new Card(GetCardPosition(n))
-                {
-                    ColorDefault = Color.WHITE,
-                    ColorFocused = Color.RED,
-                })
-                .ToList();
+            for (var i = 0; i < turnData.HandSize; i++)
+            {
+                var card = new Card(GetCardPosition(i, turnData.HandSize));
+                var cardSlot = new CardSlot(card);
+                var cardSlotEmpty = new CardSlot(cardSlot.Position + new Vector2(0, -256));
+                AddEntity(card);
+                AddEntity(cardSlot);
+                AddEntity(cardSlotEmpty);
+            }
 
-            _currentHand.ForEach(AddEntity);
         }
 
-        private Vector2 GetCardPosition(int idx)
+        private static Vector2 GetCardPosition(int idx, int handSize)
         {
-            var totalWidth = HandSize * Card.Width + HandSize * CardMargin + CardMargin;
-            var relativeXPos = idx * Card.Width + idx * CardMargin + CardMargin;
+            var totalWidth = handSize * Card.Width + handSize * Card.Margin + Card.Margin;
+            var relativeXPos = idx * Card.Width + idx * Card.Margin + Card.Margin;
             return new(relativeXPos + (Game.WindowWidth - totalWidth) /2, Game.WindowHeight / 2);
         }
 
-
-        public void OnTurnEnd()
+        public static void OnTurnEnd()
         {
 
         }
-
-      
-
-        //public override void Render()
-        //{
-        //    for (var i = 0; i < HandSize; i++)
-        //    {
-        //        var pos = GetCardPosition(i);
-        //        var rect =  new Rectangle(pos.X, pos.Y, Card.Width, Card.Height);
-        //    }
-        //}
     }
 }
