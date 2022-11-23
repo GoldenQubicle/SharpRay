@@ -13,7 +13,7 @@ namespace GardenOfCards
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
 
-        private readonly Easing _easing = new(Easings.EaseBounceIn, 1500);
+        private readonly Easing _easing = new(Easings.EaseCubicInOut, 350);
 
         public Card(Vector2 position)
         {
@@ -61,7 +61,11 @@ namespace GardenOfCards
             Position = Vector2.Lerp(_easingData.start, _easingData.end, _easing.GetValue());
             _easing.Update(deltaTime);
 
-            if (_easing.IsDone()) _doEasing = false;
+            if (_easing.IsDone())
+            {
+                _doEasing = false;
+                Position = new(RectangleSlot.x, RectangleSlot.y);
+            }
         }
 
         public override bool ContainsPoint(Vector2 point) => CheckCollisionPointRec(point, Rectangle);

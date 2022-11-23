@@ -9,7 +9,7 @@ namespace SharpRay.Gui
         public Color ColorFocused { get; set; }
         public bool CanScale { get; set; }
         protected Color ColorRender { get; private set; }
-
+        public bool IsSelected { get; private set; }
         public bool IsDragged { get; private set; }
         private Vector2 DragOffSet { get; set; }
         private Vector2 DragStart { get; set; }
@@ -23,7 +23,7 @@ namespace SharpRay.Gui
         {
             HasMouseFocus = ContainsPoint(me.Position);
 
-            if (IsDragged)
+            if (IsDragged && IsSelected)
             {
                 Position = me.Position + DragOffSet;
             }
@@ -33,9 +33,11 @@ namespace SharpRay.Gui
                 return;
             }
 
-            if (me is MouseLeftClick && OnMouseLeftClick is not null)
+            if (me is MouseLeftClick )
             {
-                EmitEvent(OnMouseLeftClick(this));
+                IsSelected = true;
+                if(OnMouseLeftClick is not null)
+                    EmitEvent(OnMouseLeftClick(this));
             }
 
             if (me is MouseRightClick)
@@ -43,7 +45,7 @@ namespace SharpRay.Gui
                 OnRightMouseClick?.Invoke(this);
             }
 
-            if (me is MouseLeftDrag && !IsDragged)
+            if (me is MouseLeftDrag && !IsDragged && IsSelected)
             {
                 DragStart = Position;
                 DragOffSet = Position - me.Position;
@@ -59,6 +61,7 @@ namespace SharpRay.Gui
                     End = Position
                 });
                 IsDragged = false;
+                IsSelected = false;
             }
 
             if (CanScale && ( me is MouseWheelUp || me is MouseWheelDown))
@@ -68,6 +71,7 @@ namespace SharpRay.Gui
                 EmitEvent(new ScaleEdit { GuiEntity = this, Start = start, End = Scale });
             }
         }
+
 
         public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {
