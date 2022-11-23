@@ -19,6 +19,18 @@ namespace SharpRay.Components
         }
 
         /// <summary>
+        /// Returns false when the easing is done, i.e. elapsed time is larger than interval time.
+        /// Will return false for repeating easings. 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsDone() => !IsRepeated && ElapsedTime > IntervalTime;
+        
+        /// <summary>
+        /// Resets elapsed time to zero. 
+        /// </summary>
+        public void Reset() => ElapsedTime = 0;
+
+        /// <summary>
         /// Set the elapsed interval time based on normalized value 0-1
         /// </summary>
         /// <param name="v"></param>

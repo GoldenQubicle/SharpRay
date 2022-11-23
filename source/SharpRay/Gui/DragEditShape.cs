@@ -28,10 +28,15 @@ namespace SharpRay.Gui
                 Position = me.Position + DragOffSet;
             }
 
-            if (!HasMouseFocus) return;
+            if (!HasMouseFocus)
+            {
+                return;
+            }
 
             if (me is MouseLeftClick && OnMouseLeftClick is not null)
+            {
                 EmitEvent(OnMouseLeftClick(this));
+            }
 
             if (me is MouseRightClick)
             {

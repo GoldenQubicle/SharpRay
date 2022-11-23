@@ -4,7 +4,7 @@ namespace GardenOfCards
 {
     internal class GroundKeeper : Entity, IHasRender 
     {
-        public int HandSize { get; set; } = 3;
+        public int HandSize { get; set; } = 4;
 
         private const int CardMargin = 15;
 
@@ -37,15 +37,15 @@ namespace GardenOfCards
 
         }
 
+      
 
-        public override void Render()
-        {
-            for (var i = 0; i < HandSize; i++)
-            {
-                var pos = GetCardPosition(i);
-                var rect =  new Rectangle(pos.X, pos.Y, Card.Width, Card.Height);
-                DrawRectangleRoundedLines(rect, .25f, 8, 2f, Color.DARKBROWN);
-            }
-        }
+        //public override void Render()
+        //{
+        //    for (var i = 0; i < HandSize; i++)
+        //    {
+        //        var pos = GetCardPosition(i);
+        //        var rect =  new Rectangle(pos.X, pos.Y, Card.Width, Card.Height);
+        //    }
+        //}
     }
 }
