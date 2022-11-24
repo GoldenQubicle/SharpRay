@@ -24,6 +24,29 @@
     This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
 
 
-☐ create actual plant entity @created(23-11-2022 17:15)
+✔ create actual plant entity @created(23-11-2022 17:15) @done(24-11-2022 14:36)
     should have multiple card slots from the get go
 
+☐ create actual cards @created(24-11-2022 14:36)
+    - seed
+    - water
+    - light
+    - nutrients
+
+☐ create end turn button @created(24-11-2022 14:37)
+☐ create card transition fx for end turn @created(24-11-2022 14:38)
+☐ create plant status fx when applying card @created(24-11-2022 14:38)
+☐ create plant status fx when applying adversities @created(24-11-2022 14:38)
+
+☐ create adversitites @created(24-11-2022 14:39)
+    gonna be text prompts with stats applied to plants. Either all or specifically targeted..?
+    - It rained a lot, the soil is soaked. (root rot...?)
+    - It was warm / hot / extremely hot {plantname} dried out / shriveled up / is dead
+    - It was cold / extremele cold / freezing
+    - A hailstorm has bruised {plantname} leaves
+    - A strong gust of wind / stormy wind / hurricane knocked over {plantname} / wrecked your garden (hurricane == game over..?) 
+    - A hedgehog/rabbit/snail/goose eat {plantname} leaves
+    - Neighborhood kids kicked their soccerball into your garden {plantname} is bruised / severly bruised / dead
+    - A neighborhood dog took a poo in your garden (+ stats)
+    - Mildew outbreak (when warm & moist meet certain conditions)
+    

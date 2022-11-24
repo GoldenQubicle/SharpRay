@@ -17,14 +17,15 @@
                 DoEventLogging = false
             });
 
-            AddTexture2D("PlantPot", "PlantPot.png");
 
-            AddEntity(new Plant(new(0, 0)));
+            GroundKeeper.OnGameStart();
             GroundKeeper.OnTurnStart(new(4));
 
             Run();
         }
 
+
+        
 
         /// <summary>
         /// Gets the card position for a given total of cards.
@@ -41,7 +42,8 @@
             return new(relativeXPos + CardSlot.LineWidth, CardSlot.LineWidth);
         }
 
-        public static float GetWidthForNCards(int total) => (total * (Card.Width + 2 * CardSlot.LineWidth) + (total - 1) * Card.Margin);
+        public static float GetWidthForNCards(int total) => 
+            (total * (Card.Width + 2 * CardSlot.LineWidth) + (total - 1) * Card.Margin);
 
     }
 }

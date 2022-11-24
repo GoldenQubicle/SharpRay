@@ -8,7 +8,6 @@
         internal const float Roundness = .25f;
         public ICollider Collider { get; }
         public Vector2 EasingTarget { get; set; }
-        private float _easingDistance = int.MaxValue;
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
 
