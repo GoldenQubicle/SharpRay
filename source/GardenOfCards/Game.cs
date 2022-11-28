@@ -1,10 +1,11 @@
-﻿namespace GardenOfCards
+﻿using GardenOfCards.Events;
+
+namespace GardenOfCards
 {
     public static class Game
     {
         internal const int WindowWidth = 1080;
         internal const int WindowHeight = 720;
-
 
         static async Task Main(string[] args)
         {
@@ -17,15 +18,32 @@
                 DoEventLogging = false
             });
 
+            
+            AddEntity(CreateTurnGui());
 
             GroundKeeper.OnGameStart();
-            GroundKeeper.OnTurnStart(new(4));
 
             Run();
         }
 
+        private static GuiContainer CreateTurnGui() => GuiContainerBuilder.CreateNew(true, 0)
+            .AddChildren(new Button
+            {
+                Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
+                Size = new Vector2(128, 64),
+                Text = "End Turn",
+                DoCenterText= true,
+                OnMouseLeftClick = e => new EndTurn { GuiEntity = e }
+            })
+            .OnGuiEvent((e, c) =>
+            {
+               if(e is EndTurn)
+                {
+                    GroundKeeper.OnTurnEnd();
+                }
+            });
 
-        
+
 
         /// <summary>
         /// Gets the card position for a given total of cards.

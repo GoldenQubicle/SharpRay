@@ -2,9 +2,14 @@
 {
     internal static class GroundKeeper
     {
+        private static readonly Dictionary<Plant, List<CardSlot>> Plants = new();
+
         public static void OnGameStart()
         {
-            CreatePlant(3);
+            CreatePlant(new PotData());
+            OnTurnStart(new(Turn: 1, HandSize: 4));
+
+
         }
 
         public static void OnTurnStart(TurnData turnData)
@@ -14,7 +19,7 @@
             for (var i = 0; i < turnData.HandSize; i++)
             {
                 var pos = Game.GetCardPosition(i, turnData.HandSize) + new Vector2((int)offset, Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth);
-                var card = new Card(pos);
+                var card = new Card(pos, i.ToString());
                 var cardSlot = new CardSlot(card);
                 AddEntity(card);
                 AddEntity(cardSlot);
@@ -23,49 +28,56 @@
 
         public static void OnTurnEnd()
         {
-
-        }
-
-        private static void CreatePlant(int startCards)
-        {
-            var potData = GetPotRenderData(startCards);
-            var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .2f);
-            potData = potData.ApplyOffset(plantPosition);
-
-            for (var i = 0; i < startCards; i++)
+            foreach(var kvp in Plants)
             {
-                var pos = Game.GetCardPosition(i, startCards) + potData.SlotOffset;
-                AddEntity(new CardSlot(pos));
+                var cards = kvp.Value.Where(cs => cs.IsOccupied).Select(cs => cs.CurrentCard).ToList();
+                kvp.Value.ForEach(cs => cs.SetCurrentCard(null));
             }
 
-            AddEntity(new Plant(plantPosition, potData));
+            RemoveEntitiesOfType<Card>();
         }
 
-        private static PotRenderData GetPotRenderData(int nSlots)
+        private static void CreatePlant(PotData data)
         {
-            var basinWidth = Game.GetWidthForNCards(nSlots);
-            var basinHeight = Card.Height * 1.75f;
-            var basinSlant = 30;
-            var basinThickness = 5;
-            var rimWidth = basinWidth + 4 * basinSlant;
-            var rimThickness = 50;
-            var offsetBasin = new Vector2(basinSlant, rimThickness);
+            var potData = GetPotRenderData(data);
+            var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .2f);
+            potData = potData.ApplyOffset(plantPosition);
+            var plant = new Plant(plantPosition, potData);
+            Plants.Add(plant, new List<CardSlot>());
 
+            for (var i = 0; i < data.nSlots; i++)
+            {
+                var pos = Game.GetCardPosition(i, data.nSlots) + potData.SlotOffset;
+                Plants[plant].Add(new CardSlot(pos));
+            }
+
+            AddEntity(plant);
+            Plants[plant].ForEach(AddEntity);
+        }
+
+        private static PotRenderData GetPotRenderData(PotData data)
+        {
+            var basinWidth = Game.GetWidthForNCards(data.nSlots);
+            var basinHeight = Card.Height * data.BasinHeightFactor;
+            var rimWidth = basinWidth + 4 * data.BasinSlant;
+            var offsetBasin = new Vector2(data.BasinSlant, data.RimThickness);
+
+            //TODO factor out basin & rim color to serializable pot data
             return new
             (
-                Height: basinHeight + basinThickness / 2 + rimThickness,
+                Height: basinHeight + data.BasinThickness / 2 + data.RimThickness,
                 Width: rimWidth,
-                RimStart: new(0, rimThickness / 2),
-                RimEnd: new(rimWidth, rimThickness / 2),
-                RimThickness: rimThickness,
+                RimStart: new(0, data.RimThickness / 2),
+                RimEnd: new(rimWidth, data.RimThickness / 2),
+                RimThickness: data.RimThickness,
                 RimColor: Color.DARKBROWN,
                 BasinLeftUp: offsetBasin,
-                BasinLeftDown: offsetBasin + new Vector2(basinSlant, basinHeight),
-                BasinRightDown: offsetBasin + new Vector2(basinWidth + basinSlant, basinHeight),
-                BasinRightUp: offsetBasin + new Vector2(basinWidth + 2 * basinSlant, 0),
-                BasinThickness: basinThickness,
+                BasinLeftDown: offsetBasin + new Vector2(data.BasinSlant, basinHeight),
+                BasinRightDown: offsetBasin + new Vector2(basinWidth + data.BasinSlant, basinHeight),
+                BasinRightUp: offsetBasin + new Vector2(basinWidth + 2 * data.BasinSlant, 0),
+                BasinThickness: data.BasinThickness,
                 BasinColor: Color.DARKBROWN,
-                SlotOffset: new((rimWidth - basinWidth) / 2, rimThickness + (basinHeight - Card.Height) / 2)
+                SlotOffset: new((rimWidth - basinWidth) / 2, data.RimThickness + (basinHeight - Card.Height) / 2)
             );
         }
     }

@@ -2,18 +2,24 @@
 {
     internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
+        public static Card Blank = new();
+
         internal const int Width = 96;
         internal const int Height = 144;
         internal const int Margin = 30;
         internal const float Roundness = .25f;
         public ICollider Collider { get; }
         public Vector2 EasingTarget { get; set; }
+        public string Text { get; }
+
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
 
         private readonly Easing _easing = new(Easings.EaseCubicInOut, 200);
 
-        public Card(Vector2 position)
+        public Card() { }
+
+        public Card(Vector2 position, string text)
         {
             Size = new(Width, Height);
             Position = position;
@@ -25,13 +31,14 @@
             ColorFocused = Color.RED;
 
             RenderLayer = 2;
+            Text = text;
         }
 
         public override void Render()
         {
             base.Render();
             DrawRectangleRounded((Collider as RectCollider).Rect, Roundness, 8, ColorRender);
-
+            DrawTextV(Text, Position, 12, Color.PURPLE);
             //Collider.Render();
         }
 

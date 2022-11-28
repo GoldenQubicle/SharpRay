@@ -1,5 +1,5 @@
 ﻿namespace GardenOfCards
 {
-    internal record TurnData(int HandSize);
+    internal record TurnData(int Turn, int HandSize);
 
 }
