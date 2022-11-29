@@ -2,14 +2,12 @@
 {
     internal static class GroundKeeper
     {
-        private static readonly Dictionary<Plant, List<CardSlot>> Plants = new();
-
-        public static void OnGameStart()
+        private static TurnData currentTurn;
+        
+        public static void OnGameStart(GameStartData data)
         {
-            CreatePlant(new PotData());
-            OnTurnStart(new(Turn: 1, HandSize: 4));
-
-
+            CreatePlant(data.Pot);
+            OnTurnStart(data.Turn);
         }
 
         public static void OnTurnStart(TurnData turnData)
@@ -24,17 +22,31 @@
                 AddEntity(card);
                 AddEntity(cardSlot);
             }
+
+            currentTurn = turnData;
+
+            if(currentTurn.Turn > 1)
+                GetEntityByTag<GuiContainer>("TurnGui").GetEntity<Label>().Text = "Turn " + currentTurn.Turn.ToString();
+
         }
 
         public static void OnTurnEnd()
         {
-            foreach(var kvp in Plants)
+            foreach(var plant in GetEntities<Plant>())
             {
-                var cards = kvp.Value.Where(cs => cs.IsOccupied).Select(cs => cs.CurrentCard).ToList();
-                kvp.Value.ForEach(cs => cs.SetCurrentCard(null));
+                var cards = GetEntitiesByTag<CardSlot>(plant.Tag)
+                    .Where(cs => cs.IsOccupied)
+                    .Select(cs => cs.CurrentCard);
             }
 
             RemoveEntitiesOfType<Card>();
+            RemoveEntitiesOfType<CardSlot>(cs => cs.Tag.Equals(CardSlot.HandTag));
+
+            AddEventAction(() => GetEntities<CardSlot>().ToList().ForEach(cs => cs.SetCurrentCard(Game.BlankCard)));
+
+            //TODO Generate & apply Adversities
+            
+            OnTurnStart(new TurnData(currentTurn.Turn + 1, currentTurn.HandSize));
         }
 
         private static void CreatePlant(PotData data)
@@ -43,16 +55,13 @@
             var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .2f);
             potData = potData.ApplyOffset(plantPosition);
             var plant = new Plant(plantPosition, potData);
-            Plants.Add(plant, new List<CardSlot>());
+            AddEntity(plant);
 
             for (var i = 0; i < data.nSlots; i++)
             {
                 var pos = Game.GetCardPosition(i, data.nSlots) + potData.SlotOffset;
-                Plants[plant].Add(new CardSlot(pos));
+                AddEntity(new CardSlot(pos, plant.Tag));
             }
-
-            AddEntity(plant);
-            Plants[plant].ForEach(AddEntity);
         }
 
         private static PotRenderData GetPotRenderData(PotData data)

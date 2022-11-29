@@ -2,8 +2,6 @@
 {
     internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
-        public static Card Blank = new();
-
         internal const int Width = 96;
         internal const int Height = 144;
         internal const int Margin = 30;
@@ -17,7 +15,10 @@
 
         private readonly Easing _easing = new(Easings.EaseCubicInOut, 200);
 
-        public Card() { }
+        public Card() 
+        { 
+            Collider = new RectCollider();
+        }
 
         public Card(Vector2 position, string text)
         {

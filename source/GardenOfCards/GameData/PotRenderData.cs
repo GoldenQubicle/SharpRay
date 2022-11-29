@@ -1,14 +1,5 @@
-﻿namespace GardenOfCards
+﻿namespace GardenOfCards.GameData
 {
-    [Serializable]
-    internal record PotData(
-        int nSlots = 2,
-        float BasinHeightFactor = 1.75f,
-        int BasinSlant = 30,
-        int BasinThickness = 5,
-        int RimThickness = 50
-        );
-
     internal record PotRenderData(
         float Height,
         float Width,

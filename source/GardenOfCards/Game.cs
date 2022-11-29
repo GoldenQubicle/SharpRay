@@ -1,9 +1,9 @@
-﻿using GardenOfCards.Events;
-
-namespace GardenOfCards
+﻿namespace GardenOfCards
 {
     public static class Game
     {
+        internal static readonly Card BlankCard = new Card();
+
         internal const int WindowWidth = 1080;
         internal const int WindowHeight = 720;
 
@@ -21,20 +21,33 @@ namespace GardenOfCards
             
             AddEntity(CreateTurnGui());
 
-            GroundKeeper.OnGameStart();
+            GroundKeeper.OnGameStart(new (new(), new()));
 
             Run();
         }
 
-        private static GuiContainer CreateTurnGui() => GuiContainerBuilder.CreateNew(true, 0)
-            .AddChildren(new Button
+        private static GuiContainer CreateTurnGui() => GuiContainerBuilder.CreateNew(true, 0, "TurnGui")
+            .AddChildren(
+            new Label
             {
-                Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
+                Position= new Vector2(WindowWidth * .85f, WindowHeight * .15f),
                 Size = new Vector2(128, 64),
-                Text = "End Turn",
                 DoCenterText= true,
-                OnMouseLeftClick = e => new EndTurn { GuiEntity = e }
-            })
+                Text = "Turn 1",
+                FillColor = Color.DARKBLUE,
+                HasOutlines = false
+            },
+            new Button
+                {
+                    Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
+                    Size = new Vector2(128, 64),
+                    Text = "End Turn",
+                    DoCenterText= true,
+                    OnMouseLeftClick = e => new EndTurn { GuiEntity = e },
+                    FocusColor= Color.BLUE,
+                    BaseColor = Color.DARKBLUE,
+                    HasOutlines= false
+                })
             .OnGuiEvent((e, c) =>
             {
                if(e is EndTurn)

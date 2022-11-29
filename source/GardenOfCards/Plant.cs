@@ -1,6 +1,6 @@
 ﻿namespace GardenOfCards
 {
-    internal class Plant : Entity, IHasRender, IHasUpdate, IHasCollision
+    internal class Plant : Entity, IHasRender, IHasUpdate
     {
         private readonly PotRenderData _potRenderData;
 
@@ -8,8 +8,8 @@
         {
             Position = position;
             _potRenderData = potRenderData;
-
             RenderLayer = 0;
+            Tag = "DevPlant"; // TODO pass in via seed card
         }
 
         public override void Render()
@@ -28,15 +28,6 @@
         public override void Update(double deltaTime)
         {
 
-        }
-
-
-        public void OnCollision(IHasCollider e)
-        {
-            if (e is Card c)
-            {
-
-            }
         }
     }
 }

@@ -17,3 +17,5 @@ global using SharpRay.Gui;
 global using SharpRay.Listeners;
 global using static SharpRay.Core.Application;
 global using static SharpRay.Core.Audio;
+global using GardenOfCards.GameData;
+global using GardenOfCards.Events;

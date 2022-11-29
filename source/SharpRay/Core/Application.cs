@@ -200,6 +200,15 @@ namespace SharpRay.Core
             Entities.OfType<TEntity>().FirstOrDefault(e => e.Tag.Equals(tag));
 
         /// <summary>
+        /// Gets all the entities by a single tag.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public static IEnumerable<TEntity> GetEntitiesByTag<TEntity>(string tag) where TEntity : Entity =>
+            Entities.OfType<TEntity>().Where(e => e.Tag.Equals(tag));
+
+        /// <summary>
         /// Gets all <typeparamref name="TEntity"/> from the Entity list. 
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
@@ -214,6 +223,16 @@ namespace SharpRay.Core
         public static void RemoveEntitiesOfType<TEntity>() where TEntity : Entity
         {
             foreach (var e in Entities.OfType<TEntity>()) RemoveEntity(e);
+        }
+
+        /// <summary>
+        /// Removes all <typeparamref name="TEntity"/> which match the predicate from the Entity list, and unsubscribes them from events.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="predicate">The condition on which to match.</param>
+        public static void RemoveEntitiesOfType<TEntity>(Func<TEntity, bool> predicate) where TEntity : Entity
+        {
+            foreach (var e in Entities.OfType<TEntity>().Where(predicate)) RemoveEntity(e);
         }
 
         /// <summary>
@@ -268,6 +287,14 @@ namespace SharpRay.Core
         /// <param name="action">The method to call when a Mouse event is emitted</param>
         public static void SetMouseEventAction(Action<IMouseEvent> action) =>
             SetEmitEventActions(Mouse, action);
+
+        /// <summary>
+        /// Event Actions are scheduled to be executed last thing in the game loop, and can be usefull for manipulating Entities.
+        /// For instance both AddEntity and RemoveEntity are EventActions, so be carefull not to add or remove in a custom action.
+        /// </summary>
+        /// <param name="action">The action to be executed.</param>
+        public static void AddEventAction(Action action) =>
+            EventActions.Add(action);
 
         /// <summary>
         /// Maps a given source value to a target range value.
