@@ -29,5 +29,10 @@
         {
 
         }
+
+        internal void OnTurnEnd(IEnumerable<Card> cards)
+        {
+
+        }
     }
 }

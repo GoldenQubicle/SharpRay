@@ -2,6 +2,14 @@
 {
     internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
+        internal enum Types
+        {
+            Seed,
+            Water,
+            Light,
+            Nutrient
+        }
+
         internal const int Width = 96;
         internal const int Height = 144;
         internal const int Margin = 30;
@@ -14,6 +22,8 @@
         private bool _doEasing;
 
         private readonly Easing _easing = new(Easings.EaseCubicInOut, 200);
+
+        public Types Type { get; set; }
 
         public Card() 
         { 

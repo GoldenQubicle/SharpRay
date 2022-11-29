@@ -3,7 +3,7 @@
     internal static class GroundKeeper
     {
         private static TurnData currentTurn;
-        
+
         public static void OnGameStart(GameStartData data)
         {
             CreatePlant(data.Pot);
@@ -25,18 +25,20 @@
 
             currentTurn = turnData;
 
-            if(currentTurn.Turn > 1)
+            if (currentTurn.Turn > 1)
                 GetEntityByTag<GuiContainer>("TurnGui").GetEntity<Label>().Text = "Turn " + currentTurn.Turn.ToString();
 
         }
 
         public static void OnTurnEnd()
         {
-            foreach(var plant in GetEntities<Plant>())
+            foreach (var plant in GetEntities<Plant>())
             {
                 var cards = GetEntitiesByTag<CardSlot>(plant.Tag)
-                    .Where(cs => cs.IsOccupied)
+                    .Where(cs => cs.IsOccupied) // could even just get all cards and penalizing leaving slots blank..?
                     .Select(cs => cs.CurrentCard);
+
+                plant.OnTurnEnd(cards);
             }
 
             RemoveEntitiesOfType<Card>();
@@ -44,8 +46,8 @@
 
             AddEventAction(() => GetEntities<CardSlot>().ToList().ForEach(cs => cs.SetCurrentCard(Game.BlankCard)));
 
-            //TODO Generate & apply Adversities
-            
+            //TODO Generate & apply Adversities 
+
             OnTurnStart(new TurnData(currentTurn.Turn + 1, currentTurn.HandSize));
         }
 
@@ -86,7 +88,7 @@
                 BasinRightUp: offsetBasin + new Vector2(basinWidth + 2 * data.BasinSlant, 0),
                 BasinThickness: data.BasinThickness,
                 BasinColor: Color.DARKBROWN,
-                SlotOffset: new((rimWidth - basinWidth) / 2, data.RimThickness + (basinHeight - Card.Height) / 2)
+                SlotOffset: new((rimWidth - basinWidth) / 2, data.RimThickness + (basinHeight - Card.Height - CardSlot.LineWidth * 2) / 2)
             );
         }
     }

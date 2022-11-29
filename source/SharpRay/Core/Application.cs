@@ -290,9 +290,9 @@ namespace SharpRay.Core
 
         /// <summary>
         /// Event Actions are scheduled to be executed last thing in the game loop, and can be usefull for manipulating Entities.
-        /// For instance both AddEntity and RemoveEntity are EventActions, so be carefull not to add or remove in a custom action.
+        /// For instance both <see cref="AddEntity(Entity)"/> and <see cref="RemoveEntity(Entity)"/> are EventActions, so be carefull not to add or remove in a custom action.
         /// </summary>
-        /// <param name="action">The action to be executed.</param>
+        /// <param name="action">The <see cref="Action"/> to be executed.</param>
         public static void AddEventAction(Action action) =>
             EventActions.Add(action);
 
