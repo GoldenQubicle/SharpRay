@@ -19,7 +19,7 @@ namespace SharpRay.Gui
             Sides = sides;
             Radius = radius;
             Points = CreatePoints(Sides, Radius * Scale);
-            TextCoords = Array.Empty<Vector2>();
+            TextCoords = new Vector2[Points.Length];
         }
 
         public override bool ContainsPoint(Vector2 point)

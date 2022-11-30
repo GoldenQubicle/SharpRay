@@ -56,7 +56,8 @@
             var potData = GetPotRenderData(data);
             var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .2f);
             potData = potData.ApplyOffset(plantPosition);
-            var plant = new Plant(plantPosition, potData);
+            var soilData = GetSoilRenderData(potData, plantPosition);
+            var plant = new Plant(plantPosition, potData, soilData);
             AddEntity(plant);
 
             for (var i = 0; i < data.nSlots; i++)
@@ -64,6 +65,20 @@
                 var pos = Game.GetCardPosition(i, data.nSlots) + potData.SlotOffset;
                 AddEntity(new CardSlot(pos, plant.Tag));
             }
+        }
+
+        private static SoilRenderData GetSoilRenderData(PotRenderData potData, Vector2 plantPosition)
+        {
+            var uv = new Vector2[5];
+            var center = new Vector2(potData.Width / 2, potData.Height / 2) + plantPosition;
+            var points = new Vector2[] {
+                potData.BasinLeftUp - center,
+                potData.BasinLeftDown - center,
+                potData.BasinRightDown - center,
+                potData.BasinRightUp - center,
+                potData.BasinLeftUp - center
+            };
+            return new(center, points, uv, new Texture2D { id = 1 }, Color.BROWN);
         }
 
         private static PotRenderData GetPotRenderData(PotData data)

@@ -2,12 +2,13 @@
 {
     internal class Plant : Entity, IHasRender, IHasUpdate
     {
-        private readonly PotRenderData _potRenderData;
-
-        public Plant(Vector2 position, PotRenderData potRenderData)
+        private readonly PotRenderData _pot;
+        private readonly SoilRenderData _soil;
+        public Plant(Vector2 position, PotRenderData potRenderData, SoilRenderData soilRenderData)
         {
             Position = position;
-            _potRenderData = potRenderData;
+            _pot = potRenderData;
+            _soil = soilRenderData;
             RenderLayer = 0;
             Tag = "DevPlant"; // TODO pass in via seed card
         }
@@ -19,10 +20,12 @@
 
         private void DrawPot()
         {
-            DrawLineEx(_potRenderData.RimStart, _potRenderData.RimEnd, _potRenderData.RimThickness, _potRenderData.RimColor);
-            DrawLineEx(_potRenderData.BasinLeftUp, _potRenderData.BasinLeftDown, _potRenderData.BasinThickness, _potRenderData.BasinColor);
-            DrawLineEx(_potRenderData.BasinLeftDown, _potRenderData.BasinRightDown, _potRenderData.BasinThickness, _potRenderData.BasinColor);
-            DrawLineEx(_potRenderData.BasinRightDown, _potRenderData.BasinRightUp, _potRenderData.BasinThickness, _potRenderData.BasinColor);
+            DrawTexturePoly(_soil.Texture, _soil.Center, _soil.Points, _soil.UV, _soil.Points.Length, _soil.Color);
+
+            DrawLineEx(_pot.RimStart, _pot.RimEnd, _pot.RimThickness, _pot.RimColor);
+            DrawLineEx(_pot.BasinLeftUp, _pot.BasinLeftDown, _pot.BasinThickness, _pot.BasinColor);
+            DrawLineEx(_pot.BasinLeftDown, _pot.BasinRightDown, _pot.BasinThickness, _pot.BasinColor);
+            DrawLineEx(_pot.BasinRightDown, _pot.BasinRightUp, _pot.BasinThickness, _pot.BasinColor);
         }
 
         public override void Update(double deltaTime)
