@@ -7,7 +7,6 @@
         public ICollider Collider { get; }
         public bool IsOccupied => CurrentCard != Game.BlankCard;
         public Card CurrentCard { get; private set; } 
-        public bool IsTargeted;
 
 
         public CardSlot(Card card) : this(card.Position, HandTag)

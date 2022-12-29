@@ -98,7 +98,6 @@
             {
                 EasingTarget = cs.Position;
                 cs.SetCurrentCard(this);
-                cs.IsTargeted = true;
             }
         }
     }
