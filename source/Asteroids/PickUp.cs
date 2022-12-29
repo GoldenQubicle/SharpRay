@@ -38,7 +38,7 @@
         public void OnSpawn(Vector2 pos)
         {
             Position = pos;
-            (Collider as RectCollider).Position = pos;
+            Collider.Position = pos;
             Data = GetData(PickupType);
             AddEntity(this);
             PlaySound(SpawnSound);
@@ -90,7 +90,7 @@
             var d = e - prevDistance;
             prevDistance = e;
             Position += new Vector2(0f, (float)d);
-            (Collider as RectCollider).Position = Position;
+            Collider.Position = Position;
         }
 
         private (string t, Color fill, Color outline, Color text, Vector2 offset) GetData(Type pickupType) => pickupType switch

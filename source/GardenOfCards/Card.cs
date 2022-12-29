@@ -55,7 +55,7 @@
 
         public override void Update(double deltaTime)
         {
-            (Collider as RectCollider).Position = Position;
+            Collider.Position = Position;
             DoEasing(deltaTime);
         }
 

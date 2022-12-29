@@ -60,7 +60,7 @@
 
             Position += Heading;
             TexturePos = Vector2.Transform(Position - TextureOffset, Matrix3x2.CreateRotation(RotationAngle, Position));
-            (Collider as RectCollider).Position = Position - TextureOffset;
+            Collider.Position = Position - TextureOffset;
             RotationAngle += RotationSpeed;
 
             //TODO make reflection speed & max speed depending on asteroid size & game level
@@ -69,8 +69,8 @@
 
             (Heading, var hasBounced) = Position switch
             {
-                Vector2 { X: < 0 } or Vector2 { X: > WindowWidth } when HasSpawned => (Vector2.Reflect(Heading, Vector2.UnitX) * bounciness, true),
-                Vector2 { Y: < 0 } or Vector2 { Y: > WindowHeight } when HasSpawned => (Vector2.Reflect(Heading, Vector2.UnitY) * bounciness, true),
+                { X: < 0 } or { X: > WindowWidth } when HasSpawned => (Vector2.Reflect(Heading, Vector2.UnitX) * bounciness, true),
+                { Y: < 0 } or { Y: > WindowHeight } when HasSpawned => (Vector2.Reflect(Heading, Vector2.UnitY) * bounciness, true),
                 _ => (Heading, false)
             };
 

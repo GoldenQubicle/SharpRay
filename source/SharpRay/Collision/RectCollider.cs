@@ -5,7 +5,6 @@
     /// </summary>
     public class RectCollider : Collider
     {
-        public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
         public Raylib_cs.Rectangle Rect
         {
