@@ -2,7 +2,7 @@
 {
     public static class Game
     {
-        internal static readonly Card BlankCard = new Card();
+        internal static readonly Card BlankCard = new();
 
         internal const int WindowWidth = 1080;
         internal const int WindowHeight = 720;
@@ -21,13 +21,12 @@
             
             AddEntity(CreateTurnGui());
 
-            GroundKeeper.OnGameStart(new (new(), new()));
+            GroundKeeper.OnGameStart(new GameStartData(new TurnData(), new PotData()));
 
             Run();
         }
 
-        private static GuiContainer CreateTurnGui() => GuiContainerBuilder.CreateNew(true, 0, "TurnGui")
-            .AddChildren(
+        private static GuiContainer CreateTurnGui() => GuiContainerBuilder.CreateNew(true, 0, "TurnGui").AddChildren(
             new Label
             {
                 Position= new Vector2(WindowWidth * .85f, WindowHeight * .15f),
@@ -38,22 +37,22 @@
                 HasOutlines = false
             },
             new Button
-                {
-                    Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
-                    Size = new Vector2(128, 64),
-                    Text = "End Turn",
-                    DoCenterText= true,
-                    OnMouseLeftClick = e => new EndTurn { GuiEntity = e },
-                    FocusColor= Color.BLUE,
-                    BaseColor = Color.DARKBLUE,
-                    HasOutlines= false
-                })
+            {
+                Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
+                Size = new Vector2(128, 64),
+                Text = "End Turn",
+                DoCenterText= true,
+                OnMouseLeftClick = e => new EndTurn { GuiEntity = e },
+                FocusColor= Color.BLUE,
+                BaseColor = Color.DARKBLUE,
+                HasOutlines= false
+            })
             .OnGuiEvent((e, c) =>
             {
                if(e is EndTurn)
-                {
-                    GroundKeeper.OnTurnEnd();
-                }
+               {
+                   GroundKeeper.OnTurnEnd();
+               }
             });
 
 
@@ -67,7 +66,6 @@
         /// <returns></returns>
         public static Vector2 GetCardPosition(int idx, int total)
         {
-
             var spacing = Card.Margin + (CardSlot.LineWidth * 2);
             var relativeXPos = idx * Card.Width + idx * spacing;
             return new(relativeXPos + CardSlot.LineWidth, CardSlot.LineWidth);

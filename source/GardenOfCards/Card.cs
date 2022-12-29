@@ -2,6 +2,11 @@
 {
     internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
+        public string Text { get; }
+        public ICollider Collider { get; }
+        public Vector2 EasingTarget { get; set; }
+        public Types Type { get; set; }
+
         internal enum Types
         {
             Seed,
@@ -14,16 +19,10 @@
         internal const int Height = 144;
         internal const int Margin = 30;
         internal const float Roundness = .25f;
-        public ICollider Collider { get; }
-        public Vector2 EasingTarget { get; set; }
-        public string Text { get; }
-
+        
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
-
         private readonly Easing _easing = new(Easings.EaseCubicInOut, 200);
-
-        public Types Type { get; set; }
 
         public Card() 
         { 
@@ -83,11 +82,10 @@
             Position = Vector2.Lerp(_easingData.start, _easingData.end, _easing.GetValue());
             _easing.Update(deltaTime);
 
-            if (_easing.IsDone())
-            {
-                _doEasing = false;
-                Position = _easingData.end;
-            }
+            if (!_easing.IsDone()) return;
+
+            _doEasing = false;
+            Position = _easingData.end;
         }
 
         public override bool ContainsPoint(Vector2 point) => Collider.ContainsPoint(point);
