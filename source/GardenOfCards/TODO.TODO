@@ -30,13 +30,13 @@
 ☐ (re)create plant from serialized data
     - serializable pot data
 
-☐ create actual cards @created(24-11-2022 14:36)
+✔ create actual cards @created(24-11-2022 14:36) @done(29-12-2022 14:54)
     - seed
     - water
     - light
     - nutrients
 
-
+☐ start new plant with a seed card .. @created(30-12-2022 18:09)
 
 ✔ create end turn button @created(24-11-2022 14:37) @done(22-11-29 11:12)
 ☐ create card transition fx for end turn @created(24-11-2022 14:38)

@@ -8,28 +8,31 @@
         public bool IsOccupied => CurrentCard != Game.BlankCard;
         public Card CurrentCard { get; private set; } 
 
-
-        public CardSlot(Card card) : this(card.Position, HandTag)
+        public CardSlot(Card card) : this(card, HandTag)
         {
             CurrentCard = card;
         }
-
-        public CardSlot(Vector2 position, string tag)
+        public CardSlot(Vector2 pos, string tag)
         {
             Size = new(Card.Width, Card.Height);
-            Position = position;
+            Position = pos;
             Collider = new RectCollider { Position = Position, Size = Size };
             CurrentCard = Game.BlankCard;
             RenderLayer = 1;
             Tag = tag;
         }
 
-        public void SetCurrentCard(Card card)
+        public CardSlot(Card card, string tag)
         {
-            CurrentCard = card;
+            Size = new(Card.Width, Card.Height);
+            Position = card.Position;
+            Collider = new RectCollider { Position = Position, Size = Size };
+            CurrentCard = Game.BlankCard;
+            RenderLayer = 1;
+            Tag = tag;
         }
 
-       
+        public void SetCurrentCard(Card card) => CurrentCard = card;
 
         public override void Update(double deltaTime)
         {
@@ -44,7 +47,7 @@
 
         public override void Render()
         {
-            var color = IsOccupied ? Color.RED : Color.GREEN;
+            var color = IsOccupied ? Color.DARKGRAY : Color.LIGHTGRAY;
 
             DrawRectangleRoundedLines((Collider as RectCollider).Rect, Card.Roundness, 8, LineWidth, color);
 

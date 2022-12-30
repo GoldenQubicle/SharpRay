@@ -5,7 +5,7 @@
         internal static readonly Card BlankCard = new();
 
         internal const int WindowWidth = 1080;
-        internal const int WindowHeight = 720;
+        internal const int WindowHeight = 980;
 
         static async Task Main(string[] args)
         {
@@ -13,12 +13,12 @@
             {
                 WindowWidth = WindowWidth,
                 WindowHeight = WindowHeight,
-                BackGroundColor = Color.BEIGE,
+                BackGroundColor = Color.GRAY,
                 ShowFPS = true,
                 DoEventLogging = false
             });
 
-            
+
             AddEntity(CreateTurnGui());
 
             GroundKeeper.OnGameStart(new GameStartData(new TurnData(), new PotData()));
@@ -29,32 +29,54 @@
         private static GuiContainer CreateTurnGui() => GuiContainerBuilder.CreateNew(true, 0, "TurnGui").AddChildren(
             new Label
             {
-                Position= new Vector2(WindowWidth * .85f, WindowHeight * .15f),
+                Position = new Vector2(WindowWidth * .85f, WindowHeight * .15f),
                 Size = new Vector2(128, 64),
-                DoCenterText= true,
+                DoCenterText = true,
                 Text = "Turn 1",
                 FillColor = Color.DARKBLUE,
                 HasOutlines = false
             },
             new Button
             {
-                Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
+                Position = new Vector2(WindowWidth * .85f, WindowHeight * .75f),
                 Size = new Vector2(128, 64),
                 Text = "End Turn",
-                DoCenterText= true,
+                DoCenterText = true,
                 OnMouseLeftClick = e => new EndTurn { GuiEntity = e },
-                FocusColor= Color.BLUE,
+                FocusColor = Color.BLUE,
                 BaseColor = Color.DARKBLUE,
-                HasOutlines= false
+                HasOutlines = false
+            }, 
+            new Button
+            {
+                Position = new Vector2(WindowWidth * .85f, WindowHeight * .85f),
+                Size = new Vector2(128, 64),
+                Text = "Reset",
+                DoCenterText = true,
+                OnMouseLeftClick = e => new ResetGame { GuiEntity = e },
+                FocusColor = Color.BLUE,
+                BaseColor = Color.DARKBLUE,
+                HasOutlines = false
             })
             .OnGuiEvent((e, c) =>
             {
-               if(e is EndTurn)
-               {
-                   GroundKeeper.OnTurnEnd();
-               }
-            });
+                if (e is EndTurn)
+                {
+                    GroundKeeper.OnTurnEnd();
+                    var turnNumber = int.Parse(c.GetEntity<Label>().Text.Split(" ").Last());
+                    c.GetEntity<Label>().Text = "Turn " + (turnNumber + 1);
+                }
 
+                if (e is ResetGame)
+                {
+                    c.GetEntity<Label>().Text = "Turn 1";
+                    RemoveEntitiesOfType<Card>();
+                    RemoveEntitiesOfType<CardSlot>();
+                    RemoveEntitiesOfType<Plant>();
+
+                    GroundKeeper.OnGameStart(new GameStartData(new TurnData(), new PotData()));
+                }
+            });
 
 
         /// <summary>
@@ -64,14 +86,14 @@
         /// <param name="idx"></param>
         /// <param name="total"></param>
         /// <returns></returns>
-        public static Vector2 GetCardPosition(int idx, int total)
+        public static Vector2 GetCardPosition(int idx)
         {
             var spacing = Card.Margin + (CardSlot.LineWidth * 2);
             var relativeXPos = idx * Card.Width + idx * spacing;
             return new(relativeXPos + CardSlot.LineWidth, CardSlot.LineWidth);
         }
 
-        public static float GetWidthForNCards(int total) => 
+        public static float GetWidthForNCards(int total) =>
             (total * (Card.Width + 2 * CardSlot.LineWidth) + (total - 1) * Card.Margin);
 
     }

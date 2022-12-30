@@ -13,21 +13,18 @@
         public static void OnTurnStart(TurnData turnData)
         {
             var offset = (Game.WindowWidth - Game.GetWidthForNCards(turnData.HandSize)) / 2;
-
+            var suites = Enum.GetValues<Suite>().Except(new []{Suite.Seed}).ToArray();
             for (var i = 0; i < turnData.HandSize; i++)
             {
-                var pos = Game.GetCardPosition(i, turnData.HandSize) + new Vector2((int)offset, Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth);
-                var card = new Card(pos, i.ToString());
+                var suiteData = GetSuiteRenderData(suites[GetRandomValue(0, suites.Length - 1)]);
+                var pos = Game.GetCardPosition(i) + new Vector2((int)offset, Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth);
+                var card = new Card(pos, suiteData);
                 var cardSlot = new CardSlot(card);
                 AddEntity(card);
                 AddEntity(cardSlot);
             }
 
             currentTurn = turnData;
-
-            if (currentTurn.Turn > 1)
-                GetEntityByTag<GuiContainer>("TurnGui").GetEntity<Label>().Text = "Turn " + currentTurn.Turn.ToString();
-
         }
 
         public static void OnTurnEnd()
@@ -53,25 +50,50 @@
 
         private static void CreatePlant(PotData data)
         {
+           
             var potData = GetPotRenderData(data);
-            var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .2f);
+            var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .65f);
             potData = potData.ApplyOffset(plantPosition);
             var soilData = GetSoilRenderData(potData, plantPosition);
-            var plant = new Plant(plantPosition, potData, soilData);
-            AddEntity(plant);
+            var seed = GetSuiteRenderData(Suite.Seed);
 
             for (var i = 0; i < data.nSlots; i++)
             {
-                var pos = Game.GetCardPosition(i, data.nSlots) + potData.SlotOffset;
-                AddEntity(new CardSlot(pos, plant.Tag));
+                var pos = Game.GetCardPosition(i) + potData.SlotOffset;
+                if (i == 0)
+                {
+                    var seedCard = new Card(pos, seed);
+                    var slot = new CardSlot(seedCard, seed.Suite.ToString());
+                    AddEntity(seedCard);
+                    AddEntity(slot);
+                }
+                else
+                {
+                    AddEntity(new CardSlot(pos, seed.Suite.ToString()));
+                }
+                
             }
+
+            var plant = new Plant(plantPosition, potData, soilData, seed.Suite.ToString());
+            AddEntity(plant);
         }
+
+        private static SuiteData GetSuiteRenderData(Suite suite) => suite switch
+        {
+            Suite.Seed => new(Suite.Seed, GetRandomStat(), Color.BEIGE, Color.BROWN),
+            Suite.Water => new(Suite.Water, GetRandomStat(), Color.SKYBLUE, Color.BLUE),
+            Suite.Light => new(Suite.Light, GetRandomStat(), Color.YELLOW, Color.GOLD),
+            Suite.Nutrient => new(Suite.Nutrient, GetRandomStat(), Color.GREEN, Color.LIME),
+            _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
+        };
+
+        private static int GetRandomStat() => GetRandomValue(1, 9);
 
         private static SoilRenderData GetSoilRenderData(PotRenderData potData, Vector2 plantPosition)
         {
             var uv = new Vector2[5];
             var center = new Vector2(potData.Width / 2, potData.Height / 2) + plantPosition;
-            var points = new Vector2[] {
+            var points = new[] {
                 potData.BasinLeftUp - center,
                 potData.BasinLeftDown - center,
                 potData.BasinRightDown - center,

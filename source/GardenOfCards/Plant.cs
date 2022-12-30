@@ -4,13 +4,15 @@
     {
         private readonly PotRenderData _pot;
         private readonly SoilRenderData _soil;
-        public Plant(Vector2 position, PotRenderData potRenderData, SoilRenderData soilRenderData)
+        private readonly Dictionary<Suite, int> _stats = Enum.GetValues<Suite>().ToDictionary(s => s, _ => 0);
+
+        public Plant(Vector2 position, PotRenderData potRenderData, SoilRenderData soilRenderData, string tag)
         {
             Position = position;
             _pot = potRenderData;
             _soil = soilRenderData;
             RenderLayer = 0;
-            Tag = "DevPlant"; // TODO pass in via seed card
+            Tag = tag;
         }
 
         public override void Render()
@@ -35,7 +37,8 @@
 
         internal void OnTurnEnd(IEnumerable<Card> cards)
         {
-
+            foreach (var card in cards)
+                _stats[card.Suite] += card.Stat;
         }
     }
 }
