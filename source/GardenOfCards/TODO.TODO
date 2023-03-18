@@ -23,11 +23,21 @@
     that way I can reuse the SharpRay collisions, with the cards being the actual colliding things.
     This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
 
+☐ plant growth @created(18-03-2023 15:35)
+    plant grows over N turns, per turn needs w, s, l inputs between 1-9
+    could generate these ideal input values w curves, or just manually make them
+    should be shown as graph
+    the difference between input and expected determines the health, and visual effects
+    plants produces N rewards, based on (overall?) deviation score 
+    
+☐ rewards @created(18-03-2023 15:38)
+    buff and debuff cards in order to give player a chance to get closer to ideal inputs
+    soil type, could act as an overall reduction buff to the deviation..?
 
 ✔ create actual plant entity @created(23-11-2022 17:15) @done(24-11-2022 14:36)
     should have multiple card slots from the get go
 
-☐ create actual cards @created(24-11-2022 14:36)
+✔ create actual cards @created(24-11-2022 14:36) @done(18-03-2023 15:34)
     - seed
     - water
     - light
