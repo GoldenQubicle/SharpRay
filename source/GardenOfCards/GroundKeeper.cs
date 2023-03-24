@@ -1,8 +1,10 @@
-﻿namespace GardenOfCards
+﻿using System.ComponentModel;
+
+namespace GardenOfCards
 {
     internal static class GroundKeeper
     {
-        private static TurnData currentTurn;
+        public static TurnData CurrentTurn { get; private set; }
 
         public static void OnGameStart(GameStartData data)
         {
@@ -24,7 +26,7 @@
                 AddEntity(cardSlot);
             }
 
-            currentTurn = turnData;
+            CurrentTurn = turnData;
         }
 
         public static void OnTurnEnd()
@@ -45,7 +47,7 @@
 
             //TODO Generate & apply Adversities 
 
-            OnTurnStart(new TurnData(currentTurn.Turn + 1, currentTurn.HandSize));
+            OnTurnStart(CurrentTurn with { Number = CurrentTurn.Number + 1 });
         }
 
         private static void CreatePlant(PotData data)
@@ -80,11 +82,20 @@
 
         private static SuiteData GetSuiteRenderData(Suite suite) => suite switch
         {
-            Suite.Seed => new(Suite.Seed, GetRandomStat(), Color.BEIGE, Color.BROWN),
-            Suite.Water => new(Suite.Water, GetRandomStat(), Color.SKYBLUE, Color.BLUE),
-            Suite.Light => new(Suite.Light, GetRandomStat(), Color.YELLOW, Color.GOLD),
-            Suite.Nutrient => new(Suite.Nutrient, GetRandomStat(), Color.GREEN, Color.LIME),
+            Suite.Seed => new(suite, GetRandomStat(), GetSuiteColors(suite)),
+            Suite.Water => new(suite, GetRandomStat(), GetSuiteColors(suite)),
+            Suite.Light => new(suite, GetRandomStat(), GetSuiteColors(suite)),
+            Suite.Nutrient => new(suite, GetRandomStat(), GetSuiteColors(suite)),
             _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
+        };
+
+        public static (Color Render, Color Highlight) GetSuiteColors(Suite suite) => suite switch
+        {
+	        Suite.Seed => (Color.BEIGE, Color.BROWN),
+	        Suite.Water => (Color.SKYBLUE, Color.BLUE),
+	        Suite.Light => (Color.YELLOW, Color.GOLD),
+	        Suite.Nutrient => (Color.GREEN, Color.LIME),
+	        _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
         };
 
         private static int GetRandomStat() => GetRandomValue(1, 9);

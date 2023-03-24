@@ -42,7 +42,7 @@
         public override void Render()
         {
             base.Render();
-            DrawRectangleRounded((Collider as RectCollider).Rect, Roundness, 8, _suiteData.RenderColor);
+            DrawRectangleRounded((Collider as RectCollider).Rect, Roundness, 8, _suiteData.colors.RenderColor);
 
             //TODO get this bullshit outta here
             var textSize = MeasureTextEx(GetFontDefault(), _suiteData.Suite.ToString(), 12, 1);
@@ -50,7 +50,7 @@
             var textPos = Position + Size / 2 - textSize / 2;
             var numberPos = Position + Size / 2 - numberSize / 2 + new Vector2(0, 8);
             //DrawTextV(_suiteData.Suite.ToString(), textPos, 12, _suiteData.TextColor);
-            DrawTextV(_suiteData.Number.ToString(), numberPos, Height, _suiteData.TextColor);
+            DrawTextV(_suiteData.Number.ToString(), numberPos, Height, _suiteData.colors.TextColor);
             //Collider.Render();
         }
 

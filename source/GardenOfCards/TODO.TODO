@@ -5,9 +5,14 @@
         - generate card hand with N cards
     ☐ onTurnEnd @created(15-11-2022 18:39)
         - generate environment data, based on turn number
-        - call plants with selected card(s) & environment data
+        - call plants with selected card(s) & environment data => 
+            ☐ pass selected cards @created(17-01-2023 16:15)
+            - do we keep stats over turns, i.e. accumulate over turns
+            - do we 
         - generate adversities 
         - call plants with adversities
+
+
     
 ✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
     can be either the hand slot, or the plant slot in case it hoovers over AND is unoccupied
@@ -36,7 +41,7 @@
     - light
     - nutrients
 
-☐ start new plant with a seed card .. @created(30-12-2022 18:09)
+✔ start new plant with a seed card .. @created(30-12-2022 18:09) @done(30-12-2022 18:23)
 
 ✔ create end turn button @created(24-11-2022 14:37) @done(22-11-29 11:12)
 ☐ create card transition fx for end turn @created(24-11-2022 14:38)
