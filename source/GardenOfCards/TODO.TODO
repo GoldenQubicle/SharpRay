@@ -12,8 +12,14 @@
         - generate adversities 
         - call plants with adversities
 
-
+☐ as a player I want to be able to deal a new hand durig turn @created(26-03-2023 16:11)
+    ✔ create deal hand button @created(26-03-2023 16:12) @done(26-03-2023 17:27)
+    ✔ deal hand from finite deck @created(26-03-2023 16:12) @done(26-03-2023 17:27)
+    ✔ block dealing when deck is depleted @created(26-03-2023 17:27) @done(26-03-2023 17:46)
+    ☐ block dealing new hand when all pot slots are occupied @created(26-03-2023 16:12)
     
+✔ as a player I want to see how much of the plant needs are already met @created(26-03-2023 17:46) @done(26-03-2023 17:57)
+
 ✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
     can be either the hand slot, or the plant slot in case it hoovers over AND is unoccupied
 ✔ stop multiple cards from receiving mouse focus @created(23-11-2022 15:00) @done(23-11-2022 15:42)
@@ -41,9 +47,7 @@
 
 ✔ create actual plant entity @created(23-11-2022 17:15) @done(24-11-2022 14:36)
     should have multiple card slots from the get go
-
-☐ (re)create plant from serialized data
-    - serializable pot data
+    
 ✔ create actual cards @created(24-11-2022 14:36) @done(18-03-2023 15:34)
     - seed
     - water

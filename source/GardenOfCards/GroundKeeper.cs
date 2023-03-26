@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
-
-namespace GardenOfCards
+﻿namespace GardenOfCards
 {
     internal static class GroundKeeper
     {
+        public static HashSet<(Suite, int)> AlreadyDealt { get; private set; }
+
         public static TurnData CurrentTurn { get; private set; }
 
         public static void OnGameStart(GameStartData data)
@@ -14,19 +14,26 @@ namespace GardenOfCards
 
         public static void OnTurnStart(TurnData turnData)
         {
-            var offset = (Game.WindowWidth - Game.GetWidthForNCards(turnData.HandSize)) / 2;
-            var suites = Enum.GetValues<Suite>().Except(new []{Suite.Seed}).ToArray();
-            for (var i = 0; i < turnData.HandSize; i++)
-            {
-                var suiteData = GetSuiteRenderData(suites[GetRandomValue(0, suites.Length - 1)]);
-                var pos = Game.GetCardPosition(i) + new Vector2((int)offset, Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth);
-                var card = new Card(pos, suiteData);
-                var cardSlot = new CardSlot(card);
-                AddEntity(card);
-                AddEntity(cardSlot);
-            }
-
             CurrentTurn = turnData;
+            AddCardsToHandSlots(DealHand(isNewTurn: true));
+        }
+
+        public static void OnDealHand()
+        {
+            if (AlreadyDealt.Count + CurrentTurn.HandSize >= Game.Suites.Length * Game.MaxStat)
+                return;
+
+            var hand = DealHand();
+            
+            foreach (var cardSlot in GetEntitiesByTag<CardSlot>(CardSlot.HandTag))
+            {
+                if(cardSlot.IsOccupied)
+                    RemoveEntity(cardSlot.CurrentCard);
+
+                var card = CreateCard(hand[cardSlot.Idx], cardSlot.Position);
+                cardSlot.SetCurrentCard(card);
+                AddEntity(card);
+            }
         }
 
         public static void OnTurnEnd()
@@ -50,6 +57,51 @@ namespace GardenOfCards
             OnTurnStart(CurrentTurn with { Number = CurrentTurn.Number + 1 });
         }
 
+        private static void AddCardsToHandSlots(List<(Suite suite, int stat)> hand)
+        {
+            var offset = GetHandSlotOffSet(CurrentTurn.HandSize);
+
+            for (var idx = 0; idx < CurrentTurn.HandSize; idx++)
+            {
+                var pos = Game.GetCardPosition(idx) + offset;
+                var card = CreateCard(hand[idx], pos);
+                var cardSlot = new CardSlot(card, idx);
+                AddEntity(card);
+                AddEntity(cardSlot);
+            }
+        }
+
+        private static Card CreateCard((Suite suite, int stat) data, Vector2 position) =>
+            new(position, GetSuiteRenderData(data));
+
+        private static Vector2 GetHandSlotOffSet(int handSize)
+        {
+            var offsetX = (Game.WindowWidth - Game.GetWidthForNCards(handSize)) / 2;
+            var offSetY = Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth;
+            var offsetV = new Vector2((int)offsetX, (int)offSetY);
+            return offsetV;
+        }
+
+        private static List<(Suite suite, int stat)> DealHand(bool isNewTurn = false)
+        {
+            if (isNewTurn)
+                AlreadyDealt = new();
+
+            var hand = new List<(Suite, int)>();
+
+            while (hand.Count < CurrentTurn.HandSize)
+            {
+                var card = (GetRandomSuite(), GetRandomStat());
+
+                if (AlreadyDealt.Contains(card)) continue;
+
+                hand.Add(card);
+                AlreadyDealt.Add(card);
+            }
+
+            return hand;
+        }
+
         private static void CreatePlant(PotData data)
         {
            
@@ -57,7 +109,7 @@ namespace GardenOfCards
             var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .65f);
             potData = potData.ApplyOffset(plantPosition);
             var soilData = GetSoilRenderData(potData, plantPosition);
-            var seed = GetSuiteRenderData(Suite.Seed);
+            var seed = GetSuiteRenderData((Suite.Seed, 0));
 
             for (var i = 0; i < data.nSlots; i++)
             {
@@ -65,13 +117,13 @@ namespace GardenOfCards
                 if (i == 0)
                 {
                     var seedCard = new Card(pos, seed);
-                    var slot = new CardSlot(seedCard, seed.Suite.ToString());
+                    var slot = new CardSlot(seedCard.Position, seed.Suite.ToString(), i);
                     AddEntity(seedCard);
                     AddEntity(slot);
                 }
                 else
                 {
-                    AddEntity(new CardSlot(pos, seed.Suite.ToString()));
+                    AddEntity(new CardSlot(pos, seed.Suite.ToString(), i));
                 }
                 
             }
@@ -80,25 +132,27 @@ namespace GardenOfCards
             AddEntity(plant);
         }
 
-        private static SuiteData GetSuiteRenderData(Suite suite) => suite switch
+        private static int GetRandomStat() => GetRandomValue(Game.MinStat, Game.MaxStat);
+
+        private static Suite GetRandomSuite() => Game.Suites[GetRandomValue(0, Game.Suites.Length - 1)];
+        
+        private static SuiteData GetSuiteRenderData((Suite suite, int stat) d) => d.suite switch
         {
-            Suite.Seed => new(suite, GetRandomStat(), GetSuiteColors(suite)),
-            Suite.Water => new(suite, GetRandomStat(), GetSuiteColors(suite)),
-            Suite.Light => new(suite, GetRandomStat(), GetSuiteColors(suite)),
-            Suite.Nutrient => new(suite, GetRandomStat(), GetSuiteColors(suite)),
-            _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
+            Suite.Seed => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+            Suite.Water => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+            Suite.Light => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+            Suite.Nutrient => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+            _ => throw new ArgumentOutOfRangeException(nameof(d.suite), d.suite, null)
         };
 
         public static (Color Render, Color Highlight) GetSuiteColors(Suite suite) => suite switch
         {
-	        Suite.Seed => (Color.BEIGE, Color.BROWN),
-	        Suite.Water => (Color.SKYBLUE, Color.BLUE),
-	        Suite.Light => (Color.YELLOW, Color.GOLD),
-	        Suite.Nutrient => (Color.GREEN, Color.LIME),
-	        _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
+            Suite.Seed => (Color.BEIGE, Color.BROWN),
+            Suite.Water => (Color.SKYBLUE, Color.BLUE),
+            Suite.Light => (Color.YELLOW, Color.GOLD),
+            Suite.Nutrient => (Color.GREEN, Color.LIME),
+            _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
         };
-
-        private static int GetRandomStat() => GetRandomValue(1, 9);
 
         private static SoilRenderData GetSoilRenderData(PotRenderData potData, Vector2 plantPosition)
         {

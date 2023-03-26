@@ -6,13 +6,13 @@
         public static float LineWidth = 2f;
         public ICollider Collider { get; }
         public bool IsOccupied => CurrentCard != Game.BlankCard;
-        public Card CurrentCard { get; private set; } 
-
-        public CardSlot(Card card) : this(card, HandTag)
+        public Card CurrentCard { get; private set; }
+        public int Idx { get; }
+        public CardSlot(Card card, int idx) : this(card.Position, HandTag, idx)
         {
             CurrentCard = card;
         }
-        public CardSlot(Vector2 pos, string tag)
+        public CardSlot(Vector2 pos, string tag, int idx)
         {
             Size = new(Card.Width, Card.Height);
             Position = pos;
@@ -20,16 +20,7 @@
             CurrentCard = Game.BlankCard;
             RenderLayer = 1;
             Tag = tag;
-        }
-
-        public CardSlot(Card card, string tag)
-        {
-            Size = new(Card.Width, Card.Height);
-            Position = card.Position;
-            Collider = new RectCollider { Position = Position, Size = Size };
-            CurrentCard = Game.BlankCard;
-            RenderLayer = 1;
-            Tag = tag;
+            Idx = idx;
         }
 
         public void SetCurrentCard(Card card) => CurrentCard = card;
