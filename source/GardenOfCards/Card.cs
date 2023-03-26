@@ -2,19 +2,29 @@
 {
     internal class Card : DragEditShape, IHasCollider, IHasCollision
     {
-        internal const int Width = 96;
-        internal const int Height = 144;
-        internal const int Margin = 30;
-        internal const float Roundness = .25f;
         public ICollider Collider { get; }
         public Vector2 EasingTarget { get; set; }
+        public Suite Suite => _suiteData.Suite;
+        public int Stat => _suiteData.Number;
+
+        internal const int Width = 64;
+        internal const int Height = 96;
+        internal const int Margin = 30;
+        internal const float Roundness = .25f;
+
         private (Vector2 start, Vector2 end) _easingData;
         private bool _doEasing;
-
         private readonly Easing _easing = new(Easings.EaseCubicInOut, 200);
+        private SuiteData _suiteData;
 
-        public Card(Vector2 position)
+        public Card()
         {
+            Collider = new RectCollider();
+        }
+
+        public Card(Vector2 position, SuiteData data)
+        {
+            _suiteData = data;
             Size = new(Width, Height);
             Position = position;
             EasingTarget = Position;
@@ -27,17 +37,26 @@
             RenderLayer = 2;
         }
 
+        
+
         public override void Render()
         {
             base.Render();
-            DrawRectangleRounded((Collider as RectCollider).Rect, Roundness, 8, ColorRender);
+            DrawRectangleRounded((Collider as RectCollider).Rect, Roundness, 8, _suiteData.colors.RenderColor);
 
+            //TODO get this bullshit outta here
+            var textSize = MeasureTextEx(GetFontDefault(), _suiteData.Suite.ToString(), 12, 1);
+            var numberSize = MeasureTextEx(GetFontDefault(), _suiteData.Number.ToString(), Height, 1);
+            var textPos = Position + Size / 2 - textSize / 2;
+            var numberPos = Position + Size / 2 - numberSize / 2 + new Vector2(0, 8);
+            //DrawTextV(_suiteData.Suite.ToString(), textPos, 12, _suiteData.TextColor);
+            DrawTextV(_suiteData.Number.ToString(), numberPos, Height, _suiteData.colors.TextColor);
             //Collider.Render();
         }
 
         public override void Update(double deltaTime)
         {
-            (Collider as RectCollider).Position = Position;
+            Collider.Position = Position;
             DoEasing(deltaTime);
         }
 
@@ -65,11 +84,10 @@
             Position = Vector2.Lerp(_easingData.start, _easingData.end, _easing.GetValue());
             _easing.Update(deltaTime);
 
-            if (_easing.IsDone())
-            {
-                _doEasing = false;
-                Position = _easingData.end;
-            }
+            if (!_easing.IsDone()) return;
+
+            _doEasing = false;
+            Position = _easingData.end;
         }
 
         public override bool ContainsPoint(Vector2 point) => Collider.ContainsPoint(point);
@@ -80,7 +98,6 @@
             {
                 EasingTarget = cs.Position;
                 cs.SetCurrentCard(this);
-                cs.IsTargeted = true;
             }
         }
     }

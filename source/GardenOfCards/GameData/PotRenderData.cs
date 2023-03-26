@@ -1,4 +1,4 @@
-﻿namespace GardenOfCards
+﻿namespace GardenOfCards.GameData
 {
     internal record PotRenderData(
         float Height,
@@ -23,7 +23,7 @@
             BasinLeftDown = BasinLeftDown + offset,
             BasinRightDown = BasinRightDown + offset,
             BasinRightUp = BasinRightUp + offset,
-            SlotOffset = SlotOffset + offset 
+            SlotOffset = SlotOffset + offset
         };
     };
 }
