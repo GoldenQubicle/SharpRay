@@ -8,6 +8,7 @@
         public bool IsOccupied => CurrentCard != Game.BlankCard;
         public Card CurrentCard { get; private set; }
         public int Idx { get; }
+
         public CardSlot(Card card, int idx) : this(card.Position, HandTag, idx)
         {
             CurrentCard = card;
@@ -27,13 +28,12 @@
 
         public override void Update(double deltaTime)
         {
-            if (IsOccupied)
-            {
-                if (!Collider.Overlaps(CurrentCard.Collider))
-                {
-                    CurrentCard = Game.BlankCard;
-                }
-            }
+	        if (!IsOccupied) return;
+
+	        if (!Collider.Overlaps(CurrentCard.Collider))
+	        {
+		        CurrentCard = Game.BlankCard;
+	        }
         }
 
         public override void Render()

@@ -1,197 +1,205 @@
 ﻿namespace GardenOfCards
 {
-    internal static class GroundKeeper
-    {
-        public static HashSet<(Suite, int)> AlreadyDealt { get; private set; }
+	internal static class GroundKeeper
+	{
+		public static HashSet<(Suite, int)> AlreadyDealt { get; private set; }
 
-        public static TurnData CurrentTurn { get; private set; }
+		public static TurnData CurrentTurn { get; private set; }
 
-        public static void OnGameStart(GameStartData data)
-        {
-            CreatePlant(data.Pot);
-            OnTurnStart(data.Turn);
-        }
 
-        public static void OnTurnStart(TurnData turnData)
-        {
-            CurrentTurn = turnData;
-            AddCardsToHandSlots(DealHand(isNewTurn: true));
-        }
+		public static void OnGameStart(GameStartData data)
+		{
+			CreatePlant(data.Pot);
+			OnTurnStart(data.Turn);
+		}
 
-        public static void OnDealHand()
-        {
-            if (AlreadyDealt.Count + CurrentTurn.HandSize >= Game.Suites.Length * Game.MaxStat)
-                return;
+		public static void OnTurnStart(TurnData turnData)
+		{
+			CurrentTurn = turnData;
+			AddCardsToHandSlots(DealHand(isNewTurn: true));
+		}
 
-            var hand = DealHand();
-            
-            foreach (var cardSlot in GetEntitiesByTag<CardSlot>(CardSlot.HandTag))
-            {
-                if(cardSlot.IsOccupied)
-                    RemoveEntity(cardSlot.CurrentCard);
+		public static void OnDealHand()
+		{
+			if (AlreadyDealt.Count + CurrentTurn.HandSize >= Game.Suites.Length * Game.MaxStat)
+				return;
 
-                var card = CreateCard(hand[cardSlot.Idx], cardSlot.Position);
-                cardSlot.SetCurrentCard(card);
-                AddEntity(card);
-            }
-        }
+			var hand = DealHand( );
 
-        public static void OnTurnEnd()
-        {
-            foreach (var plant in GetEntities<Plant>())
-            {
-                var cards = GetEntitiesByTag<CardSlot>(plant.Tag)
-                    .Where(cs => cs.IsOccupied) // could even just get all cards and penalizing leaving slots blank..?
-                    .Select(cs => cs.CurrentCard);
+			foreach (var cardSlot in GetEntitiesByTag<CardSlot>(CardSlot.HandTag))
+			{
+				if (cardSlot.IsOccupied)
+				{
+					var oldCard = cardSlot.CurrentCard;
+					cardSlot.SetCurrentCard(Game.BlankCard);
+					RemoveEntity(oldCard);
+				}
 
-                plant.OnTurnEnd(cards);
-            }
+				var newCard = CreateCard(hand[cardSlot.Idx], cardSlot.Position);
+				cardSlot.SetCurrentCard(newCard);
+				AddEntity(newCard);
+			}
 
-            RemoveEntitiesOfType<Card>();
-            RemoveEntitiesOfType<CardSlot>(cs => cs.Tag.Equals(CardSlot.HandTag));
+			CurrentTurn = CurrentTurn with { HandsDealt = CurrentTurn.HandsDealt + 1 };
+		}
 
-            AddEventAction(() => GetEntities<CardSlot>().ToList().ForEach(cs => cs.SetCurrentCard(Game.BlankCard)));
+		public static void OnTurnEnd()
+		{
+			foreach (var plant in GetEntities<Plant>( ))
+			{
+				var cards = GetEntitiesByTag<CardSlot>(plant.Tag)
+					.Where(cs => cs.IsOccupied) // could even just get all cards and penalizing leaving slots blank..?
+					.Select(cs => cs.CurrentCard);
 
-            //TODO Generate & apply Adversities 
+				plant.OnTurnEnd(cards);
+			}
 
-            OnTurnStart(CurrentTurn with { Number = CurrentTurn.Number + 1 });
-        }
+			RemoveEntitiesOfType<Card>( );
+			RemoveEntitiesOfType<CardSlot>(cs => cs.Tag.Equals(CardSlot.HandTag));
 
-        private static void AddCardsToHandSlots(List<(Suite suite, int stat)> hand)
-        {
-            var offset = GetHandSlotOffSet(CurrentTurn.HandSize);
+			AddEventAction(() => GetEntities<CardSlot>( ).ToList( ).ForEach(cs => cs.SetCurrentCard(Game.BlankCard)));
 
-            for (var idx = 0; idx < CurrentTurn.HandSize; idx++)
-            {
-                var pos = Game.GetCardPosition(idx) + offset;
-                var card = CreateCard(hand[idx], pos);
-                var cardSlot = new CardSlot(card, idx);
-                AddEntity(card);
-                AddEntity(cardSlot);
-            }
-        }
+			//TODO Generate & apply Adversities 
 
-        private static Card CreateCard((Suite suite, int stat) data, Vector2 position) =>
-            new(position, GetSuiteRenderData(data));
+			OnTurnStart(CurrentTurn with { Number = CurrentTurn.Number + 1, HandsDealt = 0 });
+		}
 
-        private static Vector2 GetHandSlotOffSet(int handSize)
-        {
-            var offsetX = (Game.WindowWidth - Game.GetWidthForNCards(handSize)) / 2;
-            var offSetY = Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth;
-            var offsetV = new Vector2((int)offsetX, (int)offSetY);
-            return offsetV;
-        }
+		private static void AddCardsToHandSlots(List<(Suite suite, int stat)> hand)
+		{
+			var offset = GetHandSlotOffSet(CurrentTurn.HandSize);
 
-        private static List<(Suite suite, int stat)> DealHand(bool isNewTurn = false)
-        {
-            if (isNewTurn)
-                AlreadyDealt = new();
+			for (var idx = 0 ;idx < CurrentTurn.HandSize ;idx++)
+			{
+				var pos = Game.GetCardPosition(idx) + offset;
+				var card = CreateCard(hand[idx], pos);
+				var cardSlot = new CardSlot(card, idx);
+				AddEntity(card);
+				AddEntity(cardSlot);
+			}
+		}
 
-            var hand = new List<(Suite, int)>();
+		private static Card CreateCard((Suite suite, int stat) data, Vector2 position) =>
+			new(position, GetSuiteRenderData(data));
 
-            while (hand.Count < CurrentTurn.HandSize)
-            {
-                var card = (GetRandomSuite(), GetRandomStat());
+		private static Vector2 GetHandSlotOffSet(int handSize)
+		{
+			var offsetX = ( Game.WindowWidth - Game.GetWidthForNCards(handSize) ) / 2;
+			var offSetY = Game.WindowHeight - Card.Height - Card.Margin - CardSlot.LineWidth;
+			var offsetV = new Vector2((int)offsetX, (int)offSetY);
+			return offsetV;
+		}
 
-                if (AlreadyDealt.Contains(card)) continue;
+		private static List<(Suite suite, int stat)> DealHand(bool isNewTurn = false)
+		{
+			if (isNewTurn)
+				AlreadyDealt = new( );
 
-                hand.Add(card);
-                AlreadyDealt.Add(card);
-            }
+			var hand = new List<(Suite, int)>( );
 
-            return hand;
-        }
+			while (hand.Count < CurrentTurn.HandSize)
+			{
+				var card = (GetRandomSuite( ), GetRandomStat( ));
 
-        private static void CreatePlant(PotData data)
-        {
-           
-            var potData = GetPotRenderData(data);
-            var plantPosition = new Vector2((Game.WindowWidth - potData.Width) / 2, Game.WindowHeight * .65f);
-            potData = potData.ApplyOffset(plantPosition);
-            var soilData = GetSoilRenderData(potData, plantPosition);
-            var seed = GetSuiteRenderData((Suite.Seed, 0));
+				if (AlreadyDealt.Contains(card))
+					continue;
 
-            for (var i = 0; i < data.nSlots; i++)
-            {
-                var pos = Game.GetCardPosition(i) + potData.SlotOffset;
-                if (i == 0)
-                {
-                    var seedCard = new Card(pos, seed);
-                    var slot = new CardSlot(seedCard.Position, seed.Suite.ToString(), i);
-                    AddEntity(seedCard);
-                    AddEntity(slot);
-                }
-                else
-                {
-                    AddEntity(new CardSlot(pos, seed.Suite.ToString(), i));
-                }
-                
-            }
+				hand.Add(card);
+				AlreadyDealt.Add(card);
+			}
 
-            var plant = new Plant(plantPosition, potData, soilData, seed.Suite.ToString());
-            AddEntity(plant);
-        }
+			return hand;
+		}
 
-        private static int GetRandomStat() => GetRandomValue(Game.MinStat, Game.MaxStat);
+		private static void CreatePlant(PotData data)
+		{
 
-        private static Suite GetRandomSuite() => Game.Suites[GetRandomValue(0, Game.Suites.Length - 1)];
-        
-        private static SuiteData GetSuiteRenderData((Suite suite, int stat) d) => d.suite switch
-        {
-            Suite.Seed => new(d.suite, d.stat, GetSuiteColors(d.suite)),
-            Suite.Water => new(d.suite, d.stat, GetSuiteColors(d.suite)),
-            Suite.Light => new(d.suite, d.stat, GetSuiteColors(d.suite)),
-            Suite.Nutrient => new(d.suite, d.stat, GetSuiteColors(d.suite)),
-            _ => throw new ArgumentOutOfRangeException(nameof(d.suite), d.suite, null)
-        };
+			var potData = GetPotRenderData(data);
+			var plantPosition = new Vector2(( Game.WindowWidth - potData.Width ) / 2, Game.WindowHeight * .65f);
+			potData = potData.ApplyOffset(plantPosition);
+			var soilData = GetSoilRenderData(potData, plantPosition);
+			var seed = GetSuiteRenderData((Suite.Seed, 0));
 
-        public static (Color Render, Color Highlight) GetSuiteColors(Suite suite) => suite switch
-        {
-            Suite.Seed => (Color.BEIGE, Color.BROWN),
-            Suite.Water => (Color.SKYBLUE, Color.BLUE),
-            Suite.Light => (Color.YELLOW, Color.GOLD),
-            Suite.Nutrient => (Color.GREEN, Color.LIME),
-            _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
-        };
+			for (var i = 0 ;i < data.nSlots ;i++)
+			{
+				var pos = Game.GetCardPosition(i) + potData.SlotOffset;
+				if (i == 0)
+				{
+					var seedCard = new Card(pos, seed);
+					var slot = new CardSlot(seedCard.Position, seed.Suite.ToString( ), i);
+					AddEntity(seedCard);
+					AddEntity(slot);
+				}
+				else
+				{
+					AddEntity(new CardSlot(pos, seed.Suite.ToString( ), i));
+				}
 
-        private static SoilRenderData GetSoilRenderData(PotRenderData potData, Vector2 plantPosition)
-        {
-            var uv = new Vector2[5];
-            var center = new Vector2(potData.Width / 2, potData.Height / 2) + plantPosition;
-            var points = new[] {
-                potData.BasinLeftUp - center,
-                potData.BasinLeftDown - center,
-                potData.BasinRightDown - center,
-                potData.BasinRightUp - center,
-                potData.BasinLeftUp - center
-            };
-            return new(center, points, uv, new Texture2D { id = 1 }, Color.BROWN);
-        }
+			}
 
-        private static PotRenderData GetPotRenderData(PotData data)
-        {
-            var basinWidth = Game.GetWidthForNCards(data.nSlots);
-            var basinHeight = Card.Height * data.BasinHeightFactor;
-            var rimWidth = basinWidth + 4 * data.BasinSlant;
-            var offsetBasin = new Vector2(data.BasinSlant, data.RimThickness);
+			var plant = new Plant(plantPosition, potData, soilData, seed.Suite.ToString( ));
+			AddEntity(plant);
+		}
 
-            //TODO factor out basin & rim color to serializable pot data
-            return new
-            (
-                Height: basinHeight + data.BasinThickness / 2 + data.RimThickness,
-                Width: rimWidth,
-                RimStart: new(0, data.RimThickness / 2),
-                RimEnd: new(rimWidth, data.RimThickness / 2),
-                RimThickness: data.RimThickness,
-                RimColor: Color.DARKBROWN,
-                BasinLeftUp: offsetBasin,
-                BasinLeftDown: offsetBasin + new Vector2(data.BasinSlant, basinHeight),
-                BasinRightDown: offsetBasin + new Vector2(basinWidth + data.BasinSlant, basinHeight),
-                BasinRightUp: offsetBasin + new Vector2(basinWidth + 2 * data.BasinSlant, 0),
-                BasinThickness: data.BasinThickness,
-                BasinColor: Color.DARKBROWN,
-                SlotOffset: new((rimWidth - basinWidth) / 2, data.RimThickness + (basinHeight - Card.Height - CardSlot.LineWidth * 2) / 2)
-            );
-        }
-    }
+		private static int GetRandomStat() => GetRandomValue(Game.MinStat, Game.MaxStat);
+
+		private static Suite GetRandomSuite() => Game.Suites[GetRandomValue(0, Game.Suites.Length - 1)];
+
+		private static SuiteData GetSuiteRenderData((Suite suite, int stat) d) => d.suite switch
+		{
+			Suite.Seed => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+			Suite.Water => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+			Suite.Light => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+			Suite.Nutrient => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+			_ => throw new ArgumentOutOfRangeException(nameof(d.suite), d.suite, null)
+		};
+
+		public static (Color Render, Color Highlight) GetSuiteColors(Suite suite) => suite switch
+		{
+			Suite.Seed => (Color.BEIGE, Color.BROWN),
+			Suite.Water => (Color.SKYBLUE, Color.BLUE),
+			Suite.Light => (Color.YELLOW, Color.GOLD),
+			Suite.Nutrient => (Color.GREEN, Color.LIME),
+			_ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
+		};
+
+		private static SoilRenderData GetSoilRenderData(PotRenderData potData, Vector2 plantPosition)
+		{
+			var uv = new Vector2[5];
+			var center = new Vector2(potData.Width / 2, potData.Height / 2) + plantPosition;
+			var points = new[ ] {
+				potData.BasinLeftUp - center,
+				potData.BasinLeftDown - center,
+				potData.BasinRightDown - center,
+				potData.BasinRightUp - center,
+				potData.BasinLeftUp - center
+			};
+			return new(center, points, uv, new Texture2D { id = 1 }, Color.BROWN);
+		}
+
+		private static PotRenderData GetPotRenderData(PotData data)
+		{
+			var basinWidth = Game.GetWidthForNCards(data.nSlots);
+			var basinHeight = Card.Height * data.BasinHeightFactor;
+			var rimWidth = basinWidth + 4 * data.BasinSlant;
+			var offsetBasin = new Vector2(data.BasinSlant, data.RimThickness);
+
+			//TODO factor out basin & rim color to serializable pot data
+			return new
+			(
+				Height: basinHeight + data.BasinThickness / 2 + data.RimThickness,
+				Width: rimWidth,
+				RimStart: new(0, data.RimThickness / 2),
+				RimEnd: new(rimWidth, data.RimThickness / 2),
+				RimThickness: data.RimThickness,
+				RimColor: Color.DARKBROWN,
+				BasinLeftUp: offsetBasin,
+				BasinLeftDown: offsetBasin + new Vector2(data.BasinSlant, basinHeight),
+				BasinRightDown: offsetBasin + new Vector2(basinWidth + data.BasinSlant, basinHeight),
+				BasinRightUp: offsetBasin + new Vector2(basinWidth + 2 * data.BasinSlant, 0),
+				BasinThickness: data.BasinThickness,
+				BasinColor: Color.DARKBROWN,
+				SlotOffset: new(( rimWidth - basinWidth ) / 2, data.RimThickness + ( basinHeight - Card.Height - CardSlot.LineWidth * 2 ) / 2)
+			);
+		}
+	}
 }

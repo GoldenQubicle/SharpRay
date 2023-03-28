@@ -16,8 +16,13 @@
     ✔ create deal hand button @created(26-03-2023 16:12) @done(26-03-2023 17:27)
     ✔ deal hand from finite deck @created(26-03-2023 16:12) @done(26-03-2023 17:27)
     ✔ block dealing when deck is depleted @created(26-03-2023 17:27) @done(26-03-2023 17:46)
-    ☐ block dealing new hand when all pot slots are occupied @created(26-03-2023 16:12)
-    
+    ✘ block dealing new hand when all pot slots are occupied @created(26-03-2023 16:12) @cancelled(28-03-2023 14:14)
+        cancelled because the issue is moreso that I don't have a way to delete a card from the plants slot when all hand slots are occupied
+        nor do I feel particularry inclinede to make it possible. Instead this is just a gameplay mechanic which the player
+        uncovers soon enough, i.e. redrawing a hand with all pot slots occupied is senseless. So, in order to benefit redrawing a hand
+        the player always has to leave one pot slot open. 
+    ✔ limit new hand by means of turn data @created(28-03-2023 13:15) @done(28-03-2023 14:00)
+
 ✔ as a player I want to see how much of the plant needs are already met @created(26-03-2023 17:46) @done(26-03-2023 17:57)
 
 ✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
