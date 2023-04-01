@@ -31,7 +31,19 @@
 
         public override void Render()
         {
-            //DrawRectangleV();
+            DebugDrawNeedsAndStats();
+
+            var start = _pot.RimEnd with { X = _pot.RimEnd.X - _pot.Width / 2 };
+            var end = start with { Y = start.Y - 100 };
+            var color = LerpColor(Color.LIME, Color.GOLD, .25f);
+            DrawLineEx(start, end, 10, color);
+
+            DrawPot();
+
+        }
+
+        private void DebugDrawNeedsAndStats()
+        {
             var turn = GroundKeeper.CurrentTurn.Number;
 
             if (turn > 3) turn = 3; //hacky obviously
@@ -65,8 +77,6 @@
             DrawRectangleV(new(220, 110), new(actualLight, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
             DrawRectangleV(new(220, 140), new(actualNutrient, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
             DrawRectangleV(new(220, 170), new(actualWater, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
-
-            DrawPot();
         }
 
         private float LerpStat(int stat, int max = 9) => MapRange(stat, 1, max, 10, 100);

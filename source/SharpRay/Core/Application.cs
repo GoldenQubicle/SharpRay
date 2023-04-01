@@ -327,6 +327,27 @@ namespace SharpRay.Core
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
 
+        public static Color LerpColor(Color start, Color stop, float amount)
+        {
+            amount = amount < 0f ? 0f : Math.Min(amount, 1f); 
+            var r = MapRange(amount, 0f, 1f, start.r, stop.r);
+            var g = MapRange(amount, 0f, 1f, start.g, stop.g);
+            var b = MapRange(amount, 0f, 1f, start.b, stop.b);
+            var a = MapRange(amount, 0f, 1f, start.a, stop.a);
+
+            //var r = Math.Abs(start.r - stop.r) * Math.Min(amount, 1);
+            //var g = Math.Abs(start.g - stop.g) * Math.Min(amount, 1);
+            //var b = Math.Abs(start.b - stop.b) * Math.Min(amount, 1);
+            //var a = Math.Abs(start.a - stop.a) * Math.Min(amount, 1);
+
+            //r = start.r > stop.r ? start.r - r : stop.r + r;
+            //g = start.g > stop.g ? start.g - g : stop.g + g;
+            //b = start.b > stop.b ? start.b - b : stop.b + b;
+            //a = start.a > stop.a ? start.a - a : stop.a + a;
+
+            return new((int)r, (int)g, (int)b, (int)a);
+        }
+
         #endregion
 
 
