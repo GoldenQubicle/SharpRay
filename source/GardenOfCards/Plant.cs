@@ -54,51 +54,36 @@ namespace GardenOfCards
             if (turn > 3) turn = 3; //hacky obviously
 
             DrawTextV("Needs per turn", new(100, 90), 12, Color.BLACK);
-            var lWidth = LerpStat(_needs[turn][Suite.Light]);
-            var nWidth = LerpStat(_needs[turn][Suite.Nutrient]);
-            var wWidth = LerpStat(_needs[turn][Suite.Water]);
+            var lWidth = 10 * _needs[turn][Suite.Light];
+            var nWidth = 10 * _needs[turn][Suite.Nutrient];
+            var wWidth = 10 * _needs[turn][Suite.Water];
 
-            DrawRectangleLinesV(new(100, 110), new(100, 100), Color.BLACK);
+            DrawRectangleLinesV(new(100, 110), new(90, 100), Color.BLACK);
             DrawRectangleV(new(100, 110), new(lWidth, 20), GroundKeeper.GetSuiteColors(Suite.Light).Render);
             DrawRectangleV(new(100, 140), new(nWidth, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
             DrawRectangleV(new(100, 170), new(wWidth, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
-
-            DrawTextV("Needs overall", new(220, 90), 12, Color.BLACK);
-            var lSum = LerpStat(_needs.Sum(t => t.Value[Suite.Light]), 9 * 3);
-            var nSum = LerpStat(_needs.Sum(t => t.Value[Suite.Nutrient]), 9 * 3);
-            var wSum = LerpStat(_needs.Sum(t => t.Value[Suite.Water]), 9 * 3);
-
-            var actualLight = LerpStat(_stats[Suite.Light], 9 * 3);
-            var actualNutrient = LerpStat(_stats[Suite.Nutrient], 9 * 3);
-            var actualWater = LerpStat(_stats[Suite.Water], 9 * 3);
-
-            DrawRectangleLinesV(new(220, 110), new(100, 100), Color.BLACK);
-            DrawRectangleV(new(220, 110), new(lSum, 20), GroundKeeper.GetSuiteColors(Suite.Light).Render);
-            DrawRectangleV(new(220, 140), new(nSum, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
-            DrawRectangleV(new(220, 170), new(wSum, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
-
-            DrawRectangleV(new(220, 110), new(actualLight, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
-            DrawRectangleV(new(220, 140), new(actualNutrient, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
-            DrawRectangleV(new(220, 170), new(actualWater, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
-
             
             var lSumP = LerpStat(_stats[Suite.Light], _needs.Sum(t => t.Value[Suite.Light]), 0, 0);
             var nSumP = LerpStat(_stats[Suite.Nutrient], _needs.Sum(t => t.Value[Suite.Nutrient]), 0, 0);
             var wSumP = LerpStat(_stats[Suite.Water], _needs.Sum(t => t.Value[Suite.Water]), 0, 0);
             var overallP = (int)LerpStat((int)(lSumP + nSumP + wSumP), 300, 0, 0);
-            DrawTextV($"Needs overall {overallP} %", new(340, 90), 12, Color.BLACK);
 
-            DrawRectangleLinesV(new(340, 110), new(100, 100), Color.BLACK);
-            DrawRectangleV(new(340, 110), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Light).Render);
-            DrawRectangleV(new(340, 140), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
-            DrawRectangleV(new(340, 170), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
+            DrawTextV($"Needs overall {overallP} %", new(220, 90), 12, Color.BLACK);
 
-            DrawTextV($"{lSumP}%", new(450, 110), 12, Color.BLACK);
-            DrawTextV($"{nSumP}%", new(450, 140), 12, Color.BLACK);
-            DrawTextV($"{wSumP}%", new(450, 170), 12, Color.BLACK);
-            DrawRectangleV(new(340, 110), new(lSumP, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
-            DrawRectangleV(new(340, 140), new(nSumP, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
-            DrawRectangleV(new(340, 170), new(wSumP, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
+            DrawRectangleLinesV(new(220, 110), new(100, 100), Color.BLACK);
+            DrawRectangleV(new(220, 110), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Light).Render);
+            DrawRectangleV(new(220, 140), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
+            DrawRectangleV(new(220, 170), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
+
+       
+            DrawRectangleV(new(220, 110), new(lSumP, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
+            DrawRectangleV(new(220, 140), new(nSumP, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
+            DrawRectangleV(new(220, 170), new(wSumP, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
+
+           
+            DrawTextV($"{lSumP}%", new(330, 110), 12, Color.BLACK);
+            DrawTextV($"{nSumP}%", new(330, 140), 12, Color.BLACK);
+            DrawTextV($"{wSumP}%", new(330, 170), 12, Color.BLACK);
         }
 
         private float LerpStat(int stat, int max = 9, int min = 1, int minS = 1) => MapRange(stat, min, max, minS, 100);
