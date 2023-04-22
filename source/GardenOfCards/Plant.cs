@@ -1,4 +1,5 @@
-﻿using Rectangle = Raylib_cs.Rectangle;
+﻿using GardenOfCards.GameData;
+using Rectangle = Raylib_cs.Rectangle;
 
 namespace GardenOfCards
 {
@@ -6,7 +7,7 @@ namespace GardenOfCards
     {
         private readonly PotRenderData _pot;
         private readonly SoilRenderData _soil;
-        private readonly StemData _stemData;
+        private readonly StemSegment _stemSegment;
 
         private readonly Dictionary<int, Dictionary<Suite, int>> _needs = new()
         {
@@ -23,7 +24,7 @@ namespace GardenOfCards
             { Suite.Seed ,0 },
         };
 
-        
+
 
         public Plant(Vector2 position, PotRenderData potRenderData, SoilRenderData soilRenderData, SuiteData seedData)
         {
@@ -32,7 +33,7 @@ namespace GardenOfCards
             _soil = soilRenderData;
             RenderLayer = 0;
             Tag = seedData.Suite.ToString();
-            _stemData = new StemData(_pot.RimEnd with { X = _pot.RimEnd.X - _pot.Width / 2 }, seedData.Number);
+            _stemSegment = new StemSegment(_pot.RimEnd with { X = _pot.RimEnd.X - _pot.Width / 2 }, seedData.Number);
 
         }
 
@@ -40,9 +41,7 @@ namespace GardenOfCards
         {
             DebugDrawNeedsAndStats();
 
-            
-            _stemData.Segments.ForEach(s => s.Render());
-
+            _stemSegment.Render();
 
             DrawPot();
         }
@@ -62,7 +61,7 @@ namespace GardenOfCards
             DrawRectangleV(new(100, 110), new(lWidth, 20), GroundKeeper.GetSuiteColors(Suite.Light).Render);
             DrawRectangleV(new(100, 140), new(nWidth, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
             DrawRectangleV(new(100, 170), new(wWidth, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
-            
+
             var lSumP = LerpStat(_stats[Suite.Light], _needs.Sum(t => t.Value[Suite.Light]), 0, 0);
             var nSumP = LerpStat(_stats[Suite.Nutrient], _needs.Sum(t => t.Value[Suite.Nutrient]), 0, 0);
             var wSumP = LerpStat(_stats[Suite.Water], _needs.Sum(t => t.Value[Suite.Water]), 0, 0);
@@ -75,12 +74,10 @@ namespace GardenOfCards
             DrawRectangleV(new(220, 140), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
             DrawRectangleV(new(220, 170), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
 
-       
             DrawRectangleV(new(220, 110), new(lSumP, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
             DrawRectangleV(new(220, 140), new(nSumP, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
             DrawRectangleV(new(220, 170), new(wSumP, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
 
-           
             DrawTextV($"{lSumP}%", new(330, 110), 12, Color.BLACK);
             DrawTextV($"{nSumP}%", new(330, 140), 12, Color.BLACK);
             DrawTextV($"{wSumP}%", new(330, 170), 12, Color.BLACK);
@@ -108,7 +105,7 @@ namespace GardenOfCards
             foreach (var card in cards)
                 _stats[card.Suite] += card.Stat;
 
-
+            _stemSegment.OnTurnEnd();
         }
     }
 }

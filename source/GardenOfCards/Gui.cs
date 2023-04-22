@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace GardenOfCards
+﻿namespace GardenOfCards
 {
 	internal static class Gui
 	{
@@ -11,7 +9,7 @@ namespace GardenOfCards
 		public static GuiContainer CreateTurnGui ( ) => GuiContainerBuilder.CreateNew(true, 0, "TurnGui").AddChildren(
 			new Label
 			{
-				Position = new Vector2(Game.WindowWidth * .85f, Game.WindowHeight * .15f),
+				Position = new(Game.WindowWidth * .85f, Game.WindowHeight * .15f),
 				Size = ButtonSize,
 				DoCenterText = true,
 				FillColor = FillColor,
@@ -20,7 +18,7 @@ namespace GardenOfCards
 			},
 			new Button
 			{
-				Position = new Vector2(Game.WindowWidth * .85f, Game.WindowHeight * .65f),
+				Position = new(Game.WindowWidth * .85f, Game.WindowHeight * .65f),
 				Size = ButtonSize,
 				DoCenterText = true,
 				OnMouseLeftClick = e => new DealHand { GuiEntity = e },
@@ -31,7 +29,7 @@ namespace GardenOfCards
 			},
 			new Button
 			{
-				Position = new Vector2(Game.WindowWidth * .85f, Game.WindowHeight * .75f),
+				Position = new(Game.WindowWidth * .85f, Game.WindowHeight * .75f),
 				Size = ButtonSize,
 				Text = "End Turn",
 				DoCenterText = true,
@@ -42,7 +40,7 @@ namespace GardenOfCards
 			},
 			new Button
 			{
-				Position = new Vector2(Game.WindowWidth * .85f, Game.WindowHeight * .85f),
+				Position = new(Game.WindowWidth * .85f, Game.WindowHeight * .85f),
 				Size = ButtonSize,
 				Text = "Reset",
 				DoCenterText = true,

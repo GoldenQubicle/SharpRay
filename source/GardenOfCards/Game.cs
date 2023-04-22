@@ -22,9 +22,9 @@
 				DoEventLogging = false
 			});
 
-			GroundKeeper.OnGameStart(new GameStartData(new TurnData( ), new PotData( )));
+			GroundKeeper.OnGameStart(new GameStartData(new TurnData(), new PotData()));
 
-			AddEntity(Gui.CreateTurnGui( ));
+			AddEntity(Gui.CreateTurnGui());
 
 			Run( );
 		}

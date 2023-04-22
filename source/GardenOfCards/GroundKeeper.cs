@@ -10,7 +10,8 @@
 		public static void OnGameStart(GameStartData data)
 		{
 			CreatePlant(data.Pot);
-			OnTurnStart(data.Turn);
+			//AddEntity(new StemSegment(new(Game.WindowWidth / 2, Game.WindowHeight / 2), GetRandomStat()));
+            OnTurnStart(data.Turn);
 		}
 
 		public static void OnTurnStart(TurnData turnData)
@@ -60,6 +61,8 @@
 			AddEventAction(() => GetEntities<CardSlot>( ).ToList( ).ForEach(cs => cs.SetCurrentCard(Game.BlankCard)));
 
 			//TODO Generate & apply Adversities 
+
+            
 
 			OnTurnStart(CurrentTurn with { Number = CurrentTurn.Number + 1, HandsDealt = 0 });
 		}
