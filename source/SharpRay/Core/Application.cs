@@ -319,6 +319,18 @@ namespace SharpRay.Core
         /// <returns></returns>
         public static float MapRange(float source, float sourceMin, float sourceMax, float targetMin, float targetMax) =>
             targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
+        
+        /// <summary>
+        /// Maps a given source value to a target range value.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="sourceMin"></param>
+        /// <param name="sourceMax"></param>
+        /// <param name="targetMin"></param>
+        /// <param name="targetMax"></param>
+        /// <returns></returns>
+        public static int MapRange(int source, int sourceMin, int sourceMax, int targetMin, int targetMax) =>
+            targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
 
         public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
             DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);

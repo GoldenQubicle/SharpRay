@@ -49,7 +49,7 @@
 			{
 				var cards = GetEntitiesByTag<CardSlot>(plant.Tag)
 					.Where(cs => cs.IsOccupied) // could even just get all cards and penalizing leaving slots blank..?
-					.Select(cs => cs.CurrentCard);
+					.Select(cs => cs.CurrentCard).ToList();
 
 				plant.OnTurnEnd(cards);
 			}
@@ -117,7 +117,7 @@
 			var plantPosition = new Vector2(( Game.WindowWidth - potData.Width ) / 2, Game.WindowHeight * .65f);
 			potData = potData.ApplyOffset(plantPosition);
 			var soilData = GetSoilRenderData(potData, plantPosition);
-			var seed = GetSuiteRenderData((Suite.Seed, 0));
+			var seed = GetSuiteRenderData((Suite.Seed, GetRandomStat()));
 
 			for (var i = 0 ;i < data.nSlots ;i++)
 			{
@@ -136,7 +136,7 @@
 
 			}
 
-			var plant = new Plant(plantPosition, potData, soilData, seed.Suite.ToString( ));
+			var plant = new Plant(plantPosition, potData, soilData, seed);
 			AddEntity(plant);
 		}
 

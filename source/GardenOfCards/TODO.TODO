@@ -1,18 +1,18 @@
-☐ groundKeeper @created(15-11-2022 18:39)
+✔ groundKeeper @created(15-11-2022 18:39) @done(22-04-2023 11:16)
     - draws the current hand and all the plants at defined slot positions?
     ✔ keep track of turn number @created(15-11-2022 18:41) @done(22-11-29 11:12)
     ✔ onTurnStart @created(15-11-2022 18:39) @done(15-11-2022 19:17)
         - generate card hand with N cards
-    ☐ onTurnEnd @created(15-11-2022 18:39)
+    ✔ onTurnEnd @created(15-11-2022 18:39) @done(22-04-2023 11:17)
         - generate environment data, based on turn number
         - call plants with selected card(s) & environment data => 
-            ☐ pass selected cards @created(17-01-2023 16:15)
+            ✔ pass selected cards @created(17-01-2023 16:15) @done(22-04-2023 11:17)
             - do we keep stats over turns, i.e. accumulate over turns
             - do we 
         - generate adversities 
         - call plants with adversities
 
-☐ as a player I want to be able to deal a new hand durig turn @created(26-03-2023 16:11)
+✔ as a player I want to be able to deal a new hand durig turn @created(26-03-2023 16:11) @done(22-04-2023 11:16)
     ✔ create deal hand button @created(26-03-2023 16:12) @done(26-03-2023 17:27)
     ✔ deal hand from finite deck @created(26-03-2023 16:12) @done(26-03-2023 17:27)
     ✔ block dealing when deck is depleted @created(26-03-2023 17:27) @done(26-03-2023 17:46)
@@ -24,7 +24,6 @@
     ✔ limit new hand by means of turn data @created(28-03-2023 13:15) @done(28-03-2023 14:00)
 
 ✔ as a player I want to see how much of the plant needs are already met @created(26-03-2023 17:46) @done(26-03-2023 17:57)
-
 ✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
     can be either the hand slot, or the plant slot in case it hoovers over AND is unoccupied
 ✔ stop multiple cards from receiving mouse focus @created(23-11-2022 15:00) @done(23-11-2022 15:42)
@@ -38,6 +37,17 @@
     which will need to be tagged in order to find out which plant they belong to. However, 
     that way I can reuse the SharpRay collisions, with the cards being the actual colliding things.
     This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
+☐ actual mechanics @created(22-04-2023 11:17)
+    so atm everything is pretty much in place for actual gameplay, i.e. my worst skill...
+    the thing that needs to happen is to map the 3 input dimensions to the output dimensions
+    that is to say, how do light, nutrients & water affect the plant size, color and new growth?
+    penalize for over / under stats per turn?
+    do ipnut dimensions map on plant dimensions directly, or map input to some health, and map health to plant?
+    and exaclty how to determine when new leaves grow, or when the reward blooms - whatever the reward is gonna be anwyay
+    
+    light       height
+    nutrient    color
+    water       leaves
 
 ☐ plant growth @created(18-03-2023 15:35)
     plant grows over N turns, per turn needs w, s, l inputs between 1-9

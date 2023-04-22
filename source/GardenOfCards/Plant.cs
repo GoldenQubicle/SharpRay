@@ -6,12 +6,13 @@ namespace GardenOfCards
     {
         private readonly PotRenderData _pot;
         private readonly SoilRenderData _soil;
+        private readonly StemData _stemData;
 
         private readonly Dictionary<int, Dictionary<Suite, int>> _needs = new()
         {
             { 1, new() { {Suite.Light, 1 }, { Suite.Nutrient, 5 }, { Suite.Water, 9 } } },
-            { 2, new() { {Suite.Light, 5 }, { Suite.Nutrient, 5 }, { Suite.Water, 8 } } },
-            { 3, new() { {Suite.Light, 9 }, { Suite.Nutrient, 6 }, { Suite.Water, 9 } } },
+            { 2, new() { {Suite.Light, 5 }, { Suite.Nutrient, 6 }, { Suite.Water, 8 } } },
+            { 3, new() { {Suite.Light, 9 }, { Suite.Nutrient, 7 }, { Suite.Water, 7 } } },
         };
 
         private readonly Dictionary<Suite, int> _stats = new()
@@ -22,23 +23,16 @@ namespace GardenOfCards
             { Suite.Seed ,0 },
         };
 
-        private Texture2D texture2d;
+        
 
-        public Plant(Vector2 position, PotRenderData potRenderData, SoilRenderData soilRenderData, string tag)
+        public Plant(Vector2 position, PotRenderData potRenderData, SoilRenderData soilRenderData, SuiteData seedData)
         {
             Position = position;
             _pot = potRenderData;
             _soil = soilRenderData;
             RenderLayer = 0;
-            Tag = tag;
-
-
-            var mask = GenImageColor(200, 200, Color.BROWN);
-            var image = GenImageColor(200, 200, Color.DARKGREEN);
-
-            ImageAlphaMask(ref mask, GenImageCellular(200, 200, 20));
-            ImageDraw(ref image, mask, new(0, 0, 200, 200), new(0, 0, 200, 200), Color.LIME);
-            texture2d = LoadTextureFromImage(image);
+            Tag = seedData.Suite.ToString();
+            _stemData = new StemData(_pot.RimEnd with { X = _pot.RimEnd.X - _pot.Width / 2 }, seedData.Number);
 
         }
 
@@ -46,32 +40,11 @@ namespace GardenOfCards
         {
             DebugDrawNeedsAndStats();
 
-            var start = _pot.RimEnd with { X = _pot.RimEnd.X - _pot.Width / 2 };
             
-            var height = 175;
-            var stemBase = 25;
-            var stemTop = 18;
-            var points = new Vector2[]
-            {
-                new Vector2(stemTop, -height),
-                new Vector2(-stemTop, -height),
-                new Vector2(-stemBase, 0),
-                new Vector2(stemBase,   0),
-                new Vector2(stemTop, -height),
-            };
+            _stemData.Segments.ForEach(s => s.Render());
 
-            var uv = new Vector2[]
-            {
-                new(0,0), new (-1,0), new (-1,1),new (0,1)
-            };
-
-            
-            DrawTexturePoly(texture2d, start, points, uv, 5, Color.WHITE);
 
             DrawPot();
-
-            DrawCircleV(start, 3, Color.ORANGE);
-
         }
 
         private void DebugDrawNeedsAndStats()
@@ -107,9 +80,28 @@ namespace GardenOfCards
             DrawRectangleV(new(220, 110), new(actualLight, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
             DrawRectangleV(new(220, 140), new(actualNutrient, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
             DrawRectangleV(new(220, 170), new(actualWater, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
+
+            
+            var lSumP = LerpStat(_stats[Suite.Light], _needs.Sum(t => t.Value[Suite.Light]), 0, 0);
+            var nSumP = LerpStat(_stats[Suite.Nutrient], _needs.Sum(t => t.Value[Suite.Nutrient]), 0, 0);
+            var wSumP = LerpStat(_stats[Suite.Water], _needs.Sum(t => t.Value[Suite.Water]), 0, 0);
+            var overallP = (int)LerpStat((int)(lSumP + nSumP + wSumP), 300, 0, 0);
+            DrawTextV($"Needs overall {overallP} %", new(340, 90), 12, Color.BLACK);
+
+            DrawRectangleLinesV(new(340, 110), new(100, 100), Color.BLACK);
+            DrawRectangleV(new(340, 110), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Light).Render);
+            DrawRectangleV(new(340, 140), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Render);
+            DrawRectangleV(new(340, 170), new(100, 20), GroundKeeper.GetSuiteColors(Suite.Water).Render);
+
+            DrawTextV($"{lSumP}%", new(450, 110), 12, Color.BLACK);
+            DrawTextV($"{nSumP}%", new(450, 140), 12, Color.BLACK);
+            DrawTextV($"{wSumP}%", new(450, 170), 12, Color.BLACK);
+            DrawRectangleV(new(340, 110), new(lSumP, 20), GroundKeeper.GetSuiteColors(Suite.Light).Highlight);
+            DrawRectangleV(new(340, 140), new(nSumP, 20), GroundKeeper.GetSuiteColors(Suite.Nutrient).Highlight);
+            DrawRectangleV(new(340, 170), new(wSumP, 20), GroundKeeper.GetSuiteColors(Suite.Water).Highlight);
         }
 
-        private float LerpStat(int stat, int max = 9) => MapRange(stat, 1, max, 10, 100);
+        private float LerpStat(int stat, int max = 9, int min = 1, int minS = 1) => MapRange(stat, min, max, minS, 100);
 
         private void DrawPot()
         {
@@ -126,10 +118,11 @@ namespace GardenOfCards
 
         }
 
-        internal void OnTurnEnd(IEnumerable<Card> cards)
+        internal void OnTurnEnd(List<Card> cards)
         {
             foreach (var card in cards)
                 _stats[card.Suite] += card.Stat;
+
 
         }
     }
