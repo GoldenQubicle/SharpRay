@@ -1,6 +1,4 @@
-﻿using Raylib_cs;
-
-namespace GardenOfCards.GameData
+﻿namespace GardenOfCards.GameData
 {
     internal class StemSegment
     {

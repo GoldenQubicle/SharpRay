@@ -1,7 +1,4 @@
-﻿using GardenOfCards.GameData;
-using Rectangle = Raylib_cs.Rectangle;
-
-namespace GardenOfCards
+﻿namespace GardenOfCards
 {
     internal class Plant : Entity, IHasRender, IHasUpdate
     {

@@ -1,3 +1,54 @@
+☐ temperature card suite @created(26-04-2023 09:20)
+
+☐ as a player I want to be able to pick a seed card to start with @created(26-04-2023 09:20)
+    how does that work tho, starting with 1 slot? kinda boring
+    starting with more than 1 slot means not every of it meets can be met per turn
+
+☐ actual mechanics @created(22-04-2023 11:17)
+    so atm everything is pretty much in place for actual gameplay, i.e. my worst skill...
+    the thing that needs to happen is to map the 3 input dimensions to the output dimensions
+    that is to say, how do light, nutrients & water affect the plant size, color and new growth?
+    penalize for over / under stats per turn?
+    do ipnut dimensions map on plant dimensions directly, or map input to some health, and map health to plant?
+    and exaclty how to determine when new leaves grow, or when the reward blooms - whatever the reward is gonna be anwyay
+    
+    light       height
+    nutrient    color
+    water       leaves
+
+    design a strategy-esque pattern as to inject these mechanics into the plant entity,
+    i.e. make sure to decouple, also with regards to buffs and debuffs based on current hand 
+
+☐ plant growth @created(18-03-2023 15:35)
+    plant grows over N turns, per turn needs w, s, l inputs between 1-9
+    could generate these ideal input values w curves, or just manually make them
+    should be shown as graph
+    the difference between input and expected determines the health, and visual effects
+    plants produces N rewards, based on (overall?) deviation score 
+    
+☐ rewards @created(18-03-2023 15:38)
+    buff and debuff cards in order to give player a chance to get closer to ideal inputs
+    soil type, could act as an overall reduction buff to the deviation..?
+    bonus for providing water, light & nutrients? Does imply fix 3 card per turn input..
+    bonus for having stats ascending or descending, e.g. 3,4,5 or 7,6,5
+    bonus for having the same stat, also does imply having 3 card input. Or could have more than 1 deck.
+
+☐ create card transition fx for end turn @created(24-11-2022 14:38)
+☐ create plant status fx when applying card @created(24-11-2022 14:38)
+☐ create plant status fx when applying adversities @created(24-11-2022 14:38)
+
+☐ create environmental adversitites @created(24-11-2022 14:39)
+    gonna be text prompts with stats applied to plants. Either all or specifically targeted..?
+    - It rained a lot, the soil is soaked. (root rot...?)
+    - It was warm / hot / extremely hot {plantname} dried out / shriveled up / is dead
+    - It was cold / extremele cold / freezing
+    - A hailstorm has bruised {plantname} leaves
+    - A strong gust of wind / stormy wind / hurricane knocked over {plantname} / wrecked your garden (hurricane == game over..?) 
+    - A hedgehog/rabbit/snail/goose eat {plantname} leaves
+    - Neighborhood kids kicked their soccerball into your garden {plantname} is bruised / severly bruised / dead
+    - A neighborhood dog took a poo in your garden (+ stats)
+    - Mildew outbreak (when warm & moist meet certain conditions)
+
 ✔ groundKeeper @created(15-11-2022 18:39) @done(22-04-2023 11:16)
     - draws the current hand and all the plants at defined slot positions?
     ✔ keep track of turn number @created(15-11-2022 18:41) @done(22-11-29 11:12)
@@ -37,31 +88,6 @@
     which will need to be tagged in order to find out which plant they belong to. However, 
     that way I can reuse the SharpRay collisions, with the cards being the actual colliding things.
     This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
-☐ actual mechanics @created(22-04-2023 11:17)
-    so atm everything is pretty much in place for actual gameplay, i.e. my worst skill...
-    the thing that needs to happen is to map the 3 input dimensions to the output dimensions
-    that is to say, how do light, nutrients & water affect the plant size, color and new growth?
-    penalize for over / under stats per turn?
-    do ipnut dimensions map on plant dimensions directly, or map input to some health, and map health to plant?
-    and exaclty how to determine when new leaves grow, or when the reward blooms - whatever the reward is gonna be anwyay
-    
-    light       height
-    nutrient    color
-    water       leaves
-
-☐ plant growth @created(18-03-2023 15:35)
-    plant grows over N turns, per turn needs w, s, l inputs between 1-9
-    could generate these ideal input values w curves, or just manually make them
-    should be shown as graph
-    the difference between input and expected determines the health, and visual effects
-    plants produces N rewards, based on (overall?) deviation score 
-    
-☐ rewards @created(18-03-2023 15:38)
-    buff and debuff cards in order to give player a chance to get closer to ideal inputs
-    soil type, could act as an overall reduction buff to the deviation..?
-    bonus for providing water, light & nutrients? Does imply fix 3 card per turn input..
-    bonus for having stats ascending or descending, e.g. 3,4,5 or 7,6,5
-    bonus for having the same stat, also does imply having 3 card input. Or could have more than 1 deck.
 
 ☐ suite icons @created(01-04-2023 15:43)
     would be nice to have little pictograms on the cards to indicate what it is, just like an actual card deck..
@@ -78,21 +104,7 @@
 ✔ start new plant with a seed card .. @created(30-12-2022 18:09) @done(30-12-2022 18:23)
 
 ✔ create end turn button @created(24-11-2022 14:37) @done(22-11-29 11:12)
-☐ create card transition fx for end turn @created(24-11-2022 14:38)
-☐ create plant status fx when applying card @created(24-11-2022 14:38)
-☐ create plant status fx when applying adversities @created(24-11-2022 14:38)
 
-☐ create environmental adversitites @created(24-11-2022 14:39)
-    gonna be text prompts with stats applied to plants. Either all or specifically targeted..?
-    - It rained a lot, the soil is soaked. (root rot...?)
-    - It was warm / hot / extremely hot {plantname} dried out / shriveled up / is dead
-    - It was cold / extremele cold / freezing
-    - A hailstorm has bruised {plantname} leaves
-    - A strong gust of wind / stormy wind / hurricane knocked over {plantname} / wrecked your garden (hurricane == game over..?) 
-    - A hedgehog/rabbit/snail/goose eat {plantname} leaves
-    - Neighborhood kids kicked their soccerball into your garden {plantname} is bruised / severly bruised / dead
-    - A neighborhood dog took a poo in your garden (+ stats)
-    - Mildew outbreak (when warm & moist meet certain conditions)
 
 
     
