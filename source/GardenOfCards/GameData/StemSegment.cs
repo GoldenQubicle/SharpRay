@@ -11,7 +11,7 @@
 
         private static Texture2D _texture2D;
 
-        private Vector2[] Points => new List<Vector2>
+        private Vector2[] Vertices => new List<Vector2>
         {
             new(TopWidth, -Height),
             new(-TopWidth, -Height),
@@ -75,13 +75,13 @@
 
             //Height = (int)-p[0].Y;
 
-            DrawTexturePoly(Texture2d, Start, Points, _uv, Points.Length, Color.WHITE);
+            DrawTexturePoly(Texture2d, Start, Vertices, _uv, Vertices.Length, Color.WHITE);
 
             _segments.ForEach(s => s.Render());
 
             //DrawCircleV(Start, 2, Color.PURPLE);
-            //DrawCircleV(Start + Points[0], 2, Color.YELLOW);
-            //DrawCircleV(Start + Points[1], 2, Color.ORANGE);
+            //DrawCircleV(Start + Vertices[0], 2, Color.YELLOW);
+            //DrawCircleV(Start + Vertices[1], 2, Color.ORANGE);
             //DrawCircleV(End, 3, Color.RED);
 
         }
@@ -130,6 +130,6 @@
         }
 
         private Vector2 GetAdjustedStart(StemSegment s) =>
-            Vector2.Lerp(s.Start + s.Points[0], s.Start + s.Points[1], .5f);
+            Vector2.Lerp(s.Start + s.Vertices[0], s.Start + s.Vertices[1], .5f);
     }
 }

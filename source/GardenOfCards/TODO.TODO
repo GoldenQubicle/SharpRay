@@ -35,6 +35,9 @@
 
 ☐ create card transition fx for end turn @created(24-11-2022 14:38)
 ☐ create plant status fx when applying card @created(24-11-2022 14:38)
+    this will mean not calling OnTurnStart immedialty in OnTurnEnd but instead fire
+    an event from the plant when the fx are done, and waiting for all plants to be done
+    before calling OnTurnStart.
 ☐ create plant status fx when applying adversities @created(24-11-2022 14:38)
 
 ☐ create environmental adversitites @created(24-11-2022 14:39)
