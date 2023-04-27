@@ -55,9 +55,6 @@
             BaseWidth = MapRange(stat, Game.MinStat, Game.MaxStat, 10, 25);
             TopWidth = MapRange(stat, Game.MinStat, Game.MaxStat, 2, 10);
             Rotation = MapRange(stat, Game.MinStat, Game.MaxStat, -.25f, .25f);
-
-
-
         }
 
         public StemSegment(StemSegment segment)
