@@ -10,7 +10,6 @@
         public static void OnGameStart(GameStartData data)
         {
             CreatePlant(data.Pot);
-            //AddEntity(new StemSegment(new(Game.WindowWidth / 2, Game.WindowHeight / 2), GetRandomStat()));
             OnTurnStart(data.Turn);
         }
 
@@ -121,33 +120,35 @@
             var soilData = GetSoilRenderData(potData, plantPosition);
             var seed = GetSuiteRenderData((Suite.Seed, GetRandomStat()));
 
+            var needs = new Dictionary<int, Dictionary<Suite, int>>
+            {
+                { 1, new() { {Suite.Light, 1 }, { Suite.Nutrient, 5 }, { Suite.Water, 9 }, { Suite.Temperature, 8} } },
+                { 2, new() { {Suite.Light, 5 }, { Suite.Nutrient, 6 }, { Suite.Water, 8 }, { Suite.Temperature, 8} } },
+                { 3, new() { {Suite.Light, 9 }, { Suite.Nutrient, 7 }, { Suite.Water, 7 }, { Suite.Temperature, 8} } },
+            };
+
+            var plantData = new DevPlant(needs, seed.Number);
+            var plant = new Plant(plantPosition, potData, soilData, plantData);
+            AddEntity(plant);
+
+
             for (var i = 0; i < data.nSlots; i++)
             {
                 var pos = Game.GetCardPosition(i) + potData.SlotOffset;
                 if (i == 0)
                 {
                     var seedCard = new Card(pos, seed);
-                    var slot = new CardSlot(seedCard.Position, seed.Suite.ToString(), i);
+                    var slot = new CardSlot(seedCard.Position, plantData.Tag, i);
                     AddEntity(seedCard);
                     AddEntity(slot);
                 }
                 else
                 {
-                    AddEntity(new CardSlot(pos, seed.Suite.ToString(), i));
+                    AddEntity(new CardSlot(pos, plantData.Tag, i));
                 }
 
             }
 
-            var needs = new Dictionary<int, Dictionary<Suite, int>>
-            {
-                { 1, new() { {Suite.Light, 1 }, { Suite.Nutrient, 5 }, { Suite.Water, 9 } } },
-                { 2, new() { {Suite.Light, 5 }, { Suite.Nutrient, 6 }, { Suite.Water, 8 } } },
-                { 3, new() { {Suite.Light, 9 }, { Suite.Nutrient, 7 }, { Suite.Water, 7 } } },
-            };
-
-            var plantData = new DevPlant(needs, seed.Number);
-            var plant = new Plant(plantPosition, potData, soilData, plantData);
-            AddEntity(plant);
         }
 
         private static int GetRandomStat() => GetRandomValue(Game.MinStat, Game.MaxStat);
@@ -160,6 +161,7 @@
             Suite.Water => new(d.suite, d.stat, GetSuiteColors(d.suite)),
             Suite.Light => new(d.suite, d.stat, GetSuiteColors(d.suite)),
             Suite.Nutrient => new(d.suite, d.stat, GetSuiteColors(d.suite)),
+            Suite.Temperature => new(d.suite, d.stat, GetSuiteColors(d.suite)),
             _ => throw new ArgumentOutOfRangeException(nameof(d.suite), d.suite, null)
         };
 
@@ -169,6 +171,7 @@
             Suite.Water => (Color.SKYBLUE, Color.BLUE),
             Suite.Light => (Color.YELLOW, Color.GOLD),
             Suite.Nutrient => (Color.GREEN, Color.LIME),
+            Suite.Temperature => (Color.RED, Color.MAROON),
             _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
         };
 

@@ -5,6 +5,7 @@
         Seed,
         Water,
         Light,
-        Nutrient
+        Nutrient,
+        Temperature
     }
 }
