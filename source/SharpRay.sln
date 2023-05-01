@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteroids", "Asteroids\Aste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShittySnake", "ShittySnake\ShittySnake.csproj", "{BFDD6412-3CE9-4A66-A6F3-A1F82E0A814C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextureTool", "TextureTool\TextureTool.csproj", "{02A12141-880A-414F-9BCB-A154CDD320BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextureTool", "TextureTool\TextureTool.csproj", "{02A12141-880A-414F-9BCB-A154CDD320BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerribleTetris", "TerribleTetris\TerribleTetris.csproj", "{882D002A-F03C-4AD8-A105-CBC05AA9462C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{02A12141-880A-414F-9BCB-A154CDD320BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02A12141-880A-414F-9BCB-A154CDD320BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02A12141-880A-414F-9BCB-A154CDD320BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{882D002A-F03C-4AD8-A105-CBC05AA9462C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{882D002A-F03C-4AD8-A105-CBC05AA9462C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{882D002A-F03C-4AD8-A105-CBC05AA9462C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{882D002A-F03C-4AD8-A105-CBC05AA9462C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
