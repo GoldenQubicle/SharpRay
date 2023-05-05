@@ -1,6 +1,4 @@
-﻿using Rectangle = Raylib_cs.Rectangle;
-
-namespace TerribleTetris;
+﻿namespace TerribleTetris;
 
 internal static partial class Game
 {
@@ -20,7 +18,7 @@ internal static partial class Game
 			_shape = shape;
 			_grid = grid;
 			_bbSize = new(_shape.BoundingBoxSize * _grid.CellSize, _shape.BoundingBoxSize * _grid.CellSize);
-			_easing = new Easing(Easings.EaseBounceOut, LevelTimer);
+			_easing = new Easing(Easings.EaseBounceOut, LevelTimer, isRepeated: true);
 			_mapY = (Position.Y, Position.Y + _grid.CellSize);
 			_x = Position.X;
 		}
@@ -43,7 +41,6 @@ internal static partial class Game
 			if (_easing.IsDone( ))
 			{
 				_mapY = (Position.Y, Position.Y + _grid.CellSize);
-				_easing.Reset( );
 				return;
 			}
 

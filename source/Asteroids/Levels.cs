@@ -146,7 +146,7 @@
             {
                 new ()
                 {
-                    SpawnScore = 15,
+                    SpawnScore = 10,
                     PickupType = PickUp.Type.Weapon,
                     Description = "Triple Shooter Weapon!",
                     OnPickUp = () => PrimaryWeapon.ChangeMode(PrimaryWeapon.Mode.Triple),
