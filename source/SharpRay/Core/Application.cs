@@ -100,7 +100,7 @@ namespace SharpRay.Core
 
         /// <summary>
         /// Convenient method to take advantage of .NET hot reloading while designing GUI elements. 
-        /// Contineously adds & removes entities, DOES NOT support interactivity!
+        /// Continuously adds & removes entities, DOES NOT support interactivity!
         /// </summary>
         /// <param name="action"></param>
         public static void RunDebugGui(Action action)
@@ -119,7 +119,7 @@ namespace SharpRay.Core
 
         /// <summary>
         /// Prints the argument to console. 
-        /// Automaticaly preprends the current frame number and class.method name indicating where the Print method is used. 
+        /// Automatically prepends the current frame number and class.method name indicating where the Print method is used. 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="arg"></param>
@@ -129,8 +129,8 @@ namespace SharpRay.Core
             Print(() => new[] { arg }, memberName, sourceFilePath);
 
         /// <summary>
-        /// Prints the arguments returned from <paramref name="args"/> in tab seperated format to console.  
-        /// Automaticaly preprends the current frame number and class.method name indicating where the Print method is used. 
+        /// Prints the arguments returned from <paramref name="args"/> in tab separated format to console.  
+        /// Automatically prepends the current frame number and class.method name indicating where the Print method is used. 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="args"></param>
