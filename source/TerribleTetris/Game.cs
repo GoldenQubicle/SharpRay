@@ -15,6 +15,8 @@ namespace TerribleTetris
 
 		internal enum RotationSystem { Super } // note default, for now hardcoded
 
+		internal static double LevelTimer = 750;
+
 		internal static void Main(string[ ] args)
 		{
 			Initialize(new SharpRayConfig
@@ -29,7 +31,7 @@ namespace TerribleTetris
 			var gridData = new GridData(Rows: 16, Cols: 10, CellSize: 20, Color1: RAYWHITE, Color2: LIGHTGRAY);
 			AddEntity(new Grid(gridData));
 
-			var tetrominoData = new TetrominoData(Shape.Z);
+			var tetrominoData = new TetrominoData(Shape.T);
 			AddEntity(new Tetromino(tetrominoData, gridData));
 
 			Run( );
