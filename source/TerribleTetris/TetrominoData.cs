@@ -23,15 +23,21 @@ internal static partial class Game
 			_ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, null)
 		};
 
-		public List<(int x, int y)> Offsets = Shape switch
+		public IDictionary<Rotation, List<(int x, int y)>> Offsets = Shape switch
 		{
-			Shape.I => new( ) { (0, 0), (1, 0), (2, 0), (3, 0) },
-			Shape.O => new( ) { (0, 0), (1, 0), (0, 1), (1, 1) },
-			Shape.T => new( ) { (0, 0), (1, 0), (2, 0), (1, 1) },
-			Shape.J => new( ) { (1, 0), (1, 1), (1, 2), (0, 2) },
-			Shape.L => new( ) { (1, 0), (1, 1), (1, 2), (2, 2) },
-			Shape.S => new( ) { (1, 0), (2, 0), (0, 1), (1, 1) },
-			Shape.Z => new( ) { (0, 0), (1, 0), (1, 1), (2, 1) },
+			//Shape.I => new( ) { (0, 0), (1, 0), (2, 0), (3, 0) },
+			//Shape.O => new( ) { (0, 0), (1, 0), (0, 1), (1, 1) },
+			Shape.T => new Dictionary<Rotation, List<(int x, int y)>>
+			{
+				{ Rotation.Up , new( ) { (1, 0), (0, 1), (1, 1), (2, 1) } },
+				{ Rotation.Right, new (){ (1,0),(1,1), (2,1), (1,2) } },
+				{ Rotation.Down, new (){ (0,1), (1,1), (2,1), (1,2) } },
+				{ Rotation.Left , new () { (1,0), (0,1), (1,1), (1,2) } }
+			},
+			//Shape.J => new( ) { (1, 0), (1, 1), (1, 2), (0, 2) },
+			//Shape.L => new( ) { (1, 0), (1, 1), (1, 2), (2, 2) },
+			//Shape.S => new( ) { (1, 0), (2, 0), (0, 1), (1, 1) },
+			//Shape.Z => new( ) { (0, 0), (1, 0), (1, 1), (2, 1) },
 			_ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, null)
 		};
 	}
