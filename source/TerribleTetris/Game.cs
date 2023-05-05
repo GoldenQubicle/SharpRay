@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TerribleTetris
 {
@@ -12,12 +13,10 @@ namespace TerribleTetris
 
 		internal enum Rotation { Up, Right, Down, Left }
 
-		internal enum RotationSystem { Super }
+		internal enum RotationSystem { Super } // note default, for now hardcoded
 
 		internal static void Main(string[ ] args)
 		{
-			SaveJson( );
-
 			Initialize(new SharpRayConfig
 			{
 				WindowWidth = WindowWidth,
@@ -30,31 +29,10 @@ namespace TerribleTetris
 			var gridData = new GridData(Rows: 16, Cols: 10, CellSize: 20, Color1: RAYWHITE, Color2: LIGHTGRAY);
 			AddEntity(new Grid(gridData));
 
-			var tetrominoData = new TetrominoData(Shape.T);
+			var tetrominoData = new TetrominoData(Shape.Z);
 			AddEntity(new Tetromino(tetrominoData, gridData));
 
 			Run( );
-		}
-
-		private static void SaveJson()
-		{
-			var data = new Dictionary<RotationSystem, Dictionary<Shape, Dictionary<Rotation, List<Vector2>>>>
-			{
-				{RotationSystem.Super, new Dictionary<Shape, Dictionary<Rotation, List<Vector2>>>
-				{
-					{ Shape.T , new Dictionary<Rotation, List<Vector2>>
-						{
-							{ Rotation.Up , new( ) { new (1, 0), new(0, 1), new(1, 1), new(2, 1) } },
-							{ Rotation.Right, new ( ) { new(1,0), new(1,1), new(2,1), new(1,2) } },
-							{ Rotation.Down, new ( ) { new(0,1), new(1,1), new(2,1), new(1,2) } },
-							{ Rotation.Left , new ( ) { new(1,0), new(0,1), new(1,1), new(1,2) } }
-						}
-					}
-				}}
-			};
-
-			var json = JsonSerializer.Serialize(data);
-			File.WriteAllText(Path.Combine(AssestsFolder, "test.json"), json);
 		}
 	}
 }

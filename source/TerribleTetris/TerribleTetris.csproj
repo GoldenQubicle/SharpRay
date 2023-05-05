@@ -29,4 +29,10 @@
     <Folder Include="assets\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="assets\readtest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
