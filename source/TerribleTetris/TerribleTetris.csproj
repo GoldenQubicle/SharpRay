@@ -25,4 +25,8 @@
     <ProjectReference Include="..\SharpRay\SharpRay.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="assets\" />
+  </ItemGroup>
+
 </Project>

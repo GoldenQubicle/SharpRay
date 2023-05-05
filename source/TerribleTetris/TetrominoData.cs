@@ -30,9 +30,9 @@ internal static partial class Game
 			Shape.T => new Dictionary<Rotation, List<(int x, int y)>>
 			{
 				{ Rotation.Up , new( ) { (1, 0), (0, 1), (1, 1), (2, 1) } },
-				{ Rotation.Right, new (){ (1,0),(1,1), (2,1), (1,2) } },
-				{ Rotation.Down, new (){ (0,1), (1,1), (2,1), (1,2) } },
-				{ Rotation.Left , new () { (1,0), (0,1), (1,1), (1,2) } }
+				{ Rotation.Right, new ( ) { (1,0),(1,1), (2,1), (1,2) } },
+				{ Rotation.Down, new ( ) { (0,1), (1,1), (2,1), (1,2) } },
+				{ Rotation.Left , new ( ) { (1,0), (0,1), (1,1), (1,2) } }
 			},
 			//Shape.J => new( ) { (1, 0), (1, 1), (1, 2), (0, 2) },
 			//Shape.L => new( ) { (1, 0), (1, 1), (1, 2), (2, 2) },
