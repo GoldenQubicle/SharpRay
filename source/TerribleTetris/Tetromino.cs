@@ -8,29 +8,27 @@ internal static partial class Game
 	{
 		private readonly TetrominoData _shape;
 		private readonly GridData _grid;
+		private readonly Easing _easing;
+		private readonly Vector2 _bbSize;
 		private int _rotation;
-		private Easing _easing;
-		private float _nextY;
-		private float _oldY;
 		private float _x;
-
-		private Vector2 _bbSize;
+		private (float start, float end) _mapY;
 
 		public Tetromino(TetrominoData shape, GridData grid)
 		{
+			Position = grid.Position;
 			_shape = shape;
 			_grid = grid;
 			_bbSize = new(_shape.BoundingBoxSize * _grid.CellSize, _shape.BoundingBoxSize * _grid.CellSize);
-			Position = grid.Position;
 			_easing = new Easing(Easings.EaseBounceOut, LevelTimer);
-			_oldY = Position.Y;
-			_nextY = Position.Y + grid.CellSize;
+			_mapY = (Position.Y, Position.Y + _grid.CellSize);
 			_x = Position.X;
 		}
 
 		public override void Render()
 		{
 			DrawRectangleLinesV(Position, _bbSize, BLUE);
+
 			foreach (var offset in _shape.Offsets[(Rotation)_rotation])
 			{
 				var pos = Position + new Vector2(offset.x * _grid.CellSize, offset.y * _grid.CellSize);
@@ -44,13 +42,12 @@ internal static partial class Game
 
 			if (_easing.IsDone( ))
 			{
-				_oldY = Position.Y;
-				_nextY = Position.Y + _grid.CellSize;
+				_mapY = (Position.Y, Position.Y + _grid.CellSize);
 				_easing.Reset( );
 				return;
 			}
 
-			Position = new Vector2(_x, MapRange(_easing.GetValue( ), 0f, 1f, _oldY, _nextY));
+			Position = new Vector2(_x, MapRange(_easing.GetValue( ), 0f, 1f, _mapY.start, _mapY.end));
 
 		}
 
