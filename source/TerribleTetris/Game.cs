@@ -8,6 +8,10 @@
 
 		internal enum Shape { I, O, T, J, L, S, Z };
 
+		internal enum Rotation { Up, Right, Down, Left}
+
+		internal enum RotationSystem { Super }
+
 		internal static void Main(string[ ] args)
 		{
 			Initialize(new SharpRayConfig
@@ -22,7 +26,7 @@
 			var gridData = new GridData(Rows: 16, Cols: 10, CellSize: 20, Color1: RAYWHITE, Color2: LIGHTGRAY );
 			AddEntity(new Grid(gridData));
 
-			var tetrominoData = new TetrominoData(Shape.Z);
+			var tetrominoData = new TetrominoData(Shape.T);
 			AddEntity(new Tetromino(tetrominoData, gridData));
 
 			Run( );
