@@ -5,9 +5,9 @@ namespace TerribleTetris
 {
 	internal class Grid : Entity, IHasRender
 	{
-		private readonly GridData _data;
+		private static  GridData _data;
 		private readonly Texture2D _texture;
-		private static Dictionary<(int x, int y), Shape> _contents = new();
+		private static readonly Dictionary<(int x, int y), Shape> Contents = new();
 
 		public Grid(GridData grid)
 		{
@@ -17,39 +17,37 @@ namespace TerribleTetris
 			UnloadImage(bgImage);
 			Position = new Vector2(( WindowWidth - _data.Width ) / 2, ( WindowHeight - _data.Height ) / 2);
 			
-			for (int r = 0 ;r < _data.Rows ;r++)
-				for (int c = 0 ;c < _data.Cols ;c++)
-					_contents.Add((c, r), Shape.None);
+			for (var r = 0 ;r < _data.Rows ;r++)
+				for (var c = 0 ;c < _data.Cols ;c++)
+					Contents.Add((c, r), Shape.None);
 
 		}
 		public override void Render()
 		{
 			DrawTextureV(_texture, Position, WHITE);
 
-			//DrawDebugIndices( );
+			DrawDebugIndices( );
 		}
 
 		private void DrawDebugIndices()
 		{
-			for (int r = 0; r < _data.Rows; r++)
+			foreach (var (c,r) in Contents.Keys)
 			{
-				for (int c = 0; c < _data.Cols; c++)
-				{
-					var pos = Position + new Vector2(c * _data.CellSize, r * _data.CellSize);
-					DrawTextV($"{c}, {r}", pos, 8, BLACK);
-				}
+				var pos = Position + new Vector2(c * _data.CellSize, r * _data.CellSize);
+				DrawTextV($"{c}, {r}", pos, 8, BLACK);
 			}
+
+			
 		}
 
 		public static bool CanMove((int x, int y) idx)
 		{
-			if (_contents.TryGetValue(idx, out Shape s))
+			if (Contents.TryGetValue(idx, out var s))
 			{
 				return s == Shape.None;
 			}
 
 			return false;
 		}
-
 	}
 }
