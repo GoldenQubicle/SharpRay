@@ -9,7 +9,7 @@ namespace TerribleTetris
 
 		internal static int WindowWidth => 680;
 
-		internal enum Shape { I, O, T, J, L, S, Z };
+		internal enum Shape { I, O, T, J, L, S, Z, None };
 
 		internal enum Rotation { Up, Right, Down, Left }
 
@@ -31,7 +31,7 @@ namespace TerribleTetris
 			var gridData = new GridData(Rows: 16, Cols: 10, CellSize: 20, Color1: RAYWHITE, Color2: LIGHTGRAY);
 			AddEntity(new Grid(gridData));
 
-			var tetrominoData = new TetrominoData(Shape.T);
+			var tetrominoData = new TetrominoData(Shape.L);
 			AddEntity(new Tetromino(tetrominoData, gridData));
 
 			Run( );
