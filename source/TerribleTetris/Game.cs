@@ -5,9 +5,9 @@ namespace TerribleTetris
 {
 	internal static partial class Game
 	{
-		internal static int WindowHeight => 480;
+		internal static int WindowHeight => 720;
 
-		internal static int WindowWidth => 680;
+		internal static int WindowWidth => 1080;
 
 		internal enum Shape { I, O, T, J, L, S, Z, None };
 
@@ -28,7 +28,7 @@ namespace TerribleTetris
 				BackGroundColor = DARKGRAY
 			});
 
-			var gridData = new GridData(Rows: 16, Cols: 10, CellSize: 20, Color1: RAYWHITE, Color2: LIGHTGRAY);
+			var gridData = new GridData(Rows: 16, Cols: 16, CellSize: 35, Color1: RAYWHITE, Color2: LIGHTGRAY);
 			AddEntity(new Grid(gridData));
 
 			var tetrominoData = new TetrominoData(Shape.L);
