@@ -23,7 +23,7 @@ namespace TerribleTetris
 		{
 			DrawTextureV(_texture, Position, WHITE);
 
-			//DrawDebugContents();
+			DrawDebugContents( );
 
 			DrawDebugIndices( );
 
@@ -44,7 +44,7 @@ namespace TerribleTetris
 			foreach (var (c,r) in Contents.Keys)
 			{
 				var pos = Position + new Vector2(c * _data.CellSize, r * _data.CellSize);
-				DrawTextV($"{c}, {r}", pos, 8, BLACK);
+				DrawTextV($"{c}, {r}", pos, 8, RED);
 			}
 		}
 
