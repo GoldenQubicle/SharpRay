@@ -40,9 +40,9 @@ namespace TerribleTetris
 			AddEntity(new Grid(GridData));
 			
 
-			Enumerable.Range(0, 10).ToList().ForEach(n =>
+			Enumerable.Range(0, 1).ToList().ForEach(n =>
 			{
-				var shape = Enum.GetValues<Shape>()[..7][GetRandomValue(0, 7)];
+				var shape = Enum.GetValues<Shape>()[..7][GetRandomValue(0, 6)];
 				TetrominoStack.Push(new Tetromino(shape, 5));
 			});
 
@@ -55,6 +55,8 @@ namespace TerribleTetris
 
 		private static void SpawnTetromino()
 		{
+			if (!TetrominoStack.Any()) return;
+
 			var tetromino = TetrominoStack.Pop();
 			TetrominoController.Push(tetromino);
 			AddEntity(tetromino, OnGameEvent);

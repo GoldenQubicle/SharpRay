@@ -20,6 +20,7 @@ internal static partial class Game
 			Shape.L => ORANGE,
 			Shape.S => LIME,
 			Shape.Z => RED,
+			Shape.None => BLANK,
 			_ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, null)
 		};
 
@@ -74,6 +75,7 @@ internal static partial class Game
 				{ Rotation.Down , new( ) { (0,1), (1,1), (1,2), (2,2) } },
 				{ Rotation.Left , new( ) { (0,1), (0,2), (1,0), (1,1) } },
 			},
+			Shape.None => new Dictionary<Rotation, List<(int x, int y)>>(),
 			_ => throw new ArgumentOutOfRangeException(nameof(Shape), Shape, null)
 		};
 	}
