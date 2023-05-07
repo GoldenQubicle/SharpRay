@@ -15,7 +15,7 @@ namespace TerribleTetris
 			var bgImage = GenImageChecked(_data.Width, _data.Height, _data.CellSize, _data.CellSize, _data.Color1, _data.Color2);
 			_texture = LoadTextureFromImage(bgImage);
 			UnloadImage(bgImage);
-			Position = new Vector2(( WindowWidth - _data.Width ) / 2, ( WindowHeight - _data.Height ) / 2);
+			Position = _data.Position;
 			
 			for (var r = 0 ;r < _data.Rows ;r++)
 				for (var c = 0 ;c < _data.Cols ;c++)
@@ -27,6 +27,7 @@ namespace TerribleTetris
 			DrawTextureV(_texture, Position, WHITE);
 
 			DrawDebugIndices( );
+
 		}
 
 		private void DrawDebugIndices()
@@ -36,12 +37,18 @@ namespace TerribleTetris
 				var pos = Position + new Vector2(c * _data.CellSize, r * _data.CellSize);
 				DrawTextV($"{c}, {r}", pos, 8, BLACK);
 			}
-
-			
 		}
 
-		public static bool CanMove((int x, int y) idx)
+		public static void BlockCells(TetrominoBlocked tb) => 
+			tb.Indices.ForEach(o => Contents[o] = tb.Shape);
+
+		public static bool CanMove(List<(int x, int y)> offsets, Vector2 toCheck) =>
+			offsets.All(o => CanMove(o, toCheck));
+
+		public static bool CanMove((int x, int y) offset, Vector2 toCheck)
 		{
+			var idx = TetrominoOffsetToGridIndices(offset, toCheck);
+
 			if (Contents.TryGetValue(idx, out var s))
 			{
 				return s == Shape.None;
