@@ -9,9 +9,19 @@ internal static partial class Game
 	{
 		public Action<IGameEvent> EmitEvent { get; set; }
 
-		public (int x, int y) GetLeftMostX() => _data.Offsets[Rotation].MinBy(o => o.x);
+		public List<(int x, int y)> GetLeftMostX() => 
+			_data.Offsets[Rotation]
+				.GroupBy(o => o.x)
+				.OrderBy(g => g.Key)
+				.First()
+				.ToList( );
 
-		public (int x, int y) GetRightMostX() => _data.Offsets[Rotation].MaxBy(o => o.x);
+		public List<(int x, int y)> GetRightMostX() =>
+			_data.Offsets[Rotation]
+				.GroupBy(o => o.x)
+				.OrderBy(g => g.Key)
+				.Last( )
+				.ToList( );
 
 		public List<(int x, int y)> GetRotationOffsets(Rotation rotation) =>
 			_data.Offsets[rotation];
@@ -21,7 +31,7 @@ internal static partial class Game
 		private readonly Vector2 _bbSize;
 		public Rotation Rotation { get; set; }
 		public float X { get; set; }
-		public float Y => _mapY.start;
+		public float Y => _mapY.end;
 		
 		private (float start, float end) _mapY;
 		private readonly List<(Vector2, int, int)> _debugIndices = new( );
@@ -50,7 +60,7 @@ internal static partial class Game
 				//DrawCircleV(pos, 3, YELLOW);
 			}
 
-			_debugIndices.ForEach(t => DrawTextV($"{t.Item2}, {t.Item3}", t.Item1, 8, YELLOW));
+			_debugIndices.ForEach(t => DrawTextV($"{t.Item2}, {t.Item3}", t.Item1, 8, BLACK));
 		}
 
 		public override void Update(double deltaTime)
@@ -60,8 +70,9 @@ internal static partial class Game
 			if (!CanMoveDown() && _isActive)
 			{
 				EmitEvent(new TetrominoBlocked(_data.Shape, _data.Offsets[Rotation]
-					.Select(o => TetrominoOffsetToGridIndices(o, Position)).ToList( )));
+					.Select(o => TetrominoOffsetToGridIndices(o, new Vector2(X, _mapY.end))).ToList( )));
 				_isActive = false;
+				RemoveEntity(this);
 				return;
 			}
 
