@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using static TerribleTetris.Game;
-
 namespace TerribleTetris
 {
 	internal class Grid : Entity, IHasRender
@@ -26,8 +23,20 @@ namespace TerribleTetris
 		{
 			DrawTextureV(_texture, Position, WHITE);
 
+			//DrawDebugContents();
+
 			DrawDebugIndices( );
 
+		}
+
+		private static void DrawDebugContents()
+		{
+			foreach (var (idx, s) in Contents)
+			{
+				var pos = Game.GridData.Position + new Vector2(idx.x * Game.GridData.CellSize, idx.y * Game.GridData.CellSize);
+				var data = new TetrominoData(s);
+				DrawRectangleV(pos, new Vector2(Game.GridData.CellSize, Game.GridData.CellSize), data.Color);
+			}
 		}
 
 		private void DrawDebugIndices()
