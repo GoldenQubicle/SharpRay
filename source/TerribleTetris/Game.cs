@@ -1,5 +1,9 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using static TerribleTetris.Game;
 
 namespace TerribleTetris
 {
@@ -9,6 +13,9 @@ namespace TerribleTetris
 
 		internal static int WindowWidth => 1080;
 
+		internal static readonly GridData GridData = 
+			new(Rows: 16, Cols: 16, CellSize: 35, Color1: RAYWHITE, Color2: LIGHTGRAY);
+
 		internal enum Shape { I, O, T, J, L, S, Z, None };
 
 		internal enum Rotation { Up, Right, Down, Left }
@@ -16,6 +23,8 @@ namespace TerribleTetris
 		internal enum RotationSystem { Super } // note default, for now hardcoded
 
 		internal static double LevelTimer = 750;
+
+		internal static Stack<Tetromino> TetrominoStack = new();
 
 		internal static void Main(string[ ] args)
 		{
@@ -27,14 +36,54 @@ namespace TerribleTetris
 				ShowFPS = true,
 				BackGroundColor = DARKGRAY
 			});
+			
+			AddEntity(new Grid(GridData));
+			
 
-			var gridData = new GridData(Rows: 16, Cols: 16, CellSize: 35, Color1: RAYWHITE, Color2: LIGHTGRAY);
-			AddEntity(new Grid(gridData));
+			Enumerable.Range(0, 10).ToList().ForEach(n =>
+			{
+				var shape = Enum.GetValues<Shape>()[..7][GetRandomValue(0, 7)];
+				TetrominoStack.Push(new Tetromino(shape, 5));
+			});
 
-			var tetrominoData = new TetrominoData(Shape.L);
-			AddEntity(new Tetromino(tetrominoData, gridData));
+			SpawnTetromino();
+
+			SetKeyBoardEventAction(TetrominoController.OnKeyBoardEvent);
 
 			Run( );
+		}
+
+		private static void SpawnTetromino()
+		{
+			var tetromino = TetrominoStack.Pop();
+			TetrominoController.Push(tetromino);
+			AddEntity(tetromino, OnGameEvent);
+		}
+
+		public static void OnGameEvent(IGameEvent e)
+		{
+			if (e is TetrominoBlocked tb)
+			{
+				Grid.BlockCells(tb);
+				SpawnTetromino();
+			}
+		}
+
+		/// <summary>
+		/// Given the position of the bounding box, and an absolute offset within it (e.g. [1,2]),
+		/// calculate the corresponding grid index.  
+		/// </summary>
+		/// <param name="offset"></param>
+		/// <param name="bbPos"></param>
+		/// <returns></returns>
+		public static (int x, int y) TetrominoOffsetToGridIndices((int x, int y) offset, Vector2 bbPos)
+		{
+			// The position in screen pixel coordinates.
+			var offsetPosition = bbPos + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
+			// The position in absolute pixel coordinates
+			var absPosition = offsetPosition - GridData.Position;
+			// Divide the absolute pixels by the cell size, also in pixels, to arrive at the grid index. 
+			return ((int)absPosition.X / GridData.CellSize, (int)absPosition.Y / GridData.CellSize);
 		}
 	}
 }

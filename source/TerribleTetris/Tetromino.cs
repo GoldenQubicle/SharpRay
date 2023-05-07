@@ -2,26 +2,39 @@
 
 internal static partial class Game
 {
-	internal class Tetromino : Entity, IHasRender, IHasUpdate
+	public record TetrominoBlocked(Shape Shape, List<(int, int)> Indices) : IGameEvent;
+
+
+	internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>
 	{
-		private readonly TetrominoData _shape;
-		private readonly GridData _grid;
+		public Action<IGameEvent> EmitEvent { get; set; }
+
+		public (int x, int y) GetLeftMostX() => _data.Offsets[Rotation].MinBy(o => o.x);
+
+		public (int x, int y) GetRightMostX() => _data.Offsets[Rotation].MaxBy(o => o.x);
+
+		public List<(int x, int y)> GetRotationOffsets(Rotation rotation) =>
+			_data.Offsets[rotation];
+
+		private readonly TetrominoData _data;
 		private readonly Easing _easing;
 		private readonly Vector2 _bbSize;
-		private int _rotation;
-		private float _x;
+		public Rotation Rotation { get; set; }
+		public float X { get; set; }
+		public float Y => _mapY.start;
+		
 		private (float start, float end) _mapY;
 		private readonly List<(Vector2, int, int)> _debugIndices = new( );
+		private bool _isActive = true;
 
-		public Tetromino(TetrominoData shape, GridData grid)
+		public Tetromino(Shape shape, int startCol)
 		{
-			Position = grid.Position;
-			_shape = shape;
-			_grid = grid;
-			_bbSize = new(_shape.BoundingBoxSize * _grid.CellSize, _shape.BoundingBoxSize * _grid.CellSize);
+			Position = GridData.Position + new Vector2(startCol * GridData.CellSize, 0);
+			_data = new TetrominoData(shape);
+			_bbSize = new(_data.BoundingBoxSize * GridData.CellSize, _data.BoundingBoxSize * GridData.CellSize);
 			_easing = new Easing(Easings.EaseExpoInOut, LevelTimer, isRepeated: true);
-			_mapY = (Position.Y, Position.Y + _grid.CellSize);
-			_x = Position.X;
+			_mapY = (Position.Y, Position.Y + GridData.CellSize);
+			X = Position.X;
 			CanMoveDown( );
 
 		}
@@ -30,10 +43,10 @@ internal static partial class Game
 		{
 			DrawRectangleLinesV(Position, _bbSize, BLUE);
 
-			foreach (var offset in _shape.Offsets[(Rotation)_rotation])
+			foreach (var offset in _data.Offsets[Rotation])
 			{
-				var pos = Position + new Vector2(offset.x * _grid.CellSize, offset.y * _grid.CellSize);
-				DrawRectangleV(pos, new Vector2(_grid.CellSize, _grid.CellSize), _shape.Color);
+				var pos = Position + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
+				DrawRectangleV(pos, new Vector2(GridData.CellSize, GridData.CellSize), _data.Color);
 				//DrawCircleV(pos, 3, YELLOW);
 			}
 
@@ -42,96 +55,41 @@ internal static partial class Game
 
 		public override void Update(double deltaTime)
 		{
-			if (!CanMoveDown( ))
+			if (!_isActive) return;
+
+			if (!CanMoveDown() && _isActive)
+			{
+				EmitEvent(new TetrominoBlocked(_data.Shape, _data.Offsets[Rotation]
+					.Select(o => TetrominoOffsetToGridIndices(o, Position)).ToList( )));
+				_isActive = false;
 				return;
+			}
 
 			_easing.Update(deltaTime);
 
 			if (_easing.IsDone( ) && CanMoveDown( ))
 			{
-				_mapY = (Position.Y, Position.Y + _grid.CellSize);
+				_mapY = (Position.Y, Position.Y + GridData.CellSize);
 			}
-
-			Position = new Vector2(_x, MapRange(_easing.GetValue( ), 0f, 1f, _mapY.start, _mapY.end));
-		}
-
-
-		/// <summary>
-		/// Given the position of the bounding box, and an absolute offset within it (e.g. [1,2]),
-		/// calculate the corresponding grid index.  
-		/// </summary>
-		/// <param name="offset"></param>
-		/// <param name="bbPos"></param>
-		/// <returns></returns>
-		private (int x, int y) OffsetToGridIndices((int x, int y) offset, Vector2 bbPos)
-		{
-			// The position in screen pixel coordinates.
-			var offsetPosition = bbPos + new Vector2(offset.x * _grid.CellSize, offset.y * _grid.CellSize);
-			// The position in absolute pixel coordinates
-			var absPosition = offsetPosition - _grid.Position;
-			// Divide the absolute pixels by the cell size, also in pixels, to arrive at the grid index. 
-			return ((int)absPosition.X / _grid.CellSize, (int)absPosition.Y / _grid.CellSize);
-		}
-
-		
-		public override void OnKeyBoardEvent(IKeyBoardEvent e)
-		{
-			_rotation = e switch
-			{
-				KeyUpReleased or KeyPressed { KeyboardKey: KeyboardKey.KEY_X } when CanRotateClockwise( ) => RotateClockwise( ),
-				KeyPressed { KeyboardKey: KeyboardKey.KEY_LEFT_CONTROL } or
-				KeyPressed { KeyboardKey: KeyboardKey.KEY_RIGHT_CONTROL } or
-				KeyPressed { KeyboardKey: KeyboardKey.KEY_Z } when CanRotateCounterClockwise( ) => RotateCounterClockwise( ),
-				_ => _rotation
-			};
-
-			_x = e switch
-			{
-				KeyRightReleased when CanMoveRight( ) => MoveRight( ),
-				KeyLeftReleased when CanMoveLeft( ) => MoveLeft( ),
-				_ => _x
-			};
-
-			Print((Rotation)_x);
-		}
 	
-		private int RotateClockwise() => ( _rotation + 1 ) % 4;
+			Position = new Vector2(X, MapRange(_easing.GetValue( ), 0f, 1f, _mapY.start, _mapY.end));
+		}
 
-		private int RotateCounterClockwise() => _rotation == 0 ? 3 : _rotation - 1;
-
-		private bool CanRotateClockwise() => CanRotate((Rotation)RotateClockwise( ));
-
-		private bool CanRotateCounterClockwise() => CanRotate((Rotation)RotateCounterClockwise( ));
-
-		private bool CanRotate(Rotation rotation) => _shape.Offsets[rotation]
-			.All(o => Grid.CanMove(OffsetToGridIndices(o, new Vector2(_x, _mapY.end)))); // _mapY.end prevented it from rotating on the floor, however, I suspect this will come back to haunt me. 
 
 		private bool CanMoveDown()
 		{
 			_debugIndices.Clear( );
-			var anchor = new Vector2(_x, _mapY.end);
-			foreach (var offset in _shape.Offsets[(Rotation)_rotation])
+			var anchor = new Vector2(X, _mapY.end);
+			foreach (var offset in _data.Offsets[Rotation])
 			{
-				var pos = Position + new Vector2(offset.x * _grid.CellSize, offset.y * _grid.CellSize);
-				var (x, y) = OffsetToGridIndices(offset, anchor);
+				var pos = Position + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
+				var (x, y) = TetrominoOffsetToGridIndices(offset, anchor);
 				_debugIndices.Add((pos, x, y));
 			}
 
-			var b = _shape.Offsets[(Rotation)_rotation]
-				.All(o => Grid.CanMove(OffsetToGridIndices(o, anchor + new Vector2(0, _grid.CellSize))));
+			var b = Grid.CanMove(_data.Offsets[Rotation], anchor + new Vector2(0, GridData.CellSize));
 
 			return b;
 		}
-
-		private float MoveLeft() => _x - _grid.CellSize;
-
-		private float MoveRight() => _x + _grid.CellSize;
-
-		private bool CanMoveLeft() => Grid.CanMove(OffsetToGridIndices(_shape.Offsets[(Rotation)_rotation].MinBy(o => o.x),
-			new Vector2(MoveLeft( ), _mapY.start)));
-
-		private bool CanMoveRight() => Grid.CanMove(OffsetToGridIndices(_shape.Offsets[(Rotation)_rotation].MaxBy(o => o.x),
-			new Vector2(MoveRight( ), _mapY.start)));
-
 	}
 }
