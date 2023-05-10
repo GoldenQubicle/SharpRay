@@ -1,11 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using static TerribleTetris.Game;
-
-namespace TerribleTetris
+﻿namespace TerribleTetris
 {
 	internal static partial class Game
 	{
@@ -22,7 +15,7 @@ namespace TerribleTetris
 
 		internal enum RotationSystem { Super } // note default, for now hardcoded
 
-		internal static double LevelTimer = 750;
+		internal static double DropTime = 2000;
 
 		internal static Stack<Tetromino> TetrominoStack = new();
 
@@ -47,7 +40,6 @@ namespace TerribleTetris
 
 			SpawnTetromino();
 
-			SetKeyBoardEventAction(TetrominoController.OnKeyBoardEvent);
 
 			Run( );
 		}
@@ -79,12 +71,14 @@ namespace TerribleTetris
 		/// <returns></returns>
 		public static (int x, int y) TetrominoOffsetToGridIndices((int x, int y) offset, Vector2 bbPos)
 		{
-			// The position in screen pixel coordinates.
-			var offsetPosition = bbPos + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
-			// The position in absolute pixel coordinates
-			var absPosition = offsetPosition - GridData.Position;
-			// Divide the absolute pixels by the cell size, also in pixels, to arrive at the grid index. 
-			return ((int)absPosition.X / GridData.CellSize, (int)absPosition.Y / GridData.CellSize);
+
+			return (offset.x + (int)bbPos.X, offset.y + (int)bbPos.Y);
+			//// The position in screen pixel coordinates.
+			//var offsetPosition = bbPos + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
+			//// The position in absolute pixel coordinates
+			//var absPosition = offsetPosition - GridData.Position;
+			//// Divide the absolute pixels by the cell size, also in pixels, to arrive at the grid index. 
+			//return ((int)absPosition.X / GridData.CellSize, (int)absPosition.Y / GridData.CellSize);
 		}
 	}
 }
