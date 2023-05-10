@@ -4,53 +4,39 @@ internal static partial class Game
 {
 	public record TetrominoBlocked(Shape Shape, List<(int, int)> Indices) : IGameEvent;
 
-
 	internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>
 	{
 		public Action<IGameEvent> EmitEvent { get; set; }
-
-		public List<(int x, int y)> GetLeftMostX() => 
-			_data.Offsets[Rotation]
-				.GroupBy(o => o.x)
-				.OrderBy(g => g.Key)
-				.First()
-				.ToList( );
-
-		public List<(int x, int y)> GetRightMostX() =>
-			_data.Offsets[Rotation]
-				.GroupBy(o => o.x)
-				.OrderBy(g => g.Key)
-				.Last( )
-				.ToList( );
-
-		public List<(int x, int y)> GetRotationOffsets(Rotation rotation) =>
-			_data.Offsets[rotation];
+		public Rotation Rotation { get; set; }
+		//public int X { get; set; }
+		//public int Y { get; set; }
+		public Vector2 Index { get; set; }
 
 		private readonly TetrominoData _data;
-		private readonly Easing _easing;
+		private readonly Easing _dropTimer;
 		private readonly Vector2 _bbSize;
-		public Rotation Rotation { get; set; }
-		public float X { get; set; }
-		public float Y => _mapY.end;
-		
-		private (float start, float end) _mapY;
+		//private (float start, float end) _mapY;
 		private readonly List<(Vector2, int, int)> _debugIndices = new( );
 		private bool _isActive = true;
 
 		public Tetromino(Shape shape, int startCol)
 		{
-			Position = GridData.Position + new Vector2(startCol * GridData.CellSize, 0);
+			Index = new Vector2(startCol, 0);
+			Position = IndexToScreen();
 			_data = new TetrominoData(shape);
 			_bbSize = new(_data.BoundingBoxSize * GridData.CellSize, _data.BoundingBoxSize * GridData.CellSize);
-			_easing = new Easing(Easings.EaseExpoInOut, LevelTimer, isRepeated: true);
-			_mapY = (Position.Y, Position.Y + GridData.CellSize);
-			X = Position.X;
-			CanMoveDown( );
-
+			_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
+			//_mapY = (Position.Y, Position.Y + GridData.CellSize);
+			//X = Position.X;
+			//CanMoveDown( );
 		}
+
+		private Vector2 IndexToScreen() => GridData.Position + (Index * GridData.CellSize);
 
 		public override void Render()
 		{
+			Position = IndexToScreen();
+
 			DrawRectangleLinesV(Position, _bbSize, BLUE);
 
 			foreach (var offset in _data.Offsets[Rotation])
@@ -65,32 +51,87 @@ internal static partial class Game
 
 		public override void Update(double deltaTime)
 		{
-			if (!_isActive) return;
-
-			if (!CanMoveDown() && _isActive)
-			{
-				EmitEvent(new TetrominoBlocked(_data.Shape, _data.Offsets[Rotation]
-					.Select(o => TetrominoOffsetToGridIndices(o, new Vector2(X, _mapY.end))).ToList( )));
-				_isActive = false;
-				RemoveEntity(this);
+			if (!_isActive)
 				return;
-			}
 
-			_easing.Update(deltaTime);
+			//if (!CanMoveDown( ) && _isActive)
+			//{
+			//	EmitEvent(new TetrominoBlocked(_data.Shape, _data.Offsets[Rotation]
+			//		.Select(o => TetrominoOffsetToGridIndices(o, new Vector2(X, _mapY.end))).ToList( )));
+			//	_isActive = false;
+			//	RemoveEntity(this);
+			//	return;
+			//}
 
-			if (_easing.IsDone( ) && CanMoveDown( ))
+			_dropTimer.Update(deltaTime);
+
+			if(!_dropTimer.IsDone()) return;
+
+			if (CanMoveDown())
 			{
-				_mapY = (Position.Y, Position.Y + GridData.CellSize);
+				Index += Vector2.UnitY;
 			}
-	
-			Position = new Vector2(X, MapRange(_easing.GetValue( ), 0f, 1f, _mapY.start, _mapY.end));
+			
+			//if (_dropTimer.IsDone( ) && CanMoveDown( ))
+			//{
+			//	_mapY = (Position.Y, Position.Y + GridData.CellSize);
+			//}
+
+			//Position = new Vector2(X, MapRange(_dropTimer.GetValue( ), 0f, 1f, _mapY.start, _mapY.end));
 		}
 
+		public override void OnKeyBoardEvent(IKeyBoardEvent e)
+		{
+			if (!_isActive) return;
 
+			Rotation = e switch
+			{
+				KeyUpReleased or KeyPressed { KeyboardKey: KeyboardKey.KEY_X } when CanRotateClockwise( ) => RotateClockwise( ),
+				KeyPressed { KeyboardKey: KeyboardKey.KEY_LEFT_CONTROL } or
+					KeyPressed { KeyboardKey: KeyboardKey.KEY_RIGHT_CONTROL } or
+					KeyPressed { KeyboardKey: KeyboardKey.KEY_Z } when CanRotateCounterClockwise( ) => RotateCounterClockwise( ),
+				_ => Rotation
+			};
+
+			Index = e switch
+			{
+				KeyRightReleased when CanMoveRight( ) => MoveRight( ),
+				KeyLeftReleased when CanMoveLeft( ) => MoveLeft( ),
+				_ => Index
+			};
+
+			
+		}
+
+		private  Rotation RotateClockwise() =>
+			(Rotation)( (int)( Rotation + 1 ) % 4 );
+		private  Rotation RotateCounterClockwise() =>
+			(Rotation)( Rotation == 0 ? 3 : (int)Rotation - 1 );
+
+		private  bool CanRotateClockwise() =>
+			CanRotate(RotateClockwise( ));
+
+		private  bool CanRotateCounterClockwise() =>
+			CanRotate(RotateCounterClockwise( ));
+
+		private  bool CanRotate(Rotation rotation) =>
+			Grid.CanMove(GetRotationOffsets(rotation), Index);
+
+		private  Vector2 MoveLeft() =>
+			Index - Vector2.UnitX;
+
+		private  Vector2 MoveRight() =>
+			Index + Vector2.UnitX;
+
+		private  bool CanMoveLeft() =>
+			Grid.CanMove(GetLeftMostX( ), MoveLeft() );
+
+		private  bool CanMoveRight() =>
+			Grid.CanMove(GetRightMostX( ), MoveRight());
 		private bool CanMoveDown()
 		{
 			_debugIndices.Clear( );
-			var anchor = new Vector2(X, _mapY.end);
+			var anchor = Index + Vector2.UnitY;
 			foreach (var offset in _data.Offsets[Rotation])
 			{
 				var pos = Position + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
@@ -98,9 +139,24 @@ internal static partial class Game
 				_debugIndices.Add((pos, x, y));
 			}
 
-			var b = Grid.CanMove(_data.Offsets[Rotation], anchor + new Vector2(0, GridData.CellSize));
-
-			return b;
+			return Grid.CanMove(_data.Offsets[Rotation], anchor);
 		}
+
+		public List<(int x, int y)> GetLeftMostX() =>
+			_data.Offsets[Rotation]
+				.GroupBy(o => o.x)
+				.OrderBy(g => g.Key)
+				.First( )
+				.ToList( );
+
+		public List<(int x, int y)> GetRightMostX() =>
+			_data.Offsets[Rotation]
+				.GroupBy(o => o.x)
+				.OrderBy(g => g.Key)
+				.Last( )
+				.ToList( );
+
+		public List<(int x, int y)> GetRotationOffsets(Rotation rotation) =>
+			_data.Offsets[rotation];
 	}
 }
