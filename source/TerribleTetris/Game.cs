@@ -34,9 +34,18 @@
 			
 			SetKeyBoardEventAction(OnKeyBoardEvent);
 
+			SetGridBackgroundTexture();
+
 			StartGame(Mode.Generation);
 
 			Run( );
+		}
+
+		private static void SetGridBackgroundTexture()
+		{
+			var bgImage = GenImageChecked(GridData.Width, GridData.Height, GridData.CellSize, GridData.CellSize, GridData.Color1, GridData.Color2);
+			AddTexture2D("grid", LoadTextureFromImage(bgImage));
+			UnloadImage(bgImage);
 		}
 
 		private static void StartGame(Mode mode)
@@ -73,7 +82,7 @@
 
 		private static void OnKeyBoardEvent(IKeyBoardEvent e)
 		{
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_R })
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_SPACE })
 			{
 				RemoveEntitiesOfType<Grid>();
 				RemoveEntitiesOfType<Tetromino>();
