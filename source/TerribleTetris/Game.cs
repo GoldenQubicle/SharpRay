@@ -13,9 +13,11 @@
 
 		internal enum Rotation { Up, Right, Down, Left }
 
+		internal enum Mode { Generation, Playing }
+
 		internal enum RotationSystem { Super } // note default, for now hardcoded
 
-		internal static double DropTime = 2000;
+		internal static double DropTime = 10;
 
 		internal static Stack<Tetromino> TetrominoStack = new();
 
@@ -30,55 +32,90 @@
 				BackGroundColor = DARKGRAY
 			});
 			
-			AddEntity(new Grid(GridData));
+			SetKeyBoardEventAction(OnKeyBoardEvent);
 
-			Enumerable.Range(0, 19).ToList().ForEach(n =>
-			{
-				var shape = Enum.GetValues<Shape>()[..7][GetRandomValue(0, 6)];
-				TetrominoStack.Push(new Tetromino(shape, 5));
-			});
-
-			SpawnTetromino();
-
+			StartGame(Mode.Generation);
 
 			Run( );
+		}
+
+		private static void StartGame(Mode mode)
+		{
+			AddEntity(new Grid(GridData));
+
+			switch (mode)
+			{
+				case Mode.Generation:
+					TetrominoStack.Clear( );
+					var shapes = Enum.GetValues<Shape>( )[..7].ToList( );
+					var bagCount = 0;
+					while (bagCount < 5)
+					{
+						var shape = shapes[GetRandomValue(0, shapes.Count - 1)];
+						shapes.Remove(shape);
+						var data = new TetrominoData(shape);
+						TetrominoStack.Push(new Tetromino(data, GetRandomValue(0, GridData.Cols - data.BoundingBoxSize)));
+
+						if (shapes.Count != 0)
+							continue;
+
+						shapes = Enum.GetValues<Shape>( )[..7].ToList( );
+						bagCount++;
+					}
+					SpawnTetromino( );
+					break;
+				case Mode.Playing:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+			}
+		}
+
+		private static void OnKeyBoardEvent(IKeyBoardEvent e)
+		{
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_R })
+			{
+				RemoveEntitiesOfType<Grid>();
+				RemoveEntitiesOfType<Tetromino>();
+				StartGame(Mode.Generation);
+			}
 		}
 
 		private static void SpawnTetromino()
 		{
 			if (!TetrominoStack.Any()) return;
 
-			var tetromino = TetrominoStack.Pop();
-			TetrominoController.Push(tetromino);
-			AddEntity(tetromino, OnGameEvent);
+			AddEntity(TetrominoStack.Pop( ), OnGameEvent);
 		}
 
 		public static void OnGameEvent(IGameEvent e)
 		{
-			if (e is TetrominoBlocked tb)
+			if (e is TetrominoLocked tb)
 			{
-				Grid.BlockCells(tb);
-				SpawnTetromino();
+				GetEntity<Grid>( ).LockCells(tb);
+
+				if (tb.Offsets.Any(o => TetrominoOffsetToGridIndices(o, tb.BbIndex).y <= 0))
+				{
+					Print("Game OVer");
+				}
+				else
+				{
+					SpawnTetromino( );
+				}
+
+				
 			}
 		}
 
 		/// <summary>
-		/// Given the position of the bounding box, and an absolute offset within it (e.g. [1,2]),
-		/// calculate the corresponding grid index.  
+		/// Given the indices of the bounding box, and an absolute offset within it (e.g. [1,2]),
+		/// calculate the corresponding grid index of the offset.  
 		/// </summary>
 		/// <param name="offset"></param>
 		/// <param name="bbPos"></param>
 		/// <returns></returns>
-		public static (int x, int y) TetrominoOffsetToGridIndices((int x, int y) offset, Vector2 bbPos)
-		{
+		public static (int x, int y) TetrominoOffsetToGridIndices((int x, int y) offset, Vector2 bbPos) => 
+			(offset.x + (int)bbPos.X, offset.y + (int)bbPos.Y);
 
-			return (offset.x + (int)bbPos.X, offset.y + (int)bbPos.Y);
-			//// The position in screen pixel coordinates.
-			//var offsetPosition = bbPos + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
-			//// The position in absolute pixel coordinates
-			//var absPosition = offsetPosition - GridData.Position;
-			//// Divide the absolute pixels by the cell size, also in pixels, to arrive at the grid index. 
-			//return ((int)absPosition.X / GridData.CellSize, (int)absPosition.Y / GridData.CellSize);
-		}
 	}
 }

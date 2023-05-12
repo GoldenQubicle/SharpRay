@@ -2,40 +2,33 @@
 
 internal static partial class Game
 {
-	public record TetrominoBlocked(Shape Shape, List<(int, int)> Indices) : IGameEvent;
+	public record TetrominoLocked(Shape Shape, List<(int x, int y)> Offsets, Vector2 BbIndex) : IGameEvent;
 
 	internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEvent>
 	{
 		public Action<IGameEvent> EmitEvent { get; set; }
 		public Rotation Rotation { get; set; }
-		//public int X { get; set; }
-		//public int Y { get; set; }
 		public Vector2 Index { get; set; }
 
 		private readonly TetrominoData _data;
 		private readonly Easing _dropTimer;
 		private readonly Vector2 _bbSize;
-		//private (float start, float end) _mapY;
 		private readonly List<(Vector2, int, int)> _debugIndices = new( );
 		private bool _isActive = true;
 
-		public Tetromino(Shape shape, int startCol)
+		public Tetromino(TetrominoData data, int startCol)
 		{
 			Index = new Vector2(startCol, 0);
-			Position = IndexToScreen();
-			_data = new TetrominoData(shape);
+			Position = IndexToScreen( );
+			_data = data;
 			_bbSize = new(_data.BoundingBoxSize * GridData.CellSize, _data.BoundingBoxSize * GridData.CellSize);
 			_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
-			//_mapY = (Position.Y, Position.Y + GridData.CellSize);
-			//X = Position.X;
-			//CanMoveDown( );
 		}
 
-		private Vector2 IndexToScreen() => GridData.Position + (Index * GridData.CellSize);
 
 		public override void Render()
 		{
-			Position = IndexToScreen();
+			Position = IndexToScreen( );
 
 			DrawRectangleLinesV(Position, _bbSize, BLUE);
 
@@ -46,7 +39,7 @@ internal static partial class Game
 				//DrawCircleV(pos, 3, YELLOW);
 			}
 
-			_debugIndices.ForEach(t => DrawTextV($"{t.Item2}, {t.Item3}", t.Item1, 8, BLACK));
+			DrawDebugOffsetIndices();
 		}
 
 		public override void Update(double deltaTime)
@@ -54,35 +47,25 @@ internal static partial class Game
 			if (!_isActive)
 				return;
 
-			//if (!CanMoveDown( ) && _isActive)
-			//{
-			//	EmitEvent(new TetrominoBlocked(_data.Shape, _data.Offsets[Rotation]
-			//		.Select(o => TetrominoOffsetToGridIndices(o, new Vector2(X, _mapY.end))).ToList( )));
-			//	_isActive = false;
-			//	RemoveEntity(this);
-			//	return;
-			//}
-
 			_dropTimer.Update(deltaTime);
 
-			if(!_dropTimer.IsDone()) return;
+			if (!_dropTimer.IsDone( ))
+				return;
 
-			if (CanMoveDown())
-			{
+			if (CanMoveDown( ))
 				Index += Vector2.UnitY;
+			else
+			{
+				EmitEvent(new TetrominoLocked(_data.Shape, _data.Offsets[Rotation], Index));
+				_isActive = false;
+				RemoveEntity(this);
 			}
-			
-			//if (_dropTimer.IsDone( ) && CanMoveDown( ))
-			//{
-			//	_mapY = (Position.Y, Position.Y + GridData.CellSize);
-			//}
-
-			//Position = new Vector2(X, MapRange(_dropTimer.GetValue( ), 0f, 1f, _mapY.start, _mapY.end));
 		}
 
 		public override void OnKeyBoardEvent(IKeyBoardEvent e)
 		{
-			if (!_isActive) return;
+			if (!_isActive)
+				return;
 
 			Rotation = e switch
 			{
@@ -99,64 +82,55 @@ internal static partial class Game
 				KeyLeftReleased when CanMoveLeft( ) => MoveLeft( ),
 				_ => Index
 			};
-
-			
 		}
 
-		private  Rotation RotateClockwise() =>
-			(Rotation)( (int)( Rotation + 1 ) % 4 );
-		private  Rotation RotateCounterClockwise() =>
-			(Rotation)( Rotation == 0 ? 3 : (int)Rotation - 1 );
-
-		private  bool CanRotateClockwise() =>
+		private bool CanRotateClockwise() =>
 			CanRotate(RotateClockwise( ));
 
-		private  bool CanRotateCounterClockwise() =>
+		private bool CanRotateCounterClockwise() =>
 			CanRotate(RotateCounterClockwise( ));
 
-		private  bool CanRotate(Rotation rotation) =>
-			Grid.CanMove(GetRotationOffsets(rotation), Index);
+		private bool CanRotate(Rotation rotation) =>
+			GetEntity<Grid>().CanMove(GetRotationOffsets(rotation), Index);
 
-		private  Vector2 MoveLeft() =>
-			Index - Vector2.UnitX;
+		private Rotation RotateClockwise() =>
+			(Rotation)( (int)( Rotation + 1 ) % 4 );
 
-		private  Vector2 MoveRight() =>
-			Index + Vector2.UnitX;
+		private Rotation RotateCounterClockwise() =>
+			(Rotation)( Rotation == 0 ? 3 : (int)Rotation - 1 );
 
-		private  bool CanMoveLeft() =>
-			Grid.CanMove(GetLeftMostX( ), MoveLeft() );
+		private bool CanMoveDown() =>
+			GetEntity<Grid>( ).CanMove(_data.Offsets[Rotation], Index + Vector2.UnitY);
 
-		private  bool CanMoveRight() =>
-			Grid.CanMove(GetRightMostX( ), MoveRight());
-		private bool CanMoveDown()
+		private void DrawDebugOffsetIndices()
 		{
-			_debugIndices.Clear( );
-			var anchor = Index + Vector2.UnitY;
+			_debugIndices.Clear();
 			foreach (var offset in _data.Offsets[Rotation])
 			{
-				var pos = Position + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
-				var (x, y) = TetrominoOffsetToGridIndices(offset, anchor);
+				var pos = IndexToScreen() + new Vector2(offset.x * GridData.CellSize, offset.y * GridData.CellSize);
+				var (x, y) = TetrominoOffsetToGridIndices(offset, Index);
 				_debugIndices.Add((pos, x, y));
 			}
 
-			return Grid.CanMove(_data.Offsets[Rotation], anchor);
+			_debugIndices.ForEach(t => DrawTextV($"{t.Item2}, {t.Item3}", t.Item1, 8, BLACK));
 		}
 
-		public List<(int x, int y)> GetLeftMostX() =>
-			_data.Offsets[Rotation]
-				.GroupBy(o => o.x)
-				.OrderBy(g => g.Key)
-				.First( )
-				.ToList( );
+		private bool CanMoveLeft() =>
+			GetEntity<Grid>( ).CanMove(_data.Offsets[Rotation], MoveLeft( ));
 
-		public List<(int x, int y)> GetRightMostX() =>
-			_data.Offsets[Rotation]
-				.GroupBy(o => o.x)
-				.OrderBy(g => g.Key)
-				.Last( )
-				.ToList( );
+		private bool CanMoveRight() =>
+			GetEntity<Grid>( ).CanMove(_data.Offsets[Rotation], MoveRight( ));
 
-		public List<(int x, int y)> GetRotationOffsets(Rotation rotation) =>
+		private Vector2 MoveLeft() =>
+			Index - Vector2.UnitX;
+
+		private Vector2 MoveRight() =>
+			Index + Vector2.UnitX;
+
+		private List<(int x, int y)> GetRotationOffsets(Rotation rotation) =>
 			_data.Offsets[rotation];
+
+		private Vector2 IndexToScreen() =>
+			GridData.Position + ( Index * GridData.CellSize );
 	}
 }
