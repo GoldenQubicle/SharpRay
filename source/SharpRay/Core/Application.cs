@@ -182,12 +182,20 @@ namespace SharpRay.Core
         public static void AddTexture2D(string key, string filePath) =>
             Textures.Add(key, LoadTexture(Path.Combine(AssestsFolder, filePath)));
 
-        /// <summary>
-        /// Gets the first <typeparamref name="TEntity"/> from the Entity list.
-        /// </summary>
-        /// <typeparam name="TEntity"></typeparam>
-        /// <returns></returns>
-        public static TEntity GetEntity<TEntity>() where TEntity : Entity =>
+		/// <summary>
+		/// Loads a <see cref="Texture2D"/> from file, and adds it to the Textures dictionary with the given key.
+		/// </summary>
+		/// <param name="key">The key used in texture dictionary</param>
+		/// <param name="texture2d">the texture to add to the dictionary</param>
+		public static void AddTexture2D(string key, Texture2D texture2d) =>
+	        Textures.Add(key, texture2d);
+
+		/// <summary>
+		/// Gets the first <typeparamref name="TEntity"/> from the Entity list.
+		/// </summary>
+		/// <typeparam name="TEntity"></typeparam>
+		/// <returns></returns>
+		public static TEntity GetEntity<TEntity>() where TEntity : Entity =>
             Entities.OfType<TEntity>().FirstOrDefault();
 
         /// <summary>

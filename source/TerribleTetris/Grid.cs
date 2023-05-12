@@ -9,14 +9,14 @@ namespace TerribleTetris
 		public Grid(GridData grid)
 		{
 			_data = grid;
-			var bgImage = GenImageChecked(_data.Width, _data.Height, _data.CellSize, _data.CellSize, _data.Color1, _data.Color2);
-			_texture = LoadTextureFromImage(bgImage);
-			UnloadImage(bgImage);
+
 			Position = _data.Position;
 			
 			for (var r = 0 ;r < _data.Rows ;r++)
 				for (var c = 0 ;c < _data.Cols ;c++)
 					_contents.Add((c, r), Shape.None);
+
+			_texture = GetTexture2D("grid");
 
 		}
 		
