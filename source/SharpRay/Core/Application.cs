@@ -200,6 +200,15 @@ namespace SharpRay.Core
             Entities.OfType<TEntity>().FirstOrDefault(e => e.Tag.Equals(tag));
 
         /// <summary>
+        /// Gets all the entities by a single tag.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public static IEnumerable<TEntity> GetEntitiesByTag<TEntity>(string tag) where TEntity : Entity =>
+            Entities.OfType<TEntity>().Where(e => e.Tag.Equals(tag));
+
+        /// <summary>
         /// Gets all <typeparamref name="TEntity"/> from the Entity list. 
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
@@ -214,6 +223,16 @@ namespace SharpRay.Core
         public static void RemoveEntitiesOfType<TEntity>() where TEntity : Entity
         {
             foreach (var e in Entities.OfType<TEntity>()) RemoveEntity(e);
+        }
+
+        /// <summary>
+        /// Removes all <typeparamref name="TEntity"/> which match the predicate from the Entity list, and unsubscribes them from events.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="predicate">The condition on which to match.</param>
+        public static void RemoveEntitiesOfType<TEntity>(Func<TEntity, bool> predicate) where TEntity : Entity
+        {
+            foreach (var e in Entities.OfType<TEntity>().Where(predicate)) RemoveEntity(e);
         }
 
         /// <summary>
@@ -270,6 +289,14 @@ namespace SharpRay.Core
             SetEmitEventActions(Mouse, action);
 
         /// <summary>
+        /// Event Actions are scheduled to be executed last thing in the game loop, and can be usefull for manipulating Entities.
+        /// For instance both <see cref="AddEntity(Entity)"/> and <see cref="RemoveEntity(Entity)"/> are EventActions, so be carefull not to add or remove in a custom action.
+        /// </summary>
+        /// <param name="action">The <see cref="Action"/> to be executed.</param>
+        public static void AddEventAction(Action action) =>
+            EventActions.Add(action);
+
+        /// <summary>
         /// Maps a given source value to a target range value.
         /// </summary>
         /// <param name="source"></param>
@@ -292,6 +319,18 @@ namespace SharpRay.Core
         /// <returns></returns>
         public static float MapRange(float source, float sourceMin, float sourceMax, float targetMin, float targetMax) =>
             targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
+        
+        /// <summary>
+        /// Maps a given source value to a target range value.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="sourceMin"></param>
+        /// <param name="sourceMax"></param>
+        /// <param name="targetMin"></param>
+        /// <param name="targetMax"></param>
+        /// <returns></returns>
+        public static int MapRange(int source, int sourceMin, int sourceMax, int targetMin, int targetMax) =>
+            targetMin + (source - sourceMin) * (targetMax - targetMin) / (sourceMax - sourceMin);
 
         public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
             DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);
@@ -299,6 +338,27 @@ namespace SharpRay.Core
             DrawCircleLines((int)position.X, (int)position.Y, radius, color);
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
+
+        public static Color LerpColor(Color start, Color stop, float amount)
+        {
+            amount = amount < 0f ? 0f : Math.Min(amount, 1f); 
+            var r = MapRange(amount, 0f, 1f, start.r, stop.r);
+            var g = MapRange(amount, 0f, 1f, start.g, stop.g);
+            var b = MapRange(amount, 0f, 1f, start.b, stop.b);
+            var a = MapRange(amount, 0f, 1f, start.a, stop.a);
+
+            //var r = Math.Abs(start.r - stop.r) * Math.Min(amount, 1);
+            //var g = Math.Abs(start.g - stop.g) * Math.Min(amount, 1);
+            //var b = Math.Abs(start.b - stop.b) * Math.Min(amount, 1);
+            //var a = Math.Abs(start.a - stop.a) * Math.Min(amount, 1);
+
+            //r = start.r > stop.r ? start.r - r : stop.r + r;
+            //g = start.g > stop.g ? start.g - g : stop.g + g;
+            //b = start.b > stop.b ? start.b - b : stop.b + b;
+            //a = start.a > stop.a ? start.a - a : stop.a + a;
+
+            return new((int)r, (int)g, (int)b, (int)a);
+        }
 
         #endregion
 
