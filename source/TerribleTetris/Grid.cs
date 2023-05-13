@@ -4,7 +4,7 @@ namespace TerribleTetris
 	{
 		private readonly GridData _data;
 		private readonly Texture2D _texture;
-		private readonly Dictionary<(int x, int y), Shape> _contents = new();
+		private readonly Dictionary<Vector2, Shape> _contents = new();
 
 		public Grid(GridData grid)
 		{
@@ -14,7 +14,7 @@ namespace TerribleTetris
 			
 			for (var r = 0 ;r < _data.Rows ;r++)
 				for (var c = 0 ;c < _data.Cols ;c++)
-					_contents.Add((c, r), Shape.None);
+					_contents.Add(new (c, r), Shape.None);
 
 			_texture = GetTexture2D("grid");
 
@@ -25,9 +25,9 @@ namespace TerribleTetris
 		{
 			DrawTextureV(_texture, Position, WHITE);
 
-			DrawDebugContents( );
+			//DrawDebugContents( );
 
-			DrawDebugIndices( );
+			//DrawDebugIndices( );
 
 		}
 
@@ -35,28 +35,28 @@ namespace TerribleTetris
 		{
 			foreach (var (idx, s) in _contents)
 			{
-				var pos = Position + new Vector2(idx.x * _data.CellSize, idx.y * _data.CellSize);
-				var data = new TetrominoData(s);
-				DrawRectangleV(pos, new Vector2(_data.CellSize, _data.CellSize), data.Color);
+				var pos = Position + new Vector2(idx.X * _data.CellSize, idx.Y * _data.CellSize);
+				DrawRectangleV(pos, new Vector2(_data.CellSize, _data.CellSize), TetrominoData.Color(s));
 			}
 		}
 
 		private void DrawDebugIndices()
 		{
-			foreach (var (c,r) in _contents.Keys)
+			foreach (var v in _contents.Keys)
 			{
-				var pos = Position + new Vector2(c * _data.CellSize, r * _data.CellSize);
-				DrawTextV($"{c}, {r}", pos, 8, RED);
+				var pos = Position + new Vector2(v.X * _data.CellSize, v.Y * _data.CellSize);
+				DrawTextV($"{v.X}, {v.Y}", pos, 8, RED);
 			}
 		}
 
 		public void LockCells(TetrominoLocked tb) =>
-			tb.Offsets.ForEach(o => _contents[TetrominoOffsetToGridIndices(o, tb.BbIndex)] = tb.Shape);
+			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
+				.ForEach(o => _contents[TetrominoOffsetToGridIndices(o, tb.BbIndex)] = tb.Shape);
 
-		public bool CanMove(List<(int x, int y)> offsets, Vector2 toCheck) =>
+		public bool CanMove(List<Vector2> offsets, Vector2 toCheck) =>
 			offsets.All(o => CanMove(o, toCheck));
 
-		public  bool CanMove((int x, int y) offset, Vector2 toCheck)
+		public  bool CanMove(Vector2 offset, Vector2 toCheck)
 		{
 			var idx = TetrominoOffsetToGridIndices(offset, toCheck);
 
