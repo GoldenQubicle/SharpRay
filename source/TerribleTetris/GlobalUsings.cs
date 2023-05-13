@@ -5,7 +5,9 @@ global using System.Numerics;
 global using System.Text.RegularExpressions;
 global using System.Collections.Generic;
 global using System.Threading.Tasks;
+global using System.Text.Json;
 
+global using SharpRay;
 global using static SharpRay.Core.Audio;
 global using static SharpRay.Core.Application;
 global using SharpRay.Core;
