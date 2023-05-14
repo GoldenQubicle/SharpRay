@@ -27,13 +27,13 @@ internal static partial class Game
 			_bbSize = new(bbSize * GridData.CellSize, bbSize * GridData.CellSize);
 			_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
 
-			Position = IndexToScreen(_bbIndex);
+			Position = BbIdxToScreen(_bbIndex);
 
 		}
 
 		public override void Render()
 		{
-			Position = IndexToScreen(_bbIndex);
+			Position = BbIdxToScreen(_bbIndex);
 
 			//DrawRectangleLinesV(Position, _bbSize, BLUE);
 
@@ -53,7 +53,7 @@ internal static partial class Game
 			foreach (var offset in GetOffsets( ))
 			{
 				var pos = OffsetToScreen(_bbIndex, offset);
-				var v = TetrominoOffsetToGridIndices(offset, _bbIndex);
+				var v = OffsetToGridIdx(offset, _bbIndex);
 				_debugIndices.Add((pos, v));
 			}
 
@@ -144,9 +144,6 @@ internal static partial class Game
 
 		private List<Vector2> GetOffsets() =>
 			TetrominoData.GetOffsets(_shape, _rotation);
-
-		public bool CanSpawn() =>
-			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape, _rotation), _bbIndex);
 
 	}
 }
