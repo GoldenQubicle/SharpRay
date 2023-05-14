@@ -166,7 +166,7 @@ namespace TerribleTetris
 		internal static Vector2 OffsetToGridIdx(Vector2 bbIdx, Vector2 offset) => bbIdx + offset;
 
 		internal static Vector2 OffsetToScreen(Vector2 bbIdx, Vector2 offset) =>
-			 BbIdxToScreen(bbIdx) + new Vector2(offset.X * GridData.CellSize, offset.Y * GridData.CellSize);
+			 BbIdxToScreen(bbIdx) + ( offset * GridData.CellSize );
 
 		internal static Vector2 BbIdxToScreen(Vector2 bbIdx) =>
 			GridData.Position + ( bbIdx * GridData.CellSize );

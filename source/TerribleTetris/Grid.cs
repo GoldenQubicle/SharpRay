@@ -54,12 +54,12 @@ namespace TerribleTetris
 				.Select(o => OffsetToGridIdx(o, tb.BbIndex)).ToList()
 				.ForEach(o => Cells[o] = tb.Shape);
 
-		public bool CanMove(List<Vector2> offsets, Vector2 toCheck) =>
-			offsets.All(o => CanMove(o, toCheck));
+		public bool CanMove(List<Vector2> offsets, Vector2 bbIdx) =>
+			offsets.All(o => CanMove(o, bbIdx));
 
-		public  bool CanMove(Vector2 offset, Vector2 toCheck)
+		public  bool CanMove(Vector2 bbIdx, Vector2 offset)
 		{
-			var idx = OffsetToGridIdx(offset, toCheck);
+			var idx = OffsetToGridIdx(bbIdx, offset);
 
 			if (Cells.TryGetValue(idx, out var s))
 			{
