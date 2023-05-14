@@ -113,7 +113,7 @@ namespace TerribleTetris
 					{
 						var shape = shapes[GetRandomValue(0, shapes.Count - 1)];
 						shapes.Remove(shape);
-						TetrominoStack.Push(new Tetromino(shape, rotations[GetRandomValue(0, 3)], GetRandomValue(0, GridData.Cols - TetrominoData.BoundingBoxSize(shape))));
+						TetrominoStack.Push(new Tetromino(shape, rotations[GetRandomValue(0, 3)], GetRandomValue(0, GridData.Cols - Tetromino.BoundingBoxSize(shape))));
 
 						if (shapes.Count != 0)
 							continue;
@@ -128,7 +128,7 @@ namespace TerribleTetris
 					DropTime = 750;
 					TetrominoStack.Clear();
 					Pattern.Shapes.Reverse( );
-					Pattern.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( GridData.Cols - TetrominoData.BoundingBoxSize(s.Shape))/2)));
+					Pattern.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( GridData.Cols - Tetromino.BoundingBoxSize(s.Shape))/2)));
 					AddEntity(new Pattern(Pattern));
 					SpawnTetromino( );
 					break;
@@ -160,7 +160,7 @@ namespace TerribleTetris
 		}
 
 		private static bool IsAboveGrid(TetrominoLocked tb) =>
-			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
+			Tetromino.GetOffsets(tb.Shape, tb.Rotation)
 				.Any(o => OffsetToGridIdx(o, tb.BbIndex).Y <= 0);
 
 		internal static Vector2 OffsetToGridIdx(Vector2 bbIdx, Vector2 offset) => bbIdx + offset;

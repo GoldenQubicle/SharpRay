@@ -36,7 +36,7 @@ namespace TerribleTetris
 			foreach (var (idx, s) in Cells)
 			{
 				var pos = Position + new Vector2(idx.X * _data.CellSize, idx.Y * _data.CellSize);
-				DrawRectangleV(pos, new Vector2(_data.CellSize, _data.CellSize), TetrominoData.Color(s));
+				DrawRectangleV(pos, new Vector2(_data.CellSize, _data.CellSize), Tetromino.Color(s));
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace TerribleTetris
 		}
 
 		public void LockCells(TetrominoLocked tb) =>
-			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
+			Tetromino.GetOffsets(tb.Shape, tb.Rotation)
 				.Select(o => OffsetToGridIdx(o, tb.BbIndex)).ToList()
 				.ForEach(o => Cells[o] = tb.Shape);
 

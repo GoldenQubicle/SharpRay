@@ -8,7 +8,7 @@ internal class Pattern : Entity, IHasRender
 	public Pattern(PatternData data)
 	{
 		_cells = data.Shapes
-			.SelectMany(s => TetrominoData.GetOffsets(s.Shape, s.Rotation)
+			.SelectMany(s => Tetromino.GetOffsets(s.Shape, s.Rotation)
 				.Select(o => OffsetToScreen(s.BbIndex, o))).ToList();
 
 	}
