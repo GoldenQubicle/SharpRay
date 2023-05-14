@@ -9,11 +9,13 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 	private Rotation _rotation;
 	private Vector2 _bbIndex;
 	private readonly Easing _dropTimer;
+	private readonly Easing _moveTimer;
 	private readonly Vector2 _bbSize;
 	private readonly Vector2 _cellSize;
 	private readonly List<(Vector2, Vector2)> _debugIndices = new( );
 	private bool _isActive = true;
 	private double _dropTimerMultiplier = 1;
+	private Vector2 _movement;
 
 	public Tetromino(Shape shape, Rotation rotation, int startCol)
 	{
@@ -24,6 +26,7 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 		_bbSize = _cellSize * BoundingBoxSize(shape);
 		_bbIndex = new Vector2(startCol, 0 - GetOffsets( ).Min(o => o.Y));
 		_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
+		_moveTimer = new Easing(Easings.EaseExpoInOut, DropTime/4, isRepeated: true);
 
 		Position = BbIdxToScreen(_bbIndex);
 	}
@@ -39,8 +42,8 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 			//DrawCircleV(pos, 3, YELLOW);
 		}
 
-		DrawRectangleLinesV(Position, _bbSize, BLUE);
-		DrawDebugOffsetIndices( );
+		//DrawRectangleLinesV(Position, _bbSize, BLUE);
+		//DrawDebugOffsetIndices( );
 	}
 
 	private void DrawDebugOffsetIndices()
@@ -49,7 +52,7 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 		foreach (var offset in GetOffsets( ))
 		{
 			var pos = OffsetToScreen(_bbIndex, offset);
-			var v = OffsetToGridIdx(offset, _bbIndex);
+			var v = OffsetToGridIdx(_bbIndex, offset);
 			_debugIndices.Add((pos, v));
 		}
 
@@ -61,18 +64,24 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 		if (!_isActive)
 			return;
 
+		_moveTimer.Update(deltaTime);
 		_dropTimer.Update(deltaTime * _dropTimerMultiplier);
 
-		if (!_dropTimer.IsDone( ))
-			return;
-
-		if (CanMoveDown( ))
-			_bbIndex += Vector2.UnitY;
-		else
+		if (_moveTimer.IsDone())
 		{
-			EmitEvent(new TetrominoLocked(_shape, _rotation, _bbIndex));
-			_isActive = false;
-			//RemoveEntity(this);
+			_bbIndex += _movement;
+		}
+
+		if (_dropTimer.IsDone())
+		{
+			if (CanMoveDown( ))
+				_bbIndex += Vector2.UnitY;
+			else
+			{
+				EmitEvent(new TetrominoLocked(_shape, _rotation, _bbIndex));
+				_isActive = false;
+				//RemoveEntity(this);
+			}
 		}
 	}
 
@@ -90,11 +99,11 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 			_ => _rotation
 		};
 
-		_bbIndex = e switch
+		_movement = e switch
 		{
-			KeyRightReleased when CanMoveRight( ) => MoveRight( ),
-			KeyLeftReleased when CanMoveLeft( ) => MoveLeft( ),
-			_ => _bbIndex
+			KeyRightDown when CanMoveRight( ) => MoveRight( ),
+			KeyLeftDown when CanMoveLeft( ) => MoveLeft( ),
+			_ => Vector2.Zero
 		};
 
 		_dropTimerMultiplier = e switch
@@ -124,16 +133,14 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 		GetEntity<Grid>( ).CanMove(GetOffsets( ), _bbIndex + Vector2.UnitY);
 
 	private bool CanMoveLeft() =>
-		GetEntity<Grid>( ).CanMove(GetOffsets( ), MoveLeft( ));
+		GetEntity<Grid>( ).CanMove(GetOffsets( ), _bbIndex + MoveLeft( ));
 
 	private bool CanMoveRight() =>
-		GetEntity<Grid>( ).CanMove(GetOffsets( ), MoveRight( ));
+		GetEntity<Grid>( ).CanMove(GetOffsets( ), _bbIndex + MoveRight( ));
 
-	private Vector2 MoveLeft() =>
-		_bbIndex - Vector2.UnitX;
+	private Vector2 MoveLeft() => -Vector2.UnitX;
 
-	private Vector2 MoveRight() =>
-		_bbIndex + Vector2.UnitX;
+	private Vector2 MoveRight() => Vector2.UnitX;
 
 	private List<Vector2> GetOffsets(Rotation rotation) =>
 		GetOffsets(_shape, rotation);
