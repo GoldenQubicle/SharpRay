@@ -7,20 +7,20 @@
 		internal static int WindowWidth => 1080;
 
 		internal static GridData GridData =
-			new(Rows: 16, Cols: 16, CellSize: 35, Color1: RAYWHITE, Color2: LIGHTGRAY);
+			new(Rows: 16, Cols: 8, CellSize: 35, Color1: RAYWHITE, Color2: LIGHTGRAY);
 
 		internal enum Shape { I, O, T, J, L, S, Z, None };
 
 		internal enum Rotation { Up, Right, Down, Left }
 
-		internal enum Mode { Generation, Playing }
+		internal enum Mode { Generation, Playing, Pause }
 
 		internal enum RotationSystem { Super } // note default, for now hardcoded
 
 		internal static double DropTime;
 
 		internal static Stack<Tetromino> TetrominoStack = new( );
-		internal static PatternData _pattern;
+		internal static PatternData? Pattern;
 
 		internal static Mode CurrentMode { get; set; }
 
@@ -35,18 +35,15 @@
 				BackGroundColor = DARKGRAY
 			});
 
-		
-
+			
 			SetKeyBoardEventAction(OnKeyBoardEvent);
 
 			SetGridBackgroundTexture( );
 
-			StartGame(Mode.Playing);
+			StartGame(Mode.Generation);
 
 			Run( );
 		}
-
-
 
 		private static void SetGridBackgroundTexture()
 		{
@@ -63,16 +60,18 @@
 			switch (CurrentMode)
 			{
 				case Mode.Generation:
-					DropTime = 100;
+					//SetRandomSeed(512);
+					DropTime = 10;
 					TetrominoStack.Clear( );
-					_pattern = new PatternData(GridData.Rows, GridData.Cols, new( ));
+					Pattern = new PatternData(GridData.Rows, GridData.Cols, new( ));
 					var shapes = Enum.GetValues<Shape>( )[..7].ToList( );
+					var rotations = Enum.GetValues<Rotation>();
 					var bagCount = 0;
 					while (bagCount < 5)
 					{
 						var shape = shapes[GetRandomValue(0, shapes.Count - 1)];
 						shapes.Remove(shape);
-						TetrominoStack.Push(new Tetromino(shape, GetRandomValue(0, GridData.Cols - TetrominoData.BoundingBoxSize(shape))));
+						TetrominoStack.Push(new Tetromino(shape, rotations[GetRandomValue(0,3)], GetRandomValue(0, GridData.Cols - TetrominoData.BoundingBoxSize(shape))));
 
 						if (shapes.Count != 0)
 							continue;
@@ -85,12 +84,17 @@
 
 				case Mode.Playing:
 					DropTime = 750;
-					var json = File.ReadAllText(Path.Combine(AssestsFolder, "readtest.json"));
-					var pattern = JsonSerializer.Deserialize<PatternData>(json, GetJsonOptions( ));
-					GridData = GridData with { Cols = pattern.Cols, Rows = pattern.Rows };
-					pattern.Shapes.Reverse();
-					pattern.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, 5)));
-					AddEntity(new Pattern(pattern));
+
+					//if (Pattern == null)
+					//{
+					//	var json = File.ReadAllText(Path.Combine(AssestsFolder, "readtest.json"));
+					//	Pattern = JsonSerializer.Deserialize<PatternData>(json, GetJsonOptions( ));
+					//	GridData = GridData with { Cols = Pattern.Cols, Rows = Pattern.Rows };
+					//}
+				
+					Pattern.Shapes.Reverse( );
+					Pattern.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, 5)));
+					AddEntity(new Pattern(Pattern));
 					SpawnTetromino( );
 
 					break;
@@ -103,10 +107,26 @@
 		{
 			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_SPACE })
 			{
-				RemoveEntitiesOfType<Grid>( );
-				RemoveEntitiesOfType<Tetromino>( );
+				ClearGridAndTetrominos( );
 				StartGame(Mode.Generation);
 			}
+
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && CurrentMode == Mode.Pause)
+			{
+				ClearGridAndTetrominos( );
+				StartGame(Mode.Playing);
+			}
+
+			//if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_S })
+			//{
+			//	SpawnTetromino();
+			//}
+		}
+
+		private static void ClearGridAndTetrominos()
+		{
+			RemoveEntitiesOfType<Tetromino>( );
+			RemoveEntitiesOfType<Grid>( );
 		}
 
 		private static void SpawnTetromino()
@@ -114,7 +134,10 @@
 			if (!TetrominoStack.Any( ))
 				return;
 
-			AddEntity(TetrominoStack.Pop( ), OnGameEvent);
+			var shape = TetrominoStack.Pop();
+
+			//if (shape.CanSpawn( ))
+				AddEntity(shape,  OnGameEvent);
 		}
 
 		public static void OnGameEvent(IGameEvent e)
@@ -125,27 +148,51 @@
 
 				if (CurrentMode == Mode.Generation)
 				{
-					_pattern.Shapes.Add(tb);
+					Pattern.Shapes.Add(tb);
 
 					if (IsAboveGrid(tb))
 					{
-						var json = JsonSerializer.Serialize(_pattern, GetJsonOptions());
-						File.WriteAllText(Path.Combine(AssestsFolder, "readtest.json"), json);
+						//var json = JsonSerializer.Serialize(_pattern, GetJsonOptions());
+						//File.WriteAllText(Path.Combine(AssestsFolder, "readtest.json"), json);
+
+						CurrentMode = Mode.Pause;
 						return;
 					}
 				}
 
-				if (CurrentMode == Mode.Playing && (IsAboveGrid(tb) || TetrominoStack.Count == 0))
+				if (CurrentMode == Mode.Playing)
 				{
-					//TODO calculate the score
-					Print("Game Over");
-					return;
+					Pattern.Placed.Add(tb);
+					
+					if (IsAboveGrid(tb) || TetrominoStack.Count == 0)
+					{
+						var score = CalculateScore( );
+						Print($"Game Over! {score}");
+						return;
+					}
 				}
-				
+
 				SpawnTetromino( );
 			}
 		}
 
+		internal record ScoreData(int Correct);
+
+		private static ScoreData CalculateScore()
+		{
+			var correct = Pattern.Shapes.Count(s => Pattern.Placed.Contains(s));
+			var pattern = Pattern.Shapes
+				.SelectMany(s => TetrominoData.GetOffsets(s.Shape, s.Rotation)
+					.Select(o => (offset: TetrominoOffsetToGridIndices(o, s.BbIndex), s.Shape)))
+					.ToDictionary(t => t.offset, t => t.Shape);
+
+			var grid = GetEntity<Grid>().Contents;
+			var coveredSameShape = pattern.Where(c => grid[c.Key] == c.Value).ToList();
+			var coveredSomeShape = pattern.Where(c => grid[c.Key] != Shape.None).ToList();
+
+
+			return new ScoreData(correct);
+		}
 
 		private static bool IsAboveGrid(TetrominoLocked tb) =>
 			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
@@ -153,20 +200,20 @@
 
 		internal static Vector2 TetrominoOffsetToGridIndices(Vector2 offset, Vector2 bbPos) => offset + bbPos;
 
-		internal static Vector2 OffsetToScreen(Vector2 index, Vector2 offset) => 
+		internal static Vector2 OffsetToScreen(Vector2 index, Vector2 offset) =>
 			 IndexToScreen(index) + new Vector2(offset.X * GridData.CellSize, offset.Y * GridData.CellSize);
 
 		internal static Vector2 IndexToScreen(Vector2 index) =>
 			GridData.Position + ( index * GridData.CellSize );
 
-		private static JsonSerializerOptions GetJsonOptions() => new()
+		private static JsonSerializerOptions GetJsonOptions() => new( )
+		{
+			WriteIndented = true,
+			Converters =
 			{
-				WriteIndented = true, 
-				Converters =
-					{
-						new Vector2JsonConverter()
-					}
-			};
+				new Vector2JsonConverter()
+			}
+		};
 
 	}
 }

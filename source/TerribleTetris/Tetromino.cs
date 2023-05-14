@@ -1,6 +1,4 @@
-﻿using static TerribleTetris.Game;
-
-namespace TerribleTetris;
+﻿namespace TerribleTetris;
 
 internal static partial class Game
 {
@@ -16,14 +14,21 @@ internal static partial class Game
 		private readonly Vector2 _bbSize;
 		private readonly List<(Vector2, Vector2)> _debugIndices = new( );
 		private bool _isActive = true;
+		private double _dropTimerMultiplier = 1;
 
-		public Tetromino(Shape shape, int startCol)
+		public Tetromino(Shape shape, Rotation rotation, int startCol)
 		{
 			_shape = shape;
-			_bbIndex = new Vector2(startCol, 0);
-			Position = IndexToScreen(_bbIndex);
-			_bbSize = new(TetrominoData.BoundingBoxSize(shape) * GridData.CellSize, TetrominoData.BoundingBoxSize(shape) * GridData.CellSize);
+			_rotation = rotation;
+			
+			var bbSize = TetrominoData.BoundingBoxSize(shape);
+			var t = TetrominoData.GetOffsets(_shape, _rotation).Min(o => o.Y);
+			_bbIndex = new Vector2(startCol, 0 - t);
+			_bbSize = new(bbSize * GridData.CellSize, bbSize * GridData.CellSize);
 			_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
+
+			Position = IndexToScreen(_bbIndex);
+
 		}
 
 
@@ -31,7 +36,7 @@ internal static partial class Game
 		{
 			Position = IndexToScreen(_bbIndex);
 
-			//DrawRectangleLinesV(Position, _bbSize, BLUE);
+			DrawRectangleLinesV(Position, _bbSize, BLUE);
 
 			foreach (var offset in TetrominoData.GetOffsets(_shape, _rotation))
 			{
@@ -43,12 +48,25 @@ internal static partial class Game
 			//DrawDebugOffsetIndices();
 		}
 
+		private void DrawDebugOffsetIndices()
+		{
+			_debugIndices.Clear( );
+			foreach (var offset in TetrominoData.GetOffsets(_shape, _rotation))
+			{
+				var pos = OffsetToScreen(_bbIndex, offset);
+				var v = TetrominoOffsetToGridIndices(offset, _bbIndex);
+				_debugIndices.Add((pos, v));
+			}
+
+			_debugIndices.ForEach(t => DrawTextV($"{t.Item2.X}, {t.Item2.Y}", t.Item1, 8, BLACK));
+		}
+
 		public override void Update(double deltaTime)
 		{
 			if (!_isActive)
 				return;
 
-			_dropTimer.Update(deltaTime);
+			_dropTimer.Update(deltaTime * _dropTimerMultiplier);
 
 			if (!_dropTimer.IsDone( ))
 				return;
@@ -83,6 +101,13 @@ internal static partial class Game
 				KeyLeftReleased when CanMoveLeft( ) => MoveLeft( ),
 				_ => _bbIndex
 			};
+
+			_dropTimerMultiplier = e switch
+			{
+				KeyDownDown => 8.0,
+				KeyDownReleased => 1.0,
+				_ => _dropTimerMultiplier
+			};
 		}
 
 		private bool CanRotateClockwise() =>
@@ -103,19 +128,6 @@ internal static partial class Game
 		private bool CanMoveDown() =>
 			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape,_rotation), _bbIndex + Vector2.UnitY);
 
-		private void DrawDebugOffsetIndices()
-		{
-			_debugIndices.Clear();
-			foreach (var offset in TetrominoData.GetOffsets(_shape, _rotation))
-			{
-				var pos = OffsetToScreen(_bbIndex, offset);
-				var v = TetrominoOffsetToGridIndices(offset, _bbIndex);
-				_debugIndices.Add((pos, v));
-			}
-
-			_debugIndices.ForEach(t => DrawTextV($"{t.Item2.X}, {t.Item2.Y}", t.Item1, 8, BLACK));
-		}
-
 		private bool CanMoveLeft() =>
 			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape, _rotation), MoveLeft( ));
 
@@ -131,5 +143,8 @@ internal static partial class Game
 		private List<Vector2> GetRotationOffsets(Rotation rotation) =>
 			TetrominoData.GetOffsets(_shape, rotation);
 		
+		public bool CanSpawn() => 
+			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape, _rotation), _bbIndex);
+
 	}
 }

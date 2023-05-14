@@ -4,7 +4,7 @@ namespace TerribleTetris
 	{
 		private readonly GridData _data;
 		private readonly Texture2D _texture;
-		private readonly Dictionary<Vector2, Shape> _contents = new();
+		public Dictionary<Vector2, Shape> Contents { get; } = new();
 
 		public Grid(GridData grid)
 		{
@@ -14,7 +14,7 @@ namespace TerribleTetris
 			
 			for (var r = 0 ;r < _data.Rows ;r++)
 				for (var c = 0 ;c < _data.Cols ;c++)
-					_contents.Add(new (c, r), Shape.None);
+					Contents.Add(new (c, r), Shape.None);
 
 			_texture = GetTexture2D("grid");
 
@@ -33,7 +33,7 @@ namespace TerribleTetris
 
 		private void DrawDebugContents()
 		{
-			foreach (var (idx, s) in _contents)
+			foreach (var (idx, s) in Contents)
 			{
 				var pos = Position + new Vector2(idx.X * _data.CellSize, idx.Y * _data.CellSize);
 				DrawRectangleV(pos, new Vector2(_data.CellSize, _data.CellSize), TetrominoData.Color(s));
@@ -42,7 +42,7 @@ namespace TerribleTetris
 
 		private void DrawDebugIndices()
 		{
-			foreach (var v in _contents.Keys)
+			foreach (var v in Contents.Keys)
 			{
 				var pos = Position + new Vector2(v.X * _data.CellSize, v.Y * _data.CellSize);
 				DrawTextV($"{v.X}, {v.Y}", pos, 8, RED);
@@ -51,7 +51,7 @@ namespace TerribleTetris
 
 		public void LockCells(TetrominoLocked tb) =>
 			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
-				.ForEach(o => _contents[TetrominoOffsetToGridIndices(o, tb.BbIndex)] = tb.Shape);
+				.ForEach(o => Contents[TetrominoOffsetToGridIndices(o, tb.BbIndex)] = tb.Shape);
 
 		public bool CanMove(List<Vector2> offsets, Vector2 toCheck) =>
 			offsets.All(o => CanMove(o, toCheck));
@@ -60,7 +60,7 @@ namespace TerribleTetris
 		{
 			var idx = TetrominoOffsetToGridIndices(offset, toCheck);
 
-			if (_contents.TryGetValue(idx, out var s))
+			if (Contents.TryGetValue(idx, out var s))
 			{
 				return s == Shape.None;
 			}
