@@ -51,14 +51,15 @@ namespace TerribleTetris
 
 		public void LockCells(TetrominoLocked tb) =>
 			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
-				.ForEach(o => Cells[TetrominoOffsetToGridIndices(o, tb.BbIndex)] = tb.Shape);
+				.Select(o => OffsetToGridIdx(o, tb.BbIndex)).ToList()
+				.ForEach(o => Cells[o] = tb.Shape);
 
 		public bool CanMove(List<Vector2> offsets, Vector2 toCheck) =>
 			offsets.All(o => CanMove(o, toCheck));
 
 		public  bool CanMove(Vector2 offset, Vector2 toCheck)
 		{
-			var idx = TetrominoOffsetToGridIndices(offset, toCheck);
+			var idx = OffsetToGridIdx(offset, toCheck);
 
 			if (Cells.TryGetValue(idx, out var s))
 			{

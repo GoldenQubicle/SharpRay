@@ -161,15 +161,15 @@ namespace TerribleTetris
 
 		private static bool IsAboveGrid(TetrominoLocked tb) =>
 			TetrominoData.GetOffsets(tb.Shape, tb.Rotation)
-				.Any(o => TetrominoOffsetToGridIndices(o, tb.BbIndex).Y <= 0);
+				.Any(o => OffsetToGridIdx(o, tb.BbIndex).Y <= 0);
 
-		internal static Vector2 TetrominoOffsetToGridIndices(Vector2 offset, Vector2 bbPos) => offset + bbPos;
+		internal static Vector2 OffsetToGridIdx(Vector2 bbIdx, Vector2 offset) => bbIdx + offset;
 
-		internal static Vector2 OffsetToScreen(Vector2 index, Vector2 offset) =>
-			 IndexToScreen(index) + new Vector2(offset.X * GridData.CellSize, offset.Y * GridData.CellSize);
+		internal static Vector2 OffsetToScreen(Vector2 bbIdx, Vector2 offset) =>
+			 BbIdxToScreen(bbIdx) + new Vector2(offset.X * GridData.CellSize, offset.Y * GridData.CellSize);
 
-		internal static Vector2 IndexToScreen(Vector2 index) =>
-			GridData.Position + ( index * GridData.CellSize );
+		internal static Vector2 BbIdxToScreen(Vector2 bbIdx) =>
+			GridData.Position + ( bbIdx * GridData.CellSize );
 
 		private static JsonSerializerOptions GetJsonOptions() => new( )
 		{
