@@ -7,7 +7,7 @@ global using System.Collections.Generic;
 global using System.Threading.Tasks;
 global using System.Text.Json;
 
-global using SharpRay;
+global using SharpRay.Utils;
 global using static SharpRay.Core.Audio;
 global using static SharpRay.Core.Application;
 global using SharpRay.Core;
