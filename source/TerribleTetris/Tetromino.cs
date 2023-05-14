@@ -20,9 +20,9 @@ internal static partial class Game
 		{
 			_shape = shape;
 			_rotation = rotation;
-			
+
 			var bbSize = TetrominoData.BoundingBoxSize(shape);
-			var t = TetrominoData.GetOffsets(_shape, _rotation).Min(o => o.Y);
+			var t = GetOffsets( ).Min(o => o.Y);
 			_bbIndex = new Vector2(startCol, 0 - t);
 			_bbSize = new(bbSize * GridData.CellSize, bbSize * GridData.CellSize);
 			_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
@@ -31,14 +31,13 @@ internal static partial class Game
 
 		}
 
-
 		public override void Render()
 		{
 			Position = IndexToScreen(_bbIndex);
 
-			DrawRectangleLinesV(Position, _bbSize, BLUE);
+			//DrawRectangleLinesV(Position, _bbSize, BLUE);
 
-			foreach (var offset in TetrominoData.GetOffsets(_shape, _rotation))
+			foreach (var offset in GetOffsets( ))
 			{
 				var pos = Position + new Vector2(offset.X * GridData.CellSize, offset.Y * GridData.CellSize);
 				DrawRectangleV(pos, new Vector2(GridData.CellSize, GridData.CellSize), TetrominoData.Color(_shape));
@@ -51,7 +50,7 @@ internal static partial class Game
 		private void DrawDebugOffsetIndices()
 		{
 			_debugIndices.Clear( );
-			foreach (var offset in TetrominoData.GetOffsets(_shape, _rotation))
+			foreach (var offset in GetOffsets( ))
 			{
 				var pos = OffsetToScreen(_bbIndex, offset);
 				var v = TetrominoOffsetToGridIndices(offset, _bbIndex);
@@ -117,7 +116,7 @@ internal static partial class Game
 			CanRotate(RotateCounterClockwise( ));
 
 		private bool CanRotate(Rotation rotation) =>
-			GetEntity<Grid>().CanMove(GetRotationOffsets(rotation), _bbIndex);
+			GetEntity<Grid>( ).CanMove(GetOffsets(rotation), _bbIndex);
 
 		private Rotation RotateClockwise() =>
 			(Rotation)( (int)( _rotation + 1 ) % 4 );
@@ -126,13 +125,13 @@ internal static partial class Game
 			(Rotation)( _rotation == 0 ? 3 : (int)_rotation - 1 );
 
 		private bool CanMoveDown() =>
-			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape,_rotation), _bbIndex + Vector2.UnitY);
+			GetEntity<Grid>( ).CanMove(GetOffsets( ), _bbIndex + Vector2.UnitY);
 
 		private bool CanMoveLeft() =>
-			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape, _rotation), MoveLeft( ));
+			GetEntity<Grid>( ).CanMove(GetOffsets( ), MoveLeft( ));
 
 		private bool CanMoveRight() =>
-			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape, _rotation), MoveRight( ));
+			GetEntity<Grid>( ).CanMove(GetOffsets( ), MoveRight( ));
 
 		private Vector2 MoveLeft() =>
 			_bbIndex - Vector2.UnitX;
@@ -140,10 +139,13 @@ internal static partial class Game
 		private Vector2 MoveRight() =>
 			_bbIndex + Vector2.UnitX;
 
-		private List<Vector2> GetRotationOffsets(Rotation rotation) =>
+		private List<Vector2> GetOffsets(Rotation rotation) =>
 			TetrominoData.GetOffsets(_shape, rotation);
-		
-		public bool CanSpawn() => 
+
+		private List<Vector2> GetOffsets() =>
+			TetrominoData.GetOffsets(_shape, _rotation);
+
+		public bool CanSpawn() =>
 			GetEntity<Grid>( ).CanMove(TetrominoData.GetOffsets(_shape, _rotation), _bbIndex);
 
 	}

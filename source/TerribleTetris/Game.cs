@@ -1,4 +1,6 @@
-﻿namespace TerribleTetris
+﻿using static TerribleTetris.Game;
+
+namespace TerribleTetris
 {
 	internal static partial class Game
 	{
@@ -35,7 +37,7 @@
 				BackGroundColor = DARKGRAY
 			});
 
-			
+
 			SetKeyBoardEventAction(OnKeyBoardEvent);
 
 			SetGridBackgroundTexture( );
@@ -43,101 +45,6 @@
 			StartGame(Mode.Generation);
 
 			Run( );
-		}
-
-		private static void SetGridBackgroundTexture()
-		{
-			var bgImage = GenImageChecked(GridData.Width, GridData.Height, GridData.CellSize, GridData.CellSize, GridData.Color1, GridData.Color2);
-			AddTexture2D("grid", LoadTextureFromImage(bgImage));
-			UnloadImage(bgImage);
-		}
-
-		private static void StartGame(Mode mode)
-		{
-			CurrentMode = mode;
-			AddEntity(new Grid(GridData));
-			
-			switch (CurrentMode)
-			{
-				case Mode.Generation:
-					//SetRandomSeed(512);
-					DropTime = 10;
-					TetrominoStack.Clear( );
-					Pattern = new PatternData(GridData.Rows, GridData.Cols, new( ));
-					var shapes = Enum.GetValues<Shape>( )[..7].ToList( );
-					var rotations = Enum.GetValues<Rotation>();
-					var bagCount = 0;
-					while (bagCount < 5)
-					{
-						var shape = shapes[GetRandomValue(0, shapes.Count - 1)];
-						shapes.Remove(shape);
-						TetrominoStack.Push(new Tetromino(shape, rotations[GetRandomValue(0,3)], GetRandomValue(0, GridData.Cols - TetrominoData.BoundingBoxSize(shape))));
-
-						if (shapes.Count != 0)
-							continue;
-
-						shapes = Enum.GetValues<Shape>( )[..7].ToList( );
-						bagCount++;
-					}
-					SpawnTetromino( );
-					break;
-
-				case Mode.Playing:
-					DropTime = 750;
-
-					//if (Pattern == null)
-					//{
-					//	var json = File.ReadAllText(Path.Combine(AssestsFolder, "readtest.json"));
-					//	Pattern = JsonSerializer.Deserialize<PatternData>(json, GetJsonOptions( ));
-					//	GridData = GridData with { Cols = Pattern.Cols, Rows = Pattern.Rows };
-					//}
-				
-					Pattern.Shapes.Reverse( );
-					Pattern.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, 5)));
-					AddEntity(new Pattern(Pattern));
-					SpawnTetromino( );
-
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
-			}
-		}
-
-		private static void OnKeyBoardEvent(IKeyBoardEvent e)
-		{
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_SPACE })
-			{
-				ClearGridAndTetrominos( );
-				StartGame(Mode.Generation);
-			}
-
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && CurrentMode == Mode.Pause)
-			{
-				ClearGridAndTetrominos( );
-				StartGame(Mode.Playing);
-			}
-
-			//if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_S })
-			//{
-			//	SpawnTetromino();
-			//}
-		}
-
-		private static void ClearGridAndTetrominos()
-		{
-			RemoveEntitiesOfType<Tetromino>( );
-			RemoveEntitiesOfType<Grid>( );
-		}
-
-		private static void SpawnTetromino()
-		{
-			if (!TetrominoStack.Any( ))
-				return;
-
-			var shape = TetrominoStack.Pop();
-
-			//if (shape.CanSpawn( ))
-				AddEntity(shape,  OnGameEvent);
 		}
 
 		public static void OnGameEvent(IGameEvent e)
@@ -152,8 +59,6 @@
 
 					if (IsAboveGrid(tb))
 					{
-						//var json = JsonSerializer.Serialize(_pattern, GetJsonOptions());
-						//File.WriteAllText(Path.Combine(AssestsFolder, "readtest.json"), json);
 
 						CurrentMode = Mode.Pause;
 						return;
@@ -163,11 +68,10 @@
 				if (CurrentMode == Mode.Playing)
 				{
 					Pattern.Placed.Add(tb);
-					
+
 					if (IsAboveGrid(tb) || TetrominoStack.Count == 0)
 					{
-						var score = CalculateScore( );
-						Print($"Game Over! {score}");
+						Print($"Game Over!");
 						return;
 					}
 				}
@@ -176,22 +80,83 @@
 			}
 		}
 
-		internal record ScoreData(int Correct);
-
-		private static ScoreData CalculateScore()
+		private static void OnKeyBoardEvent(IKeyBoardEvent e)
 		{
-			var correct = Pattern.Shapes.Count(s => Pattern.Placed.Contains(s));
-			var pattern = Pattern.Shapes
-				.SelectMany(s => TetrominoData.GetOffsets(s.Shape, s.Rotation)
-					.Select(o => (offset: TetrominoOffsetToGridIndices(o, s.BbIndex), s.Shape)))
-					.ToDictionary(t => t.offset, t => t.Shape);
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_SPACE })
+			{
+				ClearGridAndTetrominos( );
+				StartGame(Mode.Generation);
+			}
 
-			var grid = GetEntity<Grid>().Contents;
-			var coveredSameShape = pattern.Where(c => grid[c.Key] == c.Value).ToList();
-			var coveredSomeShape = pattern.Where(c => grid[c.Key] != Shape.None).ToList();
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && CurrentMode == Mode.Pause)
+			{
+				ClearGridAndTetrominos();
+				StartGame(Mode.Playing);
+			}
+		}
 
+		private static void StartGame(Mode mode)
+		{
+			CurrentMode = mode;
+			AddEntity(new Grid(GridData));
 
-			return new ScoreData(correct);
+			switch (CurrentMode)
+			{
+				case Mode.Generation:
+					DropTime = 10;
+					TetrominoStack.Clear( );
+					Pattern = new PatternData(GridData.Rows, GridData.Cols, new( ));
+					var shapes = Enum.GetValues<Shape>( )[..7].ToList( );
+					var rotations = Enum.GetValues<Rotation>( );
+					var bagCount = 0;
+					while (bagCount < 5)
+					{
+						var shape = shapes[GetRandomValue(0, shapes.Count - 1)];
+						shapes.Remove(shape);
+						TetrominoStack.Push(new Tetromino(shape, rotations[GetRandomValue(0, 3)], GetRandomValue(0, GridData.Cols - TetrominoData.BoundingBoxSize(shape))));
+
+						if (shapes.Count != 0)
+							continue;
+
+						shapes = Enum.GetValues<Shape>( )[..7].ToList( );
+						bagCount++;
+					}
+					SpawnTetromino( );
+					break;
+
+				case Mode.Playing:
+					DropTime = 750;
+					TetrominoStack.Clear();
+					Pattern.Shapes.Reverse( );
+					Pattern.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( GridData.Cols - TetrominoData.BoundingBoxSize(s.Shape))/2)));
+					AddEntity(new Pattern(Pattern));
+					SpawnTetromino( );
+					break;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+			}
+		}
+
+		private static void ClearGridAndTetrominos()
+		{
+			RemoveEntitiesOfType<Grid>( );
+			RemoveEntitiesOfType<Tetromino>( );
+		}
+		
+		private static void SpawnTetromino()
+		{
+			if (!TetrominoStack.Any( ))
+				return;
+
+			AddEntity(TetrominoStack.Pop( ), OnGameEvent);
+		}
+
+		private static void SetGridBackgroundTexture()
+		{
+			var bgImage = GenImageChecked(GridData.Width, GridData.Height, GridData.CellSize, GridData.CellSize, GridData.Color1, GridData.Color2);
+			AddTexture2D("grid", LoadTextureFromImage(bgImage));
+			UnloadImage(bgImage);
 		}
 
 		private static bool IsAboveGrid(TetrominoLocked tb) =>
