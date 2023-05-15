@@ -17,12 +17,12 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 	private double _dropTimerMultiplier = 1;
 	private Vector2 _movement;
 
-	public Tetromino(Shape shape, Rotation rotation, int startCol)
+	public Tetromino(Shape shape, Rotation rotation, int startCol, int cellSize)
 	{
 		_shape = shape;
 		_rotation = rotation;
 
-		_cellSize = new Vector2(Game.GridData.CellSize, Game.GridData.CellSize);
+		_cellSize = new Vector2(cellSize, cellSize);
 		_bbSize = _cellSize * BoundingBoxSize(shape);
 		_bbIndex = new Vector2(startCol, 0 - GetOffsets( ).Min(o => o.Y));
 		_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
