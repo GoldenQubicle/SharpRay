@@ -2,14 +2,14 @@
 
 namespace TerribleTetris
 {
-    internal static class Game
+	internal static class Game
 	{
 		internal static int WindowHeight => 720;
 
 		internal static int WindowWidth => 1080;
-
-		private static readonly GridData GridData = new(Rows: 16, Cols: 8, CellSize: 35, Color1: RAYWHITE, Color2: LIGHTGRAY);
-
+		internal static int CellSize => 20;
+		private static readonly GridData GridData = new(Rows: 20, Cols: 16, CellSize: CellSize);
+		internal const string GridTexture = nameof(GridTexture);
 		internal enum Shape { I, O, T, J, L, S, Z, None };
 
 		internal enum Rotation { Up, Right, Down, Left }
@@ -22,7 +22,7 @@ namespace TerribleTetris
 
 		internal static Stack<Tetromino> TetrominoStack = new( );
 
-		internal static IGameMode GameMode { get; set; } = new PauseMode();
+		internal static IGameMode GameMode { get; set; } = new PauseMode { GridData = GridData };
 
 		internal static void Main(string[ ] args)
 		{
@@ -55,22 +55,23 @@ namespace TerribleTetris
 
 			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is PauseMode)
 			{
-				ClearGridAndTetrominos();
-				StartGame(Mode.Playing);
+				ClearGridAndTetrominos( );
+				GameMode = GameMode.NextMode(new PlayMode( ));
+				GameMode.Initialize( );
 			}
 		}
 
-		private static void StartGame(Mode mode)
+		private static void StartGame(Mode mode, string fileName = "")
 		{
 			GameMode = mode switch
 			{
-				Mode.Generation => GameMode.NextMode(new GenerationMode()),
-				Mode.Playing => GameMode.NextMode(new PlayMode()),
+				Mode.Generation => new GenerationMode(GridData, fileName),
+				Mode.Playing => new PlayMode(fileName),
 				_ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
 			};
 
-			GameMode.OnStart(GridData);
-			
+			GameMode.Initialize( );
+
 		}
 
 		private static void ClearGridAndTetrominos()
@@ -87,10 +88,11 @@ namespace TerribleTetris
 			AddEntity(TetrominoStack.Pop( ), GameMode.OnGameEvent);
 		}
 
-		private static void SetGridBackgroundTexture(GridData gridData)
+		internal static void SetGridBackgroundTexture(GridData gridData)
 		{
-			var bgImage = GenImageChecked(gridData.Width, gridData.Height, gridData.CellSize, gridData.CellSize, gridData.Color1, gridData.Color2);
-			AddTexture2D("grid", LoadTextureFromImage(bgImage));
+			RemoveTexture2D(GridTexture);
+			var bgImage = GenImageChecked(gridData.Width, gridData.Height, gridData.CellSize, gridData.CellSize, RAYWHITE, LIGHTGRAY);
+			AddTexture2D(GridTexture, LoadTextureFromImage(bgImage));
 			UnloadImage(bgImage);
 		}
 
@@ -101,12 +103,12 @@ namespace TerribleTetris
 		internal static Vector2 OffsetToGridIdx(Vector2 bbIdx, Vector2 offset) => bbIdx + offset;
 
 		internal static Vector2 OffsetToScreen(Vector2 bbIdx, Vector2 offset) =>
-			 BbIdxToScreen(bbIdx) + ( offset * GridData.CellSize );
+			 BbIdxToScreen(bbIdx) + ( offset * CellSize );
 
 		internal static Vector2 BbIdxToScreen(Vector2 bbIdx) =>
-			GridData.Position + ( bbIdx * GridData.CellSize );
+			GridData.Position + ( bbIdx * CellSize );
 
-		private static JsonSerializerOptions GetJsonOptions() => new( )
+		internal static JsonSerializerOptions GetJsonOptions() => new( )
 		{
 			WriteIndented = true,
 			Converters =

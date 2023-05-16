@@ -59,6 +59,8 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 		_debugIndices.ForEach(t => DrawTextV($"{t.Item2.X}, {t.Item2.Y}", t.Item1, 8, BLACK));
 	}
 
+
+
 	public override void Update(double deltaTime)
 	{
 		if (!_isActive)

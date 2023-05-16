@@ -16,7 +16,7 @@ namespace TerribleTetris
 				for (var c = 0 ;c < _data.Cols ;c++)
 					Cells.Add(new (c, r), Shape.None);
 
-			_texture = GetTexture2D("grid");
+			_texture = GetTexture2D(GridTexture);
 			
 		}
 		

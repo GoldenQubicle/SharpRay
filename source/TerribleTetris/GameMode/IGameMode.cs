@@ -3,7 +3,8 @@
     internal interface IGameMode
     {
         PatternData PatternData { get; set; }
-        void OnStart(GridData gridData);
+        GridData GridData { get; set; }
+        void Initialize();
         void OnGameEvent(IGameEvent e);
 
         IGameMode NextMode(IGameMode nextGameMode);
