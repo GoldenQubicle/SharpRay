@@ -3,7 +3,9 @@
 internal class PauseMode : IGameMode
 {
 	public PatternData PatternData { get; set; }
-	public void OnStart(GridData gridData)
+	public GridData GridData { get; set; }
+
+	public void Initialize()
 	{
 	}
 
@@ -14,6 +16,7 @@ internal class PauseMode : IGameMode
 	public IGameMode NextMode(IGameMode nextGameMode)
 	{
 		nextGameMode.PatternData = PatternData;
+		nextGameMode.GridData = GridData;
 		return nextGameMode;
 	}
 }

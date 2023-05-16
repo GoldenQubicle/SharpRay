@@ -1,17 +1,34 @@
-﻿namespace TerribleTetris.GameMode;
+﻿using System.Diagnostics;
+
+namespace TerribleTetris.GameMode;
 
 internal class PlayMode : IGameMode
 {
+	public GridData GridData { get; set; }
 	public PatternData PatternData { get; set; }
 
-	public void OnStart(GridData gridData)
+	public PlayMode(string fileName = "")
 	{
-		AddEntity(new Grid(gridData));
+		if (!string.IsNullOrEmpty(fileName))
+		{
+			var json = File.ReadAllText(Path.Combine(AssestsFolder, fileName));
+			PatternData = JsonSerializer.Deserialize<PatternData>(json, GetJsonOptions());
+			GridData = new GridData(PatternData.Rows, PatternData.Cols, CellSize);
+			SetGridBackgroundTexture(GridData);
+		}
+	}
+
+	public void Initialize()
+	{
+		Debug.Assert(GridData is not null);
+		Debug.Assert(PatternData is not null);
+			
+		AddEntity(new Grid(GridData));
 		DropTime = 750;
 		TetrominoStack.Clear( );
 		PatternData.Shapes.Reverse( );
-		PatternData.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( gridData.Cols - Tetromino.BoundingBoxSize(s.Shape) ) / 2, gridData.CellSize)));
-		AddEntity(new Pattern(PatternData, gridData));
+		PatternData.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( GridData.Cols - Tetromino.BoundingBoxSize(s.Shape) ) / 2, GridData.CellSize)));
+		AddEntity(new Pattern(PatternData, GridData));
 		SpawnTetromino( );
 	}
 

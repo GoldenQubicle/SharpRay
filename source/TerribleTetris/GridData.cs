@@ -1,10 +1,10 @@
 namespace TerribleTetris
 {
-	internal record GridData(int Rows, int Cols, int CellSize, Color Color1, Color Color2)
+	internal record GridData(int Rows, int Cols, int CellSize)
 	{
 		public int Height = Rows * CellSize;
 		public int Width = Cols * CellSize;
-		public Vector2 Position => new(( Game.WindowWidth - Width ) / 2, ( Game.WindowHeight - Height ) / 2);
+		public Vector2 Position => new(( WindowWidth - Width ) / 2, ( WindowHeight - Height ) / 2);
 
 	};
 }
