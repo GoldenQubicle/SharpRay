@@ -32,7 +32,7 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 
 	public override void Render()
 	{
-		//Position = BbIdxToScreen(_bbIndex);
+		
 
 		foreach (var offset in GetOffsets( ))
 		{
@@ -41,7 +41,8 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 			//DrawCircleV(pos, 3, YELLOW);
 		}
 
-		//DrawRectangleLinesV(Position, _bbSize, BLUE);
+		Position = BbIdxToScreen(_bbIndex);
+		DrawRectangleLinesV(Position, _bbSize, BLUE);
 		//DrawDebugOffsetIndices( );
 	}
 
