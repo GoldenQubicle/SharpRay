@@ -41,8 +41,8 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 			//DrawCircleV(pos, 3, YELLOW);
 		}
 
-		Position = BbIdxToScreen(_bbIndex);
-		DrawRectangleLinesV(Position, _bbSize, BLUE);
+		//Position = BbIdxToScreen(_bbIndex);
+		//DrawRectangleLinesV(Position, _bbSize, BLUE);
 		//DrawDebugOffsetIndices( );
 	}
 
