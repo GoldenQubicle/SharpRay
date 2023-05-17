@@ -37,8 +37,7 @@ internal class PlayMode : IGameMode
 		if (e is TetrominoLocked tl)
 		{
 			GetEntity<Grid>( ).LockCells(tl);
-			
-			PatternData.Placed.Add(tl);
+			GetEntity<Pattern>().CalculateScore(tl);
 
 			if (IsAboveGrid(tl) || TetrominoStack.Count == 0)
 			{

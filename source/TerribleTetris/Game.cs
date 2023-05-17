@@ -40,7 +40,7 @@ namespace TerribleTetris
 
 			SetGridBackgroundTexture(GridData);
 
-			StartGame(Mode.Generation);
+			StartGame(Mode.Playing, "score-L.json");
 
 			Run( );
 		}
