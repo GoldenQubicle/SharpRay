@@ -23,6 +23,8 @@ namespace TerribleTetris
 
 		public override void Render()
 		{
+			//DrawCircleV(Position, 5, ORANGE);
+
 			DrawTextureV(_texture, Position, WHITE);
 
 			//DrawDebugCells( );

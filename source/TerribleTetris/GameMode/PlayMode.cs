@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿
 
 namespace TerribleTetris.GameMode;
 
@@ -22,7 +22,7 @@ internal class PlayMode : IGameMode
 	{
 		Debug.Assert(GridData is not null);
 		Debug.Assert(PatternData is not null);
-			
+		Game.GridData = GridData;	
 		AddEntity(new Grid(GridData));
 		DropTime = 750;
 		TetrominoStack.Clear( );
@@ -37,6 +37,7 @@ internal class PlayMode : IGameMode
 		if (e is TetrominoLocked tl)
 		{
 			GetEntity<Grid>( ).LockCells(tl);
+			
 			PatternData.Placed.Add(tl);
 
 			if (IsAboveGrid(tl) || TetrominoStack.Count == 0)

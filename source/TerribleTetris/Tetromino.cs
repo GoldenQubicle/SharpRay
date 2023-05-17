@@ -28,16 +28,15 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 		_dropTimer = new Easing(Easings.EaseExpoInOut, DropTime, isRepeated: true);
 		_moveTimer = new Easing(Easings.EaseExpoInOut, DropTime/4, isRepeated: true);
 
-		Position = BbIdxToScreen(_bbIndex);
 	}
 
 	public override void Render()
 	{
-		Position = BbIdxToScreen(_bbIndex);
+		//Position = BbIdxToScreen(_bbIndex);
 
 		foreach (var offset in GetOffsets( ))
 		{
-			var pos = Position + (offset * _cellSize );
+			var pos = OffsetToScreen(_bbIndex, offset);
 			DrawRectangleV(pos, _cellSize, Color(_shape));
 			//DrawCircleV(pos, 3, YELLOW);
 		}
