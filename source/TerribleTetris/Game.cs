@@ -7,8 +7,8 @@ namespace TerribleTetris
 		internal static int WindowHeight => 720;
 
 		internal static int WindowWidth => 1080;
-		internal static int CellSize => 20;
-		private static readonly GridData GridData = new(Rows: 20, Cols: 16, CellSize: CellSize);
+		internal static int CellSize => 25;
+		internal static GridData GridData = new(Rows: 14, Cols: 8, CellSize: CellSize);
 		internal const string GridTexture = nameof(GridTexture);
 		internal enum Shape { I, O, T, J, L, S, Z, None };
 
