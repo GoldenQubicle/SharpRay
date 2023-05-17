@@ -1,0 +1,22 @@
+{
+    "Rows": 6,
+    "Cols": 6,
+    "Shapes": [
+      {
+        "Shape": 6,
+        "Rotation": 0,
+        "BbIndex": {
+          "X": 0,
+          "Y": 4
+        }
+      },
+      {
+        "Shape": 6,
+        "Rotation": 1,
+        "BbIndex": {
+          "X": 3,
+          "Y": 3
+        }
+      }
+    ]
+}

@@ -22,7 +22,7 @@ namespace TerribleTetris
 
 		internal static Stack<Tetromino> TetrominoStack = new( );
 
-		internal static IGameMode GameMode { get; set; } = new PauseMode { GridData = GridData };
+		internal static IGameMode GameMode { get; set; } = new GenDoneMode { GridData = GridData };
 
 		internal static void Main(string[ ] args)
 		{
@@ -35,12 +35,13 @@ namespace TerribleTetris
 				BackGroundColor = DARKGRAY
 			});
 
+			//RunDebugGui(() => AddEntity(Gui.CreateStartMenu( )));
 
 			SetKeyBoardEventAction(OnKeyBoardEvent);
 
-			SetGridBackgroundTexture(GridData);
-
-			StartGame(Mode.Playing, "score-L.json");
+			//SetGridBackgroundTexture(GridData);
+			AddEntity(Gui.CreateStartMenu());
+			//StartGame(Mode.Playing, "writetest2.json");
 
 			Run( );
 		}
@@ -53,7 +54,7 @@ namespace TerribleTetris
 				StartGame(Mode.Generation);
 			}
 
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is PauseMode)
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is GenDoneMode)
 			{
 				ClearGridAndTetrominos( );
 				GameMode = GameMode.NextMode(new PlayMode( ));
@@ -61,7 +62,7 @@ namespace TerribleTetris
 			}
 		}
 
-		private static void StartGame(Mode mode, string fileName = "")
+		internal static void StartGame(Mode mode, string fileName = "")
 		{
 			GameMode = mode switch
 			{
@@ -74,9 +75,10 @@ namespace TerribleTetris
 
 		}
 
-		private static void ClearGridAndTetrominos()
+		internal static void ClearGridAndTetrominos()
 		{
 			RemoveEntitiesOfType<Grid>( );
+			RemoveEntitiesOfType<Pattern>();
 			RemoveEntitiesOfType<Tetromino>( );
 		}
 

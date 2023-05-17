@@ -25,4 +25,5 @@ global using static Raylib_cs.Color;
 global using Raylib_cs;
 
 global using static TerribleTetris.Game;
+global using static TerribleTetris.Gui;
 global using TerribleTetris;

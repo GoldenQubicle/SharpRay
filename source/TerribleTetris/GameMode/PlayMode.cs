@@ -12,7 +12,7 @@ internal class PlayMode : IGameMode
 		if (!string.IsNullOrEmpty(fileName))
 		{
 			var json = File.ReadAllText(Path.Combine(AssestsFolder, fileName));
-			PatternData = JsonSerializer.Deserialize<PatternData>(json, GetJsonOptions());
+			PatternData = JsonSerializer.Deserialize<PatternData>(json, GetJsonOptions( ));
 			GridData = new GridData(PatternData.Rows, PatternData.Cols, CellSize);
 			SetGridBackgroundTexture(GridData);
 		}
@@ -28,6 +28,8 @@ internal class PlayMode : IGameMode
 		TetrominoStack.Clear( );
 		PatternData.Shapes.Reverse( );
 		PatternData.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( GridData.Cols - Tetromino.BoundingBoxSize(s.Shape) ) / 2, GridData.CellSize)));
+
+		//var scoreMenu = GetEntityByTag<GuiContainer>("ScoreMenu");
 		AddEntity(new Pattern(PatternData, GridData));
 		SpawnTetromino( );
 	}
@@ -42,6 +44,8 @@ internal class PlayMode : IGameMode
 			if (IsAboveGrid(tl) || TetrominoStack.Count == 0)
 			{
 				Print($"Game Over!");
+				ClearGridAndTetrominos();
+				GetEntityByTag<GuiContainer>(StartMenu).Show();
 				return;
 			}
 

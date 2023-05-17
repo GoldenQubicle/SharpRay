@@ -13,7 +13,8 @@ internal class GenerationMode : IGameMode
 	}
 
 	public void Initialize()
-    {
+	{
+		SetGridBackgroundTexture(GridData);
         AddEntity(new Grid(GridData));
         DropTime = 10;
         TetrominoStack.Clear();
@@ -48,12 +49,12 @@ internal class GenerationMode : IGameMode
             {
 	            if (!string.IsNullOrEmpty(_fileName))
 	            {
-		            var json = JsonSerializer.Serialize(PatternData, GetJsonOptions());
+                    var json = JsonSerializer.Serialize(PatternData, GetJsonOptions( ));
                     File.WriteAllText(Path.Combine(AssestsFolder, _fileName), json);
-	            }
+                }
 	            else
 	            {
-		            Game.GameMode = NextMode(new PauseMode( ));
+		            Game.GameMode = NextMode(new GenDoneMode( ));
 				}
 
 				return;
