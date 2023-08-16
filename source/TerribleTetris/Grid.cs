@@ -9,6 +9,7 @@ namespace TerribleTetris
 		public Grid(GridData grid)
 		{
 			_data = grid;
+		
 
 			Position = _data.Position;
 			
