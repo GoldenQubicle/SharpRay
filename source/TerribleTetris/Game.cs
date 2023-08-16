@@ -35,13 +35,21 @@ namespace TerribleTetris
 				BackGroundColor = DARKGRAY
 			});
 
-			//RunDebugGui(() => AddEntity(Gui.CreateStartMenu( )));
+			//var patternData = new PatternData(GridData.Rows, GridData.Cols, new List<TetrominoLocked>
+			//{
+			//	new(Shape.J, Rotation.Left, new(3, 2))
+			//});
+
+			//SetGridBackgroundTexture(GridData);
+			//RunDebugGui(() =>
+			//{
+			//	AddEntity(new Grid(GridData));
+			//	AddEntity(new Pattern(patternData, GridData));
+			//});
 
 			SetKeyBoardEventAction(OnKeyBoardEvent);
 
-			//SetGridBackgroundTexture(GridData);
-			AddEntity(Gui.CreateStartMenu());
-			//StartGame(Mode.Playing, "writetest2.json");
+			AddEntity(CreateStartMenu());
 
 			Run( );
 		}
@@ -50,16 +58,23 @@ namespace TerribleTetris
 		{
 			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_SPACE })
 			{
-				ClearGridAndTetrominos( );
+				RemoveGameEntities( );
 				StartGame(Mode.Generation);
 			}
 
 			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is GenDoneMode)
 			{
-				ClearGridAndTetrominos( );
+				RemoveGameEntities( );
 				GameMode = GameMode.NextMode(new PlayMode( ));
 				GameMode.Initialize( );
 			}
+
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is LevelDoneMode)
+			{
+				RemoveGameEntities( );
+				GetEntityByTag<GuiContainer>(StartMenu).Show();
+			}
+
 		}
 
 		internal static void StartGame(Mode mode, string fileName = "")
@@ -75,7 +90,7 @@ namespace TerribleTetris
 
 		}
 
-		internal static void ClearGridAndTetrominos()
+		internal static void RemoveGameEntities()
 		{
 			RemoveEntitiesOfType<Grid>( );
 			RemoveEntitiesOfType<Pattern>();

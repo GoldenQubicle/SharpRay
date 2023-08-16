@@ -29,7 +29,6 @@ internal class PlayMode : IGameMode
 		PatternData.Shapes.Reverse( );
 		PatternData.Shapes.ForEach(s => TetrominoStack.Push(new Tetromino(s.Shape, Rotation.Up, ( GridData.Cols - Tetromino.BoundingBoxSize(s.Shape) ) / 2, GridData.CellSize)));
 
-		//var scoreMenu = GetEntityByTag<GuiContainer>("ScoreMenu");
 		AddEntity(new Pattern(PatternData, GridData));
 		SpawnTetromino( );
 	}
@@ -43,10 +42,7 @@ internal class PlayMode : IGameMode
 
 			if (IsAboveGrid(tl) || TetrominoStack.Count == 0)
 			{
-				Print($"Game Over!");
-				ClearGridAndTetrominos();
-				GetEntityByTag<GuiContainer>(StartMenu).Show();
-				return;
+				Game.GameMode = NextMode(new LevelDoneMode( ));
 			}
 
 			SpawnTetromino( );
