@@ -68,14 +68,14 @@
                .Select(s => new Star
                {
                    Position = new Vector2(GetRandomValue(0, WindowWidth), GetRandomValue(0, WindowHeight)),
-                   Easing = new Easing(scaleEasings[GetRandomValue(0, 1)], GetRandomValue(3500, 7500), isRepeated: true),
+                   Easing = new Easing(scaleEasings[GetRandomValue(0, 1)], GetRandomValue(3500, 7500), isRepeated: true, isReversed: true),
                    Color = ColorAlpha(colors[GetRandomValue(0, colors.Count - 1)], GetRandomValue(20, 90)/100f),
                    IsDiagonal = GetRandomValue(0, 1) == 1,
                    ScaleRange = GetRandomValue(3, 17) / 100f,
                }).ToList();
 
             foreach (var star in stars)
-                star.Easing.SetElapsedTime(GetRandomValue(3500, 7500));
+                star.Easing.SetElapsedTime(MapRange(GetRandomValue(3500, 7500), 3500, 7500, 0f, 1f));
         }
 
         public override void Update(double deltaTime)

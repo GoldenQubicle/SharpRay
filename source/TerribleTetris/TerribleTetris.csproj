@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+<!-- dotnet publish -p:PublishSingleFile=true -c Release -r win-x86 
+  as including the PublishSingleFile into csproj file prevents VS2022 from attachting a debugger when running in release -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputType>WinExe</OutputType>
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>Embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+ <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\SharpRay\SharpRay.csproj" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <Content Include="assets\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="false" /> 
+  </ItemGroup>
+
+ 
+</Project>

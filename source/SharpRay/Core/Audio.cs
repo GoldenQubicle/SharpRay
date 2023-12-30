@@ -17,6 +17,7 @@ namespace SharpRay.Core
 
         public static void OnGuiEvent(IGuiEvent e) => TryPlaySound(e?.GetType().Name);
         public static void OnGameEvent(IGameEvent e) => TryPlaySound(e?.GetType().Name);
+
         private static void TryPlaySound(string name)
         {
             if (string.IsNullOrEmpty(name)) return;
