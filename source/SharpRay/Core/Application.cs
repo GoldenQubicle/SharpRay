@@ -356,10 +356,10 @@ namespace SharpRay.Core
         public static Color LerpColor(Color start, Color stop, float amount)
         {
             amount = amount < 0f ? 0f : Math.Min(amount, 1f); 
-            var r = MapRange(amount, 0f, 1f, start.r, stop.r);
-            var g = MapRange(amount, 0f, 1f, start.g, stop.g);
-            var b = MapRange(amount, 0f, 1f, start.b, stop.b);
-            var a = MapRange(amount, 0f, 1f, start.a, stop.a);
+            var r = MapRange(amount, 0f, 1f, start.R, stop.R);
+            var g = MapRange(amount, 0f, 1f, start.G, stop.G);
+            var b = MapRange(amount, 0f, 1f, start.B, stop.B);
+            var a = MapRange(amount, 0f, 1f, start.A, stop.A);
 
             //var r = Math.Abs(start.r - stop.r) * Math.Min(amount, 1);
             //var g = Math.Abs(start.g - stop.g) * Math.Min(amount, 1);
