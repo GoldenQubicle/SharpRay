@@ -1,0 +1,119 @@
+☐ temporary on hold @created(01-05-2023 09:44)
+    putting this project on pause because frankly I still have no idea what the actual gameplay is gonna be. 
+    It started with the vague notion of having stat driven gameplay along a few dimensions in order to make a plant grow. 
+    The expectation was ideas would become more concrete as the project progressed. 
+    However this has not come to pass, the idea is still as vague as it was from the outset. 
+    That being said the general idea and concepts - cards serving as inputs, having multiple plants to care for while dealing with adversities -
+    still seem like it would make for a potentially fun gameplay experience. 
+    The biggest obstacle at the moment is making an actual plant grow according to the inputs, having difficulty with both
+    keeping it as simple codewise yet somewhat visually appealing and coming up with gameplay mechanics. 
+
+☐ as a player I want to be able to pick a seed card to start with @created(26-04-2023 09:20)
+    how does that work tho, starting with 1 slot? kinda boring
+    starting with more than 1 slot means not every of it meets can be met per turn
+
+☐ actual mechanics @created(22-04-2023 11:17)
+    so atm everything is pretty much in place for actual gameplay, i.e. my worst skill...
+    the thing that needs to happen is to map the 3 input dimensions to the output dimensions
+    that is to say, how do light, nutrients & water affect the plant size, color and new growth?
+    penalize for over / under stats per turn?
+    do ipnut dimensions map on plant dimensions directly, or map input to some health, and map health to plant?
+    and exaclty how to determine when new leaves grow, or when the reward blooms - whatever the reward is gonna be anwyay
+    
+    light       height
+    nutrient    color
+    water       leaves
+
+    design a strategy-esque pattern as to inject these mechanics into the plant entity,
+    i.e. make sure to decouple, also with regards to buffs and debuffs based on current hand 
+
+☐ plant growth @created(18-03-2023 15:35)
+    plant grows over N turns, per turn needs w, s, l inputs between 1-9
+    could generate these ideal input values w curves, or just manually make them
+    should be shown as graph
+    the difference between input and expected determines the health, and visual effects
+    plants produces N rewards, based on (overall?) deviation score 
+    
+☐ rewards @created(18-03-2023 15:38)
+    buff and debuff cards in order to give player a chance to get closer to ideal inputs
+    soil type, could act as an overall reduction buff to the deviation..?
+    bonus for providing water, light & nutrients? Does imply fix 3 card per turn input..
+    bonus for having stats ascending or descending, e.g. 3,4,5 or 7,6,5
+    bonus for having the same stat, also does imply having 3 card input. Or could have more than 1 deck.
+
+☐ suite icons @created(01-04-2023 15:43)
+    would be nice to have little pictograms on the cards to indicate what it is, just like an actual card 
+
+☐ create card transition fx for end turn @created(24-11-2022 14:38)
+
+☐ create plant status fx when applying card @created(24-11-2022 14:38)
+    this will mean not calling OnTurnStart immedialty in OnTurnEnd but instead fire
+    an event from the plant when the fx are done, and waiting for all plants to be done
+    before calling OnTurnStart.
+☐ create plant status fx when applying adversities @created(24-11-2022 14:38)
+
+☐ create environmental adversitites @created(24-11-2022 14:39)
+    gonna be text prompts with stats applied to plants. Either all or specifically targeted..?
+    - It rained a lot, the soil is soaked. (root rot...?)
+    - It was warm / hot / extremely hot {plantname} dried out / shriveled up / is dead
+    - It was cold / extremele cold / freezing
+    - A hailstorm has bruised {plantname} leaves
+    - A strong gust of wind / stormy wind / hurricane knocked over {plantname} / wrecked your garden (hurricane == game over..?) 
+    - A hedgehog/rabbit/snail/goose eat {plantname} leaves
+    - Neighborhood kids kicked their soccerball into your garden {plantname} is bruised / severly bruised / dead
+    - A neighborhood dog took a poo in your garden (+ stats)
+    - Mildew outbreak (when warm & moist meet certain conditions)
+
+✔ temperature card suite @created(26-04-2023 09:20) @done(28-04-2023 20:11)
+
+✔ groundKeeper @created(15-11-2022 18:39) @done(22-04-2023 11:16)
+    - draws the current hand and all the plants at defined slot positions?
+    ✔ keep track of turn number @created(15-11-2022 18:41) @done(22-11-29 11:12)
+    ✔ onTurnStart @created(15-11-2022 18:39) @done(15-11-2022 19:17)
+        - generate card hand with N cards
+    ✔ onTurnEnd @created(15-11-2022 18:39) @done(22-04-2023 11:17)
+        - generate environment data, based on turn number
+        - call plants with selected card(s) & environment data => 
+            ✔ pass selected cards @created(17-01-2023 16:15) @done(22-04-2023 11:17)
+            - do we keep stats over turns, i.e. accumulate over turns
+            - do we 
+        - generate adversities 
+        - call plants with adversities
+
+✔ as a player I want to be able to deal a new hand durig turn @created(26-03-2023 16:11) @done(22-04-2023 11:16)
+    ✔ create deal hand button @created(26-03-2023 16:12) @done(26-03-2023 17:27)
+    ✔ deal hand from finite deck @created(26-03-2023 16:12) @done(26-03-2023 17:27)
+    ✔ block dealing when deck is depleted @created(26-03-2023 17:27) @done(26-03-2023 17:46)
+    ✘ block dealing new hand when all pot slots are occupied @created(26-03-2023 16:12) @cancelled(28-03-2023 14:14)
+        cancelled because the issue is moreso that I don't have a way to delete a card from the plants slot when all hand slots are occupied
+        nor do I feel particularry inclinede to make it possible. Instead this is just a gameplay mechanic which the player
+        uncovers soon enough, i.e. redrawing a hand with all pot slots occupied is senseless. So, in order to benefit redrawing a hand
+        the player always has to leave one pot slot open. 
+    ✔ limit new hand by means of turn data @created(28-03-2023 13:15) @done(28-03-2023 14:00)
+
+✔ as a player I want to see how much of the plant needs are already met @created(26-03-2023 17:46) @done(26-03-2023 17:57)
+✔ make card ease back to anchor position @created(23-11-2022 14:03) @done(23-11-2022 15:00)
+    can be either the hand slot, or the plant slot in case it hoovers over AND is unoccupied
+✔ stop multiple cards from receiving mouse focus @created(23-11-2022 15:00) @done(23-11-2022 15:42)
+✔ place card in plant slot @created(23-11-2022 15:42) @done(23-11-2022 17:15)
+    ✔ create plant slot @created(23-11-2022 15:43) @done(23-11-2022 15:56)
+    ✔ detect overlap @created(23-11-2022 15:43) @done(23-11-2022 17:15)
+    ✔ ease card to other slot @created(23-11-2022 15:43) @done(23-11-2022 17:15)
+        ok so little more involved than I anticipated because obviously a plant can and will have 
+        multiple card slots. It's probably a good idea to treat a card slot as a collidable entity, 
+        which will need to be tagged in order to find out which plant they belong to. However, 
+        that way I can reuse the SharpRay collisions, with the cards being the actual colliding things.
+        This will also mean I can put cards back from plants into slots, since it going to be the same deal. 
+
+✔ create actual plant entity @created(23-11-2022 17:15) @done(24-11-2022 14:36)
+    should have multiple card slots from the get go
+    
+✔ create actual cards @created(24-11-2022 14:36) @done(18-03-2023 15:34)
+    - seed
+    - water
+    - light
+    - nutrients
+
+✔ start new plant with a seed card .. @created(30-12-2022 18:09) @done(30-12-2022 18:23)
+
+✔ create end turn button @created(24-11-2022 14:37) @done(22-11-29 11:12)

@@ -12,14 +12,14 @@
 //        private Vector2[] Points { get; set; }
 //        private Vector2[] TextCoords { get; init; }
 
-//        private static Texture2D texture2D = new() { id = 1, }; // seems like textures need to be unloaded btw
+//        private static Texture2D texture2D = new() { Id = 1, }; // seems like textures need to be unloaded btw
 
 //        public Polygon(int sides, float radius)
 //        {
 //            Sides = sides;
 //            Radius = radius;
 //            Points = CreatePoints(Sides, Radius * Scale);
-//            TextCoords = Array.Empty<Vector2>();
+//            TextCoords = new Vector2[Points.Length];
 //        }
 
 //        public override bool ContainsPoint(Vector2 point)
@@ -36,7 +36,7 @@
 //        public override void Render()
 //        {
 //            base.Render();
-//            DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, ColorRender);
+//            //DrawTexturePoly(texture2D, Position, Points, TextCoords, Points.Length, ColorRender);
 //        }
 
 //        public override void OnMouseEvent(IMouseEvent me)

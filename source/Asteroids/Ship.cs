@@ -60,12 +60,10 @@ namespace Asteroids
 
             Collider = new CircleCollider
             {
-                Center = Position,
+                Position = Position,
                 Radius = radius,
                 HitPoints = 16
             };
-
-            
 
             Motions = new Dictionary<string, Easing>
             {
@@ -116,7 +114,7 @@ namespace Asteroids
             Position += new Vector2(MathF.Cos(rotation - HalfPI) * acceleration, MathF.Sin(rotation - HalfPI) * acceleration);
 
             // Don't forget to update collider. 
-            (Collider as CircleCollider).Center = Position;
+            Collider.Position= Position;
 
             // Bounds check.
             if (Position.X < 0) Position = new Vector2(WindowWidth, Position.Y);
