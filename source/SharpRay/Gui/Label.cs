@@ -10,17 +10,6 @@
         public Color TextColor { get; set; } = WHITE;
         public Color FillColor { get; set; } = LIGHTGRAY;
         public bool DoCenterText { get; set; }
-
-        public Raylib_cs.Rectangle Rectangle
-        {
-            get => new Raylib_cs.Rectangle
-            {
-                x = Position.X - Size.X / 2 + TextOffSet.X,
-                y = Position.Y - Size.Y / 2 + TextOffSet.Y,
-                width = Size.X - TextOffSet.X,
-                height = Size.Y - TextOffSet.Y
-            };
-        }
         public float FontSize { get; init; } = 15f;
         public float Spacing { get; init; } = 1f;
         public Vector2 TextOffSet { get; set; }

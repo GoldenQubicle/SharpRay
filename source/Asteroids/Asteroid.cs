@@ -42,7 +42,7 @@
             Definition = (size, type);
             Texture = GetAsteroidTexture(Definition);
             //NOTE need to call base.Size for the Vector2 since the Size enum hides it otherwise
-            base.Size = new Vector2(Texture.width, Texture.height) * GetScale(size);
+            base.Size = new Vector2(Texture.Width, Texture.Height) * GetScale(size);
             TextureOffset = base.Size / 2;
 
             Position = position;

@@ -50,12 +50,12 @@ namespace Asteroids
         public Ship(Vector2 position, Texture2D texture)
         {
             Position = position;
-            Size = new Vector2(texture.width, texture.height);
+            Size = new Vector2(texture.Width, texture.Height);
             RenderLayer = RlShip;
             ShipTexture = texture;
             EngineConeTexture = GetTexture2D("fire04");
             EngineExhaustTexture = GetTexture2D("fire09");
-            offset = new Vector2(texture.width / 2, texture.height / 2) * scale;
+            offset = new Vector2(texture.Width / 2, texture.Height / 2) * scale;
             radius = (Size.X / 2) * scale;
 
             Collider = new CircleCollider
@@ -168,8 +168,8 @@ namespace Asteroids
 
         public override void Render()
         {
-            var thrustPos = Vector2.Transform(Position + new Vector2(-EngineExhaustTexture.width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
-            var conePos = Vector2.Transform(Position + new Vector2(-EngineConeTexture.width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
+            var thrustPos = Vector2.Transform(Position + new Vector2(-EngineExhaustTexture.Width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
+            var conePos = Vector2.Transform(Position + new Vector2(-EngineConeTexture.Width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
             var enginePos = Vector2.Transform(Position + new Vector2(0, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
 
             var exhaustColor = ColorAlpha(Color.GOLD, n_acceleration > n_rotation ? n_acceleration * .75f : n_rotation * .75f);

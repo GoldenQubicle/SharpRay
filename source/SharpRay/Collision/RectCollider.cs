@@ -11,10 +11,10 @@
         {
             get => new()
             {
-                x = Position.X,
-                y = Position.Y,
-                width = Size.X,
-                height = Size.Y
+                X = Position.X,
+                Y = Position.Y,
+                Width = Size.X,
+                Height = Size.Y
             };
         }
         public override void Render() => DrawRectangleLinesEx(Rect, 2, Color);

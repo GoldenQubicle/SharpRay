@@ -250,7 +250,7 @@ namespace Asteroids
 
             for (var i = 1; i <= playerLifes; i++)
             {
-                var pos = new Vector2(icon.width + (i * icon.width * 1.5f), 20);
+                var pos = new Vector2(icon.Width + (i * icon.Width * 1.5f), 20);
                 container.AddChildren(
                      new ImageTexture(icon, Color.WHITE)
                      {
@@ -318,7 +318,7 @@ namespace Asteroids
              GuiContainerBuilder.CreateNew().AddChildren(
                   new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
                   {
-                      Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2 - WindowWidth * .318f - 25), -216),
+                      Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).Width / 2 - WindowWidth * .318f - 25), -216),
                   },
                   new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
                   {
@@ -495,8 +495,8 @@ namespace Asteroids
                 new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
                 {
                     Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
-                    new Vector2(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).width / 2,
-                            GetTexture2D(ships[SelectedShipType][SelectedShipColor]).height / 2) // rather stupid tbh
+                    new Vector2(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).Width / 2,
+                            GetTexture2D(ships[SelectedShipType][SelectedShipColor]).Height / 2) // rather stupid tbh
                 },
                 new Label
                 {
@@ -516,7 +516,7 @@ namespace Asteroids
                     Tag = Tags.ShipSelectLeft,
                     Position = new Vector2((WindowWidth * .2f), WindowHeight * .49f),
                     Texture2D = GetTexture2D(nameof(KeyLeftDown)),
-                    Size = new Vector2(GetTexture2D(nameof(KeyLeftDown)).width, GetTexture2D(nameof(KeyLeftDown)).height), // also kinda stupid tbh
+                    Size = new Vector2(GetTexture2D(nameof(KeyLeftDown)).Width, GetTexture2D(nameof(KeyLeftDown)).Height), // also kinda stupid tbh
                     BaseColor = GuiShipBaseColor[SelectedShipColor],
                     FocusColor = GuiShipFocusColor[SelectedShipColor],
                     OnMouseLeftClick = e => new ChangeShipType
@@ -530,7 +530,7 @@ namespace Asteroids
                     Tag = Tags.ShipSelectRight,
                     Position = new Vector2((WindowWidth * .8f), WindowHeight * .49f),
                     Texture2D = GetTexture2D(nameof(KeyRightDown)),
-                    Size = new Vector2(GetTexture2D(nameof(KeyRightDown)).width, GetTexture2D(nameof(KeyRightDown)).height), // also kinda stupid tbh
+                    Size = new Vector2(GetTexture2D(nameof(KeyRightDown)).Width, GetTexture2D(nameof(KeyRightDown)).Height), // also kinda stupid tbh
                     BaseColor = GuiShipBaseColor[SelectedShipColor],
                     FocusColor = GuiShipFocusColor[SelectedShipColor],
                     OnMouseLeftClick = e => new ChangeShipType
@@ -621,7 +621,7 @@ namespace Asteroids
                     SelectedShipType = cst.ShipType;
                     var texture = GetTexture2D(ships[SelectedShipType][SelectedShipColor]);
                     c.GetEntity<ImageTexture>().Texture2D = texture;
-                    c.GetEntity<ImageTexture>().Position = new Vector2(WindowWidth / 2, WindowHeight / 2) - new Vector2(texture.width / 2, texture.height / 2);
+                    c.GetEntity<ImageTexture>().Position = new Vector2(WindowWidth / 2, WindowHeight / 2) - new Vector2(texture.Width / 2, texture.Height / 2);
                     c.GetEntityByTag<Label>(Tags.ShipTypeLabel).Text = $"Type {SelectedShipType}";
                 }
 

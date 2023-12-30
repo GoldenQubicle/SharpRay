@@ -21,7 +21,7 @@
         public override void Render()
         {
             if(HasOutline)
-                DrawRectangleLines((int)Position.X, (int)Position.Y, Texture2D.width, Texture2D.height, Color);
+                DrawRectangleLines((int)Position.X, (int)Position.Y, Texture2D.Width, Texture2D.Height, Color);
             DrawTexture(Texture2D, (int)Position.X, (int)Position.Y, Color);
         }
     }

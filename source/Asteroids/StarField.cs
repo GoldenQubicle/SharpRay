@@ -41,7 +41,7 @@
         {
             RenderLayer = RlBackground;
             starTexture = GetTexture2D(Assets.starTexture);
-            starTextureOffset = new Vector2(starTexture.width / 2, starTexture.height / 2);
+            starTextureOffset = new Vector2(starTexture.Width / 2, starTexture.Height / 2);
             Generate();
         }
 
@@ -94,7 +94,7 @@
                 BeginBlendMode(BlendMode.BLEND_ADDITIVE);
 
                 if (star.IsDiagonal)
-                    DrawTextureEx(starTexture, star.Position - new Vector2(0, starTexture.height * 0.7f) * scale, 45, scale, star.Color);
+                    DrawTextureEx(starTexture, star.Position - new Vector2(0, starTexture.Height * 0.7f) * scale, 45, scale, star.Color);
                 else
                     DrawTextureEx(starTexture, star.Position - starTextureOffset * scale, 0, scale, star.Color);
 
