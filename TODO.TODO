@@ -1,3 +1,65 @@
+SharpRay:
+  ☐ unit test easing component @created(29-12-2022 12:20)
+    wanted to do simple maintaince but held off since the repeated / reversed stuff is a bit tricky and I don't know 
+    how I could quickly check to see if things are still working. Should be under test, plain & simple. 
+  ☐ setup build for all projects @created(14-05-2022 20:53) 
+  ☐ rework Entity to just be an abstract class @created(14-05-2022 20:10)
+      basically all bevaviour should be on interfaces so we can compose to our liking
+      reason being, atm AddEntity() automatically adds it to keyboard & mouse, however lot of times
+      entities do not need to listening for keyboard & mouse events, like for example the bullets and asteroids in Meteor Madness
+  ☐ consider adding GUI container children to entity list so we can grab them directly by tag  @created(14-05-2022 19:50)
+      note tho this will mean they will be render twice, probably..
+      could also just consider an overload with 2 tags, specifically for gui containers..
+  ☐ have general audio, key & mouse control and display menu available @created(07-05-2022 19:41)
+  ☐ being able to pass multiple ongame event actions when adding an entity @created(07-05-2022 18:34)
+      currently running into an issue with asteroids in that I want to bind a menu to the event emitter of a bullet, 
+      however, the public api only allows for 1 game action to be passed, and changing it to accept params causes 
+      a conflicting signature within the internal api..
+  ☐ proper click & double click mouse events @created(06-06-2021 14:21)
+  ☐ rework and extend undo and redo system @created(04-09-2021 20:23)
+    essentially both OnUIEvent and OnKeyBoardEvent in Aplication exist only to deal with undo redo stuff, 
+    so rework this to a single method, i.e. a single event type. Moreover, when an entity implements the appropriate interface it 
+    should automatically bind to this single method. 
+  ☐ rework event emitter system @created(04-09-2021 12:31)
+    basically entities should be able to have various event emitter, not BE event emitters
+    running into the issue again with drag edit shape, which emits a gui event. However in order to 
+    actually have undo / redo capabilties, the event MUST also implement IHasUndoRedo and it's not possible
+    to constrain this, or at least couldn't figure it out easily. Much rather have this be explicit, i.e.
+    when an entity has undo/redo it must implement an eventEmitter<IUndoRedo> At the moment this is not possible.
+      Cancelled because it does forces me to consider what type of entity should emit what type of events. Like, the fact 
+      a zone should emit undoredo event makes it clear it is, in fact, not a game entity. So in that regard the system
+      works as intended by design. 
+    Note uncancelled @created(11-09-2021 13:10)
+      so ran into a new issue with protocity. Namely that a button press to de active the transit tool still registers with the transit tool
+      and causes a node to be inserted, and then deactives the tool, leaving a segment hanging quite literally. 
+      Thus, put more formal; when any gui entity is interacted with the associated mouse or keyboard event should not be emitted to the other registred delegates. 
+      Now this poses quite a serious rework of the eventing system, because in order to make than happen it first of all means the keyboard and mouse need to 
+      know to what type of receiverd they are emitting, and it needs to have a manual loop of sorts. And since it's not possible to derive from MulticastDelegate class
+      I would need to come up with something myself.. So yeah, quite some work..
+  ☐ investigate DI and project organisation @created(06-06-2021 13:17)
+    so this kinda goes hand-in-hand with the frame logging & event emitter items. The issue that at the moment it's no possible
+    to easily see which classes fired what event and in which order. If there were proper event emitter objects, which could bind to 
+    specific methods, and the project had DI, than there could be different implementations of emitters, i.e. those which logged 
+    all their events, and those which did not log anything. 
+  ✔ create frame logging system @created(20-06-2021 17:04) @done(04-09-2021 19:26)
+    reason: technical challenge and long term beneficial. At the moment there's a weird bug in snake game 
+    wherein the order of update vs collision in the main loop is causing food consumption to be triggered twice. 
+    Not sure why that is and when figuring it out it would be super helpfull the have a way to tell which events
+    were fired and handled during a single frame (i.e. main loop) in which order and which were the emitters
+    and receivers. 
+      small update @created(04-09-2021 13:28)
+      did a little experimenting with callermember name attribute but this is not sufficient to say the least
+      in that it only tells me the method it fired from (i.e. EmitEvent) and which source file it's in. 
+      What I would like to see is which method it originated in, i.e. the method which made the call to EmitEvent
+      as well as instance information about the object. 
+      another small update @created(04-09-2021 19:25)
+      so I went ahead and added rudimantary event logging to console which can be toggled with a flag in de config. easy peasy and 
+      should be sufficient for now. 
+  ✔ update main w asteroids branch @created(03-09-2021 11:06) @done(04-09-2021 12:55)
+  ✔ merge builds branch to main @created(14-05-2022 20:53) @done(15-11-2022 18:08)
+  
+    
+
 First MileStone:
   ✔ be able to draw a rectangles, and undo/redo @created(06-06-2021 13:13) @done(06-06-2021 13:14)
     reason: handle ui stuff in somewhat sensible manner and proper undo / redo is very helpfull down the line
@@ -143,63 +205,6 @@ Fourth MileStone:
       so going to keep this simple I reckon and just have index based lookups. As in, use mouse pos x & y to figure out the grid index. 
     ☐ transit tool marks segments on the grid @created(18-09-2021 16:50)
 
-
-SharpRay:
-  ☐ merge builds branch to main & setup build for all projects @created(14-05-2022 20:53)
-  ☐ rework Entity to just be an abstract class @created(14-05-2022 20:10)
-      basically all bevaviour should be on interfaces so we can compose to our liking
-      reason being, atm AddEntity() automatically adds it to keyboard & mouse, however lot of times
-      entities do not need to listening for keyboard & mouse events, like for example the bullets and asteroids in Meteor Madness
-  ☐ consider adding GUI container children to entity list so we can grab them directly by tag  @created(14-05-2022 19:50)
-      note tho this will mean they will be render twice, probably..
-      could also just consider an overload with 2 tags, specifically for gui containers..
-  ☐ have general audio, key & mouse control and display menu available @created(07-05-2022 19:41)
-  ☐ being able to pass multiple ongame event actions when adding an entity @created(07-05-2022 18:34)
-      currently running into an issue with asteroids in that I want to bind a menu to the event emitter of a bullet, 
-      however, the public api only allows for 1 game action to be passed, and changing it to accept params causes 
-      a conflicting signature within the internal api..
-  ✔ update main w asteroids branch @created(03-09-2021 11:06) @done(04-09-2021 12:55)
-  ☐ proper click & double click mouse events @created(06-06-2021 14:21)
-  ☐ rework and extend undo and redo system @created(04-09-2021 20:23)
-    essentially both OnUIEvent and OnKeyBoardEvent in Aplication exist only to deal with undo redo stuff, 
-    so rework this to a single method, i.e. a single event type. Moreover, when an entity implements the appropriate interface it 
-    should automatically bind to this single method. 
-  ☐ rework event emitter system @created(04-09-2021 12:31)
-    basically entities should be able to have various event emitter, not BE event emitters
-    running into the issue again with drag edit shape, which emits a gui event. However in order to 
-    actually have undo / redo capabilties, the event MUST also implement IHasUndoRedo and it's not possible
-    to constrain this, or at least couldn't figure it out easily. Much rather have this be explicit, i.e.
-    when an entity has undo/redo it must implement an eventEmitter<IUndoRedo> At the moment this is not possible.
-      Cancelled because it does forces me to consider what type of entity should emit what type of events. Like, the fact 
-      a zone should emit undoredo event makes it clear it is, in fact, not a game entity. So in that regard the system
-      works as intended by design. 
-    Note uncancelled @created(11-09-2021 13:10)
-      so ran into a new issue with protocity. Namely that a button press to de active the transit tool still registers with the transit tool
-      and causes a node to be inserted, and then deactives the tool, leaving a segment hanging quite literally. 
-      Thus, put more formal; when any gui entity is interacted with the associated mouse or keyboard event should not be emitted to the other registred delegates. 
-      Now this poses quite a serious rework of the eventing system, because in order to make than happen it first of all means the keyboard and mouse need to 
-      know to what type of receiverd they are emitting, and it needs to have a manual loop of sorts. And since it's not possible to derive from MulticastDelegate class
-      I would need to come up with something myself.. So yeah, quite some work..
-  ✔ create frame logging system @created(20-06-2021 17:04) @done(04-09-2021 19:26)
-    reason: technical challenge and long term beneficial. At the moment there's a weird bug in snake game 
-    wherein the order of update vs collision in the main loop is causing food consumption to be triggered twice. 
-    Not sure why that is and when figuring it out it would be super helpfull the have a way to tell which events
-    were fired and handled during a single frame (i.e. main loop) in which order and which were the emitters
-    and receivers. 
-      small update @created(04-09-2021 13:28)
-      did a little experimenting with callermember name attribute but this is not sufficient to say the least
-      in that it only tells me the method it fired from (i.e. EmitEvent) and which source file it's in. 
-      What I would like to see is which method it originated in, i.e. the method which made the call to EmitEvent
-      as well as instance information about the object. 
-      another small update @created(04-09-2021 19:25)
-      so I went ahead and added rudimantary event logging to console which can be toggled with a flag in de config. easy peasy and 
-      should be sufficient for now. 
-  ☐ investigate DI and project organisation @created(06-06-2021 13:17)
-    so this kinda goes hand-in-hand with the frame logging & event emitter items. The issue that at the moment it's no possible
-    to easily see which classes fired what event and in which order. If there were proper event emitter objects, which could bind to 
-    specific methods, and the project had DI, than there could be different implementations of emitters, i.e. those which logged 
-    all their events, and those which did not log anything. 
-    
 
 Next MileStones / Challenging Ideas:
   ✔ rework shitty snake w new project structure @created(02-09-2021 14:12) @done(14-05-2022 20:09)

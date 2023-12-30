@@ -62,7 +62,7 @@
             
             Collider = new CircleCollider
             {
-                Center = Position,
+                Position = Position,
                 Radius = data.Radius
             };
 
@@ -89,7 +89,7 @@
 
             Position += acceleration;
 
-            (Collider as CircleCollider).Center = Position;
+            Collider.Position = Position;
 
             //bounds check
             if (Position.X < 0) Position = new Vector2(WindowWidth, Position.Y);

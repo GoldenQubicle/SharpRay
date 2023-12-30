@@ -9,16 +9,11 @@ namespace SharpRay.Gui
         public Color ColorFocused { get; set; }
         public bool CanScale { get; set; }
         protected Color ColorRender { get; private set; }
-
+        public bool IsSelected { get; private set; }
         public bool IsDragged { get; private set; }
         private Vector2 DragOffSet { get; set; }
         private Vector2 DragStart { get; set; }
-
-        /// <summary>
-        /// NOTE: it is the callers responsibility to maintain selected state!
-        /// </summary>
-        public bool IsSelected { get; set; }
-
+        
         /// <summary>
         /// NOTE: the event returned by the func MUST also implement IHasUndoRedo in order to work properly
         /// </summary>
@@ -33,17 +28,24 @@ namespace SharpRay.Gui
                 Position = me.Position + DragOffSet;
             }
 
-            if (!HasMouseFocus || !IsSelected) return;
+            if (!HasMouseFocus)
+            {
+                return;
+            }
 
-            if (me is MouseLeftClick && OnMouseLeftClick is not null)
-                EmitEvent(OnMouseLeftClick(this));
+            if (me is MouseLeftClick )
+            {
+                IsSelected = true;
+                if(OnMouseLeftClick is not null)
+                    EmitEvent(OnMouseLeftClick(this));
+            }
 
             if (me is MouseRightClick)
             {
                 OnRightMouseClick?.Invoke(this);
             }
 
-            if (me is MouseLeftDrag && !IsDragged)
+            if (me is MouseLeftDrag && !IsDragged && IsSelected)
             {
                 DragStart = Position;
                 DragOffSet = Position - me.Position;
@@ -59,6 +61,7 @@ namespace SharpRay.Gui
                     End = Position
                 });
                 IsDragged = false;
+                IsSelected = false;
             }
 
             if (CanScale && ( me is MouseWheelUp || me is MouseWheelDown))
@@ -68,6 +71,7 @@ namespace SharpRay.Gui
                 EmitEvent(new ScaleEdit { GuiEntity = this, Start = start, End = Scale });
             }
         }
+
 
         public override void OnKeyBoardEvent(IKeyBoardEvent ke)
         {

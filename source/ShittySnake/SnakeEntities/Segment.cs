@@ -59,7 +59,7 @@ namespace SnakeEntities
             DoLocomotion();
 
             //update position used by collider
-            (Collider as RectCollider).Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
+           Collider.Position = new Vector2(Center.X - Size.X / 2, Center.Y - Size.Y / 2);
         }
 
         public override void Render()
