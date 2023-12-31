@@ -31,7 +31,11 @@ public class Program
 		{
 			Console.WriteLine($"you clicked cell with index x: {ge.Position.x} y: {ge.Position.y} ");
 
-			FloodFill.Run(ge.Position, grid, cell => cell.Character != '#', set => GetEntity<Grid2dEntity>( ).RenderAction(set));
+			//PathFinding.FloodFill(ge.Position, grid, cell => cell.Character != '#', set => GetEntity<Grid2dEntity>( ).RenderAction(set));
+			
+			var target = grid.First(c => c.Character == 'T');
+			PathFinding.BreadthFirstSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
+				set => GetEntity<Grid2dEntity>().RenderAction(set));
 		}
 	}
 

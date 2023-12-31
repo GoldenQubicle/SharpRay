@@ -39,6 +39,7 @@ internal class Grid2dEntity : Entity
 
 	public async Task RenderAction(IEnumerable<Grid2d.Cell> set)
 	{
+		
 		set.ForEach(c => dictionary.TryAdd(c.GetHashCode(), c));
 
 		await Task.Delay(animationSpeed);
