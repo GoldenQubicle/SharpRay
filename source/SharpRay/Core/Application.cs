@@ -421,7 +421,7 @@ namespace SharpRay.Core
         {
             EventActions.Add(() =>
             {
-                EntityEventInitialisation(e, onGuiEventActions, onGameEventActions);
+                EntityEventInitialization(e, onGuiEventActions, onGameEventActions);
                 Entities.Add(e);
                 if (e is IHasRender)
                 {
@@ -431,7 +431,7 @@ namespace SharpRay.Core
             });
         }
 
-        private static void EntityEventInitialisation(
+        private static void EntityEventInitialization(
            Entity e,
            Action<IGuiEvent>[] onGuiEventActions = null,
            Action<IGameEvent>[] onGameEventActions = null)

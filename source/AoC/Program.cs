@@ -2,21 +2,21 @@
 
 public class Program
 {
-	public const int height = 720;
-	public const int width = 720;
-	const int cells = 72;
+	private static Grid2d grid;
+	public const int Height = 720;
+	public const int Width = 720;
 
-	static void Main(string[ ] args)
+	private static void Main()
 	{
 		var config = new SharpRayConfig
 		{
-			WindowWidth = width,
-			WindowHeight = height
+			WindowWidth = Width,
+			WindowHeight = Height
 		};
 
 		Initialize(config);
 
-		var grid = new Grid2d(new PfSolution("grid20x20").Input);
+		grid = new Grid2d(new PfSolution("grid20x20").Input, diagonalAllowed: false);
 
 		AddEntity(new Grid2dEntity(grid));
 
@@ -28,6 +28,8 @@ public class Program
 		if (e is GridEvent ge)
 		{
 			Console.WriteLine($"you clicked cell with index x: {ge.Position.x} y: {ge.Position.y} ");
+
+			FloodFill.Run(ge.Position, grid, cell => cell.Character != '#', set => GetEntity<Grid2dEntity>( ).RenderAction(set));
 		}
 	}
 

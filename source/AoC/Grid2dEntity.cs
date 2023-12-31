@@ -1,4 +1,6 @@
-﻿namespace AoC;
+﻿using Common.Extensions;
+
+namespace AoC;
 
 internal class Grid2dEntity : Entity
 {
@@ -6,19 +8,22 @@ internal class Grid2dEntity : Entity
 	private int cellSize;
 	private int cellSizeHalf;
 	private List<Button> buttons;
+	private Action DoRenderAction;
+	private Queue<Action> renderActions = new();
+
 
 	public Grid2dEntity(Grid2d grid)
 	{
-		cellSize = width / grid.Width;
+		cellSize = Width / grid.Width;
 		cellSizeHalf = cellSize / 2;
-		var image = GenImageChecked(width, height, cellSize, cellSize, Color.VIOLET, Color.DARKPURPLE);
+		var image = GenImageChecked(Width, Height, cellSize, cellSize, Color.VIOLET, Color.DARKPURPLE);
 		texture = LoadTextureFromImage(image);
 		UnloadImage(image);
 
 		buttons = grid.Select(c => new Button
 		{
 			Size = new Vector2(cellSize, cellSize),
-			Position = new Vector2(cellSize * c.X + cellSizeHalf, cellSize * c.Y + cellSizeHalf),
+			Position = GridPosition2Screen(c.X, c.Y) + new Vector2(cellSizeHalf, cellSizeHalf), //buttons are drawn from the center, so add half the cell size
 			HasOutlines = true,
 			DoCenterText = true,
 			BaseColor = Color.BLANK,
@@ -31,15 +36,29 @@ internal class Grid2dEntity : Entity
 		}).ToList( );
 	}
 
+	public async Task RenderAction(IEnumerable<Grid2d.Cell> set)
+	{
+		DoRenderAction = () =>
+			set.ForEach(c =>
+				DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), Color.MAROON));
+		await Task.Delay(5);
+		
+	}
+
 	public override void Render()
 	{
 		DrawTexture(texture, 0, 0, Color.WHITE);
 
 		buttons.ForEach(b => b.Render( ));
+
+		DoRenderAction?.Invoke( );
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
 	{
 		buttons.ForEach(b => b.OnMouseEvent(e));
 	}
+
+	private Vector2 GridPosition2Screen(int x, int y) => new(cellSize * x, cellSize * y);
+
 }
