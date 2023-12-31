@@ -1,4 +1,5 @@
-﻿using Common.Extensions;
+﻿using System.Collections.Concurrent;
+using Common.Extensions;
 
 namespace AoC;
 
@@ -8,9 +9,7 @@ internal class Grid2dEntity : Entity
 	private int cellSize;
 	private int cellSizeHalf;
 	private List<Button> buttons;
-	private Action DoRenderAction;
-	private Queue<Action> renderActions = new();
-
+	private int animationSpeed = 5;
 
 	public Grid2dEntity(Grid2d grid)
 	{
@@ -36,13 +35,13 @@ internal class Grid2dEntity : Entity
 		}).ToList( );
 	}
 
+	private ConcurrentDictionary<int, Grid2d.Cell> dictionary = new();
+
 	public async Task RenderAction(IEnumerable<Grid2d.Cell> set)
 	{
-		DoRenderAction = () =>
-			set.ForEach(c =>
-				DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), Color.MAROON));
-		await Task.Delay(5);
-		
+		set.ForEach(c => dictionary.TryAdd(c.GetHashCode(), c));
+
+		await Task.Delay(animationSpeed);
 	}
 
 	public override void Render()
@@ -51,12 +50,19 @@ internal class Grid2dEntity : Entity
 
 		buttons.ForEach(b => b.Render( ));
 
-		DoRenderAction?.Invoke( );
+		dictionary.Values.ForEach(c =>
+			DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), Color.MAROON));
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
 	{
 		buttons.ForEach(b => b.OnMouseEvent(e));
+	}
+
+	public override void OnKeyBoardEvent(IKeyBoardEvent e)
+	{
+		if (e is KeySpaceBarDown)
+			dictionary = new();
 	}
 
 	private Vector2 GridPosition2Screen(int x, int y) => new(cellSize * x, cellSize * y);
