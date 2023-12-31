@@ -27,11 +27,17 @@ namespace SharpRay.Gui
         public override void OnMouseEvent(IMouseEvent e)
         {
             base.OnMouseEvent(e);
-            if (HasMouseFocus && e is MouseLeftClick mlc)
-            {
-                EmitEvent?.Invoke(OnMouseLeftClick?.Invoke(this));
-                mlc.IsHandled = true;
-            }
+
+            if (!HasMouseFocus || e is not MouseLeftClick mlc) return;
+
+            // There are scenarios where we do not want to emit an event, yet still want to invoke the delegate. 
+            // When EmitEvent is null, the delegate won't be invoked even if assigned hence this null check. 
+            if (EmitEvent is not null)
+	            EmitEvent.Invoke(OnMouseLeftClick?.Invoke(this));
+            else
+	            OnMouseLeftClick?.Invoke(this);
+
+            mlc.IsHandled = true;
         }
     }
 }
