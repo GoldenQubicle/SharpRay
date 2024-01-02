@@ -35,12 +35,12 @@ internal class Grid2dEntity : Entity
 		}).ToList( );
 	}
 
-	private ConcurrentDictionary<int, Grid2d.Cell> dictionary = new();
+	private ConcurrentDictionary<int, Grid2d.Cell> renderUpdate = new();
 
-	public async Task RenderAction(IEnumerable<Grid2d.Cell> set)
+	public async Task RenderAction(IEnumerable<Grid2d.Cell> update)
 	{
 		
-		set.ForEach(c => dictionary.TryAdd(c.GetHashCode(), c));
+		update.ForEach(c => renderUpdate.TryAdd(c.GetHashCode(), c));
 
 		await Task.Delay(animationSpeed);
 	}
@@ -51,8 +51,8 @@ internal class Grid2dEntity : Entity
 
 		buttons.ForEach(b => b.Render( ));
 
-		dictionary.Values.ForEach(c =>
-			DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), Color.MAROON));
+		renderUpdate.Values.ForEach(c =>
+			DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), ColorAlpha(Color.MAROON, .5f)));
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
@@ -63,7 +63,7 @@ internal class Grid2dEntity : Entity
 	public override void OnKeyBoardEvent(IKeyBoardEvent e)
 	{
 		if (e is KeySpaceBarDown)
-			dictionary = new();
+			renderUpdate = new();
 	}
 
 	private Vector2 GridPosition2Screen(int x, int y) => new(cellSize * x, cellSize * y);
