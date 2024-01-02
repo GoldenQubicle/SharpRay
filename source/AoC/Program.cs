@@ -35,7 +35,10 @@ public class Program
 			
 			var target = grid.First(c => c.Character == 'T');
 			PathFinding.BreadthFirstSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
-				set => GetEntity<Grid2dEntity>().RenderAction(set));
+				set => GetEntity<Grid2dEntity>( ).RenderAction(set));
+
+			PathFinding.UniformCostSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
+				set => GetEntity<Grid2dEntity>( ).RenderAction(set));
 		}
 	}
 
