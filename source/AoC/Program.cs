@@ -24,20 +24,21 @@ public class Program
 	}
 
 	
-
 	public static void GuiEvent(IGuiEvent e)
 	{
 		if (e is GridEvent ge)
 		{
 			Console.WriteLine($"you clicked cell with index x: {ge.Position.x} y: {ge.Position.y} ");
 
-			//PathFinding.FloodFill(ge.Position, grid, cell => cell.Character != '#', set => GetEntity<Grid2dEntity>( ).RenderAction(set));
+			PathFinding.FloodFill(ge.Position, grid, cell => cell.Character != '#', 
+				set => GetEntity<Grid2dEntity>( ).RenderAction(set, 2, ColorAlpha(Color.BEIGE, .25f) ));
 			
 			var target = grid.First(c => c.Character == 'T');
 			PathFinding.BreadthFirstSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
 				set => GetEntity<Grid2dEntity>( ).RenderAction(set, 0, ColorAlpha(Color.LIME, .5f)));
 
 			PathFinding.UniformCostSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
+				(t, n) => Maths.GetManhattanDistance(t.Position, n.Position),
 				set => GetEntity<Grid2dEntity>( ).RenderAction(set, 1, ColorAlpha(Color.YELLOW, .5f)));
 		}
 	}
