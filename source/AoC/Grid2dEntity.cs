@@ -35,12 +35,16 @@ internal class Grid2dEntity : Entity
 		}).ToList( );
 	}
 
-	private ConcurrentDictionary<int, Grid2d.Cell> renderUpdate = new();
+	private ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> renderUpdate = new();
+	private ConcurrentDictionary<int, Color> renderUpdateColor = new();
 
-	public async Task RenderAction(IEnumerable<Grid2d.Cell> update)
+	public async Task RenderAction(IEnumerable<Grid2d.Cell> update, int layer, Color color)
 	{
-		
-		update.ForEach(c => renderUpdate.TryAdd(c.GetHashCode(), c));
+		if (!renderUpdate.TryAdd(layer, update.ToConcurrentBag()))
+			renderUpdate[layer] = update.ToConcurrentBag();
+
+		renderUpdateColor.TryAdd(layer, color);
+		//update.ForEach(c => renderUpdate.TryAdd(layer, c));
 
 		await Task.Delay(animationSpeed);
 	}
@@ -51,8 +55,8 @@ internal class Grid2dEntity : Entity
 
 		buttons.ForEach(b => b.Render( ));
 
-		renderUpdate.Values.ForEach(c =>
-			DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), ColorAlpha(Color.MAROON, .5f)));
+		renderUpdate.ForEach(bag => bag.Value.ForEach(c => 
+			DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), renderUpdateColor[bag.Key])));
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
