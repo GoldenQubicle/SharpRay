@@ -31,15 +31,20 @@ public class Program
 			Console.WriteLine($"you clicked cell with index x: {ge.Position.x} y: {ge.Position.y} ");
 
 			PathFinding.FloodFill(ge.Position, grid, cell => cell.Character != '#', 
-				set => GetEntity<Grid2dEntity>( ).RenderAction(set, 2, ColorAlpha(Color.BEIGE, .25f) ));
-			
-			var target = grid.First(c => c.Character == 'T');
-			PathFinding.BreadthFirstSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
-				set => GetEntity<Grid2dEntity>( ).RenderAction(set, 0, ColorAlpha(Color.LIME, .5f)));
+				set => GetEntity<Grid2dEntity>( ).RenderAction(set.Cast<Grid2d.Cell>(), 2, ColorAlpha(Color.BEIGE, .25f) ));
 
-			PathFinding.UniformCostSearch(ge.Position, target.Position, grid, cell => cell.Character != '#',
-				(t, n) => Maths.GetManhattanDistance(t.Position, n.Position),
-				set => GetEntity<Grid2dEntity>( ).RenderAction(set, 1, ColorAlpha(Color.YELLOW, .5f)));
+			var start = grid[ge.Position];
+			var target = grid.First(c => c.Character == 'T');
+			PathFinding.BreadthFirstSearch(start, target, grid, 
+				(c, _) => c.Character != '#',
+				(c, t) => c.Character == target.Character,
+				set => GetEntity<Grid2dEntity>( ).RenderAction(set.Cast<Grid2d.Cell>( ), 0, ColorAlpha(Color.LIME, .5f)));
+
+			PathFinding.UniformCostSearch(start, target, grid,
+				(c, _) => c.Character != '#',
+				(c, t) => c.Character == target.Character,
+				(t, n) => Maths.GetManhattanDistance((t as Grid2d.Cell).Position, (n as Grid2d.Cell).Position),
+				set => GetEntity<Grid2dEntity>( ).RenderAction(set.Cast<Grid2d.Cell>( ), 1, ColorAlpha(Color.YELLOW, .5f)));
 		}
 	}
 

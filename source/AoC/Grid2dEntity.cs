@@ -44,7 +44,6 @@ internal class Grid2dEntity : Entity
 			renderUpdate[layer] = update.ToConcurrentBag();
 
 		renderUpdateColor.TryAdd(layer, color);
-		//update.ForEach(c => renderUpdate.TryAdd(layer, c));
 
 		await Task.Delay(animationSpeed);
 	}
