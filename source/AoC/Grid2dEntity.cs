@@ -6,31 +6,31 @@ namespace AoC;
 internal class Grid2dEntity : Entity
 {
 	private readonly Texture2D texture;
-	private int cellSize;
-	private int cellSizeHalf;
+	private Vector2 cellSize;
+	private Vector2 cellSizeHalf;
 	private List<Button> buttons;
 	private int animationSpeed = 5;
 
 	public Grid2dEntity(Grid2d grid)
 	{
-		cellSize = Width / grid.Width;
+		cellSize = new Vector2(Width / grid.Width, Height / grid.Height);
 		cellSizeHalf = cellSize / 2;
-		var image = GenImageChecked(Width, Height, cellSize, cellSize, Color.VIOLET, Color.DARKPURPLE);
+		var image = GenImageChecked(Width, Height, (int)cellSize.X, (int)cellSize.Y, Color.VIOLET, Color.DARKPURPLE);
 		texture = LoadTextureFromImage(image);
 		UnloadImage(image);
 
 		buttons = grid.Select(c => new Button
 		{
-			Size = new Vector2(cellSize, cellSize),
-			Position = GridPosition2Screen(c.X, c.Y) + new Vector2(cellSizeHalf, cellSizeHalf), //buttons are drawn from the center, so add half the cell size
+			Size = cellSize,
+			Position = GridPosition2Screen(c.X, c.Y) + cellSizeHalf, //buttons are drawn from the center, so add half the cell size
 			HasOutlines = true,
 			DoCenterText = true,
 			BaseColor = Color.BLANK,
 			TextColor = Color.ORANGE,
 			FocusColor = Color.RED,
-			FontSize = cellSize,
+			FontSize = cellSize.X > cellSize.Y ? cellSize.Y : cellSize.X,
 			Text = c.Character.ToString( ),
-			OnMouseLeftClick = e => new GridEvent(e, (x: (int)(e.Position.X - cellSizeHalf) / cellSize, y: (int)(e.Position.Y - cellSizeHalf) / cellSize)),
+			OnMouseLeftClick = e => new GridEvent(e, (x: (int)(e.Position.X - cellSizeHalf.X) / (int) cellSize.X, y: (int)(e.Position.Y - cellSizeHalf.Y) / (int)cellSize.Y)),
 			EmitEvent = GuiEvent,
 		}).ToList( );
 	}
@@ -55,7 +55,7 @@ internal class Grid2dEntity : Entity
 		buttons.ForEach(b => b.Render( ));
 
 		renderUpdate.ForEach(bag => bag.Value.ForEach(c => 
-			DrawRectangleV(GridPosition2Screen(c.X, c.Y), new Vector2(cellSize, cellSize), renderUpdateColor[bag.Key])));
+			DrawRectangleV(GridPosition2Screen(c.X, c.Y), cellSize, renderUpdateColor[bag.Key])));
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
@@ -69,6 +69,6 @@ internal class Grid2dEntity : Entity
 			renderUpdate = new();
 	}
 
-	private Vector2 GridPosition2Screen(int x, int y) => new(cellSize * x, cellSize * y);
+	private Vector2 GridPosition2Screen(int x, int y) => new(cellSize.X * x, cellSize.Y * y);
 
 }
