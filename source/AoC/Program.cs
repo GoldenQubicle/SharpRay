@@ -1,36 +1,37 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace AoC;
 
 public class Program
 {
+	public static readonly Vector2 CellSize = new(25, 25);
+
 	private static Solution day;
 	private static Grid2d grid;
-	public const int Height = 720;
-	public const int Width = 720;
 
 	private static void Main()
 	{
+		day = Solution.Initialize("2022", "12");
+
+		day.RenderAction = set =>
+			GetEntity<Grid2dEntity>( ).RenderAction(set.Cast<Grid2d.Cell>( ), 0, ColorAlpha(Color.SKYBLUE, .5f));
+
+		grid = (Grid2d)day.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(day);
+
 		var config = new SharpRayConfig
 		{
-			WindowWidth = Width,
-			WindowHeight = Height
+			Name = "Advent of Code 2022 Day 12 part 1",
+			WindowWidth = (int)CellSize.X * grid.Width,
+			WindowHeight = (int)CellSize.Y * grid.Height,
 		};
 
 		Initialize(config);
 
-		day = Solution.Initialize(2022, 12);
-
-		day.RenderAction = set =>
-			GetEntity<Grid2dEntity>().RenderAction(set.Cast<Grid2d.Cell>(), 1, ColorAlpha(Color.YELLOW, .5f));
-
-		grid = (Grid2d)day.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(day);
-
 		//grid = new Grid2d(new PfSolution("grid20x10").Input, diagonalAllowed: false);
 
-
-		AddEntity(new Grid2dEntity(grid));
+		AddEntity(new Grid2dEntity(grid, config));
 
 		Run( );
 	}
@@ -41,12 +42,10 @@ public class Program
 		if (e is GridEvent ge)
 		{
 			Console.WriteLine($"you clicked cell with index x: {ge.Position.x} y: {ge.Position.y} ");
-			var solveAsync = day.GetType().GetMethod("SolveAsync", BindingFlags.Instance | BindingFlags.Public);
-			var task = (Task<string>) solveAsync.Invoke(day, new object[]{});
-			await task;
-			var resultProperty = task.GetType( ).GetProperty("Result");
 			
-			Console.WriteLine(resultProperty.GetValue(task));
+			await day.SolvePart1();
+			
+			
 			//PathFinding.FloodFill(ge.Position, grid, cell => cell.Character != '#', 
 			//	set => GetEntity<Grid2dEntity>( ).RenderAction(set.Cast<Grid2d.Cell>(), 2, ColorAlpha(Color.BEIGE, .25f) ));
 

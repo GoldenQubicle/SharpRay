@@ -9,12 +9,13 @@ namespace AoC
 
 		}
 
-		public override string SolvePart1()
+
+		public override Task<string> SolvePart1()
 		{
 			throw new NotImplementedException();
 		}
 
-		public override string SolvePart2()
+		public override Task<string> SolvePart2()
 		{
 			throw new NotImplementedException();
 		}

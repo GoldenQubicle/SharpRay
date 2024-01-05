@@ -8,6 +8,7 @@
         public string Text { get; set; }
         public Font Font { get; init; } = GetFontDefault();
         public Color TextColor { get; set; } = WHITE;
+        public Color OutlineColor { get; set; } = WHITE;
         public Color FillColor { get; set; } = LIGHTGRAY;
         public bool DoCenterText { get; set; }
         public float FontSize { get; init; } = 15f;
@@ -24,7 +25,7 @@
             DrawRectangleV(offset, Size, FillColor);
 
             if (HasOutlines)
-                DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, TextColor);
+                DrawRectangleLines((int)offset.X, (int)offset.Y, (int)Size.X, (int)Size.Y, OutlineColor);
 
             if (DoCenterText)
             {

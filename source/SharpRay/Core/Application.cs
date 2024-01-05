@@ -56,7 +56,7 @@ namespace SharpRay.Core
 
             InitAudioDevice();
             Audio.Initialize();
-            InitWindow(config.WindowWidth, config.WindowHeight, Assembly.GetEntryAssembly().GetName().Name);
+            InitWindow(config.WindowWidth, config.WindowHeight, config.Name);
             SetWindowPosition(GetMonitorWidth(0) / 2 - config.WindowWidth / 2, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
             //SetTargetFPS(60);
