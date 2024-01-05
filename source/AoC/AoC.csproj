@@ -17,12 +17,15 @@
 
   <ItemGroup>
     <Reference Include="Common">
-      <HintPath>..\..\..\AdventOfCode\Common\bin\Release\net8.0\Common.dll</HintPath>
+      <HintPath>..\..\..\AdventOfCode\Common\bin\Debug\net8.0\Common.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="data\day18test1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data\grid20x10.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="data\grid20x20.txt">
