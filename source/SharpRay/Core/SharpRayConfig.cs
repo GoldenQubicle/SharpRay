@@ -13,6 +13,11 @@
         /// How many times should fixed update be performed
         /// </summary>
         public static readonly double FixedUpdate = 60d; // times per second
+
+        /// <summary>
+        /// Name of the SharpRay application as shown in window bar.
+        /// </summary>
+        public string Name { get; init; } = Assembly.GetEntryAssembly().GetName().Name;
         /// <summary>
         /// Width of the application window.
         /// </summary>
@@ -32,6 +37,6 @@
         /// <summary>
         /// The background color set every frame in the rendering loop. Grey by default. 
         /// </summary>
-        public Color BackGroundColor { get; init; } = Color.GRAY;
+        public Color BackGroundColor { get; init; } = GRAY;
     }
 }
