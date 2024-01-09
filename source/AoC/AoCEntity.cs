@@ -2,8 +2,13 @@
 {
 	internal abstract class AoCEntity : Entity
 	{
-		public readonly int _animationSpeed = 50;
-		public abstract Task RenderAction(IRenderState state, int layer, Color color);
+		protected readonly int AnimationSpeed = 5;
+
+		protected ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> RenderUpdate = new( );
+
+		protected readonly ConcurrentDictionary<int, Color> RenderUpdateColor = new( );
+
+		public abstract Task RenderAction(IRenderState state, int layer = 0, Color color = default );
 
 		protected AoCEntity(SharpRayConfig config)
 		{

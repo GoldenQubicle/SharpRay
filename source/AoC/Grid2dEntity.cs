@@ -31,21 +31,19 @@ internal class Grid2dEntity : AoCEntity
 		}).ToList( );
 	}
 
-	private ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> _renderUpdate = new( );
-	private readonly ConcurrentDictionary<int, Color> _renderUpdateColor = new( );
 
 	public override async Task RenderAction(IRenderState state, int layer, Color color)
 	{
 		//note we're assuming a cast to the path finding renderer
 		//this will cause some future headache when for instance wanting to render cellular automata
-		var update = ((PathFindingRender)state).set.Cast<Grid2d.Cell>( ).ToList();
+		var update = state.Cast<PathFindingRender>().Set.Cast<Grid2d.Cell>( ).ToList();
 
-		if (!_renderUpdate.TryAdd(layer, update.ToConcurrentBag( )))
-			_renderUpdate[layer] = update.ToConcurrentBag( );
+		if (!RenderUpdate.TryAdd(layer, update.ToConcurrentBag( )))
+			RenderUpdate[layer] = update.ToConcurrentBag( );
 
-		_renderUpdateColor.TryAdd(layer, color);
+		RenderUpdateColor.TryAdd(layer, color);
 
-		await Task.Delay(_animationSpeed);
+		await Task.Delay(AnimationSpeed);
 	}
 
 	public override void Render()
@@ -54,8 +52,8 @@ internal class Grid2dEntity : AoCEntity
 
 		_buttons.ForEach(b => b.Render( ));
 
-		_renderUpdate.ForEach(bag => bag.Value.ForEach(c =>
-			DrawRectangleV(GridPosition2Screen(c.X, c.Y), CellSize, _renderUpdateColor[bag.Key])));
+		RenderUpdate.ForEach(bag => bag.Value.ForEach(c =>
+			DrawRectangleV(GridPosition2Screen(c.X, c.Y), CellSize, RenderUpdateColor[bag.Key])));
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
@@ -66,7 +64,7 @@ internal class Grid2dEntity : AoCEntity
 	public override void OnKeyBoardEvent(IKeyBoardEvent e)
 	{
 		if (e is KeySpaceBarDown)
-			_renderUpdate = new( );
+			RenderUpdate = new( );
 	}
 
 	private static Vector2 GridPosition2Screen(int x, int y) => new(CellSize.X * x, CellSize.Y * y);
