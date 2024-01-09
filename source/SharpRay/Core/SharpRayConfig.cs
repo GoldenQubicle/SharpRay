@@ -13,7 +13,6 @@
         /// How many times should fixed update be performed
         /// </summary>
         public static readonly double FixedUpdate = 60d; // times per second
-
         /// <summary>
         /// Name of the SharpRay application as shown in window bar.
         /// </summary>

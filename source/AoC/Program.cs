@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
 
 namespace AoC;
 
@@ -15,8 +13,8 @@ public class Program
 	{
 		day = Solution.Initialize("2022", "12");
 
-		day.RenderAction = set =>
-			GetEntity<Grid2dEntity>( ).RenderAction(set.Cast<Grid2d.Cell>( ), 0, ColorAlpha(Color.SKYBLUE, .5f));
+		day.RenderAction = state =>
+			GetEntity<Grid2dEntity>( ).RenderAction(((PathFinding.VisitedSet)state).set.Cast<Grid2d.Cell>(), 0, ColorAlpha(Color.SKYBLUE, .5f));
 
 		grid = (Grid2d)day.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(day);
 
