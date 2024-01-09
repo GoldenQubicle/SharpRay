@@ -1,27 +1,25 @@
-﻿using System.Collections.Concurrent;
-using Common.Extensions;
+﻿using Common.Renders;
 
 namespace AoC;
 
-internal class Grid2dEntity : Entity
+internal class Grid2dEntity : AoCEntity
 {
-	private readonly Texture2D texture;
-	private Vector2 CellSizeHalf;
-	private List<Button> buttons;
-	private int animationSpeed = 5;
+	public static readonly Vector2 CellSize = new(15, 15);
 
-	public Grid2dEntity(Grid2d grid, SharpRayConfig config)
+	private readonly Texture2D _texture;
+	private readonly List<Button> _buttons;
+	
+	public Grid2dEntity(Grid2d grid, SharpRayConfig config) : base(config)
 	{
-		CellSizeHalf = CellSize / 2;
-
 		var image = GenImageChecked(config.WindowWidth, config.WindowHeight, (int)CellSize.X, (int)CellSize.Y, Color.VIOLET, Color.DARKPURPLE);
-		texture = LoadTextureFromImage(image);
+		_texture = LoadTextureFromImage(image);
 		UnloadImage(image);
-		
-		buttons = grid.Select(c => new Button
+
+		//using buttons because of nice highlighting on mouse over..
+		_buttons = grid.Select(c => new Button
 		{
 			Size = CellSize,
-			Position = GridPosition2Screen(c.X, c.Y) + CellSizeHalf, //buttons are drawn from the center, so add half the cell size
+			Position = GridPosition2Screen(c.X, c.Y) + CellSize / 2, //buttons are drawn from the center, so add half the cell size
 			HasOutlines = true,
 			DoCenterText = true,
 			BaseColor = Color.BLANK,
@@ -30,45 +28,46 @@ internal class Grid2dEntity : Entity
 			FocusColor = Color.RED,
 			FontSize = CellSize.X > CellSize.Y ? CellSize.Y : CellSize.X,
 			Text = c.Character.ToString( ),
-			OnMouseLeftClick = e => new GridEvent(e, (x: (int)(e.Position.X - CellSizeHalf.X) / (int) CellSize.X, y: (int)(e.Position.Y - CellSizeHalf.Y) / (int)CellSize.Y)),
-			EmitEvent = GuiEvent,
 		}).ToList( );
 	}
 
-	private ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> renderUpdate = new();
-	private ConcurrentDictionary<int, Color> renderUpdateColor = new();
+	private ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> _renderUpdate = new( );
+	private readonly ConcurrentDictionary<int, Color> _renderUpdateColor = new( );
 
-	public async Task RenderAction(IEnumerable<Grid2d.Cell> update, int layer, Color color)
+	public override async Task RenderAction(IRenderState state, int layer, Color color)
 	{
-		if (!renderUpdate.TryAdd(layer, update.ToConcurrentBag()))
-			renderUpdate[layer] = update.ToConcurrentBag();
+		//note we're assuming a cast to the path finding renderer
+		//this will cause some future headache when for instance wanting to render cellular automata
+		var update = ((PathFindingRender)state).set.Cast<Grid2d.Cell>( ).ToList();
 
-		renderUpdateColor.TryAdd(layer, color);
+		if (!_renderUpdate.TryAdd(layer, update.ToConcurrentBag( )))
+			_renderUpdate[layer] = update.ToConcurrentBag( );
 
-		await Task.Delay(animationSpeed);
+		_renderUpdateColor.TryAdd(layer, color);
+
+		await Task.Delay(_animationSpeed);
 	}
 
 	public override void Render()
 	{
-		DrawTexture(texture, 0, 0, Color.WHITE);
+		DrawTexture(_texture, 0, 0, Color.WHITE);
 
-		buttons.ForEach(b => b.Render( ));
+		_buttons.ForEach(b => b.Render( ));
 
-		renderUpdate.ForEach(bag => bag.Value.ForEach(c => 
-			DrawRectangleV(GridPosition2Screen(c.X, c.Y), CellSize, renderUpdateColor[bag.Key])));
+		_renderUpdate.ForEach(bag => bag.Value.ForEach(c =>
+			DrawRectangleV(GridPosition2Screen(c.X, c.Y), CellSize, _renderUpdateColor[bag.Key])));
 	}
 
 	public override void OnMouseEvent(IMouseEvent e)
 	{
-		buttons.ForEach(b => b.OnMouseEvent(e));
+		_buttons.ForEach(b => b.OnMouseEvent(e));
 	}
 
 	public override void OnKeyBoardEvent(IKeyBoardEvent e)
 	{
 		if (e is KeySpaceBarDown)
-			renderUpdate = new();
+			_renderUpdate = new( );
 	}
 
-	private Vector2 GridPosition2Screen(int x, int y) => new(CellSize.X * x, CellSize.Y * y);
-
+	private static Vector2 GridPosition2Screen(int x, int y) => new(CellSize.X * x, CellSize.Y * y);
 }
