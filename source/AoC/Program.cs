@@ -2,7 +2,7 @@
 
 /* days visualized
  * 2022 12 1
- * 
+ * 2017 10 2
  */
 
 public class Program
@@ -14,7 +14,7 @@ public class Program
 
 	private static void Main()
 	{
-		//var setup = SetupGridEntity();
+		//var setup = SetupGridEntity( );
 		//solution = setup.solution;
 		//Initialize(setup.config);
 		//AddEntity(new Grid2dEntity(setup.grid, setup.config));
@@ -22,14 +22,14 @@ public class Program
 		var config = new SharpRayConfig
 		{
 			Name = $"Advent of Code {Year} Day {Day} part {Part}",
-			WindowHeight = 480,
-			WindowWidth = 640
+			WindowHeight = 860,
+			WindowWidth = 860
 		};
 
 		Initialize(config);
 
 		solution = Solution.Initialize(Year, Day);
-		solution.RenderAction = state => GetEntity<KnotHashEntity>().RenderAction(state, 0, Color.GREEN);
+		solution.RenderAction = state => GetEntity<KnotHashEntity>( ).RenderAction(state);
 
 		AddEntity(new KnotHashEntity(config));
 
