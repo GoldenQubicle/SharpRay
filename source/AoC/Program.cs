@@ -22,8 +22,9 @@ public class Program
 		var config = new SharpRayConfig
 		{
 			Name = $"Advent of Code {Year} Day {Day} part {Part}",
-			WindowHeight = 860,
-			WindowWidth = 860
+			WindowHeight = 1024,
+			WindowWidth = 860,
+			BackGroundColor = Color.DARKBLUE
 		};
 
 		Initialize(config);
