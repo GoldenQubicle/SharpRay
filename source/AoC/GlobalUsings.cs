@@ -12,3 +12,5 @@ global using Common.Interfaces;
 global using System.Collections.Concurrent;
 global using Common.Extensions;
 global using System.Reflection;
+global using Common.Renders;
+global using Rectangle = Raylib_cs.Rectangle;
