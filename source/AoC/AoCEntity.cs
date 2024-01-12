@@ -2,7 +2,7 @@
 {
 	internal abstract class AoCEntity : Entity
 	{
-		protected readonly int AnimationSpeed = 500;
+		protected readonly int AnimationSpeed = 15;
 
 		protected ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> RenderUpdate = new( );
 
