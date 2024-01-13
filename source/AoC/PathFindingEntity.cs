@@ -1,15 +1,13 @@
-﻿using Common.Renders;
+﻿namespace AoC;
 
-namespace AoC;
-
-internal class Grid2dEntity : AoCEntity
+internal class PathFindingEntity : AoCEntity<PathFindingRender>
 {
 	public static readonly Vector2 CellSize = new(15, 15);
 
 	private readonly Texture2D _texture;
 	private readonly List<Button> _buttons;
 	
-	public Grid2dEntity(Grid2d grid, SharpRayConfig config) : base(config)
+	public PathFindingEntity(Grid2d grid, SharpRayConfig config, string part) : base(config, part)
 	{
 		var image = GenImageChecked(config.WindowWidth, config.WindowHeight, (int)CellSize.X, (int)CellSize.Y, Color.VIOLET, Color.DARKPURPLE);
 		_texture = LoadTextureFromImage(image);
@@ -32,11 +30,9 @@ internal class Grid2dEntity : AoCEntity
 	}
 
 
-	public override async Task RenderAction(IRenderState state, int layer, Color color)
+	public override async Task RenderAction(PathFindingRender state, int layer, Color color)
 	{
-		//note we're assuming a cast to the path finding renderer
-		//this will cause some future headache when for instance wanting to render cellular automata
-		var update = state.Cast<PathFindingRender>().Set.Cast<Grid2d.Cell>( ).ToList();
+		var update = state.Set.Cast<Grid2d.Cell>( ).ToList();
 
 		if (!RenderUpdate.TryAdd(layer, update.ToConcurrentBag( )))
 			RenderUpdate[layer] = update.ToConcurrentBag( );

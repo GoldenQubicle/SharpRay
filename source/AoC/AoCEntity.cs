@@ -1,16 +1,17 @@
 ﻿namespace AoC
 {
-	internal abstract class AoCEntity : Entity
+	internal abstract class AoCEntity<TRender> : Entity
 	{
 		protected readonly int AnimationSpeed = 1;
 
 		protected ConcurrentDictionary<int, ConcurrentBag<Grid2d.Cell>> RenderUpdate = new( );
 
 		protected readonly ConcurrentDictionary<int, Color> RenderUpdateColor = new( );
+		
 
-		public abstract Task RenderAction(IRenderState state, int layer = 0, Color color = default );
+		public abstract Task RenderAction(TRender state, int layer = 0, Color color = default);
 
-		protected AoCEntity(SharpRayConfig config)
+		protected AoCEntity(SharpRayConfig config, string part)
 		{
 			AddEntity(new Button
 			{
@@ -19,11 +20,11 @@
 				DoCenterText = true,
 				FontSize = 20,
 				Size = new Vector2(100, 30),
-				Position = new Vector2(config.WindowWidth - 75, config.WindowHeight - 40 ),
+				Position = new Vector2(config.WindowWidth - 75, config.WindowHeight - 40),
 				TextColor = Color.RAYWHITE,
 				FocusColor = Color.GREEN,
 				BaseColor = Color.DARKGREEN,
-				OnMouseLeftClick = e => new AoCEvent(e),
+				OnMouseLeftClick = e => new AoCEvent(e, part),
 				EmitEvent = GuiEvent
 			});
 		}
