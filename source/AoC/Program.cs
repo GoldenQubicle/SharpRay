@@ -7,69 +7,69 @@
 
 public class Program
 {
-	private const string Year = "2017";
-	private const string Day = "10";
-	private const string Part = "2";
 	private static Solution solution;
 
 	private static void Main()
 	{
-		//var setup = SetupGridEntity( );
-		//solution = setup.solution;
-		//Initialize(setup.config);
-		//AddEntity(new Grid2dEntity(setup.grid, setup.config));
+		//InitializePathFindingEntity("2022", "12", "1");
+		
+		InitializeKnotHashEntity("2017", "10", "2");
+
+		Run( );
+	}
+
+	private static void InitializeKnotHashEntity(string year, string day, string part)
+	{
+		solution = Solution.Initialize(year, day);
+		solution.RenderAction = state => GetEntity<KnotHashEntity>( ).RenderAction(state.Cast<KnotHashRender>( ));
 
 		var config = new SharpRayConfig
 		{
-			Name = $"Advent of Code {Year} Day {Day} part {Part}",
+			Name = $"Advent of Code {year} Day {day} part {part}",
 			WindowHeight = 1024,
 			WindowWidth = 860,
 			BackGroundColor = Color.DARKBLUE
 		};
 
 		Initialize(config);
-
-		solution = Solution.Initialize(Year, Day);
-		solution.RenderAction = state => GetEntity<KnotHashEntity>( ).RenderAction(state);
-
-		AddEntity(new KnotHashEntity(config));
-
-		Run( );
+		AddEntity(new KnotHashEntity(config, part));
 	}
 
 
-	private static (SharpRayConfig config, Solution solution, Grid2d grid) SetupGridEntity()
+	private static void InitializePathFindingEntity(string year, string day, string part)
 	{
-		var solution = Solution.Initialize(Year, Day);
+		solution = Solution.Initialize(year, day);
 
 		solution.RenderAction = state =>
-			GetEntity<Grid2dEntity>( ).RenderAction(state, 0, ColorAlpha(Color.SKYBLUE, .5f));
+			GetEntity<PathFindingEntity>( ).RenderAction(state.Cast<PathFindingRender>( ), 0, ColorAlpha(Color.SKYBLUE, .5f));
 
+		//assuming a path finding solution has a grid field...
 		var grid = (Grid2d)solution.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(solution);
 
 		var config = new SharpRayConfig
 		{
-			Name = $"Advent of Code {Year} Day {Day} part {Part}",
-			WindowWidth = (int)Grid2dEntity.CellSize.X * grid.Width,
-			WindowHeight = (int)Grid2dEntity.CellSize.Y * grid.Height,
+			Name = $"Advent of Code {year} Day {day} part {part}",
+			WindowWidth = (int)PathFindingEntity.CellSize.X * grid.Width,
+			WindowHeight = (int)PathFindingEntity.CellSize.Y * grid.Height,
 		};
-		
-		return (config, solution, grid);
+
+		Initialize(config);
+		AddEntity(new PathFindingEntity(grid, config, part));
 	}
 
-	
+
 	public static async void GuiEvent(IGuiEvent e)
 	{
 		if (e is AoCEvent aoc)
 		{
-			aoc.GuiEntity.Hide();
-			if (Part.Equals("1"))
-				await solution.SolvePart1();
+			aoc.GuiEntity.Hide( );
+			if (aoc.Part.Equals("1"))
+				await solution.SolvePart1( );
 			else
-				await solution.SolvePart2();
+				await solution.SolvePart2( );
 		}
 	}
 
-	public record AoCEvent(GuiEntity GuiEntity) : IGuiEvent;
+	public record AoCEvent(GuiEntity GuiEntity, string Part) : IGuiEvent;
 
 }
