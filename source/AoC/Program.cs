@@ -2,6 +2,7 @@
 
 /* days visualized
  * 2022 12 1
+ * 2021 15 1 note part 2 doesn't work since we expand the grid in the solution...
  * 2017 10 2
  */
 
@@ -11,9 +12,9 @@ public class Program
 
 	private static void Main()
 	{
-		//InitializePathFindingEntity("2022", "12", "1");
-		
-		InitializeKnotHashEntity("2017", "10", "2");
+		InitializePathFindingEntity("2021", "15", "1");
+
+		//InitializeKnotHashEntity("2017", "10", "2");
 
 		Run( );
 	}
@@ -21,7 +22,8 @@ public class Program
 	private static void InitializeKnotHashEntity(string year, string day, string part)
 	{
 		solution = Solution.Initialize(year, day);
-		solution.RenderAction = state => GetEntity<KnotHashEntity>( ).RenderAction(state.Cast<KnotHashRender>( ));
+		
+		IRenderState.Update = state => GetEntity<KnotHashEntity>( ).RenderAction(state.Cast<KnotHashRender>( ));
 
 		var config = new SharpRayConfig
 		{
@@ -40,7 +42,7 @@ public class Program
 	{
 		solution = Solution.Initialize(year, day);
 
-		solution.RenderAction = state =>
+		IRenderState.Update = state =>
 			GetEntity<PathFindingEntity>( ).RenderAction(state.Cast<PathFindingRender>( ), 0, ColorAlpha(Color.SKYBLUE, .5f));
 
 		//assuming a path finding solution has a grid field...

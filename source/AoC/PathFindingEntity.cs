@@ -2,7 +2,7 @@
 
 internal class PathFindingEntity : AoCEntity<PathFindingRender>
 {
-	public static readonly Vector2 CellSize = new(15, 15);
+	public static readonly Vector2 CellSize = new(10, 10);
 
 	private readonly Texture2D _texture;
 	private readonly List<Button> _buttons;
