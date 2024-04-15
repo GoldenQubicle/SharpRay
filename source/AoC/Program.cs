@@ -1,8 +1,12 @@
-﻿namespace AoC;
+﻿using AoC.Entities;
+
+namespace AoC;
 
 /* days visualized
+ * PATH FINDING
  * 2022 12 1
  * 2021 15 1 note part 2 doesn't work since we expand the grid in the solution...
+ * KNOT HASH
  * 2017 10 2
  */
 
@@ -12,11 +16,29 @@ public class Program
 
 	private static void Main()
 	{
-		InitializePathFindingEntity("2021", "15", "1");
+		Initialize2018Day15("2018", "15", "1");
+
+		//InitializePathFindingEntity("2021", "15", "1");
 
 		//InitializeKnotHashEntity("2017", "10", "2");
 
 		Run( );
+	}
+
+	private static void Initialize2018Day15(string year, string day, string part)
+	{
+		solution = Solution.Initialize(year, day);
+		IRenderState.Update = state => GetEntity<CombatEntity>( ).RenderAction(state.Cast<CombatRender>( ));
+		var config = new SharpRayConfig
+		{
+			Name = $"Advent of Code {year} Day {day} part {part}",
+			WindowHeight = 1024,
+			WindowWidth = 860,
+			BackGroundColor = Color.DARKBLUE
+		};
+
+		Initialize(config);
+		AddEntity(new CombatEntity(config, part));
 	}
 
 	private static void InitializeKnotHashEntity(string year, string day, string part)
