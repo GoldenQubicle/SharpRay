@@ -28,24 +28,27 @@ public class Program
 	private static void Initialize2018Day15(string year, string day, string part)
 	{
 		solution = Solution.Initialize(year, day);
-		IRenderState.Update = state => GetEntity<CombatEntity>( ).RenderAction(state.Cast<CombatRender>( ));
+
+		IRenderState.Update = state => GetEntity<CombatEntity>( ).RenderAction(state);
 		var config = new SharpRayConfig
 		{
 			Name = $"Advent of Code {year} Day {day} part {part}",
 			WindowHeight = 1024,
-			WindowWidth = 860,
+			WindowWidth = 1024,
 			BackGroundColor = Color.DARKBLUE
 		};
 
 		Initialize(config);
-		AddEntity(new CombatEntity(config, part));
+		var grid = (Grid2d)solution.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(solution);
+		var units = (List<UnitData>)solution.GetType( ).GetField("unitData", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(solution);
+		AddEntity(new CombatEntity(grid, units, config, part));
 	}
 
 	private static void InitializeKnotHashEntity(string year, string day, string part)
 	{
 		solution = Solution.Initialize(year, day);
 		
-		IRenderState.Update = state => GetEntity<KnotHashEntity>( ).RenderAction(state.Cast<KnotHashRender>( ));
+		IRenderState.Update = state => GetEntity<KnotHashEntity>( ).RenderAction(state);
 
 		var config = new SharpRayConfig
 		{
@@ -65,7 +68,7 @@ public class Program
 		solution = Solution.Initialize(year, day);
 
 		IRenderState.Update = state =>
-			GetEntity<PathFindingEntity>( ).RenderAction(state.Cast<PathFindingRender>( ), 0, ColorAlpha(Color.SKYBLUE, .5f));
+			GetEntity<PathFindingEntity>( ).RenderAction(state, 0, ColorAlpha(Color.SKYBLUE, .5f));
 
 		//assuming a path finding solution has a grid field...
 		var grid = (Grid2d)solution.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(solution);

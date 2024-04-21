@@ -1,6 +1,6 @@
 ﻿namespace AoC.Entities;
 
-internal class PathFindingEntity : AoCEntity<PathFindingRender>
+internal class PathFindingEntity : AoCEntity
 {
     public static readonly Vector2 CellSize = new(10, 10);
 
@@ -30,9 +30,9 @@ internal class PathFindingEntity : AoCEntity<PathFindingRender>
     }
 
 
-    public override async Task RenderAction(PathFindingRender state, int layer, Color color)
+    public override async Task RenderAction(IRenderState state, int layer, Color color)
     {
-        var update = state.Set.Cast<Grid2d.Cell>().ToList();
+        var update = state.Cast<PathFindingRender>().Set.Cast<Grid2d.Cell>().ToList();
 
         if (!RenderUpdate.TryAdd(layer, update.ToConcurrentBag()))
             RenderUpdate[layer] = update.ToConcurrentBag();

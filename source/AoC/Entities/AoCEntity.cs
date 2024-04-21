@@ -1,6 +1,6 @@
 ﻿namespace AoC.Entities
 {
-    internal abstract class AoCEntity<TRender> : Entity
+    internal abstract class AoCEntity : Entity
     {
         protected readonly int AnimationSpeed = 1;
 
@@ -9,7 +9,7 @@
         protected readonly ConcurrentDictionary<int, Color> RenderUpdateColor = new();
 
 
-        public abstract Task RenderAction(TRender state, int layer = 0, Color color = default);
+        public abstract Task RenderAction(IRenderState state, int layer = 0, Color color = default);
 
         protected AoCEntity(SharpRayConfig config, string part)
         {

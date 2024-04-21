@@ -1,6 +1,6 @@
 ﻿namespace AoC.Entities;
 
-internal class KnotHashEntity(SharpRayConfig config, string part) : AoCEntity<KnotHashRender>(config, part)
+internal class KnotHashEntity(SharpRayConfig config, string part) : AoCEntity(config, part)
 {
     private const float MagicNumber = .8f;
     private readonly float _chunkHeight = config.WindowHeight * .45f / 16f;
@@ -22,14 +22,15 @@ internal class KnotHashEntity(SharpRayConfig config, string part) : AoCEntity<Kn
     private int _cycle;
     private int _op;
 
-    public override async Task RenderAction(KnotHashRender state, int layer = 0, Color color = default)
+    public override async Task RenderAction(IRenderState state, int layer = 0, Color color = default)
     {
-        _cycle = state.Cycle;
-        _op = state.Operation;
+	    var update = state.Cast<KnotHashRender>();
+        _cycle = update.Cycle;
+        _op = update.Operation;
 
-        await UpdateRange(state.Range);
+        await UpdateRange(update.Range);
 
-        _idxNext = ClampIdx(_idx + state.Jump);
+        _idxNext = ClampIdx(_idx + update.Jump);
 
         if (_showPointer)
             await MovePointer();
