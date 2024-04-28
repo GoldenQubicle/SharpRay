@@ -7,8 +7,9 @@ internal class CombatEntity : AoCEntity
 	public List<UnitData> UnitData { get; }
 	public static Vector2 CellSize = new(10, 10);
 	private readonly IEnumerable<(Vector2, Color)> _gridRender;
-	private readonly ConcurrentDictionary<int, Unit> _units;
-	private static readonly float UnitMoveSpeed = 100;
+	private readonly ConcurrentDictionary<int, CombatUnit> _units;
+	private static readonly float UnitMoveSpeed = 150;
+	private static readonly float UnitAttackSpeed = 75;
 
 	public CombatEntity(Grid2d grid, List<UnitData> unitData, SharpRayConfig config, string part) : base(config, part)
 	{
@@ -22,8 +23,10 @@ internal class CombatEntity : AoCEntity
 		});
 
 		_units = unitData
-			.Select(u => new Unit(u.Id, GridPosition2Screen(u.Position), u.Type == 'G' ? Color.DARKGREEN : Color.SKYBLUE))
+			.Select(u => new CombatUnit(u.Id, GridPosition2Screen(u.Position), u.Type == 'G' ? Color.DARKGREEN : Color.SKYBLUE))
 			.ToConcurrentDictionary(u => u.Id, u => u);
+
+		AddEntity(new AttackEntity());
 	}
 
 	public override async Task RenderAction(IRenderState state, int layer = 0, Color color = default)
@@ -45,8 +48,13 @@ internal class CombatEntity : AoCEntity
 
 		if (state is Attack attack)
 		{
-			_units[attack.UnitId].DoAttack(_units[attack.TargetId].Position);
-			await Task.Delay((int)UnitMoveSpeed);
+			AddEntity(new AttackEntity
+			{
+				Position = _units[attack.UnitId].Position,
+				AttackPosition = _units[attack.TargetId].Position
+			});
+
+			await Task.Delay((int)UnitAttackSpeed);
 		}
 
 		if (state is Death death)
@@ -54,9 +62,9 @@ internal class CombatEntity : AoCEntity
 			_units.Remove(death.UnitId, out _);
 		}
 
-
 		await Task.Delay(AnimationSpeed);
 	}
+
 
 	public override void Render()
 	{
@@ -76,7 +84,7 @@ internal class CombatEntity : AoCEntity
 	private static Vector2 GridPosition2Screen((int x, int y) pos) => new(CellSize.X * pos.x, CellSize.Y * pos.y);
 	private static Vector2 GridPosition2Screen(int x, int y) => new(CellSize.X * x, CellSize.Y * y);
 
-	private class Unit(int id, Vector2 position, Color color)
+	private class CombatUnit(int id, Vector2 position, Color color)
 	{
 		public int Id { get; } = id;
 		public Color Color { get; set; } = color;
@@ -96,10 +104,10 @@ internal class CombatEntity : AoCEntity
 		{
 			DrawRectangleV(Position, CellSize, Color);
 
-			if (_doAttack)
-			{
-				DrawLineV(Position + CellSize/2, _attackPosition + CellSize/ 2, Color.RED);
-			}
+			//if (_doAttack)
+			//{
+			//	DrawLineV(Position + CellSize/2, _attackPosition + CellSize/ 2, Color.RED);
+			//}
 		}
 
 		public void Update(double deltaTime)
@@ -113,13 +121,13 @@ internal class CombatEntity : AoCEntity
 					_doMove = false;
 			}
 
-			if (_doAttack)
-			{
-				_attackEasing.Update(deltaTime);
+			//if (_doAttack)
+			//{
+			//	_attackEasing.Update(deltaTime);
 
-				if (_attackEasing.IsDone())
-					_doAttack = false;
-			}
+			//	if (_attackEasing.IsDone())
+			//		_doAttack = false;
+			//}
 		}
 
 		public void DoMove(Vector2 newPos)
@@ -134,6 +142,32 @@ internal class CombatEntity : AoCEntity
 			_attackEasing.Reset();
 			_attackPosition = targetPos;
 			_doAttack = true;
+		}
+	}
+
+	public class AttackEntity : Entity
+	{
+		private readonly Easing _attackEasing = new(Easings.EaseSineIn, UnitAttackSpeed);
+		public Vector2 AttackPosition { get; set; }
+
+		public AttackEntity()
+		{
+			RenderLayer = 1;
+		}
+
+		public override void Render()
+		{
+			var ap = AttackPosition + CellSize / 2;
+			DrawLineV(Position + CellSize / 2, ap, Color.RED);
+			DrawCircleV(Position + CellSize / 2, 5, Color.RED);
+		}
+
+		public override void Update(double deltaTime)
+		{
+			_attackEasing.Update(deltaTime);
+
+			if (_attackEasing.IsDone( ))
+				RemoveEntity(this);
 		}
 	}
 }
