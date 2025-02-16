@@ -18,7 +18,7 @@
         public override void Render()
         {
             foreach (var p in GetHitPoints())
-                DrawCircleV(p, 2, RED);
+                DrawCircleV(p, 2, Red);
 
             DrawCircleLines((int)Position.X, (int)Position.Y, Radius, Color);
         }

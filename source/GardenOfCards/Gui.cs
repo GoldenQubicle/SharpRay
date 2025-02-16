@@ -3,8 +3,8 @@
 	internal static class Gui
 	{
 		private static readonly Vector2 ButtonSize = new(128, 64);
-		private static readonly Color FillColor = Color.DARKBLUE;
-		private static readonly Color FocusColor = Color.BLUE;
+		private static readonly Color FillColor = Color.DarkBlue;
+		private static readonly Color FocusColor = Color.Blue;
 
 		public static GuiContainer CreateTurnGui ( ) => GuiContainerBuilder.CreateNew(true, 0, "TurnGui").AddChildren(
 			new Label

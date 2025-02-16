@@ -31,14 +31,14 @@
             var e = MathF.Sin((float)t) * 5;
             var d = e - prevDistance;
             prevDistance = e;
-            Position += new Vector2(0f, (float)d);
+            Position += new Vector2(0f, d);
             Collider.Position = Position;
         }
 
         public override void Render()
         {
-            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 1, Color.LIME);
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 2, 1, Color.GREEN);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 1, Lime);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 1, Green);
         }
     }
 }

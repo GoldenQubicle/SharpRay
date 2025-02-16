@@ -20,15 +20,15 @@
 
         private readonly List<Color> colors = new()
         {
-            Color.YELLOW,
-            Color.GOLD,
-            Color.ORANGE,
-            Color.PINK,
-            Color.PURPLE,
-            Color.DARKPURPLE,
-            Color.DARKBLUE,
-            Color.DARKGRAY,
-            Color.MAGENTA
+            Color.Yellow,
+            Color.Gold,
+            Color.Orange,
+            Color.Pink,
+            Color.Purple,
+            Color.DarkPurple,
+            Color.DarkBlue,
+            Color.DarkGray,
+            Color.Magenta
         };
 
         private readonly List<Func<float, float, float, float, float>> scaleEasings = new()
@@ -54,11 +54,11 @@
             
             //NOTE order does matter! 
             ImageColorInvert(ref c2);
-            ImageColorTint(ref c2, Color.MAGENTA);
+            ImageColorTint(ref c2, Color.Magenta);
             ImageColorContrast(ref c2, 20);
             ImageColorContrast(ref c1, -20);
             ImageAlphaMask(ref c1, c2);
-            ImageColorTint(ref c1, Color.DARKBLUE);
+            ImageColorTint(ref c1, Color.DarkBlue);
             backGroundTexture = LoadTextureFromImage(c1);
             UnloadImage(c1);
             UnloadImage(c2);
@@ -86,12 +86,12 @@
 
         public override void Render()
         {
-            DrawTexture(backGroundTexture, 0, 0, Color.WHITE);
+            DrawTexture(backGroundTexture, 0, 0, Color.White);
             foreach (var star in stars)
             {
                 var scale = star.GetScale();
 
-                BeginBlendMode(BlendMode.BLEND_ADDITIVE);
+                BeginBlendMode(BlendMode.Additive);
 
                 if (star.IsDiagonal)
                     DrawTextureEx(starTexture, star.Position - new Vector2(0, starTexture.Height * 0.7f) * scale, 45, scale, star.Color);

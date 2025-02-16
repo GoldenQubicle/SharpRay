@@ -64,10 +64,10 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            Color = IsDigesting ? Color.BROWN : Color.DARKPURPLE;
+            Color = IsDigesting ? Brown: DarkPurple;
 
             DrawRectangleRounded((Collider as RectCollider).Rect, .35f, 1, Color);
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .35f, 1, 2, Color.PURPLE);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .35f, 1, Purple);
 
             var (start, end) = Direction switch
             {
@@ -77,7 +77,7 @@ namespace SnakeEntities
                 Direction.Left => (-180, 0),
             };
 
-            ScaleColor = IsDigesting ? Color.GOLD : Color.YELLOW;
+            ScaleColor = IsDigesting ? Gold : Yellow;
             DrawCircleSectorLines(Center, SegmentSize/3, start, end, 16, ScaleColor);
         }
 

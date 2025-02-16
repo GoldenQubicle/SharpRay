@@ -110,30 +110,30 @@ internal class KnotHashEntity(SharpRayConfig config, string part) : AoCEntity(co
         foreach (var chunk in _list.Values.Chunk(16).WithIndex())
         {
             var pos = _anchor + new Vector2(0, (_chunkHeight + 30) * chunk.idx);
-            DrawRectangleLinesV(pos, _chunkSize, Color.GREEN);
+            DrawRectangleLinesV(pos, _chunkSize, Color.Green);
 
             var hash = chunk.Value.Skip(1).Aggregate(chunk.Value[0], (s, t) => s ^ t);
-            DrawTextV(hash.ToString(), pos + new Vector2(_chunkSize.X + 50, _rectSize * .4f), 16, Color.RAYWHITE);
+            DrawTextV(hash.ToString(), pos + new Vector2(_chunkSize.X + 50, _rectSize * .4f), 16, Color.RayWhite);
 
 
             foreach (var c in chunk.Value.WithIndex())
             {
                 var p = _anchor + ColRowToScreen(new(c.idx, chunk.idx)) + new Vector2(_rectSize * .25f, _rectSize * .4f);
-                DrawTextV(c.Value.ToString(), p, 16, Color.GOLD);
+                DrawTextV(c.Value.ToString(), p, 16, Color.Gold);
             }
         }
 
         if (_showPointer)
-            DrawRectangleLinesEx(new Rectangle { Height = _rectSize, Width = _rectSize, X = _pointer.X, Y = _pointer.Y }, 3, Color.ORANGE);
+            DrawRectangleLinesEx(new Rectangle { Height = _rectSize, Width = _rectSize, X = _pointer.X, Y = _pointer.Y }, 3, Color.Orange);
 
         foreach (var t in _rangeRects.WithIndex())
         {
             var p = _anchor + ColRowToScreen(IdxToColRow(ClampIdx(_idx + t.idx)));
-            DrawRectangleV(p, new Vector2(_rectSize, _rectSize), ColorAlpha(Color.PURPLE, .25f));
+            DrawRectangleV(p, new Vector2(_rectSize, _rectSize), ColorAlpha(Color.Purple, .25f));
         }
 
-        DrawTextV($"Cycle {_cycle} / 64", _anchor with { Y = config.WindowHeight - 70 }, 16, Color.RAYWHITE);
-        DrawTextV($"Operation {_op} / 58", _anchor with { Y = config.WindowHeight - 40 }, 16, Color.RAYWHITE);
+        DrawTextV($"Cycle {_cycle} / 64", _anchor with { Y = config.WindowHeight - 70 }, 16, Color.RayWhite);
+        DrawTextV($"Operation {_op} / 58", _anchor with { Y = config.WindowHeight - 40 }, 16, Color.RayWhite);
     }
 
     private int ScreenToIdx(Vector2 pos) => (int)Math.Floor(pos.X / _rectSize + pos.Y / (_chunkHeight + 30) * 16);

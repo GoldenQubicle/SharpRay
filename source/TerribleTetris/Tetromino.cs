@@ -56,7 +56,7 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 			_debugIndices.Add((pos, v));
 		}
 
-		_debugIndices.ForEach(t => DrawTextV($"{t.Item2.X}, {t.Item2.Y}", t.Item1, 8, BLACK));
+		_debugIndices.ForEach(t => DrawTextV($"{t.Item2.X}, {t.Item2.Y}", t.Item1, 8, Black));
 	}
 
 
@@ -94,10 +94,10 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 
 		_rotation = e switch
 		{
-			KeyUpReleased or KeyPressed { KeyboardKey: KeyboardKey.KEY_X } when CanRotateClockwise( ) => RotateClockwise( ),
-			KeyPressed { KeyboardKey: KeyboardKey.KEY_LEFT_CONTROL } or
-				KeyPressed { KeyboardKey: KeyboardKey.KEY_RIGHT_CONTROL } or
-				KeyPressed { KeyboardKey: KeyboardKey.KEY_Z } when CanRotateCounterClockwise( ) => RotateCounterClockwise( ),
+			KeyUpReleased or KeyPressed { KeyboardKey: KeyboardKey.X } when CanRotateClockwise( ) => RotateClockwise( ),
+			KeyPressed { KeyboardKey: KeyboardKey.LeftControl } or
+				KeyPressed { KeyboardKey: KeyboardKey.RightControl } or
+				KeyPressed { KeyboardKey: KeyboardKey.Z } when CanRotateCounterClockwise( ) => RotateCounterClockwise( ),
 			_ => _rotation
 		};
 
@@ -159,14 +159,14 @@ internal class Tetromino : Entity, IHasRender, IHasUpdate, IEventEmitter<IGameEv
 
 	public static Color Color(Shape shape) => shape switch
 	{
-		Shape.I => SKYBLUE,
-		Shape.O => YELLOW,
-		Shape.T => PURPLE,
-		Shape.J => DARKBLUE,
-		Shape.L => ORANGE,
-		Shape.S => LIME,
-		Shape.Z => RED,
-		Shape.None => BLANK,
+		Shape.I => SkyBlue,
+		Shape.O => Yellow,
+		Shape.T => Purple,
+		Shape.J => DarkBlue,
+		Shape.L => Orange,
+		Shape.S => Lime,
+		Shape.Z => Red,
+		Shape.None => Blank,
 		_ => throw new ArgumentOutOfRangeException(nameof(Shape), shape, null)
 	};
 

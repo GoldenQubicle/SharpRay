@@ -35,18 +35,18 @@ namespace Asteroids
 
         private static readonly Dictionary<ShipColor, Color> GuiShipBaseColor = new()
         {
-            { ShipColor.blue, Color.DARKBLUE },
+            { ShipColor.blue, Color.DarkBlue },
             { ShipColor.red, new Color(175, 25, 40, 255) },
-            { ShipColor.green, Color.LIME },
+            { ShipColor.green, Color.Lime },
             { ShipColor.orange, new Color(200, 100, 0, 255) },
         };
 
         private static readonly Dictionary<ShipColor, Color> GuiShipFocusColor = new()
         {
-            { ShipColor.blue, Color.BLUE },
-            { ShipColor.red, Color.RED },
-            { ShipColor.green, Color.GREEN },
-            { ShipColor.orange, Color.ORANGE },
+            { ShipColor.blue, Color.Blue },
+            { ShipColor.red, Color.Red },
+            { ShipColor.green, Color.Green },
+            { ShipColor.orange, Color.Orange },
         };
 
         private static readonly Dictionary<string, string> Credits = new()
@@ -63,10 +63,10 @@ namespace Asteroids
             Position = new(WindowWidth - 300, WindowHeight - (1 + GetEntities<Label>().Count()) * 35),
             Size = new(0, 25),
             Text = description,
-            TextColor = Color.RAYWHITE,
+            TextColor = Color.RayWhite,
             HasOutlines = false,
             TextOffSet = new(3, 5),
-            FillColor = Color.BLANK,
+            FillColor = Color.Blank,
             TriggerTime = 2000d * SharpRayConfig.TickMultiplier,
             UpdateAction = l =>
             {
@@ -92,9 +92,9 @@ namespace Asteroids
                 new Label
                 {
                     Size = new Vector2(384, 164),
-                    FillColor = Color.DARKPURPLE,
+                    FillColor = Color.DarkPurple,
                     Text = desc.Contains(Levels.Data.Count.ToString()) ? $"All Levels clear" :  $"{desc} Cleared",
-                    TextColor = Color.GOLD,
+                    TextColor = Color.Gold,
                     FontSize = 32,
                     Font = GetFont(FontFuture),
                     TextOffSet = new Vector2(24, 32)
@@ -103,8 +103,8 @@ namespace Asteroids
                 {
                     Size = new Vector2(150, 35),
                     Position = new Vector2(0, 32),
-                    BaseColor = Color.DARKGREEN,
-                    FocusColor = Color.GREEN,
+                    BaseColor = Color.DarkGreen,
+                    FocusColor = Color.Green,
                     Text = desc.Contains(Levels.Data.Count.ToString()) ? "To Main Menu" :"Next Level",
                     FontSize = 16,
                     Font = GetFont(FontFutureThin),
@@ -128,8 +128,8 @@ namespace Asteroids
                 new Label
                 {
                     Size = new Vector2(320, 128),
-                    FillColor = Color.MAROON,
-                    TextColor = Color.RAYWHITE,
+                    FillColor = Color.Maroon,
+                    TextColor = Color.RayWhite,
                     FontSize = 24,
                     TextOffSet = new Vector2(0, 24),
                     Font = GetFont(FontFuture),
@@ -143,10 +143,10 @@ namespace Asteroids
                     Size = new Vector2(100, 20),
                     Text = "Continue",
                     TextOffSet = new Vector2(11, 2),
-                    TextColor = Color.RAYWHITE,
+                    TextColor = Color.RayWhite,
                     Font = GetFont(FontFutureThin),
                     FontSize = 16,
-                    FocusColor = Color.LIGHTGRAY,
+                    FocusColor = Color.LightGray,
                     OnMouseLeftClick = b => new ContinueWithLevel { GuiEntity = b }
                 })
                 .Translate(new Vector2(WindowWidth / 2, WindowHeight / 2))
@@ -187,7 +187,7 @@ namespace Asteroids
                     Position = new Vector2(WindowWidth - 200, 32),
                     Size = new Vector2(0, 50),
                     HasOutlines = false,
-                    FillColor = Color.LIME,
+                    FillColor = Color.Lime,
                 },
                 new Label
                 {
@@ -195,8 +195,8 @@ namespace Asteroids
                     Position = new Vector2(WindowWidth - 200, 32),
                     Size = new Vector2(230, 50),
                     Text = GetScoreString(CurrentScore),
-                    TextColor = Color.RAYWHITE,
-                    FillColor = Color.BLANK,
+                    TextColor = Color.RayWhite,
+                    FillColor = Color.Blank,
                     FontSize = 32,
                     TextOffSet = new Vector2(20, 10),
                     Font = GetFont(FontFutureThin),
@@ -207,7 +207,7 @@ namespace Asteroids
                     Position = new Vector2(WindowWidth - 500, 32),
                     Size = new Vector2(0, 50),
                     HasOutlines = false,
-                    FillColor = Color.RED,
+                    FillColor = Color.Red,
                 },
                 new Label
                 {
@@ -215,8 +215,8 @@ namespace Asteroids
                     Position = new Vector2(WindowWidth - 500, 32),
                     Size = new Vector2(230, 50),
                     Text = GetHealthString(MaxHealth),
-                    TextColor = Color.RAYWHITE,
-                    FillColor = Color.BLANK,
+                    TextColor = Color.RayWhite,
+                    FillColor = Color.Blank,
                     FontSize = 32,
                     TextOffSet = new Vector2(20, 10),
                     Font = GetFont(FontFutureThin),
@@ -230,7 +230,7 @@ namespace Asteroids
 
                     if (e is ShipLifeLost sll)
                     {
-                        c.GetEntityByTag<ImageTexture>(PlayerLifeIcon(sll.LifeIconIdx)).Color = Color.DARKGRAY;
+                        c.GetEntityByTag<ImageTexture>(PlayerLifeIcon(sll.LifeIconIdx)).Color = Color.DarkGray;
 
                     }
 
@@ -252,7 +252,7 @@ namespace Asteroids
             {
                 var pos = new Vector2(icon.Width + (i * icon.Width * 1.5f), 20);
                 container.AddChildren(
-                     new ImageTexture(icon, Color.WHITE)
+                     new ImageTexture(icon, Color.White)
                      {
                          Tag = PlayerLifeIcon(i),
                          Position = pos,
@@ -278,59 +278,59 @@ namespace Asteroids
                {
                    Tag = Tags.StartGame,
                    Text = "Start Game",
-                   TextColor = Color.YELLOW,
+                   TextColor = Color.Yellow,
                    FontSize = 32,
                    Font = GetFont(FontFutureThin),
                    DoCenterText = true,
                    Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .3f),
                    Size = new Vector2(300, 50),
-                   BaseColor = Color.DARKGREEN,
-                   FocusColor = Color.LIME,
+                   BaseColor = Color.DarkGreen,
+                   FocusColor = Color.Lime,
                    OnMouseLeftClick = e => new GameStart { GuiEntity = e },
                },
                new Button
                {
                    Tag = Tags.StartGame,
                    Text = "Select Ship",
-                   TextColor = Color.YELLOW,
+                   TextColor = Color.Yellow,
                    FontSize = 32,
                    Font = GetFont(FontFutureThin),
                    DoCenterText = true,
                    Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .45f),
                    Size = new Vector2(300, 50),
-                   BaseColor = Color.DARKGREEN,
-                   FocusColor = Color.LIME,
+                   BaseColor = Color.DarkGreen,
+                   FocusColor = Color.Lime,
                    OnMouseLeftClick = e => new SelectShip { GuiEntity = e }
                },
                new Button
                {
                    Text = "Credits",
-                   TextColor = Color.YELLOW,
+                   TextColor = Color.Yellow,
                    FontSize = 32,
                    Font = GetFont(FontFutureThin),
                    DoCenterText = true,
                    Position = new Vector2(WindowWidth * 0.361f, WindowHeight * .6f),
                    Size = new Vector2(300, 50),
-                   BaseColor = Color.DARKGREEN,
-                   FocusColor = Color.LIME,
+                   BaseColor = Color.DarkGreen,
+                   FocusColor = Color.Lime,
                    OnMouseLeftClick = e => new ShowCredits { GuiEntity = e }
                },
              GuiContainerBuilder.CreateNew().AddChildren(
-                  new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
+                  new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.White)
                   {
                       Position = new Vector2(-(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).Width / 2 - WindowWidth * .318f - 25), -216),
                   },
-                  new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.WHITE)
+                  new ImageTexture(GetTexture2D(nameof(KeyLeftDown)), Color.White)
                   {
                       Position = new Vector2(WindowWidth * .318f - 50, 25),
                       HasOutline = true,
                   },
-                  new ImageTexture(GetTexture2D(nameof(KeyRightDown)), Color.WHITE)
+                  new ImageTexture(GetTexture2D(nameof(KeyRightDown)), Color.White)
                   {
                       Position = new Vector2(WindowWidth * .318f + 50, 25),
                       HasOutline = true,
                   },
-                  new ImageTexture(GetTexture2D(nameof(KeyUpDown)), Color.WHITE)
+                  new ImageTexture(GetTexture2D(nameof(KeyUpDown)), Color.White)
                   {
                       Position = new Vector2(WindowWidth * .318f, -25),
                       HasOutline = true,
@@ -343,8 +343,8 @@ namespace Asteroids
                       Font = GetFont(FontFutureThin),
                       FontSize = 24,
                       DoCenterText = true,
-                      FillColor = Color.BLANK,
-                      TextColor = Color.WHITE,
+                      FillColor = Color.Blank,
+                      TextColor = Color.White,
                       HasOutlines = true,
                   },
                   new Label
@@ -352,7 +352,7 @@ namespace Asteroids
                       Position = new Vector2(0, 135),
                       Size = new Vector2(300, 50),
                       Text = "fire weapon",
-                      FillColor = Color.BLANK,
+                      FillColor = Color.Blank,
                       HasOutlines = true,
                       Font = GetFont(FontFuture),
                       FontSize = 30,
@@ -363,7 +363,7 @@ namespace Asteroids
                       Position = new Vector2(0, 50),
                       Size = new Vector2(300, 50),
                       Text = "ship control",
-                      FillColor = Color.BLANK,
+                      FillColor = Color.Blank,
                       HasOutlines = true,
                       Font = GetFont(FontFuture),
                       FontSize = 30,
@@ -397,8 +397,8 @@ namespace Asteroids
         private static Label GetTitleBanner() => new()
         {
             Text = "Meteor Mayhem",
-            TextColor = Color.YELLOW,
-            FillColor = Color.DARKPURPLE,
+            TextColor = Color.Yellow,
+            FillColor = Color.DarkPurple,
             FontSize = 72,
             Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
             Size = new Vector2(780, 100),
@@ -414,8 +414,8 @@ namespace Asteroids
                   {
                       Position = new Vector2(WindowWidth * .5f, WindowHeight * .50f),
                       Size = new Vector2(600, 400),
-                      FillColor = Color.DARKGREEN,
-                      TextColor = Color.YELLOW
+                      FillColor = Color.DarkGreen,
+                      TextColor = Color.Yellow
                   },
                    new Button
                    {
@@ -444,9 +444,9 @@ namespace Asteroids
                     Font = GetFont(FontFuture),
                     FontSize = 22,
                     TextOffSet = new Vector2(16, 18),
-                    BaseColor = Color.DARKBLUE,
-                    TextColor = Color.RAYWHITE,
-                    FocusColor = Color.SKYBLUE,
+                    BaseColor = Color.DarkBlue,
+                    TextColor = Color.RayWhite,
+                    FocusColor = Color.SkyBlue,
                     DoCenterText = true,
                 });
             }
@@ -484,7 +484,7 @@ namespace Asteroids
                 new Label
                 {
                     Text = "Meteor Mayhem",
-                    TextColor = Color.YELLOW,
+                    TextColor = Color.Yellow,
                     FillColor = GuiShipBaseColor[SelectedShipColor],
                     FontSize = 72,
                     Position = new Vector2(WindowWidth / 2, WindowHeight * .1f),
@@ -492,7 +492,7 @@ namespace Asteroids
                     Font = GetFont(FontFuture),
                     DoCenterText = true
                 },
-                new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.WHITE)
+                new ImageTexture(GetTexture2D(ships[SelectedShipType][SelectedShipColor]), Color.White)
                 {
                     Position = new Vector2(WindowWidth / 2, WindowHeight / 2) -
                     new Vector2(GetTexture2D(ships[SelectedShipType][SelectedShipColor]).Width / 2,
@@ -505,7 +505,7 @@ namespace Asteroids
                     Size = new Vector2(200, 50),
                     Text = $"Type {SelectedShipType}",
                     DoCenterText = true,
-                    FillColor = Color.BLANK,
+                    FillColor = Color.Blank,
                     HasOutlines = false,
                     Font = GetFont(FontFutureThin),
                     FontSize = 39,
@@ -595,7 +595,7 @@ namespace Asteroids
                 {
                     Tag = Tags.StartGame,
                     Text = "Start",
-                    TextColor = Color.YELLOW,
+                    TextColor = Color.Yellow,
                     FontSize = 24,
                     Font = GetFont(FontFutureThin),
                     DoCenterText = true,

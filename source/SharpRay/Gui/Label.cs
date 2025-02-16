@@ -1,15 +1,15 @@
 ﻿namespace SharpRay.Gui
 {
 	/// <summary>
-	/// A simple text label. Postion is the center from which the label is drawn. 
+	/// A simple text label. Position is the center from which the label is drawn. 
 	/// </summary>
 	public class Label : GuiEntity
 	{
 		public string Text { get; set; }
 		public Font Font { get; init; } = GetFontDefault( );
-		public Color TextColor { get; set; } = WHITE;
-		public Color OutlineColor { get; set; } = WHITE;
-		public Color FillColor { get; set; } = LIGHTGRAY;
+		public Color TextColor { get; set; } = White;
+		public Color OutlineColor { get; set; } = White;
+		public Color FillColor { get; set; } = LightGray;
 		public bool DoCenterText { get; set; }
 		public float FontSize { get; init; } = 15f;
 		public float Spacing { get; init; } = 1f;

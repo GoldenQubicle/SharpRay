@@ -32,7 +32,7 @@ namespace TerribleTetris
 				WindowHeight = WindowHeight,
 				DoEventLogging = false,
 				ShowFPS = true,
-				BackGroundColor = DARKGRAY
+				BackGroundColor = DarkGray
 			});
 
 			//var patternData = new PatternData(GridData.Rows, GridData.Cols, new List<TetrominoLocked>
@@ -56,20 +56,20 @@ namespace TerribleTetris
 
 		private static void OnKeyBoardEvent(IKeyBoardEvent e)
 		{
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_SPACE })
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.Space })
 			{
 				RemoveGameEntities( );
 				StartGame(Mode.Generation);
 			}
 
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is GenDoneMode)
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.P } && GameMode is GenDoneMode)
 			{
 				RemoveGameEntities( );
 				GameMode = GameMode.NextMode(new PlayMode( ));
 				GameMode.Initialize( );
 			}
 
-			if (e is KeyPressed { KeyboardKey: KeyboardKey.KEY_P } && GameMode is LevelDoneMode)
+			if (e is KeyPressed { KeyboardKey: KeyboardKey.P } && GameMode is LevelDoneMode)
 			{
 				RemoveGameEntities( );
 				GetEntityByTag<GuiContainer>(StartMenu).Show();
@@ -108,7 +108,7 @@ namespace TerribleTetris
 		internal static void SetGridBackgroundTexture(GridData gridData)
 		{
 			RemoveTexture2D(GridTexture);
-			var bgImage = GenImageChecked(gridData.Width, gridData.Height, gridData.CellSize, gridData.CellSize, RAYWHITE, LIGHTGRAY);
+			var bgImage = GenImageChecked(gridData.Width, gridData.Height, gridData.CellSize, gridData.CellSize, RayWhite, LightGray);
 			AddTexture2D(GridTexture, LoadTextureFromImage(bgImage));
 			UnloadImage(bgImage);
 		}

@@ -28,11 +28,11 @@
             {
                 if (!_texture2D.Equals(default(Texture2D))) return _texture2D;
 
-                var mask = GenImageColor(200, 200, Color.BROWN);
-                var image = GenImageColor(200, 200, Color.DARKGREEN);
+                var mask = GenImageColor(200, 200, Color.Brown);
+                var image = GenImageColor(200, 200, Color.DarkGreen);
 
                 ImageAlphaMask(ref mask, GenImageCellular(200, 200, 20));
-                ImageDraw(ref image, mask, new(0, 0, 200, 200), new(0, 0, 200, 200), Color.LIME);
+                ImageDraw(ref image, mask, new(0, 0, 200, 200), new(0, 0, 200, 200), Color.Lime);
 
                 _texture2D = LoadTextureFromImage(image);
 
@@ -77,10 +77,10 @@
 
             _segments.ForEach(s => s.Render());
 
-            DrawCircleV(Start, 2, Color.PURPLE);
-            DrawCircleV(Start + Vertices[0], 2, Color.YELLOW);
-            DrawCircleV(Start + Vertices[1], 2, Color.ORANGE);
-            DrawCircleV(End, 3, Color.RED);
+            DrawCircleV(Start, 2, Color.Purple);
+            DrawCircleV(Start + Vertices[0], 2, Color.Yellow);
+            DrawCircleV(Start + Vertices[1], 2, Color.Orange);
+            DrawCircleV(End, 3, Color.Red);
 
         }
 

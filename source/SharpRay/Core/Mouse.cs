@@ -19,36 +19,36 @@
                 EmitEvent?.Invoke(new MouseMovement { Position = Cursor });
 
             //click events - TODO proper click & double click
-            if (IsMouseButtonPressed(MouseButton.MOUSE_LEFT_BUTTON))
+            if (IsMouseButtonPressed(MouseButton.Left))
                 EmitEvent?.Invoke(new MouseLeftClick { Position = Cursor });
 
-            if (IsMouseButtonPressed(MouseButton.MOUSE_MIDDLE_BUTTON))
+            if (IsMouseButtonPressed(MouseButton.Middle))
                 EmitEvent?.Invoke(new MouseMiddleClick { Position = Cursor });
 
-            if (IsMouseButtonPressed(MouseButton.MOUSE_RIGHT_BUTTON))
+            if (IsMouseButtonPressed(MouseButton.Right))
                 EmitEvent?.Invoke(new MouseRightClick { Position = Cursor });
 
 
             //release events
-            if (IsMouseButtonReleased(MouseButton.MOUSE_LEFT_BUTTON))
+            if (IsMouseButtonReleased(MouseButton.Left))
                 EmitEvent?.Invoke(new MouseLeftRelease { Position = Cursor });
 
-            if (IsMouseButtonReleased(MouseButton.MOUSE_MIDDLE_BUTTON))
+            if (IsMouseButtonReleased(MouseButton.Middle))
                 EmitEvent?.Invoke(new MouseMiddleRelease { Position = Cursor });
 
-            if (IsMouseButtonReleased(MouseButton.MOUSE_RIGHT_BUTTON))
+            if (IsMouseButtonReleased(MouseButton.Right))
                 EmitEvent?.Invoke(new MouseRightRelease { Position = Cursor });
 
 
             //drag events
             //send continuously even when cursor is outside window with potentially negative coordinates
-            if (IsMouseButtonDown(MouseButton.MOUSE_LEFT_BUTTON) && isDragging)
+            if (IsMouseButtonDown(MouseButton.Left) && isDragging)
                 EmitEvent?.Invoke(new MouseLeftDrag { Position = Cursor });
 
-            if (IsMouseButtonDown(MouseButton.MOUSE_MIDDLE_BUTTON) && isDragging)
+            if (IsMouseButtonDown(MouseButton.Middle) && isDragging)
                 EmitEvent?.Invoke(new MouseMiddleDrag { Position = Cursor });
 
-            if (IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON) && isDragging)
+            if (IsMouseButtonDown(MouseButton.Right) && isDragging)
                 EmitEvent?.Invoke(new MouseRightDrag { Position = Cursor });
 
 

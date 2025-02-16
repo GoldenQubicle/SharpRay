@@ -35,7 +35,7 @@ public class Program
 			Name = $"Advent of Code {year} Day {day} part {part}",
 			WindowHeight = 1024,
 			WindowWidth = 1024,
-			BackGroundColor = Color.DARKBLUE
+			BackGroundColor = Color.DarkBlue
 		};
 
 		Initialize(config);
@@ -55,7 +55,7 @@ public class Program
 			Name = $"Advent of Code {year} Day {day} part {part}",
 			WindowHeight = 1024,
 			WindowWidth = 860,
-			BackGroundColor = Color.DARKBLUE
+			BackGroundColor = Color.DarkBlue
 		};
 
 		Initialize(config);
@@ -68,7 +68,7 @@ public class Program
 		solution = Solution.Initialize(year, day);
 
 		IRenderState.Update = state =>
-			GetEntity<PathFindingEntity>( ).RenderAction(state, 0, ColorAlpha(Color.SKYBLUE, .5f));
+			GetEntity<PathFindingEntity>( ).RenderAction(state, 0, ColorAlpha(Color.SkyBlue, .5f));
 
 		//assuming a path finding solution has a grid field...
 		var grid = (Grid2d)solution.GetType( ).GetField("grid", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(solution);

@@ -31,7 +31,7 @@ internal class Pattern : Entity, IHasRender, IEventEmitter<IGameEvent>
 	{
 		foreach (var cell in _cells)
 		{
-			DrawRectangleV(cell.Key, _cellSize, BEIGE);
+			DrawRectangleV(cell.Key, _cellSize, Beige);
 		}
 
 		DrawScore( );
@@ -43,11 +43,11 @@ internal class Pattern : Entity, IHasRender, IEventEmitter<IGameEvent>
 		var size = new Vector2(196, 128);
 		var margin = 28;
 		var fontSize = 18;
-		DrawRectangleV(anchor, size, DARKGREEN);
-		DrawRectangleLinesV(anchor, size, GREEN);
-		DrawTextV($"Score : {_totalScore}", anchor + new Vector2(margin, margin), fontSize, GOLD);
-		DrawTextV($"Shapes : {_totalShapes} / {_data.Shapes.Count}", anchor + new Vector2(margin, margin * 2), fontSize, GOLD);
-		DrawTextV($"Cells : {_totalCells} / {_cells.Count}", anchor + new Vector2(margin, margin * 3), fontSize, GOLD);
+		DrawRectangleV(anchor, size, DarkGreen);
+		DrawRectangleLinesV(anchor, size, Green);
+		DrawTextV($"Score : {_totalScore}", anchor + new Vector2(margin, margin), fontSize, Gold);
+		DrawTextV($"Shapes : {_totalShapes} / {_data.Shapes.Count}", anchor + new Vector2(margin, margin * 2), fontSize, Gold);
+		DrawTextV($"Cells : {_totalCells} / {_cells.Count}", anchor + new Vector2(margin, margin * 3), fontSize, Gold);
 	}
 
 

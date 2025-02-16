@@ -26,7 +26,7 @@ namespace TerribleTetris
 		{
 			//DrawCircleV(Position, 5, ORANGE);
 
-			DrawTextureV(_texture, Position, WHITE);
+			DrawTextureV(_texture, Position, White);
 
 			//DrawDebugCells( );
 
@@ -48,7 +48,7 @@ namespace TerribleTetris
 			foreach (var v in Cells.Keys)
 			{
 				var pos = Position + new Vector2(v.X * _data.CellSize, v.Y * _data.CellSize);
-				DrawTextV($"{v.X}, {v.Y}", pos, 8, RED);
+				DrawTextV($"{v.X}, {v.Y}", pos, 8, Red);
 			}
 		}
 

@@ -12,24 +12,24 @@
 
             if (IsActive)
             {
-                DrawRectangleLinesV(sCenter - GridHandler.CellSizeV / 2, GridHandler.CellSizeV, Color.BEIGE);
+                DrawRectangleLinesV(sCenter - GridHandler.CellSizeV / 2, GridHandler.CellSizeV, Color.Beige);
             }
 
             foreach (var node in Nodes.Values)
             {
                 //DrawCircleV(node.Position, 3, Color.DARKPURPLE);
-                DrawTextV(node.Connections.Count.ToString(), node.Position, 10, Color.RAYWHITE);
+                DrawTextV(node.Connections.Count.ToString(), node.Position, 10, Color.RayWhite);
 
                 foreach (var con in node.Connections)
                 {
-                    DrawLineV(node.Position, con.Position, Color.PURPLE);
+                    DrawLineV(node.Position, con.Position, Color.Purple);
                 }
             }
 
             if (prevIdx != -1)
             {
                 //DrawCircleV(sCenter, 3, Color.PINK);
-                DrawLineV(Nodes[prevIdx].Position, sCenter, Color.LIME);
+                DrawLineV(Nodes[prevIdx].Position, sCenter, Color.Lime);
             }
         }
 

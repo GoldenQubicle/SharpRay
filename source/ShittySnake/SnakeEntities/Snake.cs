@@ -80,9 +80,9 @@
 
         public override void Render()
         {
-            HeadColor = IsDigesting ? PINK : MAGENTA; 
+            HeadColor = IsDigesting ? Pink : Magenta; 
             DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 10, HeadColor);
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 10, 1, PURPLE);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 10, Purple);
         }
 
         public override void OnKeyBoardEvent(IKeyBoardEvent e) =>

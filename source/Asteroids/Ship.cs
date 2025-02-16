@@ -170,8 +170,8 @@ namespace Asteroids
             var conePos = Vector2.Transform(Position + new Vector2(-EngineConeTexture.Width / 2, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
             var enginePos = Vector2.Transform(Position + new Vector2(0, offset.Y - 2), Matrix3x2.CreateRotation(rotation, Position));
 
-            var exhaustColor = ColorAlpha(Color.GOLD, n_acceleration > n_rotation ? n_acceleration * .75f : n_rotation * .75f);
-            var coneColor = ColorAlpha(Color.SKYBLUE, n_acceleration > n_rotation ? n_acceleration : n_rotation);
+            var exhaustColor = ColorAlpha(Color.Gold, n_acceleration > n_rotation ? n_acceleration * .75f : n_rotation * .75f);
+            var coneColor = ColorAlpha(Color.SkyBlue, n_acceleration > n_rotation ? n_acceleration : n_rotation);
 
             var angle = direction.Equals(Left) ? MapRange(n_rotation, 0, 1, 0, 25) : MapRange(n_rotation, 0, 1, 0, -25);
             thrustPos = Vector2.Transform(thrustPos, Matrix3x2.CreateRotation(angle * DEG2RAD, enginePos));
@@ -181,10 +181,10 @@ namespace Asteroids
             DrawTextureEx(EngineConeTexture, conePos, RAD2DEG * rotation + angle, 1f, coneColor);
 
             var texPos = Vector2.Transform(Position - offset, Matrix3x2.CreateRotation(rotation, Position));
-            DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, scale, Color.WHITE);
+            DrawTextureEx(ShipTexture, texPos, RAD2DEG * rotation, scale, Color.White);
 
             if (HasTakenDamage)
-                DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DARKGRAY);
+                DrawTextureEx(DamgageTexture, texPos, RAD2DEG * rotation, scale, Color.DarkGray);
 
             //Collider.Render();
             //DrawCircleV(Position, 5, Color.PINK);

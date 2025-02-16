@@ -216,14 +216,14 @@ namespace Asteroids
 #if DEBUG
             if (e is KeyPressed kp)
             {
-                if (kp.KeyboardKey == KeyboardKey.KEY_E)
+                if (kp.KeyboardKey == KeyboardKey.E)
                 {
                     ResetGame();
                     RemoveEntity(GetEntityByTag<GuiContainer>(Gui.Tags.ScoreOverlay));
                     StartGame(LevelIdx);
                 }
 
-                if (kp.KeyboardKey == KeyboardKey.KEY_M)
+                if (kp.KeyboardKey == KeyboardKey.M)
                 {
                     //TODO prompt to stop and exit to menu..
                     ResetGame();

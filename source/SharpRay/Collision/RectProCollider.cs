@@ -23,7 +23,7 @@
                
         public override void Render()
         {
-            DrawCircleV(Center, 5, Raylib_cs.Color.ORANGE);
+            DrawCircleV(Center, 5, Orange);
 
             DrawLineV(points[0], points[1], Color);
             DrawLineV(points[1], points[2], Color);

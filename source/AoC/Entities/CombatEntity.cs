@@ -18,12 +18,12 @@ internal class CombatEntity : AoCEntity
 
 		_gridRender = grid.Select(c => c.Character switch
 		{
-			'#' => (GridPosition2Screen(c.X, c.Y), Color.BROWN),
-			_ => (GridPosition2Screen(c.X, c.Y), Color.RAYWHITE),
+			'#' => (GridPosition2Screen(c.X, c.Y), Color.Brown),
+			_ => (GridPosition2Screen(c.X, c.Y), Color.RayWhite),
 		});
 
 		_units = unitData
-			.Select(u => new CombatUnit(u.Id, GridPosition2Screen(u.Position), u.Type == 'G' ? Color.DARKGREEN : Color.SKYBLUE))
+			.Select(u => new CombatUnit(u.Id, GridPosition2Screen(u.Position), u.Type == 'G' ? Color.DarkGreen : Color.SkyBlue))
 			.ToConcurrentDictionary(u => u.Id, u => u);
 
 		AddEntity(new AttackEntity());
@@ -158,8 +158,8 @@ internal class CombatEntity : AoCEntity
 		public override void Render()
 		{
 			var ap = AttackPosition + CellSize / 2;
-			DrawLineV(Position + CellSize / 2, ap, Color.RED);
-			DrawCircleV(Position + CellSize / 2, 5, Color.RED);
+			DrawLineV(Position + CellSize / 2, ap, Color.Red);
+			DrawCircleV(Position + CellSize / 2, 5, Color.Red);
 		}
 
 		public override void Update(double deltaTime)

@@ -20,8 +20,8 @@ namespace ProtoCity
         {
             Initialize(new SharpRayConfig { WindowWidth = WindowWidth, WindowHeight = WindowHeight });
 
-            var background = GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, Color.BEIGE, Color.BROWN);
-            AddEntity(new ImageTexture(background, Color.GRAY));
+            var background = GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, Color.Beige, Color.Brown);
+            AddEntity(new ImageTexture(background, Color.Gray));
             AddEntity(new GridHandler(CellSize));
             AddEntity(GuiContainerBuilder.CreateNew()
                 .AddChildren(
@@ -74,7 +74,7 @@ namespace ProtoCity
 
         private static void OnKeyBoardEvent(IKeyBoardEvent e)
         {
-            if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.KEY_SPACE)
+            if (e is KeyPressed kp && kp.KeyboardKey == KeyboardKey.Space)
             {
                 GetEntity<GuiContainer>().GetEntity<TransitTool>().Clear();
                 GetEntity<GuiContainer>().GetEntity<BrushTool>().Clear();

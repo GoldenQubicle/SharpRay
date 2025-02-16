@@ -30,12 +30,12 @@
 
                 if (cell.Occupant == Occupant.Zone)
                 {
-                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.BEIGE);
+                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.Beige);
                 }
 
                 if (cell.Occupant == Occupant.TransitNode)
                 {
-                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.GRAY);
+                    DrawRectangleV(IndexToCoordinatesV(idx), CellSizeV, Color.Gray);
                 }
             }
         }

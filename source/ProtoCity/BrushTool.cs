@@ -14,7 +14,7 @@
             if (IsActive)
             {
                 var sCenter = GridHandler.GetSelectedCenter();
-                DrawCircleLinesV(sCenter, radius, Color.BEIGE);
+                DrawCircleLinesV(sCenter, radius, Color.Beige);
             }
         }
 

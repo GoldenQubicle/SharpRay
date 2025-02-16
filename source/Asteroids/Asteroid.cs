@@ -122,10 +122,10 @@
 
         private static Color GetColor(Type type) => type switch
         {
-            Type.Dirt or Type.Stone => Color.WHITE,
-            Type.Emerald => Color.LIME,
-            Type.Ruby => Color.MAROON,
-            Type.Saphire => Color.GOLD,
+            Type.Dirt or Type.Stone => Color.White,
+            Type.Emerald => Color.Lime,
+            Type.Ruby => Color.Maroon,
+            Type.Saphire => Color.Gold,
         };
 
         private static float GetScale(Size size) => size switch

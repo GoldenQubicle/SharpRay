@@ -54,20 +54,21 @@ namespace SharpRay.Core
             Mouse.EmitEvent += OnMouseEvent;
             KeyBoard.EmitEvent += OnKeyBoardEvent;
 
-            InitAudioDevice();
-            Audio.Initialize();
+            
             InitWindow(config.WindowWidth, config.WindowHeight, config.Name);
             SetWindowPosition(GetMonitorWidth(0) / 2 - config.WindowWidth / 2, GetMonitorHeight(0) / 2 - config.WindowHeight / 2);
 
+            InitAudioDevice( );
+            Audio.Initialize( );
             //SetTargetFPS(60);
         }
 
-        /// <summary>
-        /// The main loop of the SharpRay application. 
-        /// Handles rendering, collision, eventing, etc.
-        /// Unloads assets from memory when the SharpRay application is closed. 
-        /// </summary>
-        public static void Run()
+		/// <summary>
+		/// The main loop of the SharpRay application. 
+		/// Handles rendering, collision, eventing, etc.
+		/// Unloads assets from memory when the SharpRay application is closed. 
+		/// </summary>
+		public static void Run()
         {
             sw.Start();
             var previous = 0L;
@@ -347,8 +348,8 @@ namespace SharpRay.Core
 
         public static void DrawRectangleLinesV(Vector2 position, Vector2 size, Color color) =>
             DrawRectangleLines((int)position.X, (int)position.Y, (int)size.X, (int)size.Y, color);
-        public static void DrawCircleLinesV(Vector2 position, float radius, Color color) =>
-            DrawCircleLines((int)position.X, (int)position.Y, radius, color);
+        //public static void DrawCircleLinesV(Vector2 position, float radius, Color color) =>
+        //    DrawCircleLines((int)position.X, (int)position.Y, radius, color);
         public static void DrawTextV(string text, Vector2 position, int fontSize, Color color) =>
             DrawText(text, (int)position.X, (int)position.Y, fontSize, color);
 

@@ -45,15 +45,15 @@ namespace ShittySnake
         /// </summary>
         private static void CreateGui()
         {
-            AddEntity(new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LIGHTGRAY, GRAY), DARKBLUE));
+            AddEntity(new ImageTexture(GenImageChecked(WindowWidth, WindowHeight, CellSize, CellSize, LightGray, Gray), DarkBlue));
             AddEntity(GuiContainerBuilder.CreateNew(isVisible: false).AddChildren(
                 new Label
                 {
                     Position = new Vector2(),
                     Size = new Vector2(320, WindowHeight),
                     TextOffSet = new Vector2(20, 60),
-                    FillColor = DARKBROWN,
-                    TextColor = GOLD,
+                    FillColor = DarkBrown,
+                    TextColor = Gold,
                     FontSize = 90f,
                     Text = "Game O\nver",
                 },
@@ -62,8 +62,8 @@ namespace ShittySnake
                     Position = new Vector2(0, 120),
                     Size = new Vector2(320, WindowHeight / 6),
                     TextOffSet = new Vector2(60, 20),
-                    FillColor = DARKPURPLE,
-                    TextColor = YELLOW,
+                    FillColor = DarkPurple,
+                    TextColor = Yellow,
                     FontSize = 45,
                 },
                 new Button
@@ -71,9 +71,9 @@ namespace ShittySnake
                     Position = new Vector2(80, 0),
                     Size = new Vector2(80, 100),
                     TextOffSet = new Vector2(5, 3),
-                    BaseColor = DARKBLUE,
-                    FocusColor = BLUE,
-                    TextColor = ORANGE,
+                    BaseColor = DarkBlue,
+                    FocusColor = Blue,
+                    TextColor = Orange,
                     OnMouseLeftClick = e => new SnakeGameStart { GuiEntity = e },
                     Text = "AGA\nIN!",
                     FontSize = 37,
@@ -103,8 +103,8 @@ namespace ShittySnake
                     Position = new Vector2(),
                     Size = new Vector2(320, WindowHeight),
                     TextOffSet = new Vector2(18, 40),
-                    FillColor = DARKBROWN,
-                    TextColor = GOLD,
+                    FillColor = DarkBrown,
+                    TextColor = Gold,
                     FontSize = 110f,
                     Text = "Shitty\n Snak\ne",
                 },
@@ -113,9 +113,9 @@ namespace ShittySnake
                     Position = new Vector2(80, 160),
                     Size = new Vector2(120, 40),
                     TextOffSet = new Vector2(14, 3),
-                    BaseColor = DARKBLUE,
-                    FocusColor = MAGENTA,
-                    TextColor = ORANGE,
+                    BaseColor = DarkBlue,
+                    FocusColor = Magenta,
+                    TextColor = Orange,
                     Text = "Start",
                     FontSize = 37,
                     OnMouseLeftClick = e => new SnakeGameStart { GuiEntity = e }

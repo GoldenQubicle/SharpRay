@@ -9,7 +9,7 @@ internal class PathFindingEntity : AoCEntity
 
     public PathFindingEntity(Grid2d grid, SharpRayConfig config, string part) : base(config, part)
     {
-        var image = GenImageChecked(config.WindowWidth, config.WindowHeight, (int)CellSize.X, (int)CellSize.Y, Color.VIOLET, Color.DARKPURPLE);
+        var image = GenImageChecked(config.WindowWidth, config.WindowHeight, (int)CellSize.X, (int)CellSize.Y, Color.Violet, Color.DarkPurple);
         _texture = LoadTextureFromImage(image);
         UnloadImage(image);
 
@@ -20,10 +20,10 @@ internal class PathFindingEntity : AoCEntity
             Position = GridPosition2Screen(c.X, c.Y) + CellSize / 2, //buttons are drawn from the center, so add half the cell size
             HasOutlines = true,
             DoCenterText = true,
-            BaseColor = Color.BLANK,
-            OutlineColor = ColorAlpha(Color.DARKGREEN, .75f),
-            TextColor = Color.GOLD,
-            FocusColor = Color.RED,
+            BaseColor = Color.Blank,
+            OutlineColor = ColorAlpha(Color.DarkGreen, .75f),
+            TextColor = Color.Gold,
+            FocusColor = Color.Red,
             FontSize = CellSize.X > CellSize.Y ? CellSize.Y : CellSize.X,
             Text = c.Character.ToString(),
         }).ToList();
@@ -44,7 +44,7 @@ internal class PathFindingEntity : AoCEntity
 
     public override void Render()
     {
-        DrawTexture(_texture, 0, 0, Color.WHITE);
+        DrawTexture(_texture, 0, 0, Color.White);
 
         _buttons.ForEach(b => b.Render());
 

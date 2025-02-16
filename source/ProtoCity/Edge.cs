@@ -18,10 +18,10 @@
 
         public override void Render()
         {
-            DrawLineEx(A.Position, B.Position, 3, Color.LIGHTGRAY);
+            DrawLineEx(A.Position, B.Position, 3, Color.LightGray);
 
-            DrawTextV("A", A.Position, 15, Color.BLACK);
-            DrawTextV("B", B.Position - new Vector2(15, 0), 15, Color.BLACK);
+            DrawTextV("A", A.Position, 15, Color.Black);
+            DrawTextV("B", B.Position - new Vector2(15, 0), 15, Color.Black);
 
             DrawRays();
         }

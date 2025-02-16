@@ -70,7 +70,7 @@
             var r = (Collider as RectCollider).Rect;
 
             DrawRectangleRounded(r, .5f, 8, Data.fill);
-            DrawRectangleRoundedLines(r, .5f, 8, 3, Data.outline);
+            DrawRectangleRoundedLines(r, .5f, 8, Data.outline);
             DrawTextEx(Font, Data.t, Position + Data.offset, 32, 0, Data.text);
 
             //Collider.Render();
@@ -95,9 +95,9 @@
 
         private (string t, Color fill, Color outline, Color text, Vector2 offset) GetData(Type pickupType) => pickupType switch
         {
-            Type.Bullet => ("B", Color.YELLOW, Color.GOLD, Color.ORANGE, new Vector2(5, -2)),
-            Type.Weapon => ("W", Color.PURPLE, Color.PINK, Color.DARKPURPLE, new Vector2(4, -2)),
-            Type.Health => ("H", Color.DARKGREEN, Color.LIME, Color.GREEN, new Vector2(5.25f, -2)),
+            Type.Bullet => ("B", Color.Yellow, Color.Gold, Color.Orange, new Vector2(5, -2)),
+            Type.Weapon => ("W", Color.Purple, Color.Pink, Color.DarkPurple, new Vector2(4, -2)),
+            Type.Health => ("H", Color.DarkGreen, Color.Lime, Color.Green, new Vector2(5.25f, -2)),
         };
     }
 }

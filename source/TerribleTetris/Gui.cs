@@ -13,10 +13,10 @@
 				Position = new(WindowWidth - 300, WindowHeight - ( 1 + GetEntities<Label>( ).Count( ) ) * 35),
 				Size = new(0, 25),
 				Text = "Perfect Match!",
-				TextColor = Color.RAYWHITE,
+				TextColor = RayWhite,
 				HasOutlines = false,
 				TextOffSet = new(3, 5),
-				FillColor = Color.BLANK,
+				FillColor = Blank,
 				TriggerTime = 500d * SharpRayConfig.TickMultiplier,
 				UpdateAction = l =>
 				{
@@ -44,8 +44,8 @@
 			container.AddChildren(new Label
 			{
 				Position = new(0, 0),
-				FillColor = BLUE,
-				TextColor = SKYBLUE,
+				FillColor = Blue,
+				TextColor = SkyBlue,
 				Size = new(400, 480),
 				Text = "Terrible Tetris",
 				DoCenterText = false,
@@ -56,9 +56,9 @@
 				new Button
 				{
 					Position = btnPos,
-					FocusColor = PURPLE,
-					BaseColor = DARKPURPLE,
-					TextColor = PINK,
+					FocusColor = Purple,
+					BaseColor = DarkPurple,
+					TextColor = Pink,
 					Size = new(btnWidth, btnHeight),
 					Text = "Random",
 					DoCenterText = true,

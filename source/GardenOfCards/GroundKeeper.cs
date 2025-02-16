@@ -167,11 +167,11 @@
 
         public static (Color Render, Color Highlight) GetSuiteColors(Suite suite) => suite switch
         {
-            Suite.Seed => (Color.BEIGE, Color.BROWN),
-            Suite.Water => (Color.SKYBLUE, Color.BLUE),
-            Suite.Light => (Color.YELLOW, Color.GOLD),
-            Suite.Nutrient => (Color.GREEN, Color.LIME),
-            Suite.Temperature => (Color.RED, Color.MAROON),
+            Suite.Seed => (Color.Beige, Color.Brown),
+            Suite.Water => (Color.SkyBlue, Color.Blue),
+            Suite.Light => (Color.Yellow, Color.Gold),
+            Suite.Nutrient => (Color.Green, Color.Lime),
+            Suite.Temperature => (Color.Red, Color.Maroon),
             _ => throw new ArgumentOutOfRangeException(nameof(suite), suite, null)
         };
 
@@ -186,7 +186,7 @@
                 potData.BasinRightUp - center,
                 potData.BasinLeftUp - center
             };
-            return new(center, points, uv, new Texture2D { Id = 1 }, Color.BROWN);
+            return new(center, points, uv, new Texture2D { Id = 1 }, Color.Brown);
         }
 
         private static PotRenderData GetPotRenderData(PotData data)
@@ -204,13 +204,13 @@
                 RimStart: new(0, data.RimThickness / 2),
                 RimEnd: new(rimWidth, data.RimThickness / 2),
                 RimThickness: data.RimThickness,
-                RimColor: Color.DARKBROWN,
+                RimColor: Color.DarkBrown,
                 BasinLeftUp: offsetBasin,
                 BasinLeftDown: offsetBasin + new Vector2(data.BasinSlant, basinHeight),
                 BasinRightDown: offsetBasin + new Vector2(basinWidth + data.BasinSlant, basinHeight),
                 BasinRightUp: offsetBasin + new Vector2(basinWidth + 2 * data.BasinSlant, 0),
                 BasinThickness: data.BasinThickness,
-                BasinColor: Color.DARKBROWN,
+                BasinColor: Color.DarkBrown,
                 SlotOffset: new((rimWidth - basinWidth) / 2, data.RimThickness + (basinHeight - Card.Height - CardSlot.LineWidth * 2) / 2)
             );
         }

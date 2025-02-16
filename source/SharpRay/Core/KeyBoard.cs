@@ -11,46 +11,46 @@
             foreach (var key in Keys) if (IsKeyPressed(key)) DoEvent(new KeyPressed { KeyboardKey = key });
 
 
-            if (IsKeyReleased(KeyboardKey.KEY_UP) || IsKeyReleased(KeyboardKey.KEY_W))
+            if (IsKeyReleased(KeyboardKey.Up) || IsKeyReleased(KeyboardKey.W))
                 DoEvent(new KeyUpReleased());
 
-            if (IsKeyReleased(KeyboardKey.KEY_RIGHT) || IsKeyReleased(KeyboardKey.KEY_D))
+            if (IsKeyReleased(KeyboardKey.Right) || IsKeyReleased(KeyboardKey.D))
                 DoEvent(new KeyRightReleased());
 
-            if (IsKeyReleased(KeyboardKey.KEY_DOWN) || IsKeyReleased(KeyboardKey.KEY_S))
+            if (IsKeyReleased(KeyboardKey.Down) || IsKeyReleased(KeyboardKey.S))
                 DoEvent(new KeyDownReleased());
 
-            if (IsKeyReleased(KeyboardKey.KEY_LEFT) || IsKeyReleased(KeyboardKey.KEY_A))
+            if (IsKeyReleased(KeyboardKey.Left) || IsKeyReleased(KeyboardKey.A))
                 DoEvent(new KeyLeftReleased());
 
 
-            if (IsKeyDown(KeyboardKey.KEY_UP) || IsKeyDown(KeyboardKey.KEY_W))
+            if (IsKeyDown(KeyboardKey.Up) || IsKeyDown(KeyboardKey.W))
                 DoEvent(new KeyUpDown());
 
-            if (IsKeyDown(KeyboardKey.KEY_RIGHT) || IsKeyDown(KeyboardKey.KEY_D))
+            if (IsKeyDown(KeyboardKey.Right) || IsKeyDown(KeyboardKey.D))
                 DoEvent(new KeyRightDown());
 
-            if (IsKeyDown(KeyboardKey.KEY_DOWN) || IsKeyDown(KeyboardKey.KEY_S))
+            if (IsKeyDown(KeyboardKey.Down) || IsKeyDown(KeyboardKey.S))
                 DoEvent(new KeyDownDown());
 
-            if (IsKeyDown(KeyboardKey.KEY_LEFT) || IsKeyDown(KeyboardKey.KEY_A))
+            if (IsKeyDown(KeyboardKey.Left) || IsKeyDown(KeyboardKey.A))
                 DoEvent(new KeyLeftDown());
 
 
-            if (IsKeyPressed(KeyboardKey.KEY_SPACE))
+            if (IsKeyPressed(KeyboardKey.Space))
                 DoEvent(new KeySpaceBarPressed());
 
-            if (IsKeyDown(KeyboardKey.KEY_SPACE))
+            if (IsKeyDown(KeyboardKey.Space))
                 DoEvent(new KeySpaceBarDown());
 
-            if (IsKeyDown(KeyboardKey.KEY_DELETE))
+            if (IsKeyDown(KeyboardKey.Delete))
                 DoEvent(new KeyDelete());
 
 
-            if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Z))
+            if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Z))
                 DoEvent(new KeyUndo());
 
-            if (IsKeyDown(KeyboardKey.KEY_LEFT_CONTROL) && IsKeyPressed(KeyboardKey.KEY_Y))
+            if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Y))
                 DoEvent(new KeyRedo());
         }
 

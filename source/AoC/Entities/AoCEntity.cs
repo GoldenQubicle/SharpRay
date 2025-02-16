@@ -21,9 +21,9 @@
                 FontSize = 20,
                 Size = new Vector2(100, 30),
                 Position = new Vector2(config.WindowWidth - 75, config.WindowHeight - 40),
-                TextColor = Color.RAYWHITE,
-                FocusColor = Color.GREEN,
-                BaseColor = Color.DARKGREEN,
+                TextColor = Color.RayWhite,
+                FocusColor = Color.Green,
+                BaseColor = Color.DarkGreen,
                 OnMouseLeftClick = e => new AoCEvent(e, part),
                 EmitEvent = GuiEvent
             });

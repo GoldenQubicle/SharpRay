@@ -43,15 +43,15 @@
                 suiteSum += sum;
                 DrawRectangleV(overallGraphAnchor + barOffset, new(100, 20), GroundKeeper.GetSuiteColors(suite).Render);
                 DrawRectangleV(overallGraphAnchor + barOffset, new(sum, 20), GroundKeeper.GetSuiteColors(suite).Highlight);
-                DrawTextV($"{sum}%", overallGraphAnchor + new Vector2(110, 10) + barOffset, 12, Color.BLACK);
+                DrawTextV($"{sum}%", overallGraphAnchor + new Vector2(110, 10) + barOffset, 12, Color.Black);
             }
            
             
-            DrawTextV("Needs per turn", turnGraphAnchor - margin, 12, Color.BLACK);
-            DrawRectangleLinesV(turnGraphAnchor + new Vector2(0, 10), new(turnGraphWidth, graphHeight), Color.BLACK);
+            DrawTextV("Needs per turn", turnGraphAnchor - margin, 12, Color.Black);
+            DrawRectangleLinesV(turnGraphAnchor + new Vector2(0, 10), new(turnGraphWidth, graphHeight), Color.Black);
 
-            DrawTextV($"Needs overall {(int)LerpStat((int)suiteSum, 300, 0, 0)} %", new(220, 90), 12, Color.BLACK);
-            DrawRectangleLinesV(overallGraphAnchor + new Vector2(0, 10), new(overallGraphWidth, graphHeight), Color.BLACK);
+            DrawTextV($"Needs overall {(int)LerpStat((int)suiteSum, 300, 0, 0)} %", new(220, 90), 12, Color.Black);
+            DrawRectangleLinesV(overallGraphAnchor + new Vector2(0, 10), new(overallGraphWidth, graphHeight), Color.Black);
         }
 
         private static Vector2 GetBarOffset(int idx) => new(0, 10 + idx * 25);

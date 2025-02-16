@@ -38,9 +38,9 @@
 
         public override void Render()
         {
-            var color = IsOccupied ? Color.DARKGRAY : Color.LIGHTGRAY;
+            var color = IsOccupied ? Color.DarkGray : Color.LightGray;
 
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, Card.Roundness, 8, LineWidth, color);
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, Card.Roundness, 8, color);
 
             //Collider.Render();
         }

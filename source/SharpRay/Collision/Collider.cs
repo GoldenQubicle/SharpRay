@@ -3,7 +3,7 @@
     public abstract class Collider : ICollider, IHasRender
     {
 		public Vector2 Position { get; set; }
-		protected static Color Color => Color.BLUE;
+		protected static Color Color => Blue;
 
         public bool ContainsPoint(Vector2 point) => this switch
         {

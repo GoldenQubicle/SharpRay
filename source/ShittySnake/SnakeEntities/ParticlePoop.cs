@@ -38,8 +38,8 @@ namespace SnakeEntities
 
         public override void Render()
         {
-            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 5, ColorAlpha(Color.DARKBROWN, alpha));
-            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 5, 2, Color.BROWN);
+            DrawRectangleRounded((Collider as RectCollider).Rect, .5f, 5, ColorAlpha(DarkBrown, alpha));
+            DrawRectangleRoundedLines((Collider as RectCollider).Rect, .5f, 5, Brown);
         }
     }
 }

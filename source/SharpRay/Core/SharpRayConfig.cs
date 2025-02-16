@@ -36,6 +36,6 @@
         /// <summary>
         /// The background color set every frame in the rendering loop. Grey by default. 
         /// </summary>
-        public Color BackGroundColor { get; init; } = GRAY;
+        public Color BackGroundColor { get; init; } = Gray;
     }
 }

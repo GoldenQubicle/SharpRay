@@ -17,7 +17,7 @@
 			{
 				WindowWidth = WindowWidth,
 				WindowHeight = WindowHeight,
-				BackGroundColor = Color.GRAY,
+				BackGroundColor = Color.Gray,
 				ShowFPS = true,
 				DoEventLogging = false
 			});

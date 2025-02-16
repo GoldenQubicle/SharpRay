@@ -31,8 +31,8 @@
 
 			Collider = new RectCollider { Position = Position, Size = Size };
 
-			ColorDefault = Color.WHITE;
-			ColorFocused = Color.RED;
+			ColorDefault = Color.White;
+			ColorFocused = Color.Red;
 
 			RenderLayer = 2;
 		}
